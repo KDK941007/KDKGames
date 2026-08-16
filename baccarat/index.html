@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#07523a">
-<title>Paradise Baccarat Practice</title>
+<title>Paradise Baccarat Practice v1.11</title>
 <style>
 :root{
   --bg:#04110d;
@@ -71,6 +71,37 @@ button{touch-action:manipulation}
 .testGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .testGrid label{display:grid;gap:4px;font-size:8px;color:var(--muted);font-weight:850}
 .testGrid select{min-width:0;width:100%;padding:8px 5px;border-radius:9px;background:#081913;color:var(--text);border:1px solid var(--line);font-size:10px}
+.settingsGameSheet{height:78dvh;max-height:720px;display:flex;flex-direction:column;overflow:hidden}
+.settingsGameBody{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding-right:2px}
+.settingsTestBox{margin-top:12px;padding-top:11px;border-top:1px solid var(--line)}
+.settingsTestToggle{width:100%}
+.testDealStatus{
+  margin-top:8px;padding:7px 8px;border:1px solid rgba(226,192,100,.18);
+  border-radius:9px;background:rgba(226,192,100,.05);
+  color:var(--gold);font-size:9px;font-weight:900;line-height:1.45
+}
+.testClearBtn{width:100%;margin-top:7px;border-color:rgba(255,118,118,.22);color:#ffc0c0}
+
+/* setup: multi user / KRW-JPY */
+.toggle{display:flex;gap:6px}
+.toggle button{
+  flex:1;min-height:38px;border:1px solid var(--line);border-radius:10px;
+  background:#081913;color:var(--muted);font-weight:950;font-size:10px
+}
+.toggle button.active{background:var(--gold);color:#211a08;border-color:transparent}
+.userBankList{display:grid;gap:7px}
+.userBankRow{
+  padding:8px;border:1px solid rgba(255,255,255,.07);border-radius:11px;
+  background:rgba(255,255,255,.018)
+}
+.userBankMain{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:7px}
+.userBankMain label{display:grid;gap:4px;font-size:9px;color:var(--muted);font-weight:900}
+.userBankMain input{
+  width:100%;min-width:0;padding:9px;border:1px solid var(--line);border-radius:9px;
+  background:#081913;color:var(--text)
+}
+.bankCalc{min-height:14px;margin-top:4px;color:var(--gold);font-size:9px;font-weight:850}
+@media(max-width:380px){.userBankMain{gap:5px}.userBankMain input{padding:8px 6px}}
 
 /* GAME */
 .gameScreen{
@@ -135,9 +166,47 @@ button{touch-action:manipulation}
   display:flex;flex-direction:column;justify-content:space-between;font-size:11px;font-weight:1000;
   box-shadow:0 4px 10px rgba(0,0,0,.32);transform-origin:center
 }
-.card.red{color:#c52323}.card .bottom{align-self:flex-end;transform:rotate(180deg)}
-.card.dealP{animation:dealP .36s cubic-bezier(.2,.8,.2,1) both}
-.card.dealB{animation:dealB .36s cubic-bezier(.2,.8,.2,1) both}
+.card.red{color:#c52323}
+.card .bottom{align-self:flex-end;transform:rotate(180deg)}
+.card.basicFace{
+  display:flex;flex-direction:column;justify-content:space-between;
+  font-family:Georgia,"Times New Roman",serif;font-size:11px;font-weight:1000
+}
+.card.cardBack{
+  padding:0;border:3px solid #f5f1df;
+  background:
+    linear-gradient(135deg,rgba(255,255,255,.10),transparent 38%),
+    repeating-linear-gradient(45deg,#163760,#163760 5px,#c8aa50 5px,#c8aa50 8px)
+}
+.realCardFace{
+  position:relative;width:100%;height:100%;background:#fff;border-radius:6px;overflow:hidden;
+  color:#151515
+}
+.realCardFace.red{color:#bf1f2b}
+.cardSvg{display:block;width:100%;height:100%;overflow:hidden}
+.cardSvg text{
+  font-family:Georgia,"Times New Roman","Times",serif;
+  font-weight:700;
+  dominant-baseline:middle;
+  text-anchor:middle;
+}
+.cardSvg .pipText{font-size:20px}
+.cardSvg .acePip{font-size:45px}
+.cardSvg .cornerRank{font-size:17px;font-weight:800}
+.cardSvg .cornerSuit{font-size:14px}
+.cardSvg .courtLetter{font-size:25px;font-weight:800}
+.cardSvg .courtSuit{font-size:21px}
+.cardSvg .courtLine{stroke:#1d3f76;stroke-width:4}
+.realCardFace.red .cardSvg .courtLine{stroke:#a52430}
+
+/* SQUEEZE中は角の数字・スートを最後まで隠す。
+   ピップを少しずつ見る楽しみを優先する。 */
+.squeezeFace .cardIndex{opacity:0;transition:opacity .10s ease}
+.squeezeFace.showIndex .cardIndex{opacity:1}
+.card.dealP{animation:dealP .66s cubic-bezier(.2,.8,.2,1) both}
+.card.dealB{animation:dealB .66s cubic-bezier(.2,.8,.2,1) both}
+.card.cardFlip{animation:cardFlip .48s ease both}
+@keyframes cardFlip{0%{transform:rotateY(90deg)}100%{transform:rotateY(0)}}
 @keyframes dealP{0%{transform:translate(155px,-115px) rotate(18deg) scale(.7);opacity:.15}100%{transform:none;opacity:1}}
 @keyframes dealB{0%{transform:translate(76px,-115px) rotate(13deg) scale(.7);opacity:.15}100%{transform:none;opacity:1}}
 .sideState{height:27px;text-align:center;font-size:9px;color:var(--muted);font-weight:900}
@@ -172,10 +241,31 @@ button{touch-action:manipulation}
   padding:7px 8px 9px;box-shadow:0 7px 24px rgba(0,0,0,.26);overflow:hidden
 }
 .betStatus{
-  min-height:21px;display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:5px
+  min-height:21px;display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px
 }
 .message{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;font-weight:950;color:#e9f2ed}
-.bankText{flex:0 0 auto;color:var(--gold);font-size:10px;font-weight:1000}
+.bankText{flex:0 0 auto;color:var(--gold);font-size:9px;font-weight:1000;white-space:nowrap}
+.limitBar{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  min-height:20px;margin:0 0 5px;padding:3px 7px;
+  border:1px solid rgba(226,192,100,.18);border-radius:9px;
+  background:rgba(226,192,100,.05);color:var(--muted);
+  font-size:8px;font-weight:900;letter-spacing:.02em
+}
+.limitBar b{color:var(--gold);font-size:9px}
+.userStrip{
+  display:flex;gap:4px;min-height:25px;margin:0 0 5px;overflow-x:auto;scrollbar-width:none;
+  -webkit-overflow-scrolling:touch
+}
+.userStrip::-webkit-scrollbar{display:none}
+.userPill{
+  flex:0 0 auto;min-width:64px;height:24px;padding:0 7px;border:1px solid var(--line);border-radius:999px;
+  background:#122a20;color:#9fb8aa;display:flex;align-items:center;justify-content:center;gap:4px;
+  font-size:8px;font-weight:950;white-space:nowrap
+}
+.userPill.active{border-color:var(--gold);background:rgba(226,192,100,.12);color:var(--gold)}
+.userPill.done{border-color:rgba(98,211,149,.28);color:#92ddb5}
+.userPill.out{opacity:.42}
 .betSpots{display:grid;grid-template-columns:1fr .72fr 1fr;gap:6px}
 .betSpot{
   position:relative;min-height:57px;border-radius:12px;border:1px solid var(--line);background:#10251d;
@@ -220,6 +310,169 @@ button{touch-action:manipulation}
   font-size:8px;font-weight:900;padding:4px 1px
 }
 
+
+/* SQUEEZE */
+.squeezeOverlay{
+  position:fixed;z-index:40;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:14px 12px;
+  border:1px solid rgba(226,192,100,.22);border-radius:18px;
+  background:rgba(1,13,9,.94);backdrop-filter:blur(5px);
+  box-shadow:0 14px 34px rgba(0,0,0,.42);
+  overflow:hidden
+}
+.squeezeTitle{font-size:11px;font-weight:1000;color:var(--gold);letter-spacing:.10em;margin-bottom:7px}
+.squeezeCard{
+  position:relative;width:clamp(154px,44vw,178px);aspect-ratio:5/7;height:auto;
+  border-radius:15px;overflow:hidden;
+  background:#fff;box-shadow:0 14px 34px rgba(0,0,0,.48);
+  touch-action:none;user-select:none;-webkit-user-select:none
+}
+.squeezeFace{
+  position:absolute;inset:0;padding:0;background:#fff;color:#111;
+  border-radius:13px;overflow:hidden;
+  opacity:0;
+}
+.squeezeFace.revealing{opacity:1}
+.squeezeFace .realCardFace{
+  position:absolute;inset:0;width:100%;height:100%;
+  border-radius:13px
+}
+.squeezeFace .cardSvg{
+  display:block;width:100%;height:100%;
+  transform:none;
+}
+.squeezeFace .cardSvg .pipText{font-size:27px}
+.squeezeFace .cardSvg .acePip{font-size:62px}
+.squeezeFace .cardSvg .cornerRank{font-size:13px}
+.squeezeFace .cardSvg .cornerSuit{font-size:10px}
+.squeezeFace .cardSvg .courtLetter{font-size:23px}
+.squeezeFace .cardSvg .courtSuit{font-size:21px}
+.squeezeFace .cardSvg .courtSkin{fill:#efc5a1;stroke:#6f422d;stroke-width:1}
+.squeezeFace .cardSvg .courtHair{fill:#543323}
+.squeezeFace .cardSvg .courtGold{fill:#d7ae3f;stroke:#735215;stroke-width:1}
+.squeezeFace .cardSvg .courtRed{fill:#b52a39}
+.squeezeFace .cardSvg .courtBlue{fill:#294f8f}
+.squeezeFace .cardSvg .courtWhite{fill:#f8f1da}
+.squeezeFace .cardSvg .courtInk{fill:#242424}
+.squeezeFace .cardSvg .courtStroke{stroke:#242424;stroke-width:1.2;stroke-linecap:round;stroke-linejoin:round}
+.squeezeFace .cardSvg .courtFine{stroke:#725d37;stroke-width:.8;stroke-linecap:round}
+.squeezeCover{
+  position:absolute;z-index:5;inset:-1px;
+  border:0;border-radius:14px;
+  background:
+    linear-gradient(135deg,rgba(255,255,255,.10),transparent 38%),
+    repeating-linear-gradient(45deg,#163760,#163760 8px,#c8aa50 8px,#c8aa50 12px);
+  box-shadow:inset 0 0 0 4px #f5f1df,0 -2px 7px rgba(0,0,0,.18);
+  will-change:left,right,top,bottom,width,height;
+}
+.squeezeCover.snapBack{
+  transition:left .18s ease,right .18s ease,top .18s ease,bottom .18s ease,
+             width .18s ease,height .18s ease;
+}
+.squeezeGuide{margin-top:10px;text-align:center;font-size:10px;line-height:1.5;color:#b8ccc2}
+.squeezeOwner{
+  margin-bottom:5px;padding:3px 8px;border-radius:999px;
+  border:1px solid rgba(226,192,100,.24);background:rgba(226,192,100,.08);
+  color:#f0d987;font-size:8px;font-weight:950
+}
+.squeezeDirection{
+  min-height:13px;margin-top:4px;color:#87cbb0;font-size:8px;font-weight:900;letter-spacing:.05em
+}
+.squeezeProgress{
+  width:150px;height:4px;margin-top:7px;border-radius:999px;background:rgba(255,255,255,.10);overflow:hidden
+}
+.squeezeProgress span{display:block;width:0;height:100%;background:var(--gold);transition:width .08s linear}
+.squeezeOpenBtn{
+  min-width:108px;height:36px;margin-top:9px;border:1px solid rgba(226,192,100,.40);
+  border-radius:999px;background:rgba(226,192,100,.12);color:var(--gold);
+  font-size:9px;font-weight:1000
+}
+
+/* BLACKJACK-LIKE ROUND RESULT */
+.resultSheet{
+  height:82dvh;max-height:82dvh;display:flex;flex-direction:column;overflow:hidden
+}
+.roundResultContent{
+  flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:3px 2px 10px
+}
+.resultPanelTitle{
+  text-align:center;font-size:14px;line-height:20px;font-weight:950;
+  color:var(--gold);margin-bottom:8px
+}
+.resultSummary{
+  display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;
+  padding:8px 9px;margin-bottom:4px;border:1px solid var(--line);border-radius:10px;
+  background:rgba(255,255,255,.025);font-size:10px
+}
+.resultSummary span{color:var(--muted)}.resultSummary b{color:#fff}
+.resultPlayer{padding:9px 0;border-bottom:1px solid var(--line)}
+.resultPlayer:last-child{border-bottom:0}
+.resultPlayerHead{
+  display:flex;align-items:center;justify-content:flex-start;gap:10px;
+  font-size:13px;line-height:20px;font-weight:950
+}
+.playerResultBadge{
+  display:inline-flex;align-items:center;justify-content:center;min-width:54px;
+  padding:3px 7px;border-radius:999px;font-size:9px;font-weight:950;letter-spacing:.05em
+}
+.playerResultBadge.win{background:rgba(98,211,149,.16);color:var(--win);border:1px solid rgba(98,211,149,.35)}
+.playerResultBadge.lose{background:rgba(255,118,118,.14);color:var(--lose);border:1px solid rgba(255,118,118,.35)}
+.playerResultBadge.push{background:rgba(246,216,122,.14);color:#f6d87a;border:1px solid rgba(246,216,122,.35)}
+.playerResultBadge.mixed{background:rgba(255,255,255,.08);color:var(--text);border:1px solid var(--line)}
+.resultHands{display:grid;gap:5px;margin-top:6px}
+.resultHand{
+  display:grid;grid-template-columns:minmax(125px,auto) minmax(0,1fr);
+  justify-content:start;column-gap:12px;align-items:center;
+  font-size:11px;line-height:18px;color:var(--muted)
+}
+.resultHand b{color:var(--text);text-align:left}
+.resultFormula{
+  text-align:left;margin:2px 0 0 137px;font-size:10px;line-height:16px;
+  color:var(--gold);font-weight:850
+}
+.resultTotals{
+  display:grid;grid-template-columns:125px minmax(0,1fr);justify-content:start;
+  column-gap:12px;align-items:center;margin-top:5px;font-size:11px;line-height:18px
+}
+.resultNextBtn{
+  flex:0 0 auto;width:100%;min-height:46px;margin-top:9px;border:0;border-radius:12px;
+  background:var(--gold);color:#211a08;font-size:12px;font-weight:1000
+}
+.resultNextBtn:disabled{opacity:.35}
+
+/* CASINO-LIKE HISTORY TABLE */
+.statsSheet{height:84dvh;max-height:84dvh}
+.statsBody{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding-right:2px}
+.statsTabs{
+  display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:9px;flex:0 0 auto
+}
+.statsTab{
+  min-height:36px;border:1px solid var(--line);border-radius:9px;
+  background:#132d23;color:var(--muted);font-size:9px;font-weight:950
+}
+.statsTab.active{background:var(--gold);color:#211a08}
+.statsPanel{display:none}.statsPanel.active{display:block}
+.historyTitle{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  margin:2px 0 6px;font-size:10px;font-weight:1000;color:var(--gold)
+}
+.historyTitle span{font-size:8px;color:var(--muted);font-weight:850}
+.historyWrap{overflow:auto;border:1px solid var(--line);border-radius:10px}
+.historyTable{width:100%;border-collapse:collapse;min-width:330px;font-size:8px}
+.historyTable th,.historyTable td{
+  height:29px;padding:4px 5px;border-right:1px solid rgba(255,255,255,.07);
+  border-bottom:1px solid rgba(255,255,255,.07);text-align:center;white-space:nowrap
+}
+.historyTable th{position:sticky;top:0;z-index:1;background:#132d23;color:var(--gold)}
+.historyTable tr:last-child td{border-bottom:0}
+.historyTable th:last-child,.historyTable td:last-child{border-right:0}
+.histOutcome{
+  display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;
+  border-radius:50%;border:2px solid currentColor;font-weight:1000
+}
+.histOutcome.p{color:var(--player)}.histOutcome.b{color:var(--banker)}.histOutcome.t{color:var(--tie)}
+.histPair{color:var(--gold);font-weight:1000}
+
 /* MODALS */
 .modal{
   position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.72);display:flex;align-items:flex-end;justify-content:center;padding:10px
@@ -234,10 +487,10 @@ button{touch-action:manipulation}
 .closeBtn{
   flex:0 0 auto;min-width:34px;height:34px;border:1px solid var(--line);border-radius:10px;background:#213a30;color:#fff;font-weight:1000
 }
-.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:9px}
+.tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin-bottom:9px}
 .tab{
-  min-height:38px;border:1px solid var(--line);border-radius:9px;background:#132d23;color:var(--muted);
-  font-size:8px;font-weight:950;line-height:1.15;padding:3px
+  min-width:0;min-height:38px;border:1px solid var(--line);border-radius:9px;background:#132d23;color:var(--muted);
+  font-size:7.5px;font-weight:950;line-height:1.15;padding:3px 1px
 }
 .tab.active{background:var(--gold);color:#211a08}
 .sheetContent{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding-right:2px}
@@ -247,7 +500,21 @@ button{touch-action:manipulation}
 .ruleTable th,.ruleTable td{border:1px solid var(--line);padding:6px 4px;text-align:center}
 .ruleTable th{color:var(--gold);background:rgba(226,192,100,.06)}
 .ruleTable td{color:#d6e1db}
+.ruleStep{display:grid;grid-template-columns:25px 1fr;gap:7px;align-items:start;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.ruleStep:last-child{border-bottom:0}
+.ruleNo{width:23px;height:23px;border-radius:50%;display:grid;place-items:center;background:rgba(226,192,100,.12);border:1px solid rgba(226,192,100,.28);color:var(--gold);font-size:9px;font-weight:1000}
+.ruleStep b{display:block;color:var(--text);font-size:10px;margin-bottom:2px}
+.ruleStep span{display:block;color:var(--muted);font-size:9px;line-height:1.55}
+.ruleNote{margin-top:7px;padding:8px 9px;border-radius:9px;background:rgba(89,143,207,.08);border:1px solid rgba(89,143,207,.18);color:#bad7f5;font-size:9px;line-height:1.55}
+.ruleWarn{margin-top:7px;padding:8px 9px;border-radius:9px;background:rgba(226,192,100,.07);border:1px solid rgba(226,192,100,.18);color:#eadba8;font-size:9px;line-height:1.55}
 .resultContent{display:grid;gap:7px}
+.smallSheet .resultContent{overflow-y:auto;max-height:55dvh;padding-right:2px}
+.userResultBlock{
+  padding:8px;border:1px solid var(--line);border-radius:11px;background:rgba(255,255,255,.025)
+}
+.userResultHead{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:10px;font-weight:1000}
+.userResultHead span{color:var(--text)}
+.userResultMeta{margin-top:4px;color:var(--muted);font-size:8px;line-height:1.5}
 .resultRow{
   display:grid;grid-template-columns:1fr auto;gap:8px;padding:8px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.025);
   font-size:10px
@@ -316,13 +583,16 @@ button{touch-action:manipulation}
       <span class="ruleBadge">COMMISSION</span>
     </div>
     <div class="grid">
-      <div class="field full">
-        <label for="playerName">プレイヤー名</label>
-        <input id="playerName" maxlength="10" value="PLAYER 1">
-      </div>
       <div class="field">
-        <label for="initialBank">初期資金（₩）</label>
-        <input id="initialBank" type="number" min="10000" step="10000" value="300000">
+        <label for="userCount">USER数</label>
+        <select id="userCount">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+        </select>
       </div>
       <div class="field">
         <label for="tableMin">テーブルMIN（₩）</label>
@@ -334,32 +604,44 @@ button{touch-action:manipulation}
         </select>
       </div>
       <div class="field full">
-        <label>ゲーム方式</label>
-        <input value="Commission Baccarat（Banker勝利は5%コミッション）" disabled>
-        <div class="fieldHint">パラダイスシティ公式案内で配当を確認できるコミッション方式を練習対象にしています。</div>
+        <label>開始資金の入力方法</label>
+        <div class="toggle">
+          <button id="modeKrw" class="active" type="button">KRWで入力</button>
+          <button id="modeJpy" type="button">円から換算</button>
+        </div>
+      </div>
+      <div id="rateField" class="field full hidden">
+        <label for="rate">換算レート：1円 = 何ウォン</label>
+        <input id="rate" type="number" inputmode="decimal" value="9.2" min="0.01" step="0.01">
+        <div class="fieldHint">旅行当日のレートを手入力してください。換算後は₩1,000単位に切り捨てます。</div>
+      </div>
+      <div class="field full">
+        <label>USER別 開始チップ</label>
+        <div id="userBankList" class="userBankList"></div>
+      </div>
+      <div class="field">
+        <label for="gameMode">ゲーム方式</label>
+        <select id="gameMode">
+          <option value="commission" selected>Commission</option>
+          <option value="nocommission">No Commission</option>
+        </select>
+        <div class="fieldHint">No CommissionではBANKERが6で勝った場合のみBANKER配当が0.5:1になります。</div>
+      </div>
+      <div class="field">
+        <label for="squeezeMode">カード確認</label>
+        <select id="squeezeMode">
+          <option value="all" selected>All Card Squeeze</option>
+          <option value="none">No Squeeze</option>
+        </select>
+        <div class="fieldHint">All Card Squeezeでは配られるカードをスワイプして確認します。</div>
       </div>
     </div>
 
     <div class="settingSummary">
       <b>練習設定</b><br>
-      PLAYER 1:1 / BANKER 0.95:1 / TIE 8:1 / PLAYER・BANKER PAIR 11:1<br>
-      8 DECK SHOE。カード追加判定はバカラのドローイングルールに従い自動進行します。
-    </div>
-
-    <div class="testBox">
-      <button id="testToggle" class="smallBtn" type="button">テスト配札を設定</button>
-      <div id="testPanel" class="testPanel hidden">
-        <div class="testTitle">テスト配札（未指定は通常抽選）</div>
-        <div class="testGrid">
-          <label>P 1<select id="tp1"></select></label>
-          <label>P 2<select id="tp2"></select></label>
-          <label>P 3<select id="tp3"></select></label>
-          <label>B 1<select id="tb1"></select></label>
-          <label>B 2<select id="tb2"></select></label>
-          <label>B 3<select id="tb3"></select></label>
-        </div>
-        <div class="fieldHint" style="margin-top:7px">3枚目はドロールール上必要な場合だけ使用します。</div>
-      </div>
+      PLAYER 1:1 / TIE 8:1 / PLAYER・BANKER PAIR 11:1。<br>
+      BANKERはCommissionなら0.95:1、No Commissionなら通常1:1・BANKER 6勝利のみ0.5:1。<br>
+      8 DECK SHOE。複数USER時は全USERのBET確定後に1回の配札を行います。
     </div>
 
     <button id="startBtn" class="primary" type="button">テーブルに着く</button>
@@ -396,15 +678,34 @@ button{touch-action:manipulation}
       </div>
     </div>
 
+
+    <div id="squeezeOverlay" class="squeezeOverlay hidden">
+      <div id="squeezeTitle" class="squeezeTitle">PLAYER CARD</div>
+      <div id="squeezeOwner" class="squeezeOwner">SQUEEZE</div>
+      <div id="squeezeCard" class="squeezeCard" aria-label="上下左右にスワイプしてカードをめくる">
+        <div id="squeezeFace" class="squeezeFace"></div>
+        <div id="squeezeCover" class="squeezeCover"></div>
+      </div>
+      <div id="squeezeGuide" class="squeezeGuide">上下左右、好きな方向へスワイプして確認<br>または OPEN をタップ</div>
+      <div id="squeezeDirection" class="squeezeDirection">DIRECTION —</div>
+      <div class="squeezeProgress"><span id="squeezeProgressBar"></span></div>
+      <button id="squeezeOpenBtn" class="squeezeOpenBtn" type="button">OPEN</button>
+    </div>
+
     <div id="resultBanner" class="resultBanner"></div>
     <div class="shoeVisual"></div>
   </section>
 
-  <section class="betPanel">
+  <section id="betPanel" class="betPanel">
     <div class="betStatus">
       <div id="message" class="message">ベット先を選択してください</div>
       <div id="bankText" class="bankText">BANK ₩300,000</div>
     </div>
+    <div id="limitBar" class="limitBar">
+      <span>MIN <b id="gameMinText">₩30,000</b></span>
+      <span>MAX <b id="gameMaxText">₩3,000,000</b></span>
+    </div>
+    <div id="userStrip" class="userStrip"></div>
 
     <div id="betArea">
       <div class="betSpots">
@@ -415,7 +716,7 @@ button{touch-action:manipulation}
           <span class="spotName">TIE</span><span class="spotPay">8 : 1</span><span id="amtTie" class="spotAmt">₩0</span>
         </button>
         <button class="betSpot banker" data-bet="banker" type="button">
-          <span class="spotName">BANKER</span><span class="spotPay">0.95 : 1</span><span id="amtBanker" class="spotAmt">₩0</span>
+          <span class="spotName">BANKER</span><span id="bankerPayText" class="spotPay">0.95 : 1</span><span id="amtBanker" class="spotAmt">₩0</span>
         </button>
       </div>
 
@@ -437,7 +738,7 @@ button{touch-action:manipulation}
       </div>
     </div>
 
-    <button id="nextRoundBtn" class="nextRoundBtn hidden" type="button">次のラウンド</button>
+    <button id="nextRoundBtn" class="nextRoundBtn hidden" type="button">結果を見る</button>
   </section>
 
   <footer class="gameFooter">
@@ -461,38 +762,66 @@ button{touch-action:manipulation}
       <button class="tab" data-help="draw" type="button">ドロー</button>
       <button class="tab" data-help="payout" type="button">配当</button>
       <button class="tab" data-help="pair" type="button">PAIR</button>
+      <button class="tab" data-help="detail" type="button">詳細</button>
     </div>
     <div id="helpContent" class="sheetContent"></div>
   </div>
 </div>
 
 <div id="resultModal" class="modal hidden">
-  <div class="sheet smallSheet">
+  <div class="sheet resultSheet">
     <div class="sheetHead">
       <div><div class="sheetTitle">ROUND RESULT</div><div id="resultSub" class="sheetSub"></div></div>
       <button class="closeBtn" data-close="resultModal" type="button">×</button>
     </div>
-    <div id="resultContent" class="resultContent"></div>
+    <div id="resultContent" class="roundResultContent"></div>
+    <button id="modalNextRound" class="resultNextBtn" type="button">次のラウンド</button>
   </div>
 </div>
 
 <div id="statsModal" class="modal hidden">
-  <div class="sheet smallSheet">
+  <div class="sheet statsSheet">
     <div class="sheetHead">
-      <div><div class="sheetTitle">SESSION STATS</div><div class="sheetSub">現在のセッション</div></div>
+      <div><div class="sheetTitle">SESSION STATS</div><div class="sheetSub">プレイヤー戦績 / ゲーム履歴</div></div>
       <button class="closeBtn" data-close="statsModal" type="button">×</button>
     </div>
-    <div id="statsContent"></div>
+    <div class="statsTabs">
+      <button id="statsPlayerTab" class="statsTab active" type="button">PLAYER STATS</button>
+      <button id="statsHistoryTab" class="statsTab" type="button">GAME HISTORY</button>
+    </div>
+    <div id="statsContent" class="statsBody"></div>
   </div>
 </div>
 
 <div id="settingsModal" class="modal hidden">
-  <div class="sheet smallSheet">
+  <div class="sheet smallSheet settingsGameSheet">
     <div class="sheetHead">
-      <div><div class="sheetTitle">現在の設定</div><div class="sheetSub">このゲームの練習条件</div></div>
+      <div><div class="sheetTitle">ゲーム設定</div><div class="sheetSub">現在の条件 / テスト配札</div></div>
       <button class="closeBtn" data-close="settingsModal" type="button">×</button>
     </div>
-    <div id="settingsContent" class="resultContent"></div>
+    <div class="settingsGameBody">
+      <div id="settingsContent" class="resultContent"></div>
+
+      <div class="testBox settingsTestBox">
+        <button id="testToggle" class="smallBtn settingsTestToggle" type="button">テスト配札を設定</button>
+        <div id="testPanel" class="testPanel hidden">
+          <div class="testTitle">テスト配札（次回DEALに適用）</div>
+          <div class="testGrid">
+            <label>PLAYER 1枚目<select id="tp1"></select></label>
+            <label>PLAYER 2枚目<select id="tp2"></select></label>
+            <label>PLAYER 3枚目<select id="tp3"></select></label>
+            <label>BANKER 1枚目<select id="tb1"></select></label>
+            <label>BANKER 2枚目<select id="tb2"></select></label>
+            <label>BANKER 3枚目<select id="tb3"></select></label>
+          </div>
+          <div class="fieldHint" style="margin-top:7px">
+            未指定は通常抽選。3枚目はドロールール上必要な場合だけ使用します。
+          </div>
+          <div id="testDealStatus" class="testDealStatus">テスト配札：未設定</div>
+          <button id="testClearBtn" class="smallBtn testClearBtn" type="button">テスト配札をクリア</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -537,22 +866,143 @@ const BET_LABEL={
   playerPair:'PLAYER PAIR', bankerPair:'BANKER PAIR'
 };
 
-let cfg={name:'PLAYER 1',initialBank:300000,min:30000,max:3000000,decks:8};
-let bank=300000,roundNo=1,shoeNo=1,deck=[],cutRemaining=0;
+let mode='krw';
+let cfg={min:30000,max:3000000,decks:8,rate:9.2,gameMode:'commission',squeezeMode:'all'};
+let users=[];
+let activeUser=0;
+let roundNo=1,shoeNo=1,deck=[],cutRemaining=0;
 let playerHand=[],bankerHand=[];
-let bets=blankBets(),lastBets=blankBets(),selectedBet='player';
+let selectedBet='player';
 let phase='setup',busy=false,lastResult=null;
 let history=[];
-let stats={rounds:0,p:0,b:0,t:0,profit:0,wagered:0,wins:0};
+let roundHistory=[];
+let resultActionReadyAt=0;
+let stats={rounds:0,p:0,b:0,t:0};
 let testDeal={p1:'',p2:'',p3:'',b1:'',b2:'',b3:''};
 
 function blankBets(){return {player:0,tie:0,banker:0,playerPair:0,bankerPair:0}}
-function totalBets(obj=bets){return BET_KEYS.reduce((s,k)=>s+(obj[k]||0),0)}
+function totalBets(obj){return BET_KEYS.reduce((s,k)=>s+(obj?.[k]||0),0)}
 function cardPoint(c){if(!c)return 0;if(c.rank==='A')return 1;if(['10','J','Q','K'].includes(c.rank))return 0;return Number(c.rank)}
 function handPoint(hand){return hand.reduce((s,c)=>s+cardPoint(c),0)%10}
 function isPair(hand){return hand.length>=2&&hand[0].rank===hand[1].rank}
-function rankKey(c){return c?c.rank:''}
 function isRed(suit){return suit==='♥'||suit==='♦'}
+function cardFaceHtml(c,large=false){
+  const red=isRed(c.suit);
+  const color=red?'#bf1f2b':'#151515';
+  const val=c.rank;
+
+  const left=large?24:31;
+  const right=large?76:69;
+  const top1=large?31:27;
+  const top2=large?48:49;
+  const mid=70;
+  const bot2=large?92:91;
+  const bot1=large?109:113;
+  const pipSize=large?29:20;
+
+  const pip=(x,y,flip=false,cls='pipText')=>
+    `<text class="${cls}" x="${x}" y="${y}" fill="${color}" style="${cls==='pipText'?`font-size:${pipSize}px`:''}"${flip?` transform="rotate(180 ${x} ${y})"`:''}>${c.suit}</text>`;
+
+  let center='';
+  if(val==='A'){
+    center=pip(50,70,false,'acePip');
+
+  }else if(['J','Q','K'].includes(val)){
+    // SQUEEZE専用のミラーコートカード。
+    // J/Q/Kで頭飾り・衣装・持ち物を変え、実カードらしい情報量を増やす。
+    const royalName=val==='K'?'KING':val==='Q'?'QUEEN':'JACK';
+    const bodyClass=val==='Q'?'courtRed':'courtBlue';
+
+    const headgear = val==='K'
+      ? `<path d="M39 35 L42 24 L48 31 L52 20 L58 31 L64 24 L67 35 Z" class="courtGold"/>
+         <circle cx="43" cy="27" r="1.4" class="courtRed"/>
+         <circle cx="52" cy="23" r="1.4" class="courtBlue"/>
+         <circle cx="63" cy="27" r="1.4" class="courtRed"/>`
+      : val==='Q'
+      ? `<path d="M39 35 Q41 25 47 24 Q52 18 57 24 Q64 25 66 35 Z" class="courtGold"/>
+         <circle cx="52" cy="22" r="2" class="courtRed"/>
+         <path d="M43 29 Q52 34 62 29" fill="none" class="courtFine"/>`
+      : `<path d="M38 35 Q44 25 52 28 Q60 24 67 35 Z" class="courtBlue"/>
+         <path d="M40 29 Q52 23 65 30" fill="none" stroke="#d7ae3f" stroke-width="2"/>`;
+
+    const heldItem = val==='K'
+      ? `<path d="M70 49 L80 86" class="courtStroke" fill="none"/>
+         <path d="M76 46 L83 49 L78 56 Z" class="courtGold"/>
+         <path d="M73 63 L81 60" class="courtStroke"/>`
+      : val==='Q'
+      ? `<path d="M72 52 L77 86" class="courtStroke" fill="none"/>
+         <circle cx="72" cy="48" r="4.5" class="courtRed"/>
+         <circle cx="78" cy="44" r="3.8" class="courtBlue"/>
+         <circle cx="82" cy="49" r="3.8" class="courtGold"/>`
+      : `<path d="M71 45 L80 89" class="courtStroke" fill="none"/>
+         <path d="M68 50 L77 46" class="courtStroke"/>
+         <path d="M76 86 L84 90" class="courtStroke"/>`;
+
+    const royalHalf = `
+      ${headgear}
+      <ellipse cx="52" cy="43" rx="12" ry="10.5" class="courtSkin"/>
+      <path d="M40 40 Q52 30 64 40 Q62 33 52 32 Q43 33 40 40" class="courtHair"/>
+      <circle cx="47" cy="42" r="1.15" class="courtInk"/>
+      <circle cx="57" cy="42" r="1.15" class="courtInk"/>
+      <path d="M48 48 Q52 50 56 48" fill="none" class="courtFine"/>
+      <path d="M34 51 Q52 45 70 51 L67 69 Q52 73 37 69 Z" class="${bodyClass}" stroke="#242424" stroke-width="1"/>
+      <path d="M43 53 L52 66 L61 53" class="courtWhite" stroke="#242424" stroke-width=".8"/>
+      <path d="M40 57 Q52 61 65 57" fill="none" stroke="#d7ae3f" stroke-width="2"/>
+      ${heldItem}
+      <text class="courtLetter" x="27" y="34" fill="${color}">${val}</text>
+      <text class="courtSuit" x="28" y="49" fill="${color}">${c.suit}</text>`;
+
+    center=`
+      <g class="courtFace">
+        <rect x="13" y="18" width="74" height="104" rx="5" class="courtWhite" stroke="#8a6d2d" stroke-width="1.4"/>
+        <rect x="16" y="21" width="68" height="98" rx="4" fill="#efe2af" stroke="#aa8b3b" stroke-width=".8"/>
+
+        <path d="M18 52 L82 88 M82 52 L18 88" class="courtLine" opacity=".85"/>
+        <path d="M18 61 L82 79 M18 79 L82 61" stroke="#b52a39" stroke-width="3" opacity=".80"/>
+        <rect x="18" y="63" width="64" height="14" rx="3" class="courtGold" opacity=".95"/>
+
+        <g>${royalHalf}</g>
+        <g transform="rotate(180 50 70)">${royalHalf}</g>
+
+        <circle cx="50" cy="70" r="8.5" fill="#fff7d2" stroke="#8a6d2d" stroke-width="1"/>
+        <text class="courtSuit" x="50" y="70" fill="${color}">${c.suit}</text>
+        <text x="50" y="116" font-size="5.2" fill="#735f33" font-family="system-ui,sans-serif">${royalName}</text>
+      </g>`;
+
+  }else{
+    const n=Number(val);
+    const positions={
+      2:[[50,top1,false],[50,bot1,true]],
+      3:[[50,top1,false],[50,mid,false],[50,bot1,true]],
+      4:[[left,top1,false],[right,top1,false],[left,bot1,true],[right,bot1,true]],
+      5:[[left,top1,false],[right,top1,false],[50,mid,false],[left,bot1,true],[right,bot1,true]],
+      6:[[left,top1,false],[right,top1,false],[left,mid,false],[right,mid,true],[left,bot1,true],[right,bot1,true]],
+      7:[[left,top1,false],[right,top1,false],[50,top2,false],[left,mid,false],[right,mid,true],[left,bot1,true],[right,bot1,true]],
+      8:[[left,top1,false],[right,top1,false],[50,top2,false],[left,mid,false],[right,mid,true],[50,bot2,true],[left,bot1,true],[right,bot1,true]],
+      9:[[left,top1,false],[right,top1,false],[left,top2,false],[right,top2,false],[50,mid,false],[left,bot2,true],[right,bot2,true],[left,bot1,true],[right,bot1,true]],
+      10:[[left,top1,false],[right,top1,false],[50,41,false],[left,top2,false],[right,top2,false],[left,bot2,true],[right,bot2,true],[50,99,true],[left,bot1,true],[right,bot1,true]]
+    }[n]||[];
+    center=positions.map(([x,y,flip])=>pip(x,y,flip)).join('');
+  }
+
+  return `<div class="realCardFace${red?' red':''}">
+    <svg class="cardSvg" viewBox="0 0 100 140" preserveAspectRatio="none" aria-hidden="true">
+      <rect x="0" y="0" width="100" height="140" rx="7" fill="#fff"/>
+      <g class="cardIndex">
+        <text class="cornerRank" x="10" y="9" fill="${color}">${val}</text>
+        <text class="cornerSuit" x="10" y="25" fill="${color}">${c.suit}</text>
+        <g transform="rotate(180 90 131)">
+          <text class="cornerRank" x="90" y="131" fill="${color}">${val}</text>
+          <text class="cornerSuit" x="90" y="115" fill="${color}">${c.suit}</text>
+        </g>
+      </g>
+      ${center}
+    </svg>
+  </div>`;
+}
+function currentUser(){return users[activeUser]||null}
+function eligibleUserIndexes(){return users.map((u,i)=>u.bank>=cfg.min?i:-1).filter(i=>i>=0)}
+function allUsersUnableToBet(){return users.length>0&&users.every(u=>u.bank<cfg.min)}
 
 function buildDeck(){
   const suits=['♠','♥','♦','♣'],ranks=['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
@@ -561,7 +1011,10 @@ function buildDeck(){
   shuffle(deck);
   const penetration=.65+Math.random()*.10;
   cutRemaining=Math.max(12,Math.round(deck.length*(1-penetration)));
+}
+function newShoe(){
   shoeNo++;
+  buildDeck();
 }
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}}
 function parseTest(v){
@@ -571,96 +1024,412 @@ function parseTest(v){
 }
 function draw(spec=''){
   if(spec)return parseTest(spec);
-  if(deck.length<1)buildDeck();
+  if(deck.length<1)newShoe();
   return deck.pop();
 }
 function needShuffle(){return deck.length<=cutRemaining||deck.length<12}
 
+const TEST_SELECT_MAP={
+  tp1:'p1',tp2:'p2',tp3:'p3',
+  tb1:'b1',tb2:'b2',tb3:'b3'
+};
+function renderTestDealStatus(){
+  const entries=[
+    ['P1',testDeal.p1],['P2',testDeal.p2],['P3',testDeal.p3],
+    ['B1',testDeal.b1],['B2',testDeal.b2],['B3',testDeal.b3]
+  ].filter(([,v])=>v);
+  $('testDealStatus').textContent=entries.length
+    ?`テスト配札：${entries.map(([k,v])=>`${k}=${v}`).join(' / ')}`
+    :'テスト配札：未設定';
+}
+function syncTestDealFromControls(){
+  for(const [id,key] of Object.entries(TEST_SELECT_MAP)){
+    testDeal[key]=$(id).value||'';
+  }
+  renderTestDealStatus();
+}
+function syncTestControlsFromState(){
+  for(const [id,key] of Object.entries(TEST_SELECT_MAP)){
+    $(id).value=testDeal[key]||'';
+  }
+  renderTestDealStatus();
+}
+function clearTestDeal(showToast=false){
+  testDeal={p1:'',p2:'',p3:'',b1:'',b2:'',b3:''};
+  syncTestControlsFromState();
+  if(showToast)toast('テスト配札をクリアしました');
+}
 function initTestSelects(){
   const opts=['<option value="">ランダム</option>'];
   for(const s of ['♠','♥','♦','♣'])for(const r of ['A','2','3','4','5','6','7','8','9','10','J','Q','K']){
     opts.push(`<option value="${r}${s}">${r}${s}</option>`);
   }
-  for(const id of ['tp1','tp2','tp3','tb1','tb2','tb3'])$(id).innerHTML=opts.join('');
+  for(const [id,key] of Object.entries(TEST_SELECT_MAP)){
+    const el=$(id);
+    el.innerHTML=opts.join('');
+    el.value=testDeal[key]||'';
+    el.addEventListener('change',syncTestDealFromControls);
+  }
+  renderTestDealStatus();
 }
 initTestSelects();
 
+/* ---------- SETUP ---------- */
+function getSetupRows(){
+  return [...document.querySelectorAll('.userBankRow')];
+}
+function buildUserBankInputs(){
+  const n=Number($('userCount').value)||1;
+  const root=$('userBankList');
+  const old=getSetupRows().map((row,i)=>({
+    name:row.querySelector('.userNameInput')?.value||`PLAYER ${i+1}`,
+    bank:row.querySelector('.userBankInput')?.value||''
+  }));
+  root.innerHTML='';
+  for(let i=0;i<n;i++){
+    const prev=old[i]||{};
+    const defaultBank=mode==='krw'?300000:30000;
+    const row=document.createElement('div');
+    row.className='userBankRow';
+    row.innerHTML=`
+      <div class="userBankMain">
+        <label>名前
+          <input class="userNameInput" type="text" maxlength="10" value="${escapeHtml(prev.name||`PLAYER ${i+1}`)}" placeholder="PLAYER ${i+1}">
+        </label>
+        <label>${mode==='krw'?'開始チップ（KRW）':'予算（JPY）'}
+          <input class="userBankInput" type="number" inputmode="numeric" min="1000" step="1000" value="${prev.bank||defaultBank}">
+        </label>
+      </div>
+      <div class="bankCalc"></div>`;
+    root.appendChild(row);
+  }
+  getSetupRows().forEach(row=>row.querySelector('.userBankInput').addEventListener('input',updateBudgetPreview));
+  updateBudgetPreview();
+}
+function updateBudgetPreview(){
+  const rate=Number($('rate').value)||0;
+  getSetupRows().forEach(row=>{
+    const input=row.querySelector('.userBankInput'),calc=row.querySelector('.bankCalc');
+    const v=Number(input.value)||0;
+    calc.textContent=mode==='jpy'
+      ?`→ 約 ${fmt(Math.floor(v*rate/1000)*1000)} 分のチップ`
+      :`開始チップ ${fmt(v)}`;
+  });
+}
+function setMode(next){
+  if(mode===next)return;
+  const rows=getSetupRows();
+  const rate=Number($('rate').value)||9.2;
+  rows.forEach(row=>{
+    const input=row.querySelector('.userBankInput');
+    const v=Number(input.value)||0;
+    if(next==='jpy'&&mode==='krw')input.value=Math.max(1000,Math.round(v/rate/1000)*1000);
+    if(next==='krw'&&mode==='jpy')input.value=Math.max(1000,Math.floor(v*rate/1000)*1000);
+  });
+  mode=next;
+  $('modeKrw').classList.toggle('active',mode==='krw');
+  $('modeJpy').classList.toggle('active',mode==='jpy');
+  $('rateField').classList.toggle('hidden',mode!=='jpy');
+  buildUserBankInputs();
+}
+$('modeKrw').onclick=()=>setMode('krw');
+$('modeJpy').onclick=()=>setMode('jpy');
+$('userCount').onchange=buildUserBankInputs;
+$('rate').addEventListener('input',updateBudgetPreview);
+buildUserBankInputs();
+
 function readSetup(){
-  const initial=Math.max(10000,Math.floor(Number($('initialBank').value)||300000));
   const min=Math.max(10000,Number($('tableMin').value)||30000);
-  cfg={
-    name:($('playerName').value||'PLAYER 1').trim().slice(0,10)||'PLAYER 1',
-    initialBank:initial,min,max:min*100,decks:8
-  };
-  testDeal={
-    p1:$('tp1').value,p2:$('tp2').value,p3:$('tp3').value,
-    b1:$('tb1').value,b2:$('tb2').value,b3:$('tb3').value
-  };
+  const rate=Math.max(.01,Number($('rate').value)||9.2);
+  cfg={min,max:min*100,decks:8,rate,gameMode:$('gameMode').value,squeezeMode:$('squeezeMode').value};
+  const rows=getSetupRows();
+  users=rows.map((row,i)=>{
+    const raw=Number(row.querySelector('.userBankInput').value)||0;
+    const bank=mode==='jpy'?Math.floor(raw*rate/1000)*1000:Math.floor(raw/1000)*1000;
+    const name=(row.querySelector('.userNameInput').value||`PLAYER ${i+1}`).trim().slice(0,10)||`PLAYER ${i+1}`;
+    return {
+      name,bank,initial:bank,roundStartBank:bank,bets:blankBets(),lastBets:blankBets(),confirmed:false,
+      roundNet:0,stats:{profit:0,wagered:0,positiveRounds:0}
+    };
+  });
 }
 function startGame(){
   readSetup();
-  if(cfg.initialBank<cfg.min){toast('初期資金はテーブルMIN以上にしてください');return}
-  bank=cfg.initialBank;roundNo=1;shoeNo=1;history=[];stats={rounds:0,p:0,b:0,t:0,profit:0,wagered:0,wins:0};
-  bets=blankBets();lastBets=blankBets();selectedBet='player';
-  buildDeck();shoeNo=1; // display first shoe as SHOE 1
+  clearTestDeal(false);
+  if(users.some(u=>!u.bank||u.bank<cfg.min)){
+    toast('全USERの開始資金をテーブルMIN以上にしてください');
+    return;
+  }
+  roundNo=1;shoeNo=1;history=[];roundHistory=[];stats={rounds:0,p:0,b:0,t:0};
+  selectedBet='player';playerHand=[];bankerHand=[];deck=[];buildDeck();
+  activeUser=0;
   $('setupScreen').style.display='none';
   $('gameScreen').style.display='block';
   phase='bet';
-  prepareBetRound();
+  prepareBetRound(false);
   updateAll();
-  startBgmFromGesture();
 }
 $('startBtn').onclick=startGame;
 
+/* ---------- RENDER ---------- */
 function updateAll(){
-  $('bankText').textContent=`BANK ${fmt(bank)}`;
+  const u=currentUser();
   $('roundPill').textContent=`ROUND ${roundNo}`;
   $('shoeText').textContent=`SHOE ${shoeNo} ・ ${deck.length} cards`;
-  $('amtPlayer').textContent=fmt(bets.player);
-  $('amtTie').textContent=fmt(bets.tie);
-  $('amtBanker').textContent=fmt(bets.banker);
-  $('amtPlayerPair').textContent=fmt(bets.playerPair);
-  $('amtBankerPair').textContent=fmt(bets.bankerPair);
-  document.querySelectorAll('.betSpot').forEach(b=>b.classList.toggle('active',b.dataset.bet===selectedBet&&phase==='bet'));
+  $('gameMinText').textContent=fmt(cfg.min);
+  $('gameMaxText').textContent=fmt(cfg.max);
+  $('bankText').textContent=u?`${u.name} BANK ${fmt(u.bank)}`:'';
+  const b=u?.bets||blankBets();
+  $('amtPlayer').textContent=fmt(b.player);
+  $('amtTie').textContent=fmt(b.tie);
+  $('amtBanker').textContent=fmt(b.banker);
+  $('amtPlayerPair').textContent=fmt(b.playerPair);
+  $('amtBankerPair').textContent=fmt(b.bankerPair);
+  $('bankerPayText').textContent=cfg.gameMode==='commission'?'0.95 : 1':'1 : 1 / 6→0.5';
+  document.querySelectorAll('.betSpot').forEach(btn=>btn.classList.toggle('active',btn.dataset.bet===selectedBet&&phase==='bet'));
   renderHands();
   renderRoad();
+  renderUserStrip();
   renderChips();
+  updateDealButtonLabel();
 }
 function renderChips(){
-  const vals=[1,2,5,10,20].map(x=>cfg.min*x);
+  const vals=chipValues();
   $('chipRow').innerHTML=vals.map(v=>`<button class="chip" type="button" data-chip="${v}">${compactMoney(v)}</button>`).join('');
   document.querySelectorAll('[data-chip]').forEach(btn=>btn.onclick=()=>addBet(Number(btn.dataset.chip)));
+  if(phase!=='bet'||busy)document.querySelectorAll('.chip').forEach(x=>x.disabled=true);
+}
+function chipValues(){
+  const min=cfg.min,max=cfg.max;
+  const nice=[10000,20000,30000,50000,100000,200000,300000,500000,1000000,2000000,3000000,5000000,10000000];
+  const vals=[...new Set([min,...nice.filter(v=>v>min&&v<=max)])].sort((a,b)=>a-b);
+  if(vals.length<=5)return vals;
+  const out=[vals[0]],rest=vals.slice(1);
+  for(let i=0;i<4;i++){
+    const idx=Math.round(i*(rest.length-1)/3);
+    if(!out.includes(rest[idx]))out.push(rest[idx]);
+  }
+  return out.sort((a,b)=>a-b);
 }
 function compactMoney(n){
   if(n>=100000000)return Math.round(n/10000000)/10+'億';
-  if(n>=10000){
-    const m=n/10000;
-    return Number.isInteger(m)?m+'万':m.toFixed(1)+'万';
-  }
+  if(n>=10000){const m=n/10000;return Number.isInteger(m)?m+'万':m.toFixed(1)+'万'}
   return String(n);
 }
-function renderHands(){
-  renderHand('player',playerHand);
-  renderHand('banker',bankerHand);
-}
+function renderHands(){renderHand('player',playerHand);renderHand('banker',bankerHand)}
 function renderHand(side,hand){
-  const row=$(side+'Cards');
-  row.innerHTML=hand.map((c,i)=>`<div class="card ${isRed(c.suit)?'red':''}"><span>${c.rank}${c.suit}</span><span class="bottom">${c.rank}${c.suit}</span></div>`).join('');
+  $(side+'Cards').innerHTML=hand.map(c=>`<div class="card basicFace ${isRed(c.suit)?'red':''}"><span>${c.rank}${c.suit}</span><span class="bottom">${c.rank}${c.suit}</span></div>`).join('');
   $(side+'Point').textContent=hand.length?handPoint(hand):'–';
 }
-function appendCard(side,c){
+function appendBackCard(side){
   const row=$(side+'Cards');
   const el=document.createElement('div');
-  el.className=`card ${isRed(c.suit)?'red':''} ${side==='player'?'dealP':'dealB'}`;
-  el.innerHTML=`<span>${c.rank}${c.suit}</span><span class="bottom">${c.rank}${c.suit}</span>`;
+  el.className=`card cardBack ${side==='player'?'dealP':'dealB'}`;
   row.appendChild(el);
-  $(side+'Point').textContent=handPoint(side==='player'?playerHand:bankerHand);
   sfxCard();
+  return el;
+}
+function revealTableCard(el,c,side){
+  el.className=`card basicFace ${isRed(c.suit)?'red':''} cardFlip`;
+  el.innerHTML=`<span>${c.rank}${c.suit}</span><span class="bottom">${c.rank}${c.suit}</span>`;
+  $(side+'Point').textContent=handPoint(side==='player'?playerHand:bankerHand);
+  sfxReveal();
+}
+let squeezeResolve=null,squeezeProgress=0,squeezeDragStartX=0,squeezeDragStartY=0;
+let squeezeDragBase=0,squeezeDragging=false,squeezeDirection=null,squeezeCompleted=false;
+
+function highestMainBettor(side){
+  const key=side==='player'?'player':'banker';
+  let best=null;
+  users.forEach((u,i)=>{
+    const amount=u.bets?.[key]||0;
+    if(amount<=0)return;
+    if(!best||amount>best.amount)best={index:i,name:u.name,amount};
+  });
+  return best;
+}
+function squeezeRights(side,cardIndex){
+  if(cfg.squeezeMode!=='all')return null;
+  // ParadiseのPair/Tieのみ参加時はオープン配札。メインBETがある側だけSqueeze対象。
+  const owner=highestMainBettor(side);
+  if(!owner)return null;
+  // 実テーブル寄り：1枚目はDealerがオープン、2枚目と必要時の3枚目を最高BET USERがSqueeze。
+  if(cardIndex<1)return null;
+  return owner;
+}
+function resetCover(){
+  const c=$('squeezeCover');
+  c.style.left='-1px';c.style.right='-1px';c.style.top='-1px';c.style.bottom='-1px';
+  c.style.width='calc(100% + 2px)';c.style.height='calc(100% + 2px)';
+}
+function paintSqueezeProgress(p){
+  squeezeProgress=Math.max(0,Math.min(1,p));
+  const c=$('squeezeCover'),remain=(1-squeezeProgress)*100;
+  resetCover();
+
+  if(squeezeDirection==='up'){
+    c.style.bottom='auto';c.style.height=`calc(${remain}% + 2px)`;
+  }else if(squeezeDirection==='down'){
+    c.style.top='auto';c.style.height=`calc(${remain}% + 2px)`;
+  }else if(squeezeDirection==='left'){
+    c.style.right='auto';c.style.width=`calc(${remain}% + 2px)`;
+  }else if(squeezeDirection==='right'){
+    c.style.left='auto';c.style.width=`calc(${remain}% + 2px)`;
+  }
+
+  $('squeezeFace').classList.toggle('revealing',squeezeProgress>0);
+  // 角の数字・スートはSQUEEZEの推測を楽しめるよう、ほぼ全部めくれた時だけ表示する。
+  $('squeezeFace').classList.toggle('showIndex',squeezeProgress>=.88);
+  $('squeezeProgressBar').style.width=`${squeezeProgress*100}%`;
+  $('squeezeDirection').textContent=squeezeDirection?`DIRECTION ${squeezeDirection.toUpperCase()}`:'DIRECTION —';
+}
+function snapBackSqueeze(){
+  const c=$('squeezeCover');
+  c.classList.add('snapBack');
+  paintSqueezeProgress(0);
+  setTimeout(()=>{
+    c.classList.remove('snapBack');
+    squeezeDirection=null;
+    resetCover();
+    $('squeezeDirection').textContent='DIRECTION —';
+    $('squeezeFace').classList.remove('revealing','showIndex');
+  },190);
+}
+function finishSqueeze(){
+  squeezeCompleted=true;
+  paintSqueezeProgress(1);
+  $('squeezeFace').classList.add('revealing','showIndex');
+  $('squeezeGuide').innerHTML='カードを確認できます<br>確認できたら「次へ」をタップ';
+  $('squeezeDirection').textContent='OPEN';
+  $('squeezeOpenBtn').textContent='次へ';
+}
+function closeSqueezeAfterReview(){
+  if(!squeezeResolve||!squeezeCompleted)return;
+  $('squeezeOverlay').classList.add('hidden');
+  const done=squeezeResolve;
+  squeezeResolve=null;
+  squeezeCompleted=false;
+  squeezeDirection=null;
+  $('squeezeOpenBtn').textContent='OPEN';
+  $('squeezeGuide').innerHTML='上下左右、好きな方向へスワイプして確認<br>または OPEN をタップ';
+  done();
+}
+function updateSqueezeOverlayBounds(){
+  const overlay=$('squeezeOverlay');
+  const stage=$('tableStage');
+  const bet=$('betPanel');
+  const footer=document.querySelector('.gameFooter');
+  if(!overlay||!stage||!bet)return;
+
+  const sr=stage.getBoundingClientRect();
+  const br=bet.getBoundingClientRect();
+  const fr=footer?footer.getBoundingClientRect():null;
+
+  const left=Math.max(6,Math.min(sr.left,br.left));
+  const right=Math.min(window.innerWidth-6,Math.max(sr.right,br.right));
+  const top=Math.max(4,sr.top);
+  const requestedBottom=Math.max(sr.bottom,br.bottom);
+  const footerLimit=fr?fr.top-4:window.innerHeight-6;
+  const bottom=Math.min(requestedBottom,footerLimit);
+
+  overlay.style.left=`${left}px`;
+  overlay.style.top=`${top}px`;
+  overlay.style.width=`${Math.max(0,right-left)}px`;
+  overlay.style.height=`${Math.max(250,bottom-top)}px`;
+}
+function squeezeReveal(c,side,owner){
+  $('squeezeTitle').textContent=`${side==='player'?'PLAYER':'BANKER'} CARD`;
+  $('squeezeOwner').textContent=`${owner.name} ・ ${fmt(owner.amount)} BET`;
+  $('squeezeFace').className='squeezeFace';
+  $('squeezeFace').innerHTML=cardFaceHtml(c,true);
+  squeezeDirection=null;
+  squeezeCompleted=false;
+  $('squeezeOpenBtn').textContent='OPEN';
+  $('squeezeGuide').innerHTML='上下左右、好きな方向へスワイプして確認<br>または OPEN をタップ';
+  $('squeezeCover').classList.remove('snapBack');
+  resetCover();
+  paintSqueezeProgress(0);
+  $('squeezeFace').classList.remove('revealing','showIndex');
+  updateSqueezeOverlayBounds();
+  $('squeezeOverlay').classList.remove('hidden');
+  return new Promise(resolve=>{squeezeResolve=resolve});
+}
+$('squeezeCard').addEventListener('pointerdown',e=>{
+  if(!squeezeResolve||squeezeCompleted)return;
+  squeezeDragging=true;squeezeDragStartX=e.clientX;squeezeDragStartY=e.clientY;squeezeDragBase=0;
+  squeezeDirection=null;
+  $('squeezeCover').classList.remove('snapBack');
+  paintSqueezeProgress(0);
+  $('squeezeCard').setPointerCapture?.(e.pointerId);
+  e.preventDefault();
+});
+$('squeezeCard').addEventListener('pointermove',e=>{
+  if(!squeezeDragging||!squeezeResolve)return;
+  const dx=e.clientX-squeezeDragStartX,dy=e.clientY-squeezeDragStartY;
+  if(!squeezeDirection&&Math.hypot(dx,dy)>8){
+    if(Math.abs(dx)>=Math.abs(dy))squeezeDirection=dx>0?'right':'left';
+    else squeezeDirection=dy>0?'down':'up';
+  }
+  if(!squeezeDirection)return;
+  const dist=squeezeDirection==='left'||squeezeDirection==='right'?Math.abs(dx):Math.abs(dy);
+  paintSqueezeProgress(squeezeDragBase+dist/118);
+  if(squeezeProgress>=.98){squeezeDragging=false;finishSqueeze()}
+  e.preventDefault();
+});
+function endSqueezeDrag(){
+  if(!squeezeDragging)return;
+  squeezeDragging=false;
+  // 指を離した時点でOPENし切っていなければ、必ず完全に裏向きへ戻す。
+  if(squeezeProgress>=.98){
+    finishSqueeze();
+  }else{
+    snapBackSqueeze();
+  }
+}
+$('squeezeCard').addEventListener('pointerup',endSqueezeDrag);
+$('squeezeCard').addEventListener('pointercancel',endSqueezeDrag);
+$('squeezeOpenBtn').onclick=()=>{
+  if(!squeezeResolve)return;
+  if(squeezeCompleted){
+    closeSqueezeAfterReview();
+    return;
+  }
+  if(!squeezeDirection)squeezeDirection='up';
+  finishSqueeze();
+};
+
+async function dealCard(side,specKey){
+  const c=draw(testDeal[specKey]);
+  const hand=side==='player'?playerHand:bankerHand;
+  const cardIndex=hand.length;
+  hand.push(c);
+  const el=appendBackCard(side);
+  updateShoe();
+  await sleep(780);
+
+  const owner=squeezeRights(side,cardIndex);
+  if(owner){
+    await squeezeReveal(c,side,owner);
+  }else{
+    // Dealer open: first card, unbet side, No Squeeze, or Tie/Pair-only participation.
+    await sleep(cardIndex===0?650:780);
+  }
+
+  revealTableCard(el,c,side);
+  await sleep(800);
+  return c;
 }
 function renderRoad(){
   const recent=history.slice(-12);
   $('road').innerHTML=recent.length?recent.map(x=>`<span class="roadDot ${x.toLowerCase()}">${x}</span>`).join(''):'<span class="roadEmpty">NO RESULTS</span>';
   $('roadStats').textContent=`P ${stats.p} / B ${stats.b} / T ${stats.t}`;
+}
+function renderUserStrip(){
+  $('userStrip').innerHTML=users.map((u,i)=>{
+    const cls=i===activeUser&&phase==='bet'?'active':u.confirmed?'done':u.bank<cfg.min?'out':'';
+    const mark=u.confirmed?'✓':u.bank<cfg.min?'OUT':'';
+    return `<div class="userPill ${cls}"><span>${escapeHtml(u.name)}</span>${mark?`<b>${mark}</b>`:''}</div>`;
+  }).join('');
 }
 function setState(side,text,cls=''){
   const el=$(side+'State');el.textContent=text;el.className='sideState'+(cls?' '+cls:'');
@@ -668,236 +1437,456 @@ function setState(side,text,cls=''){
 function phaseLabel(text){$('phaseText').textContent=text}
 function toast(text){
   const el=$('toast');el.textContent=text;el.classList.add('show');
-  clearTimeout(toast._t);toast._t=setTimeout(()=>el.classList.remove('show'),1400);
+  clearTimeout(toast._t);toast._t=setTimeout(()=>el.classList.remove('show'),1500);
+}
+function setBetControlsEnabled(enabled){
+  document.querySelectorAll('.betSpot').forEach(x=>x.disabled=!enabled);
+  document.querySelectorAll('.chip').forEach(x=>x.disabled=!enabled);
+  $('clearBtn').disabled=!enabled;
+  $('customBtn').disabled=!enabled;
+  $('dealBtn').disabled=!enabled;
+  const u=currentUser();
+  $('repeatBtn').disabled=!enabled||!u||!totalBets(u.lastBets);
+}
+function updateDealButtonLabel(){
+  if(phase!=='bet'){ $('dealBtn').textContent='DEAL'; return }
+  const next=findNextEligibleUnconfirmed(activeUser+1);
+  $('dealBtn').textContent=next>=0?'BET確定':'DEAL';
 }
 
+/* ---------- BET ---------- */
 document.querySelectorAll('.betSpot').forEach(btn=>btn.onclick=()=>{
   if(phase!=='bet'||busy)return;
   selectedBet=btn.dataset.bet;updateAll();
-  $('message').textContent=`${BET_LABEL[selectedBet]} を選択中`;
+  $('message').textContent=`${currentUser().name}：${BET_LABEL[selectedBet]} を選択中`;
 });
 function addBet(amount){
   if(phase!=='bet'||busy)return;
-  if(amount<=0)return;
-  const main=['player','banker'].includes(selectedBet);
-  const current=bets[selectedBet];
-  const max=cfg.max;
-  if(current+amount>max){toast(`この練習版のMAXは ${fmt(max)}`);return}
-  if(bank<amount){toast('残高が不足しています');return}
-  bets[selectedBet]+=amount;bank-=amount;
+  const u=currentUser();if(!u)return;
+  if(amount<=0||u.bank<=0)return;
+
+  const maxRoom=Math.max(0,cfg.max-u.bets[selectedBet]);
+  if(maxRoom<=0){toast(`この練習版のMAXは ${fmt(cfg.max)}`);return}
+
+  // 選択額が残高を超える場合は、残っているBANKをそのままALL-INする。
+  const requested=amount;
+  const actual=Math.min(requested,u.bank,maxRoom);
+  if(actual<=0)return;
+
+  u.bets[selectedBet]+=actual;
+  u.bank-=actual;
   sfxChip();updateAll();
-  $('message').textContent=`${BET_LABEL[selectedBet]} ${fmt(bets[selectedBet])}`;
+
+  if(actual<requested){
+    $('message').textContent=`${u.name}：残高分 ${fmt(actual)} をBET`;
+    toast(`残高分 ${fmt(actual)} をBETしました`);
+  }else{
+    $('message').textContent=`${u.name}：${BET_LABEL[selectedBet]} ${fmt(u.bets[selectedBet])}`;
+  }
 }
 $('clearBtn').onclick=()=>{
   if(phase!=='bet'||busy)return;
-  bank+=totalBets();bets=blankBets();sfxChip();updateAll();$('message').textContent='BETをクリアしました';
+  const u=currentUser();if(!u)return;
+  u.bank+=totalBets(u.bets);u.bets=blankBets();sfxChip();updateAll();
+  $('message').textContent=`${u.name}：BETをクリアしました`;
 };
 $('repeatBtn').onclick=()=>{
   if(phase!=='bet'||busy)return;
-  const total=totalBets(lastBets);
+  const u=currentUser();if(!u)return;
+  const total=totalBets(u.lastBets);
   if(!total){toast('前回BETがありません');return}
-  if(totalBets()){toast('先にCLEARしてください');return}
-  if(bank<total){toast('残高が不足しています');return}
-  bets={...lastBets};bank-=total;updateAll();sfxChip();$('message').textContent='前回BETをセットしました';
+  if(totalBets(u.bets)){toast('先にCLEARしてください');return}
+  if(BET_KEYS.some(k=>(u.lastBets[k]||0)>cfg.max)){toast('前回BETが現在のMAXを超えています');return}
+
+  if(u.bank>=total){
+    u.bets={...u.lastBets};u.bank-=total;sfxChip();updateAll();
+    $('message').textContent=`${u.name}：前回BETをセットしました`;
+    return;
+  }
+
+  // 前回BET総額が残高を超える場合は、前回のBET比率を保ちながら残高分だけ配分する。
+  const available=u.bank;
+  let remaining=available;
+  const scaled=blankBets();
+  const activeKeys=BET_KEYS.filter(k=>(u.lastBets[k]||0)>0);
+  activeKeys.forEach((k,idx)=>{
+    if(idx===activeKeys.length-1){
+      scaled[k]=remaining;
+      return;
+    }
+    const raw=Math.floor((available*(u.lastBets[k]/total))/1000)*1000;
+    const amt=Math.max(0,Math.min(raw,remaining));
+    scaled[k]=amt;
+    remaining-=amt;
+  });
+
+  u.bets=scaled;
+  u.bank=0;
+  sfxChip();updateAll();
+  $('message').textContent=`${u.name}：残高分 ${fmt(available)} で前回BETを再現`;
+  toast(`残高分 ${fmt(available)} をBETしました`);
 };
 $('customBtn').onclick=()=>{
   if(phase!=='bet'||busy)return;
-  $('customSub').textContent=`${BET_LABEL[selectedBet]} に追加`;
-  $('customAmount').value='';
-  $('customAmount').min=cfg.min;
+  $('customSub').textContent=`${currentUser().name} / ${BET_LABEL[selectedBet]} に追加`;
+  $('customAmount').value='';$('customAmount').min=cfg.min;
   $('customModal').classList.remove('hidden');
   setTimeout(()=>$('customAmount').focus(),80);
 };
 $('customApply').onclick=()=>{
-  let a=Math.floor(Number($('customAmount').value)||0);
+  const a=Math.floor(Number($('customAmount').value)||0);
   if(a<cfg.min){toast(`指定BETは ${fmt(cfg.min)} 以上`);return}
   if(a%1000!==0){toast('₩1,000単位で入力してください');return}
   $('customModal').classList.add('hidden');addBet(a);
 };
-
-function hasValidBet(){
-  const t=totalBets();
-  if(!t)return false;
-  // Main bets and side bets are all permitted independently in this trainer.
-  for(const k of BET_KEYS)if(bets[k]>0&&bets[k]<cfg.min)return false;
-  return true;
+function hasValidBet(obj,u=currentUser()){
+  if(!totalBets(obj))return false;
+  // 通常は各BETがMIN以上。残高を使い切ったALL-IN時だけ、最後の端数BETをMIN未満でも許可する。
+  const belowMin=BET_KEYS.filter(k=>obj[k]>0&&obj[k]<cfg.min);
+  if(!belowMin.length)return true;
+  return !!u&&u.bank===0&&belowMin.length===1;
+}
+function findNextEligibleUnconfirmed(start=0){
+  for(let i=Math.max(0,start);i<users.length;i++){
+    if(users[i].bank>=cfg.min&&!users[i].confirmed)return i;
+  }
+  return -1;
+}
+function showBetTurn(){
+  const u=currentUser();
+  if(!u)return;
+  phase='bet';busy=false;selectedBet='player';
+  $('message').textContent=`${u.name}：ベットしてください`;
+  phaseLabel('PLACE YOUR BETS');
+  setBetControlsEnabled(true);
+  updateAll();
 }
 $('dealBtn').onclick=async()=>{
   if(phase!=='bet'||busy)return;
-  if(!hasValidBet()){toast(`各BETは ${fmt(cfg.min)} 以上にしてください`);return}
-  lastBets={...bets};stats.wagered+=totalBets();
+  const u=currentUser();if(!u)return;
+  if(!hasValidBet(u.bets,u)){toast(`各BETは ${fmt(cfg.min)} 以上（残高ALL-IN時を除く）にしてください`);return}
+  u.confirmed=true;u.lastBets={...u.bets};u.stats.wagered+=totalBets(u.bets);
+  const next=findNextEligibleUnconfirmed(activeUser+1);
+  if(next>=0){
+    activeUser=next;
+    sfxChip();
+    showBetTurn();
+    return;
+  }
   await dealRound();
 };
 
-function prepareBetRound(){
-  if(needShuffle()){
-    buildDeck();
-    toast('NEW SHOE');
-  }
+/* ---------- ROUND ---------- */
+function prepareBetRound(checkShuffle=true){
+  if(checkShuffle&&needShuffle()){newShoe();toast('NEW SHOE')}
   playerHand=[];bankerHand=[];lastResult=null;phase='bet';busy=false;
+  users.forEach(u=>{u.roundStartBank=u.bank;u.bets=blankBets();u.confirmed=false;u.roundNet=0});
   $('resultBanner').className='resultBanner';$('resultBanner').textContent='';
   $('playerPoint').textContent='–';$('bankerPoint').textContent='–';
   $('playerCards').innerHTML='';$('bankerCards').innerHTML='';
   setState('player','');setState('banker','');
   $('betArea').classList.remove('hidden');$('nextRoundBtn').classList.add('hidden');
-  phaseLabel('PLACE YOUR BETS');$('message').textContent='ベット先を選択してください';
-  updateAll();
+
+  const first=users.findIndex(u=>u.bank>=cfg.min);
+  if(first<0){
+    phase='gameover';
+    $('message').textContent='全USERの残高がテーブルMIN未満です';
+    phaseLabel('GAME OVER');
+    $('bankText').textContent='';
+    $('betArea').classList.add('hidden');
+    $('nextRoundBtn').classList.add('hidden');
+    renderUserStrip();
+    toast('GAME OVER');
+    return;
+  }
+  activeUser=first;
+  showBetTurn();
 }
 async function dealRound(){
   busy=true;phase='deal';phaseLabel('NO MORE BETS');$('message').textContent='NO MORE BETS';
-  $('dealBtn').disabled=true;$('repeatBtn').disabled=true;$('clearBtn').disabled=true;$('customBtn').disabled=true;
-  document.querySelectorAll('.betSpot,.chip').forEach(x=>x.disabled=true);
+  setBetControlsEnabled(false);
   playerHand=[];bankerHand=[];$('playerCards').innerHTML='';$('bankerCards').innerHTML='';
   $('resultBanner').className='resultBanner';setState('player','');setState('banker','');
+  renderUserStrip();
   await sleep(280);
 
-  const seq=[
-    ['player','p1'],['banker','b1'],['player','p2'],['banker','b2']
-  ];
-  for(const [side,key] of seq){
-    const c=draw(testDeal[key]);
-    (side==='player'?playerHand:bankerHand).push(c);
-    appendCard(side,c);updateShoe();await sleep(390);
-  }
+  const seq=[['player','p1'],['banker','b1'],['player','p2'],['banker','b2']];
+  for(const [side,key] of seq)await dealCard(side,key);
 
   const p0=handPoint(playerHand),b0=handPoint(bankerHand);
   if(p0>=8||b0>=8){
     setState('player',p0>=8?`NATURAL ${p0}`:'','natural');
     setState('banker',b0>=8?`NATURAL ${b0}`:'','natural');
     phaseLabel('NATURAL');await sleep(700);
-    return settleRound();
+    settleRound();return;
   }
 
   let playerThird=null;
   if(p0<=5){
-    setState('player',`PLAYER ${p0} → DRAW`);
-    await sleep(420);
-    playerThird=draw(testDeal.p3);playerHand.push(playerThird);appendCard('player',playerThird);updateShoe();await sleep(520);
+    setState('player',`PLAYER ${p0} → DRAW`);await sleep(620);
+    playerThird=await dealCard('player','p3');
   }else{
-    setState('player',`PLAYER ${p0} → STAND`);
-    await sleep(360);
+    setState('player',`PLAYER ${p0} → STAND`);await sleep(720);
   }
 
-  const bInitial=b0;
-  let bankerDraw=false;
+  const bInitial=b0;let bankerDraw=false;
   if(!playerThird){
     bankerDraw=bInitial<=5;
   }else{
     const pv=cardPoint(playerThird);
-    if(bInitial<=2) bankerDraw=true;
-    else if(bInitial===3) bankerDraw=pv!==8;
-    else if(bInitial===4) bankerDraw=pv>=2&&pv<=7;
-    else if(bInitial===5) bankerDraw=pv>=4&&pv<=7;
-    else if(bInitial===6) bankerDraw=pv===6||pv===7;
-    else bankerDraw=false;
+    if(bInitial<=2)bankerDraw=true;
+    else if(bInitial===3)bankerDraw=pv!==8;
+    else if(bInitial===4)bankerDraw=pv>=2&&pv<=7;
+    else if(bInitial===5)bankerDraw=pv>=4&&pv<=7;
+    else if(bInitial===6)bankerDraw=pv===6||pv===7;
   }
 
   if(bankerDraw){
-    setState('banker',`BANKER ${bInitial} → DRAW`);
-    await sleep(420);
-    const c=draw(testDeal.b3);bankerHand.push(c);appendCard('banker',c);updateShoe();await sleep(520);
+    setState('banker',`BANKER ${bInitial} → DRAW`);await sleep(620);
+    await dealCard('banker','b3');
   }else{
-    setState('banker',`BANKER ${bInitial} → STAND`);
-    await sleep(420);
+    setState('banker',`BANKER ${bInitial} → STAND`);await sleep(720);
   }
   settleRound();
 }
 function updateShoe(){$('shoeText').textContent=`SHOE ${shoeNo} ・ ${deck.length} cards`}
 
-function settleRound(){
-  const p=handPoint(playerHand),b=handPoint(bankerHand);
-  const outcome=p>b?'P':b>p?'B':'T';
-  const pp=isPair(playerHand),bp=isPair(bankerHand);
-  let returned=0,profit=0,details=[];
-
-  function winBet(key,rate,label){
-    const stake=bets[key];if(!stake)return;
-    const pr=stake*rate;returned+=stake+pr;profit+=pr;
-    details.push({label,stake,result:`WIN +${fmt(pr)}`});
+function signedFmt(v){
+  if(v>0)return'+'+fmt(v);
+  if(v<0)return'-'+fmt(Math.abs(v));
+  return'±'+fmt(0);
+}
+function userOutcomeType(ur){
+  const types=ur.details.map(d=>d.type).filter(Boolean);
+  if(!types.length)return'push';
+  const uniq=[...new Set(types)];
+  if(uniq.length===1)return uniq[0];
+  return'mixed';
+}
+function userOutcomeLabel(ur){
+  const t=userOutcomeType(ur);
+  return t==='win'?'WIN':t==='lose'?'LOSE':t==='push'?'PUSH':'MIXED';
+}
+function settleUser(u,outcome,pp,bp,pPoint,bPoint){
+  let returned=0,details=[];
+  function winBet(key,rate,label,note=''){
+    const stake=u.bets[key];if(!stake)return;
+    const pr=stake*rate;returned+=stake+pr;
+    details.push({
+      label,stake,type:'win',result:`WIN +${fmt(pr)}`,
+      formula:`${fmt(stake)} × ${rate} = ${fmt(pr)}${note?`（${note}）`:''}`
+    });
   }
   function loseBet(key,label){
-    const stake=bets[key];if(!stake)return;
-    details.push({label,stake,result:'LOSE'});
+    const stake=u.bets[key];if(!stake)return;
+    details.push({label,stake,type:'lose',result:'LOSE',formula:''});
   }
   function pushBet(key,label){
-    const stake=bets[key];if(!stake)return;
-    returned+=stake;details.push({label,stake,result:'PUSH'});
+    const stake=u.bets[key];if(!stake)return;
+    returned+=stake;details.push({label,stake,type:'push',result:'PUSH',formula:'元金返却'});
   }
 
   if(outcome==='P'){winBet('player',1,'PLAYER');loseBet('banker','BANKER');loseBet('tie','TIE')}
-  if(outcome==='B'){winBet('banker',.95,'BANKER');loseBet('player','PLAYER');loseBet('tie','TIE')}
+  if(outcome==='B'){
+    if(cfg.gameMode==='commission'){
+      winBet('banker',.95,'BANKER','5% COMMISSION');
+    }else{
+      const rate=bPoint===6?.5:1;
+      winBet('banker',rate,'BANKER',bPoint===6?'NO COMMISSION / BANKER 6':'NO COMMISSION');
+    }
+    loseBet('player','PLAYER');loseBet('tie','TIE');
+  }
   if(outcome==='T'){pushBet('player','PLAYER');pushBet('banker','BANKER');winBet('tie',8,'TIE')}
-
   if(pp)winBet('playerPair',11,'PLAYER PAIR');else loseBet('playerPair','PLAYER PAIR');
   if(bp)winBet('bankerPair',11,'BANKER PAIR');else loseBet('bankerPair','BANKER PAIR');
 
-  bank+=returned;
-  const roundNet=returned-totalBets(bets);
-  stats.rounds++;stats.profit+=roundNet;if(roundNet>0)stats.wins++;
+  u.bank+=returned;
+  const roundNet=u.bank-u.roundStartBank;
+  u.roundNet=roundNet;u.stats.profit+=roundNet;if(roundNet>0)u.stats.positiveRounds++;
+  return {
+    name:u.name,initial:u.initial,roundStartBank:u.roundStartBank,
+    roundNet,bankAfter:u.bank,details
+  };
+}
+function settleRound(){
+  const usedTestDeal=Object.values(testDeal).some(Boolean);
+  const p=handPoint(playerHand),b=handPoint(bankerHand);
+  const outcome=p>b?'P':b>p?'B':'T',pp=isPair(playerHand),bp=isPair(bankerHand);
+  const userResults=users.filter(u=>u.confirmed).map(u=>settleUser(u,outcome,pp,bp,p,b));
+
+  stats.rounds++;
   if(outcome==='P')stats.p++;else if(outcome==='B')stats.b++;else stats.t++;
   history.push(outcome);
+  roundHistory.push({
+    round:roundNo,shoe:shoeNo,outcome,p,b,pp,bp,
+    cards:playerHand.length+bankerHand.length,
+    userNets:userResults.map(r=>({name:r.name,net:r.roundNet}))
+  });
 
   const name=outcome==='P'?'PLAYER WIN':outcome==='B'?'BANKER WIN':'TIE';
   $('resultBanner').textContent=`${name}  ${p} - ${b}`;
   $('resultBanner').className=`resultBanner show ${outcome.toLowerCase()}`;
-  phaseLabel(name);$('message').textContent=`${name} / ${roundNet>=0?'+':''}${fmt(roundNet)}`;
-  if(roundNet>0){sfxWin();$('tableStage').classList.add('winFlash');setTimeout(()=>$('tableStage').classList.remove('winFlash'),800)}
+  phaseLabel(name);
+  const totalNet=userResults.reduce((s,r)=>s+r.roundNet,0);
+  $('message').textContent=`${name} / USER合計 ${signedFmt(totalNet)}`;
+  if(userResults.some(r=>r.roundNet>0)){sfxWin();$('tableStage').classList.add('winFlash');setTimeout(()=>$('tableStage').classList.remove('winFlash'),800)}
   else sfxLose();
 
-  lastResult={outcome,p,b,pp,bp,roundNet,details,bankAfter:bank};
-  renderRoad();updateAll();
-  showResult();
+  lastResult={outcome,p,b,pp,bp,userResults,gameMode:cfg.gameMode};
+  renderRoad();renderUserStrip();
   phase='result';busy=false;
-  $('betArea').classList.add('hidden');$('nextRoundBtn').classList.remove('hidden');
+  $('betArea').classList.add('hidden');
+  $('nextRoundBtn').classList.remove('hidden');
+  $('bankText').textContent='';
+  $('modalNextRound').disabled=false;
+  $('modalNextRound').textContent=allUsersUnableToBet()?'GAME OVER｜トップへ戻る':'次のラウンド';
+  // 結果一覧を表示した直後のタップがボタンへ抜けないよう、操作受付を少し遅らせる。
+  resultActionReadyAt=performance.now()+700;
+
+  // テスト配札は1ラウンドだけ有効。使用後に自動クリアして次ラウンドへ持ち越さない。
+  if(usedTestDeal)clearTestDeal(false);
+
+  showResult();
+}
+function buildResultHtml(){
+  if(!lastResult)return'';
+  const r=lastResult;
+  const modeLabel=r.gameMode==='commission'?'COMMISSION':'NO COMMISSION';
+  return `<div class="resultPanelTitle">ROUND ${roundNo} RESULT</div>
+    <div class="resultSummary"><span>GAME RESULT</span><b>${r.outcome==='P'?'PLAYER WIN':r.outcome==='B'?'BANKER WIN':'TIE'} ・ ${r.p} - ${r.b}</b></div>
+    <div class="resultSummary"><span>PAIR / MODE</span><b>P ${r.pp?'YES':'NO'} / B ${r.bp?'YES':'NO'} ・ ${modeLabel}</b></div>`+
+    r.userResults.map(ur=>{
+      const type=ur.roundNet>0?'win':ur.roundNet<0?'lose':'push';
+      const betsHtml=ur.details.map(d=>{
+        const formula=d.formula?`<div class="resultFormula">配当：${d.formula}</div>`:'';
+        return `<div class="resultHand"><span>${d.label} ・ BET ${fmt(d.stake)}</span><b>${d.result}</b></div>${formula}`;
+      }).join('');
+      const initialDiff=ur.bankAfter-ur.initial;
+      return `<div class="resultPlayer">
+        <div class="resultPlayerHead"><span>${escapeHtml(ur.name)}</span><span class="playerResultBadge ${userOutcomeType(ur)}">${userOutcomeLabel(ur)}</span></div>
+        <div class="resultHands">${betsHtml}</div>
+        <div class="resultTotals"><span>このラウンド</span><b class="resultDelta ${type}">${signedFmt(ur.roundNet)}</b></div>
+        <div class="resultTotals"><span>元金</span><b>${fmt(ur.initial)}</b></div>
+        <div class="resultTotals"><span>残高</span><b>${fmt(ur.roundStartBank)} → ${fmt(ur.bankAfter)}</b></div>
+        <div class="resultTotals"><span>元金差</span><b class="resultDelta ${initialDiff>0?'win':initialDiff<0?'lose':'push'}">${signedFmt(initialDiff)}</b></div>
+      </div>`;
+    }).join('');
 }
 function showResult(){
   if(!lastResult)return;
-  const r=lastResult;
-  $('resultSub').textContent=`ROUND ${roundNo} ・ ${r.outcome==='P'?'PLAYER WIN':r.outcome==='B'?'BANKER WIN':'TIE'}`;
-  let rows=[
-    `<div class="resultRow"><span>PLAYER / BANKER</span><b>${r.p} / ${r.b}</b></div>`,
-    `<div class="resultRow"><span>PAIR</span><b>P ${r.pp?'YES':'NO'} / B ${r.bp?'YES':'NO'}</b></div>`
-  ];
-  for(const d of r.details){
-    rows.push(`<div class="resultRow"><span>${d.label} ${fmt(d.stake)}</span><b class="${d.result.startsWith('WIN')?'resultDelta win':d.result==='LOSE'?'resultDelta lose':''}">${d.result}</b></div>`);
-  }
-  rows.push(`<div class="resultRow"><span>ROUND損益</span><b class="${r.roundNet>=0?'resultDelta win':'resultDelta lose'}">${r.roundNet>=0?'+':''}${fmt(r.roundNet)}</b></div>`);
-  rows.push(`<div class="resultRow"><span>BANK</span><b>${fmt(r.bankAfter)}</b></div>`);
-  $('resultContent').innerHTML=rows.join('');
+  $('resultSub').textContent=`ROUND ${roundNo}`;
+  $('resultContent').innerHTML=buildResultHtml();
   $('resultModal').classList.remove('hidden');
 }
-$('nextRoundBtn').onclick=()=>{
-  $('resultModal').classList.add('hidden');
-  if(bank<=0){toast('残高がありません。トップから資金を設定してください');return}
-  roundNo++;bets=blankBets();prepareBetRound();
-};
+$('nextRoundBtn').onclick=showResult;
 $('resultBanner').onclick=showResult;
+function returnToTopScreen(){
+  stopBgm(true);
+  $('resultModal').classList.add('hidden');
+  $('statsModal').classList.add('hidden');
+  $('settingsModal').classList.add('hidden');
+  $('confirmModal').classList.add('hidden');
+  $('gameScreen').style.display='none';
+  $('setupScreen').style.display='block';
+  phase='setup';
+  window.scrollTo({top:0,behavior:'instant'});
+}
+$('modalNextRound').onclick=()=>{
+  // 結果表示を発生させたタップの「押し抜け」は処理しない。
+  if(performance.now()<resultActionReadyAt)return;
 
-function helpHtml(mode){
-  if(mode==='basic')return `
-    <div class="helpCard"><h3>勝敗</h3><b>PLAYER</b> と <b>BANKER</b> のどちらが9に近くなるかを予想します。カード合計が2桁になった場合は下一桁だけを使います。</div>
-    <div class="helpCard"><h3>カードの点数</h3>A = 1、2〜9 = 表示どおり、10/J/Q/K = 0。最初の2枚が8または9なら NATURAL で追加カードなしです。</div>
-    <div class="helpCard"><h3>プレイヤーがカードを選ぶゲームではない</h3>追加カードを引く・引かないはディーラーがドローイングルールに従って自動で決定します。参加者が選ぶのは基本的にBET先と金額です。</div>`;
-  if(mode==='draw')return `
-    <div class="helpCard"><h3>PLAYER</h3>最初の2枚が <b>0〜5ならDRAW</b>、<b>6〜7ならSTAND</b>。どちらかが8/9ならNATURALで終了。</div>
-    <div class="helpCard"><h3>BANKER：PLAYERが3枚目を引いた場合</h3>
-      <table class="ruleTable"><tr><th>BANKER 2枚計</th><th>DRAW条件（PLAYER 3枚目）</th></tr>
-      <tr><td>0〜2</td><td>常にDRAW</td></tr>
-      <tr><td>3</td><td>8以外</td></tr>
-      <tr><td>4</td><td>2〜7</td></tr>
-      <tr><td>5</td><td>4〜7</td></tr>
-      <tr><td>6</td><td>6〜7</td></tr>
-      <tr><td>7</td><td>STAND</td></tr></table>
+  if(allUsersUnableToBet()){
+    // GAME OVERは、このボタンをユーザーが明示的に押した時だけトップへ戻る。
+    returnToTopScreen();
+    return;
+  }
+
+  $('resultModal').classList.add('hidden');
+  roundNo++;
+  prepareBetRound(true);
+};
+
+/* ---------- HELP / STATS / SETTINGS ---------- */
+function helpHtml(modeKey){
+  if(modeKey==='basic')return `
+    <div class="helpCard"><h3>ゲームの目的</h3><b>PLAYER</b> と <b>BANKER</b> のどちらが9に近いポイントになるかを予想してBETします。<b>TIE</b> は同点予想です。PLAYER/BANKERは「客とカジノ」という意味ではなく、勝負する2つのサイド名です。</div>
+    <div class="helpCard"><h3>カードの点数</h3><b>A = 1</b>、2〜9 = 表示どおり、<b>10/J/Q/K = 0</b>。合計が10以上なら十の位を捨て、下一桁だけを使います。例：7＋8＝15 → <b>5ポイント</b>。</div>
+    <div class="helpCard"><h3>最初の配札</h3>基本の順番は <b>PLAYER → BANKER → PLAYER → BANKER</b>。まず両サイドに2枚ずつ配ります。</div>
+    <div class="helpCard"><h3>NATURAL</h3>最初の2枚で8または9なら <b>NATURAL</b>。どちらか一方でもNATURALなら追加カードなしで勝敗を決めます。</div>
+    <div class="helpCard"><h3>USERが選ぶもの</h3>USERが選ぶのはBET先とBET額です。HIT/STANDのようなカード判断はなく、3枚目はドローイングルールで自動決定されます。</div>
+    <div class="helpCard"><h3>SQUEEZE</h3>All Card SqueezeではBETした側のカードを直接確認できます。この練習版では各サイドの最大メインBET USERにSQUEEZE権を割り当てています。</div>`;
+
+  if(modeKey==='draw')return `
+    <div class="helpCard"><h3>最優先：NATURAL</h3>最初の2枚でPLAYERまたはBANKERが8/9なら、その時点で終了。3枚目はありません。</div>
+    <div class="helpCard"><h3>PLAYERの3枚目</h3>
+      <table class="ruleTable">
+        <tr><th>PLAYER 2枚計</th><th>判定</th></tr>
+        <tr><td>0〜5</td><td>DRAW</td></tr>
+        <tr><td>6〜7</td><td>STAND</td></tr>
+        <tr><td>8〜9</td><td>NATURAL</td></tr>
+      </table>
     </div>
-    <div class="helpCard"><h3>PLAYERがSTANDした場合</h3>BANKERは0〜5でDRAW、6〜7でSTANDします。</div>`;
-  if(mode==='payout')return `
-    <div class="helpCard"><h3>メインBET</h3><b>PLAYER</b> 1:1<br><b>BANKER</b> 0.95:1（5%コミッション控除後）<br><b>TIE</b> 8:1</div>
-    <div class="helpCard"><h3>TIE時のPLAYER / BANKER</h3>TIEになった場合、PLAYER・BANKERへのメインBETは勝敗を付けず <b>PUSH（元金返却）</b> として扱います。</div>
-    <div class="helpCard"><h3>このゲームのMAX</h3>実テーブルの上限はテーブルごとに異なるため、練習版ではBLACKJACKと同様に <b>MIN×100</b> をゲーム上のMAXにしています。</div>`;
+    <div class="helpCard"><h3>BANKER：PLAYERが3枚目を引いた場合</h3>
+      <table class="ruleTable">
+        <tr><th>BANKER 2枚計</th><th>BANKERがDRAWするPLAYER 3枚目</th></tr>
+        <tr><td>0〜2</td><td>すべて</td></tr>
+        <tr><td>3</td><td>8以外</td></tr>
+        <tr><td>4</td><td>2〜7</td></tr>
+        <tr><td>5</td><td>4〜7</td></tr>
+        <tr><td>6</td><td>6〜7</td></tr>
+        <tr><td>7</td><td>STAND</td></tr>
+      </table>
+    </div>
+    <div class="helpCard"><h3>PLAYERが3枚目を引かない場合</h3>PLAYERが6/7でSTANDした場合、BANKERは <b>0〜5でDRAW、6〜7でSTAND</b> します。</div>
+    <div class="helpCard"><h3>実戦では暗記不要</h3>参加者がDRAW/STANDを選択するわけではありません。ディーラーが決められたルールで処理します。</div>`;
+
+  if(modeKey==='payout')return `
+    <div class="helpCard"><h3>Commission Baccarat</h3>
+      <table class="ruleTable">
+        <tr><th>BET</th><th>勝利時の利益</th></tr>
+        <tr><td>PLAYER</td><td>1 : 1</td></tr>
+        <tr><td>BANKER</td><td>0.95 : 1（5%控除）</td></tr>
+        <tr><td>TIE</td><td>8 : 1</td></tr>
+        <tr><td>PAIR</td><td>11 : 1</td></tr>
+      </table>
+    </div>
+    <div class="helpCard"><h3>No Commission Baccarat</h3>BANKER勝利は通常 <b>1 : 1</b>。ただし、<b>BANKERが6ポイントで勝利した場合だけ0.5 : 1</b> です。</div>
+    <div class="helpCard"><h3>TIEになった場合</h3>TIE BETは8:1で勝利。PLAYER/BANKERのメインBETは負けではなく <b>PUSH</b> となり元金返却です。</div>
+    <div class="helpCard"><h3>テーブルLIMIT</h3>実カジノでは各テーブルごとにMIN/MAXがあります。この練習版のMAXは実テーブルの具体額ではなく、練習上 <b>MIN×100</b> としています。</div>`;
+
+  if(modeKey==='pair')return `
+    <div class="helpCard"><h3>PLAYER PAIR / BANKER PAIR</h3>各サイドの<b>最初の2枚</b>が同じランクならPAIR成立。PAIR BETの利益は <b>11 : 1</b> です。</div>
+    <div class="helpCard"><h3>成立例</h3>7♠＋7♥、J♦＋J♣、K♠＋K♦ など。</div>
+    <div class="helpCard"><h3>成立しない例</h3>10とJ、JとQ、QとKなど。バカラ上の点数はいずれも0ですが、<b>ランクが異なるためPAIRではありません</b>。</div>
+    <div class="helpCard"><h3>サイドBETだけでも参加可能</h3>Paradiseの案内では、PLAYER/BANKERのメインBETなしでTIEやPAIRだけにBETする参加も可能です。その場合はカードを表向きで配ると案内されています。</div>`;
+
   return `
-    <div class="helpCard"><h3>PLAYER PAIR / BANKER PAIR</h3>各サイドの最初の2枚が同じランクならPAIR成立。この練習版では公式案内どおり <b>11:1</b> です。</div>
-    <div class="helpCard"><h3>PAIR判定</h3>10と10、JとJなどはPAIR。10とJ、JとK、QとKは点数上はいずれも0ですがPAIRではありません。</div>
-    <div class="helpCard"><h3>サイドBETのみ</h3>PLAYER/BANKERのメインBETを置かず、TIEやPAIRだけにBETする形も選択できます。</div>`;
+    <div class="helpCard"><h3>1ラウンドの流れ</h3>
+      <div class="ruleStep"><div class="ruleNo">1</div><div><b>BET</b><span>PLAYER / BANKER / TIE / PAIRなどへ、テーブルLIMITの範囲内でBETします。</span></div></div>
+      <div class="ruleStep"><div class="ruleNo">2</div><div><b>NO MORE BETS</b><span>ディーラーの「No More Bets」以降はBETできません。</span></div></div>
+      <div class="ruleStep"><div class="ruleNo">3</div><div><b>INITIAL TWO CARDS</b><span>PLAYER → BANKER → PLAYER → BANKERの順に2枚ずつ配ります。</span></div></div>
+      <div class="ruleStep"><div class="ruleNo">4</div><div><b>NATURAL判定</b><span>どちらかが8/9なら追加カードなしで勝敗を決めます。</span></div></div>
+      <div class="ruleStep"><div class="ruleNo">5</div><div><b>3rd CARD判定</b><span>NATURALでなければPLAYERを先に判定し、その結果とPLAYERの3枚目を使ってBANKERのDRAW/STANDを決めます。</span></div></div>
+      <div class="ruleStep"><div class="ruleNo">6</div><div><b>WIN / PAYOUT</b><span>2枚または3枚の最終ポイントを比較し、高い側が勝利。同点はTIEです。</span></div></div>
+    </div>
+
+    <div class="helpCard"><h3>ポイント比較</h3>最大は9、最小は0です。カード枚数ではなく<b>最終ポイント</b>だけを比較します。例：PLAYER 3枚で9、BANKER 2枚で8 → PLAYER勝利。</div>
+
+    <div class="helpCard"><h3>STANDとNOTHING</h3>PLAYERの2枚計6/7、BANKERの2枚計7はSTAND。PLAYER 5以下、BANKER 6以下などは追加カード判定へ進みます。</div>
+
+    <div class="helpCard"><h3>Commission / No Commission</h3><b>Commission</b>ではBANKER勝利利益から5%控除。<b>No Commission</b>では原則控除なしですが、BANKERが6で勝った時だけ利益50%です。</div>
+
+    <div class="helpCard"><h3>No Squeeze / All Card Squeeze</h3><b>No Squeeze</b>は通常オープン。<b>All Card Squeeze</b>はBETした側のカードを直接確認できる方式です。SQUEEZEは結果を変える操作ではなくカード確認の演出です。</div>
+
+    <div class="helpCard"><h3>LIMIT</h3>各テーブルには最低BET額MINと最高BET額MAXがあります。ParadiseではCommission / No Commission、No Squeeze / All Card Squeeze、LIMITを組み合わせて選べると案内されています。</div>
+
+    <div class="helpCard"><h3>シャッフル・カット・シュー</h3>実テーブルではシャッフル後、参加者がインジケートカードを使ってカットする機会があります。その後カードをシューへ入れてゲームを進め、シュー終了を示すカードが出たゲームがラストゲームになります。</div>
+
+    <div class="helpCard"><h3>SCORE CARD</h3>ParadiseではPLAYER/BANKERの勝敗やパターンを記録するスコア用紙が用意されています。このゲームの <b>GAME HISTORY</b> は、その用途をスマホ上で再現するための機能です。</div>
+
+    <div class="ruleNote"><b>公式ルールと練習版の区別：</b><br>配当・ドローイングルール・Commission/No Commission・Squeeze・PairなどはParadiseの案内を基準にしています。一方、8 DECK、具体的なMAX額、SQUEEZE担当者の決め方など、公式ページで具体条件を確認できない部分は練習ゲーム側の実装です。</div>
+
+    <div class="ruleWarn"><b>覚え方：</b>PLAYER/BANKERという名前に惑わされず、「どちらのハンドが勝つかへBETするゲーム」と考えると理解しやすくなります。</div>`;
 }
 let helpMode='basic';
 function renderHelp(){
@@ -907,43 +1896,86 @@ function renderHelp(){
 $('helpBtn').onclick=()=>{helpMode='basic';renderHelp();$('helpModal').classList.remove('hidden')};
 document.querySelectorAll('[data-help]').forEach(x=>x.onclick=()=>{helpMode=x.dataset.help;renderHelp()});
 
-$('statsBtn').onclick=()=>{
-  const roi=stats.wagered?stats.profit/stats.wagered*100:0;
-  $('statsContent').innerHTML=`
+let statsMode='players';
+function renderStatsModal(){
+  const totalProfit=users.reduce((s,u)=>s+u.stats.profit,0);
+  const totalWagered=users.reduce((s,u)=>s+u.stats.wagered,0);
+  const roi=totalWagered?totalProfit/totalWagered*100:0;
+
+  const userRows=users.map(u=>`
+    <div class="userResultBlock">
+      <div class="userResultHead"><span>${escapeHtml(u.name)}</span><b class="${u.stats.profit>=0?'resultDelta win':'resultDelta lose'}">${signedFmt(u.stats.profit)}</b></div>
+      <div class="userResultMeta">BANK ${fmt(u.bank)} / BET ${fmt(u.stats.wagered)} / ＋ROUND ${u.stats.positiveRounds}</div>
+    </div>`).join('');
+
+  const historyRows=[...roundHistory].reverse().map(h=>`
+    <tr>
+      <td>${h.round}</td>
+      <td><span class="histOutcome ${h.outcome.toLowerCase()}">${h.outcome}</span></td>
+      <td>${h.p}</td><td>${h.b}</td>
+      <td class="${h.pp?'histPair':''}">${h.pp?'●':'-'}</td>
+      <td class="${h.bp?'histPair':''}">${h.bp?'●':'-'}</td>
+      <td>${h.cards}</td>
+    </tr>`).join('');
+
+  const playerHtml=`
     <div class="statsGrid">
       <div class="statBox"><b>${stats.rounds}</b><span>ROUNDS</span></div>
       <div class="statBox"><b>${stats.p}</b><span>PLAYER</span></div>
       <div class="statBox"><b>${stats.b}</b><span>BANKER</span></div>
       <div class="statBox"><b>${stats.t}</b><span>TIE</span></div>
-      <div class="statBox"><b>${stats.wins}</b><span>＋ROUND</span></div>
+      <div class="statBox"><b>${signedFmt(totalProfit)}</b><span>USER損益</span></div>
       <div class="statBox"><b>${roi.toFixed(1)}%</b><span>BET ROI</span></div>
     </div>
-    <div class="resultContent" style="margin-top:8px">
-      <div class="resultRow"><span>SESSION損益</span><b class="${stats.profit>=0?'resultDelta win':'resultDelta lose'}">${stats.profit>=0?'+':''}${fmt(stats.profit)}</b></div>
-      <div class="resultRow"><span>BANK</span><b>${fmt(bank)}</b></div>
+    <div class="resultContent" style="margin-top:8px">${userRows}</div>`;
+
+  const historyHtml=`
+    <div class="historyTitle"><b>GAME HISTORY</b><span>最新ラウンドを上に表示</span></div>
+    <div class="historyWrap">
+      <table class="historyTable">
+        <thead><tr><th>NO.</th><th>RESULT</th><th>P</th><th>B</th><th>P PAIR</th><th>B PAIR</th><th>CARDS</th></tr></thead>
+        <tbody>${historyRows||'<tr><td colspan="7">NO RESULTS</td></tr>'}</tbody>
+      </table>
     </div>`;
+
+  $('statsContent').innerHTML=statsMode==='players'?playerHtml:historyHtml;
+  $('statsPlayerTab').classList.toggle('active',statsMode==='players');
+  $('statsHistoryTab').classList.toggle('active',statsMode==='history');
+}
+$('statsBtn').onclick=()=>{
+  statsMode='players';
+  renderStatsModal();
   $('statsModal').classList.remove('hidden');
 };
+$('statsPlayerTab').onclick=()=>{statsMode='players';renderStatsModal()};
+$('statsHistoryTab').onclick=()=>{statsMode='history';renderStatsModal()};
 $('settingsBtn').onclick=()=>{
+  syncTestControlsFromState();
   $('settingsContent').innerHTML=`
-    <div class="resultRow"><span>PLAYER</span><b>${escapeHtml(cfg.name)}</b></div>
+    <div class="resultRow"><span>USER数</span><b>${users.length}</b></div>
     <div class="resultRow"><span>TABLE LIMIT</span><b>${fmt(cfg.min)} / ${fmt(cfg.max)}</b></div>
-    <div class="resultRow"><span>BANKER</span><b>5% COMMISSION</b></div>
-    <div class="resultRow"><span>SHOE</span><b>8 DECK</b></div>`;
+    <div class="resultRow"><span>ゲーム方式</span><b>${cfg.gameMode==='commission'?'COMMISSION':'NO COMMISSION'}</b></div>
+    <div class="resultRow"><span>カード確認</span><b>${cfg.squeezeMode==='all'?'ALL CARD SQUEEZE':'NO SQUEEZE'}</b></div>
+    <div class="resultRow"><span>SHOE</span><b>8 DECK</b></div>
+    <div class="resultRow"><span>開始資金入力</span><b>${mode==='jpy'?`JPY → KRW（1円=${cfg.rate}₩）`:'KRW'}</b></div>`;
   $('settingsModal').classList.remove('hidden');
 };
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 
+/* ---------- NAV / MODALS ---------- */
 $('topBtn').onclick=()=>{$('confirmModal').classList.remove('hidden')};
-$('confirmTop').onclick=()=>{
-  stopBgm(true);$('confirmModal').classList.add('hidden');$('gameScreen').style.display='none';$('setupScreen').style.display='block';phase='setup';
-  window.scrollTo({top:0,behavior:'instant'});
-};
+$('confirmTop').onclick=returnToTopScreen;
 document.querySelectorAll('[data-close]').forEach(btn=>btn.onclick=()=>$(btn.dataset.close).classList.add('hidden'));
 document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.add('hidden')}));
-$('testToggle').onclick=()=>$('testPanel').classList.toggle('hidden');
+$('testToggle').onclick=()=>{
+  $('testPanel').classList.toggle('hidden');
+  $('testToggle').textContent=$('testPanel').classList.contains('hidden')
+    ?'テスト配札を設定'
+    :'テスト配札を閉じる';
+};
+$('testClearBtn').onclick=()=>clearTestDeal(true);
 
-/* AUDIO */
+/* ---------- AUDIO ---------- */
 let audioCtx=null,bgmOn=false,bgmTimer=null,bgmNodes=[],bgmSession=0,bgmWasPlaying=false,audioRestoreBusy=false;
 function ensureAudio(){
   if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();
@@ -958,14 +1990,11 @@ function tone(freq,dur=.08,type='sine',gain=.035,when=0){
     o.connect(g);g.connect(ctx.destination);o.start(ctx.currentTime+when);o.stop(ctx.currentTime+when+dur);
   }catch{}
 }
-function sfxCard(){tone(520,.045,'triangle',.025);tone(350,.055,'triangle',.016,.025)}
+function sfxCard(){tone(520,.055,'triangle',.022);tone(350,.065,'triangle',.014,.035)}
+function sfxReveal(){tone(620,.07,'triangle',.018);tone(760,.06,'sine',.012,.05)}
 function sfxChip(){tone(900,.055,'sine',.025);tone(1200,.05,'sine',.018,.035)}
 function sfxWin(){tone(660,.12,'sine',.03);tone(880,.16,'sine',.035,.10);tone(1320,.22,'sine',.025,.20)}
 function sfxLose(){tone(240,.14,'triangle',.025);tone(190,.18,'triangle',.018,.10)}
-function startBgmFromGesture(){
-  if(!bgmOn)return;
-  startBgm();
-}
 function startBgm(){
   stopBgm(false);bgmOn=true;const ctx=ensureAudio();const session=++bgmSession;
   const master=ctx.createGain();master.gain.value=.035;master.connect(ctx.destination);bgmNodes.push(master);
@@ -987,10 +2016,7 @@ function stopBgm(update=true){
   bgmNodes.forEach(n=>{try{n.disconnect()}catch{}});bgmNodes=[];
   if(update){bgmOn=false;$('soundBtn').textContent='BGM'}
 }
-$('soundBtn').onclick=()=>{
-  ensureAudio();
-  if(bgmOn)stopBgm(true);else{bgmOn=true;startBgm()}
-};
+$('soundBtn').onclick=()=>{ensureAudio();if(bgmOn)stopBgm(true);else{bgmOn=true;startBgm()}};
 function pauseAudio(){
   bgmWasPlaying=bgmOn;
   if(audioCtx&&audioCtx.state==='running')audioCtx.suspend().catch(()=>{});
@@ -1002,6 +2028,14 @@ async function restoreAudio(){
     if(bgmWasPlaying&&bgmOn&&!bgmTimer)startBgm();
   }finally{audioRestoreBusy=false}
 }
+window.addEventListener('resize',()=>{
+  if(!$('squeezeOverlay').classList.contains('hidden'))updateSqueezeOverlayBounds();
+});
+window.addEventListener('orientationchange',()=>{
+  setTimeout(()=>{
+    if(!$('squeezeOverlay').classList.contains('hidden'))updateSqueezeOverlayBounds();
+  },180);
+});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)pauseAudio();else restoreAudio()});
 window.addEventListener('pagehide',pauseAudio);window.addEventListener('pageshow',restoreAudio);window.addEventListener('focus',restoreAudio);
 document.addEventListener('pointerdown',()=>{if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume().catch(()=>{})},{capture:true,passive:true});
