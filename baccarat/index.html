@@ -1,1 +1,1010 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#07523a">
+<title>Paradise Baccarat Practice</title>
+<style>
+:root{
+  --bg:#04110d;
+  --felt:#07523a;
+  --felt2:#063d2d;
+  --panel:rgba(3,19,14,.92);
+  --line:rgba(255,255,255,.13);
+  --text:#fffaf0;
+  --muted:#afc7bb;
+  --gold:#e2c064;
+  --player:#55a8ff;
+  --banker:#ff6d75;
+  --tie:#62d395;
+  --win:#7df0a5;
+  --lose:#ff8b8b;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;width:100%;min-height:100%;background:#04110d;color:var(--text);font-family:system-ui,-apple-system,"Segoe UI","Hiragino Sans","Yu Gothic UI",sans-serif}
+body{overflow-x:hidden;background:radial-gradient(circle at 50% 0,#0e7450 0,#07523a 34%,#03110c 88%)}
+button,input,select{font:inherit}
+button{touch-action:manipulation}
+.hidden{display:none!important}
 
+.app{width:min(100%,560px);margin:0 auto;min-height:100dvh}
+.setupScreen{min-height:100dvh;padding:calc(12px + env(safe-area-inset-top)) 10px calc(18px + env(safe-area-inset-bottom))}
+.setupBrand{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:4px 2px 12px}
+.brandTitle{font-weight:1000;font-size:19px;letter-spacing:.055em}
+.brandTitle small{display:block;margin-top:2px;color:var(--gold);font-size:10px;letter-spacing:.17em}
+.portalBack{
+  min-height:34px;padding:0 11px;border:1px solid rgba(226,192,100,.32);border-radius:999px;
+  background:rgba(226,192,100,.08);color:var(--gold);text-decoration:none;
+  display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:950
+}
+.panel{border:1px solid var(--line);background:rgba(2,15,11,.76);border-radius:18px;padding:14px;box-shadow:0 10px 28px rgba(0,0,0,.28)}
+.setupHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.setupHead h2{font-size:19px;margin:0}
+.ruleBadge{padding:4px 8px;border-radius:999px;border:1px solid rgba(98,211,149,.25);background:rgba(98,211,149,.08);color:#aeeac9;font-size:8px;font-weight:950}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.full{grid-column:1/-1}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:10px;font-weight:900;color:var(--muted)}
+.field input,.field select{
+  width:100%;min-width:0;padding:11px;border:1px solid var(--line);border-radius:11px;
+  background:#081913;color:var(--text);outline:none
+}
+.field input:focus,.field select:focus{border-color:rgba(226,192,100,.55)}
+.fieldHint{font-size:9px;line-height:1.45;color:var(--muted)}
+.settingSummary{
+  margin-top:10px;padding:10px;border:1px solid var(--line);border-radius:12px;
+  background:rgba(255,255,255,.025);font-size:10px;line-height:1.6;color:var(--muted)
+}
+.settingSummary b{color:var(--gold)}
+.primary{
+  width:100%;margin-top:12px;min-height:48px;border:0;border-radius:14px;
+  background:linear-gradient(180deg,#e8cb79,#d6ad4c);color:#241b08;font-weight:1000;font-size:14px
+}
+.smallBtn{
+  min-height:36px;border:1px solid var(--line);border-radius:10px;background:#213a30;color:#fff;
+  font-weight:900;font-size:10px;padding:0 10px
+}
+.testBox{margin-top:11px}
+.testPanel{margin-top:8px;padding:10px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.025)}
+.testTitle{font-size:10px;font-weight:950;color:var(--gold);margin-bottom:7px}
+.testGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.testGrid label{display:grid;gap:4px;font-size:8px;color:var(--muted);font-weight:850}
+.testGrid select{min-width:0;width:100%;padding:8px 5px;border-radius:9px;background:#081913;color:var(--text);border:1px solid var(--line);font-size:10px}
+
+/* GAME */
+.gameScreen{
+  display:none;height:100dvh;min-height:560px;overflow:hidden;
+  padding:calc(6px + env(safe-area-inset-top)) 10px calc(66px + env(safe-area-inset-bottom))
+}
+.gameHeader{height:52px;display:flex;align-items:center;justify-content:space-between;padding:1px 2px 6px}
+.gameBrand{font-size:17px;font-weight:1000;letter-spacing:.055em}
+.gameBrand small{display:block;color:var(--gold);font-size:8px;letter-spacing:.18em}
+.shoeInfo{text-align:right;font-size:9px;line-height:1.35;color:var(--muted);font-weight:800}
+.shoeInfo b{color:#d7e8df}
+
+.roadPanel{
+  height:48px;padding:5px 8px;border:1px solid var(--line);border-radius:12px;
+  background:rgba(3,25,17,.58);display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:center
+}
+.roadTitle{font-size:8px;color:var(--muted);font-weight:950;line-height:1.35}
+.roadTitle b{display:block;color:var(--gold);font-size:10px}
+.road{display:flex;gap:4px;align-items:center;overflow:hidden;justify-content:flex-end}
+.roadDot{
+  width:24px;height:24px;flex:0 0 24px;border-radius:50%;display:grid;place-items:center;
+  font-size:9px;font-weight:1000;border:2px solid currentColor;background:rgba(0,0,0,.2)
+}
+.roadDot.p{color:var(--player)}.roadDot.b{color:var(--banker)}.roadDot.t{color:var(--tie)}
+.roadEmpty{font-size:9px;color:#7f9b8d}
+
+.tableStage{
+  position:relative;height:282px;margin-top:7px;padding:8px;border:1px solid rgba(226,192,100,.28);
+  border-radius:18px;background:
+    radial-gradient(circle at 50% 5%,rgba(35,145,97,.28),transparent 42%),
+    rgba(2,62,43,.54);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.025),0 9px 24px rgba(0,0,0,.18);
+  overflow:hidden
+}
+.tableMeta{height:26px;display:flex;justify-content:space-between;align-items:center}
+.roundPill{
+  padding:4px 8px;border:1px solid var(--line);border-radius:999px;background:rgba(3,25,17,.72);
+  color:var(--gold);font-size:9px;font-weight:1000;letter-spacing:.07em
+}
+.phaseText{font-size:9px;color:var(--muted);font-weight:900;text-align:right}
+.hands{
+  height:190px;display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:stretch
+}
+.side{
+  position:relative;padding:8px 5px 5px;border-radius:14px;border:1px solid rgba(255,255,255,.08);
+  background:rgba(0,0,0,.12);overflow:hidden
+}
+.side.playerSide{box-shadow:inset 0 3px 0 rgba(85,168,255,.62)}
+.side.bankerSide{box-shadow:inset 0 3px 0 rgba(255,109,117,.62)}
+.sideHead{height:35px;display:flex;align-items:center;justify-content:space-between;gap:5px;padding:0 4px}
+.sideName{font-size:12px;font-weight:1000;letter-spacing:.06em}
+.playerSide .sideName{color:#aed5ff}.bankerSide .sideName{color:#ffc0c4}
+.point{
+  width:28px;height:28px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line);
+  background:rgba(0,0,0,.24);font-size:13px;font-weight:1000;color:#fff
+}
+.cardRow{
+  height:107px;display:flex;justify-content:center;align-items:center;gap:4px;perspective:700px
+}
+.card{
+  width:45px;height:65px;border-radius:7px;background:#fff;color:#111;padding:5px;
+  display:flex;flex-direction:column;justify-content:space-between;font-size:11px;font-weight:1000;
+  box-shadow:0 4px 10px rgba(0,0,0,.32);transform-origin:center
+}
+.card.red{color:#c52323}.card .bottom{align-self:flex-end;transform:rotate(180deg)}
+.card.dealP{animation:dealP .36s cubic-bezier(.2,.8,.2,1) both}
+.card.dealB{animation:dealB .36s cubic-bezier(.2,.8,.2,1) both}
+@keyframes dealP{0%{transform:translate(155px,-115px) rotate(18deg) scale(.7);opacity:.15}100%{transform:none;opacity:1}}
+@keyframes dealB{0%{transform:translate(76px,-115px) rotate(13deg) scale(.7);opacity:.15}100%{transform:none;opacity:1}}
+.sideState{height:27px;text-align:center;font-size:9px;color:var(--muted);font-weight:900}
+.sideState.natural{color:var(--gold)}
+.shoeVisual{
+  position:absolute;right:10px;bottom:9px;width:54px;height:38px;border-radius:7px 7px 12px 12px;
+  background:linear-gradient(145deg,#2b251d,#0d0b08);border:2px solid #8f7a45;transform:skewX(-8deg);
+  box-shadow:0 5px 12px rgba(0,0,0,.33)
+}
+.shoeVisual:before{
+  content:"";position:absolute;left:10px;right:7px;top:5px;height:21px;border-radius:4px;
+  background:repeating-linear-gradient(90deg,#eee 0 2px,#bbb 2px 3px);border:1px solid #ddd;transform:skewX(8deg)
+}
+.shoeVisual:after{
+  content:"SHOE";position:absolute;bottom:0;left:0;right:0;text-align:center;color:#d9c27c;
+  font-size:6px;font-weight:950;letter-spacing:.12em;transform:skewX(8deg)
+}
+.resultBanner{
+  position:absolute;left:50%;bottom:10px;transform:translateX(-50%);
+  min-width:154px;max-width:calc(100% - 130px);min-height:34px;padding:6px 12px;border-radius:999px;
+  display:flex;align-items:center;justify-content:center;text-align:center;font-size:11px;font-weight:1000;
+  opacity:0;pointer-events:none;transition:.2s
+}
+.resultBanner.show{opacity:1}
+.resultBanner.p{background:rgba(41,104,169,.93);border:1px solid #80bfff;color:#fff}
+.resultBanner.b{background:rgba(150,48,55,.94);border:1px solid #ff9ca3;color:#fff}
+.resultBanner.t{background:rgba(25,108,71,.94);border:1px solid #91e1b7;color:#fff}
+
+/* betting */
+.betPanel{
+  margin-top:7px;border:1px solid var(--line);border-radius:17px;background:rgba(3,17,12,.95);
+  padding:7px 8px 9px;box-shadow:0 7px 24px rgba(0,0,0,.26);overflow:hidden
+}
+.betStatus{
+  min-height:21px;display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:5px
+}
+.message{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;font-weight:950;color:#e9f2ed}
+.bankText{flex:0 0 auto;color:var(--gold);font-size:10px;font-weight:1000}
+.betSpots{display:grid;grid-template-columns:1fr .72fr 1fr;gap:6px}
+.betSpot{
+  position:relative;min-height:57px;border-radius:12px;border:1px solid var(--line);background:#10251d;
+  color:#fff;padding:7px 4px;display:flex;flex-direction:column;align-items:center;justify-content:center
+}
+.betSpot.active{outline:2px solid var(--gold);outline-offset:1px}
+.betSpot.player{border-color:rgba(85,168,255,.35);background:rgba(40,100,158,.17)}
+.betSpot.banker{border-color:rgba(255,109,117,.35);background:rgba(143,50,58,.18)}
+.betSpot.tie{border-color:rgba(98,211,149,.3);background:rgba(36,120,78,.15)}
+.spotName{font-size:10px;font-weight:1000;letter-spacing:.05em}
+.spotPay{font-size:7px;color:var(--muted);margin-top:1px}
+.spotAmt{font-size:11px;font-weight:1000;margin-top:4px;color:#fff}
+.sideBetRow{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
+.sideBetRow .betSpot{min-height:39px;flex-direction:row;justify-content:space-between;padding:5px 9px}
+.sideBetRow .spotPay{margin:0 0 0 5px}
+.sideBetRow .spotAmt{margin:0 0 0 auto;padding-left:5px;font-size:10px}
+.chipRow{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-top:7px}
+.chip{
+  height:38px;border-radius:50%;border:3px dashed rgba(0,0,0,.30);background:#efe2bd;color:#211a08;
+  box-shadow:inset 0 0 0 2px rgba(255,255,255,.63);font-size:9px;font-weight:1000;padding:0
+}
+.betActions{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:7px}
+.betActions button{
+  min-width:0;height:34px;border:1px solid var(--line);border-radius:9px;background:#213a30;color:#fff;
+  font-size:8px;font-weight:950;padding:0 3px
+}
+.betActions .dealBtn{background:var(--gold);color:#211a08;border-color:transparent}
+.betActions button:disabled{opacity:.28}
+.nextRoundBtn{
+  width:100%;height:46px;border:1px solid rgba(226,192,100,.5);border-radius:12px;
+  background:#213a30;color:var(--gold);font-size:12px;font-weight:1000
+}
+
+.gameFooter{
+  position:fixed;z-index:30;left:50%;bottom:0;transform:translateX(-50%);
+  width:min(100%,560px);display:grid;grid-template-columns:repeat(5,1fr);gap:4px;
+  padding:6px 8px calc(6px + env(safe-area-inset-bottom));
+  background:rgba(2,15,11,.97);border-top:1px solid var(--line)
+}
+.footerBtn{
+  min-width:0;min-height:38px;border:1px solid var(--line);border-radius:9px;background:#213a30;color:#fff;
+  font-size:8px;font-weight:900;padding:4px 1px
+}
+
+/* MODALS */
+.modal{
+  position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.72);display:flex;align-items:flex-end;justify-content:center;padding:10px
+}
+.sheet{
+  width:min(100%,560px);height:82dvh;max-height:720px;border:1px solid var(--line);border-radius:18px 18px 10px 10px;
+  background:#071b14;box-shadow:0 -12px 30px rgba(0,0,0,.45);padding:12px;display:flex;flex-direction:column;overflow:hidden
+}
+.sheet.smallSheet{height:auto;max-height:70dvh}
+.sheetHead{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:9px}
+.sheetTitle{font-size:15px;font-weight:1000}.sheetSub{font-size:9px;color:var(--muted);margin-top:2px}
+.closeBtn{
+  flex:0 0 auto;min-width:34px;height:34px;border:1px solid var(--line);border-radius:10px;background:#213a30;color:#fff;font-weight:1000
+}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:9px}
+.tab{
+  min-height:38px;border:1px solid var(--line);border-radius:9px;background:#132d23;color:var(--muted);
+  font-size:8px;font-weight:950;line-height:1.15;padding:3px
+}
+.tab.active{background:var(--gold);color:#211a08}
+.sheetContent{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding-right:2px}
+.helpCard{padding:9px 2px;border-bottom:1px solid var(--line);font-size:10px;line-height:1.6;color:var(--muted)}
+.helpCard:last-child{border-bottom:0}.helpCard h3{margin:0 0 5px;color:var(--gold);font-size:11px}.helpCard b{color:var(--text)}
+.ruleTable{width:100%;border-collapse:collapse;font-size:9px;margin-top:7px}
+.ruleTable th,.ruleTable td{border:1px solid var(--line);padding:6px 4px;text-align:center}
+.ruleTable th{color:var(--gold);background:rgba(226,192,100,.06)}
+.ruleTable td{color:#d6e1db}
+.resultContent{display:grid;gap:7px}
+.resultRow{
+  display:grid;grid-template-columns:1fr auto;gap:8px;padding:8px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.025);
+  font-size:10px
+}
+.resultRow span{color:var(--muted)}.resultRow b{color:#fff;text-align:right}
+.resultDelta.win{color:var(--win)}.resultDelta.lose{color:var(--lose)}
+.statsGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.statBox{padding:9px;border:1px solid var(--line);border-radius:10px;text-align:center;background:rgba(255,255,255,.025)}
+.statBox b{display:block;font-size:15px}.statBox span{font-size:8px;color:var(--muted)}
+.confirmText{font-size:11px;line-height:1.65;color:var(--muted)}
+.confirmBtns{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:12px}
+.confirmBtns button{height:42px;border-radius:11px;border:1px solid var(--line);font-weight:950}
+.cancelBtn{background:#213a30;color:#fff}.dangerBtn{background:#7b3333;color:#fff}
+.customForm{display:grid;gap:9px}
+.customForm input{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;background:#081913;color:#fff}
+.customApply{height:42px;border:0;border-radius:11px;background:var(--gold);color:#211a08;font-weight:1000}
+
+/* Effects */
+.toast{
+  position:fixed;z-index:80;left:50%;top:15%;transform:translate(-50%,-8px);
+  max-width:calc(100% - 36px);padding:9px 13px;border:1px solid var(--line);border-radius:12px;
+  background:rgba(0,0,0,.82);color:#fff;font-size:10px;font-weight:950;opacity:0;pointer-events:none;transition:.2s
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.winFlash{animation:flash .75s ease}
+@keyframes flash{0%,100%{box-shadow:none}40%{box-shadow:0 0 28px rgba(226,192,100,.45)}}
+
+@media(max-height:760px){
+  .gameScreen{padding-top:calc(3px + env(safe-area-inset-top))}
+  .gameHeader{height:44px}
+  .roadPanel{height:42px}
+  .tableStage{height:254px}
+  .hands{height:169px}
+  .cardRow{height:91px}
+  .card{width:41px;height:59px}
+  .betSpot{min-height:51px}
+  .chip{height:34px}
+  .betActions button{height:31px}
+}
+@media(max-height:660px){
+  .roadPanel{display:none}
+  .tableStage{height:242px;margin-top:3px}
+  .gameHeader{height:40px}
+  .betPanel{margin-top:4px}
+}
+@media(max-width:380px){
+  .brandTitle{font-size:17px}
+  .betSpot{padding-left:2px;padding-right:2px}
+  .spotName{font-size:9px}
+  .chip{font-size:8px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<section id="setupScreen" class="setupScreen">
+  <div class="setupBrand">
+    <div class="brandTitle">BACCARAT<small>PARADISE PRACTICE</small></div>
+    <a class="portalBack" href="../">← ポータルへ戻る</a>
+  </div>
+
+  <section class="panel">
+    <div class="setupHead">
+      <h2>テーブル設定</h2>
+      <span class="ruleBadge">COMMISSION</span>
+    </div>
+    <div class="grid">
+      <div class="field full">
+        <label for="playerName">プレイヤー名</label>
+        <input id="playerName" maxlength="10" value="PLAYER 1">
+      </div>
+      <div class="field">
+        <label for="initialBank">初期資金（₩）</label>
+        <input id="initialBank" type="number" min="10000" step="10000" value="300000">
+      </div>
+      <div class="field">
+        <label for="tableMin">テーブルMIN（₩）</label>
+        <select id="tableMin">
+          <option value="10000">₩10,000</option>
+          <option value="30000" selected>₩30,000</option>
+          <option value="50000">₩50,000</option>
+          <option value="100000">₩100,000</option>
+        </select>
+      </div>
+      <div class="field full">
+        <label>ゲーム方式</label>
+        <input value="Commission Baccarat（Banker勝利は5%コミッション）" disabled>
+        <div class="fieldHint">パラダイスシティ公式案内で配当を確認できるコミッション方式を練習対象にしています。</div>
+      </div>
+    </div>
+
+    <div class="settingSummary">
+      <b>練習設定</b><br>
+      PLAYER 1:1 / BANKER 0.95:1 / TIE 8:1 / PLAYER・BANKER PAIR 11:1<br>
+      8 DECK SHOE。カード追加判定はバカラのドローイングルールに従い自動進行します。
+    </div>
+
+    <div class="testBox">
+      <button id="testToggle" class="smallBtn" type="button">テスト配札を設定</button>
+      <div id="testPanel" class="testPanel hidden">
+        <div class="testTitle">テスト配札（未指定は通常抽選）</div>
+        <div class="testGrid">
+          <label>P 1<select id="tp1"></select></label>
+          <label>P 2<select id="tp2"></select></label>
+          <label>P 3<select id="tp3"></select></label>
+          <label>B 1<select id="tb1"></select></label>
+          <label>B 2<select id="tb2"></select></label>
+          <label>B 3<select id="tb3"></select></label>
+        </div>
+        <div class="fieldHint" style="margin-top:7px">3枚目はドロールール上必要な場合だけ使用します。</div>
+      </div>
+    </div>
+
+    <button id="startBtn" class="primary" type="button">テーブルに着く</button>
+  </section>
+</section>
+
+<section id="gameScreen" class="gameScreen">
+  <header class="gameHeader">
+    <div class="gameBrand">BACCARAT<small>PARADISE PRACTICE</small></div>
+    <div class="shoeInfo"><b>8 DECK SHOE</b><br><span id="shoeText">SHOE 1 ・ 416 cards</span></div>
+  </header>
+
+  <div class="roadPanel">
+    <div class="roadTitle"><b>RESULT ROAD</b><span id="roadStats">P 0 / B 0 / T 0</span></div>
+    <div id="road" class="road"><span class="roadEmpty">NO RESULTS</span></div>
+  </div>
+
+  <section id="tableStage" class="tableStage">
+    <div class="tableMeta">
+      <div id="roundPill" class="roundPill">ROUND 1</div>
+      <div id="phaseText" class="phaseText">PLACE YOUR BETS</div>
+    </div>
+
+    <div class="hands">
+      <div class="side playerSide">
+        <div class="sideHead"><span class="sideName">PLAYER</span><span id="playerPoint" class="point">–</span></div>
+        <div id="playerCards" class="cardRow"></div>
+        <div id="playerState" class="sideState"></div>
+      </div>
+      <div class="side bankerSide">
+        <div class="sideHead"><span class="sideName">BANKER</span><span id="bankerPoint" class="point">–</span></div>
+        <div id="bankerCards" class="cardRow"></div>
+        <div id="bankerState" class="sideState"></div>
+      </div>
+    </div>
+
+    <div id="resultBanner" class="resultBanner"></div>
+    <div class="shoeVisual"></div>
+  </section>
+
+  <section class="betPanel">
+    <div class="betStatus">
+      <div id="message" class="message">ベット先を選択してください</div>
+      <div id="bankText" class="bankText">BANK ₩300,000</div>
+    </div>
+
+    <div id="betArea">
+      <div class="betSpots">
+        <button class="betSpot player active" data-bet="player" type="button">
+          <span class="spotName">PLAYER</span><span class="spotPay">1 : 1</span><span id="amtPlayer" class="spotAmt">₩0</span>
+        </button>
+        <button class="betSpot tie" data-bet="tie" type="button">
+          <span class="spotName">TIE</span><span class="spotPay">8 : 1</span><span id="amtTie" class="spotAmt">₩0</span>
+        </button>
+        <button class="betSpot banker" data-bet="banker" type="button">
+          <span class="spotName">BANKER</span><span class="spotPay">0.95 : 1</span><span id="amtBanker" class="spotAmt">₩0</span>
+        </button>
+      </div>
+
+      <div class="sideBetRow">
+        <button class="betSpot" data-bet="playerPair" type="button">
+          <span class="spotName">PLAYER PAIR</span><span class="spotPay">11 : 1</span><span id="amtPlayerPair" class="spotAmt">₩0</span>
+        </button>
+        <button class="betSpot" data-bet="bankerPair" type="button">
+          <span class="spotName">BANKER PAIR</span><span class="spotPay">11 : 1</span><span id="amtBankerPair" class="spotAmt">₩0</span>
+        </button>
+      </div>
+
+      <div id="chipRow" class="chipRow"></div>
+      <div class="betActions">
+        <button id="repeatBtn" type="button">前回BET</button>
+        <button id="customBtn" type="button">指定BET</button>
+        <button id="clearBtn" type="button">CLEAR</button>
+        <button id="dealBtn" class="dealBtn" type="button">DEAL</button>
+      </div>
+    </div>
+
+    <button id="nextRoundBtn" class="nextRoundBtn hidden" type="button">次のラウンド</button>
+  </section>
+
+  <footer class="gameFooter">
+    <button id="settingsBtn" class="footerBtn" type="button">設定</button>
+    <button id="helpBtn" class="footerBtn" type="button">ヘルプ</button>
+    <button id="statsBtn" class="footerBtn" type="button">戦績</button>
+    <button id="soundBtn" class="footerBtn" type="button">BGM</button>
+    <button id="topBtn" class="footerBtn" type="button">トップへ戻る</button>
+  </footer>
+</section>
+</div>
+
+<div id="helpModal" class="modal hidden">
+  <div class="sheet">
+    <div class="sheetHead">
+      <div><div class="sheetTitle">バカラ ヘルプ</div><div class="sheetSub">パラダイスシティの公式案内を基準にした練習用まとめ</div></div>
+      <button class="closeBtn" data-close="helpModal" type="button">×</button>
+    </div>
+    <div class="tabs">
+      <button class="tab active" data-help="basic" type="button">基本</button>
+      <button class="tab" data-help="draw" type="button">ドロー</button>
+      <button class="tab" data-help="payout" type="button">配当</button>
+      <button class="tab" data-help="pair" type="button">PAIR</button>
+    </div>
+    <div id="helpContent" class="sheetContent"></div>
+  </div>
+</div>
+
+<div id="resultModal" class="modal hidden">
+  <div class="sheet smallSheet">
+    <div class="sheetHead">
+      <div><div class="sheetTitle">ROUND RESULT</div><div id="resultSub" class="sheetSub"></div></div>
+      <button class="closeBtn" data-close="resultModal" type="button">×</button>
+    </div>
+    <div id="resultContent" class="resultContent"></div>
+  </div>
+</div>
+
+<div id="statsModal" class="modal hidden">
+  <div class="sheet smallSheet">
+    <div class="sheetHead">
+      <div><div class="sheetTitle">SESSION STATS</div><div class="sheetSub">現在のセッション</div></div>
+      <button class="closeBtn" data-close="statsModal" type="button">×</button>
+    </div>
+    <div id="statsContent"></div>
+  </div>
+</div>
+
+<div id="settingsModal" class="modal hidden">
+  <div class="sheet smallSheet">
+    <div class="sheetHead">
+      <div><div class="sheetTitle">現在の設定</div><div class="sheetSub">このゲームの練習条件</div></div>
+      <button class="closeBtn" data-close="settingsModal" type="button">×</button>
+    </div>
+    <div id="settingsContent" class="resultContent"></div>
+  </div>
+</div>
+
+<div id="customModal" class="modal hidden">
+  <div class="sheet smallSheet">
+    <div class="sheetHead">
+      <div><div class="sheetTitle">指定BET</div><div id="customSub" class="sheetSub"></div></div>
+      <button class="closeBtn" data-close="customModal" type="button">×</button>
+    </div>
+    <div class="customForm">
+      <input id="customAmount" type="number" inputmode="numeric" min="1" placeholder="金額を入力">
+      <button id="customApply" class="customApply" type="button">追加する</button>
+    </div>
+  </div>
+</div>
+
+<div id="confirmModal" class="modal hidden">
+  <div class="sheet smallSheet">
+    <div class="sheetHead">
+      <div class="sheetTitle">トップへ戻りますか？</div>
+      <button class="closeBtn" data-close="confirmModal" type="button">×</button>
+    </div>
+    <div class="confirmText">現在のセッション戦績と資金状態はリセットされます。</div>
+    <div class="confirmBtns">
+      <button class="cancelBtn" data-close="confirmModal" type="button">キャンセル</button>
+      <button id="confirmTop" class="dangerBtn" type="button">トップへ戻る</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const fmt=n=>'₩'+Math.round(n).toLocaleString('ja-JP');
+
+const BET_KEYS=['player','tie','banker','playerPair','bankerPair'];
+const BET_LABEL={
+  player:'PLAYER', tie:'TIE', banker:'BANKER',
+  playerPair:'PLAYER PAIR', bankerPair:'BANKER PAIR'
+};
+
+let cfg={name:'PLAYER 1',initialBank:300000,min:30000,max:3000000,decks:8};
+let bank=300000,roundNo=1,shoeNo=1,deck=[],cutRemaining=0;
+let playerHand=[],bankerHand=[];
+let bets=blankBets(),lastBets=blankBets(),selectedBet='player';
+let phase='setup',busy=false,lastResult=null;
+let history=[];
+let stats={rounds:0,p:0,b:0,t:0,profit:0,wagered:0,wins:0};
+let testDeal={p1:'',p2:'',p3:'',b1:'',b2:'',b3:''};
+
+function blankBets(){return {player:0,tie:0,banker:0,playerPair:0,bankerPair:0}}
+function totalBets(obj=bets){return BET_KEYS.reduce((s,k)=>s+(obj[k]||0),0)}
+function cardPoint(c){if(!c)return 0;if(c.rank==='A')return 1;if(['10','J','Q','K'].includes(c.rank))return 0;return Number(c.rank)}
+function handPoint(hand){return hand.reduce((s,c)=>s+cardPoint(c),0)%10}
+function isPair(hand){return hand.length>=2&&hand[0].rank===hand[1].rank}
+function rankKey(c){return c?c.rank:''}
+function isRed(suit){return suit==='♥'||suit==='♦'}
+
+function buildDeck(){
+  const suits=['♠','♥','♦','♣'],ranks=['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+  deck=[];
+  for(let d=0;d<cfg.decks;d++)for(const s of suits)for(const r of ranks)deck.push({rank:r,suit:s,id:`${shoeNo}-${d}-${s}-${r}-${Math.random()}`});
+  shuffle(deck);
+  const penetration=.65+Math.random()*.10;
+  cutRemaining=Math.max(12,Math.round(deck.length*(1-penetration)));
+  shoeNo++;
+}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}}
+function parseTest(v){
+  if(!v)return null;
+  const rank=v.slice(0,-1),suit=v.slice(-1);
+  return {rank,suit,id:`test-${v}-${Math.random()}`};
+}
+function draw(spec=''){
+  if(spec)return parseTest(spec);
+  if(deck.length<1)buildDeck();
+  return deck.pop();
+}
+function needShuffle(){return deck.length<=cutRemaining||deck.length<12}
+
+function initTestSelects(){
+  const opts=['<option value="">ランダム</option>'];
+  for(const s of ['♠','♥','♦','♣'])for(const r of ['A','2','3','4','5','6','7','8','9','10','J','Q','K']){
+    opts.push(`<option value="${r}${s}">${r}${s}</option>`);
+  }
+  for(const id of ['tp1','tp2','tp3','tb1','tb2','tb3'])$(id).innerHTML=opts.join('');
+}
+initTestSelects();
+
+function readSetup(){
+  const initial=Math.max(10000,Math.floor(Number($('initialBank').value)||300000));
+  const min=Math.max(10000,Number($('tableMin').value)||30000);
+  cfg={
+    name:($('playerName').value||'PLAYER 1').trim().slice(0,10)||'PLAYER 1',
+    initialBank:initial,min,max:min*100,decks:8
+  };
+  testDeal={
+    p1:$('tp1').value,p2:$('tp2').value,p3:$('tp3').value,
+    b1:$('tb1').value,b2:$('tb2').value,b3:$('tb3').value
+  };
+}
+function startGame(){
+  readSetup();
+  if(cfg.initialBank<cfg.min){toast('初期資金はテーブルMIN以上にしてください');return}
+  bank=cfg.initialBank;roundNo=1;shoeNo=1;history=[];stats={rounds:0,p:0,b:0,t:0,profit:0,wagered:0,wins:0};
+  bets=blankBets();lastBets=blankBets();selectedBet='player';
+  buildDeck();shoeNo=1; // display first shoe as SHOE 1
+  $('setupScreen').style.display='none';
+  $('gameScreen').style.display='block';
+  phase='bet';
+  prepareBetRound();
+  updateAll();
+  startBgmFromGesture();
+}
+$('startBtn').onclick=startGame;
+
+function updateAll(){
+  $('bankText').textContent=`BANK ${fmt(bank)}`;
+  $('roundPill').textContent=`ROUND ${roundNo}`;
+  $('shoeText').textContent=`SHOE ${shoeNo} ・ ${deck.length} cards`;
+  $('amtPlayer').textContent=fmt(bets.player);
+  $('amtTie').textContent=fmt(bets.tie);
+  $('amtBanker').textContent=fmt(bets.banker);
+  $('amtPlayerPair').textContent=fmt(bets.playerPair);
+  $('amtBankerPair').textContent=fmt(bets.bankerPair);
+  document.querySelectorAll('.betSpot').forEach(b=>b.classList.toggle('active',b.dataset.bet===selectedBet&&phase==='bet'));
+  renderHands();
+  renderRoad();
+  renderChips();
+}
+function renderChips(){
+  const vals=[1,2,5,10,20].map(x=>cfg.min*x);
+  $('chipRow').innerHTML=vals.map(v=>`<button class="chip" type="button" data-chip="${v}">${compactMoney(v)}</button>`).join('');
+  document.querySelectorAll('[data-chip]').forEach(btn=>btn.onclick=()=>addBet(Number(btn.dataset.chip)));
+}
+function compactMoney(n){
+  if(n>=100000000)return Math.round(n/10000000)/10+'億';
+  if(n>=10000){
+    const m=n/10000;
+    return Number.isInteger(m)?m+'万':m.toFixed(1)+'万';
+  }
+  return String(n);
+}
+function renderHands(){
+  renderHand('player',playerHand);
+  renderHand('banker',bankerHand);
+}
+function renderHand(side,hand){
+  const row=$(side+'Cards');
+  row.innerHTML=hand.map((c,i)=>`<div class="card ${isRed(c.suit)?'red':''}"><span>${c.rank}${c.suit}</span><span class="bottom">${c.rank}${c.suit}</span></div>`).join('');
+  $(side+'Point').textContent=hand.length?handPoint(hand):'–';
+}
+function appendCard(side,c){
+  const row=$(side+'Cards');
+  const el=document.createElement('div');
+  el.className=`card ${isRed(c.suit)?'red':''} ${side==='player'?'dealP':'dealB'}`;
+  el.innerHTML=`<span>${c.rank}${c.suit}</span><span class="bottom">${c.rank}${c.suit}</span>`;
+  row.appendChild(el);
+  $(side+'Point').textContent=handPoint(side==='player'?playerHand:bankerHand);
+  sfxCard();
+}
+function renderRoad(){
+  const recent=history.slice(-12);
+  $('road').innerHTML=recent.length?recent.map(x=>`<span class="roadDot ${x.toLowerCase()}">${x}</span>`).join(''):'<span class="roadEmpty">NO RESULTS</span>';
+  $('roadStats').textContent=`P ${stats.p} / B ${stats.b} / T ${stats.t}`;
+}
+function setState(side,text,cls=''){
+  const el=$(side+'State');el.textContent=text;el.className='sideState'+(cls?' '+cls:'');
+}
+function phaseLabel(text){$('phaseText').textContent=text}
+function toast(text){
+  const el=$('toast');el.textContent=text;el.classList.add('show');
+  clearTimeout(toast._t);toast._t=setTimeout(()=>el.classList.remove('show'),1400);
+}
+
+document.querySelectorAll('.betSpot').forEach(btn=>btn.onclick=()=>{
+  if(phase!=='bet'||busy)return;
+  selectedBet=btn.dataset.bet;updateAll();
+  $('message').textContent=`${BET_LABEL[selectedBet]} を選択中`;
+});
+function addBet(amount){
+  if(phase!=='bet'||busy)return;
+  if(amount<=0)return;
+  const main=['player','banker'].includes(selectedBet);
+  const current=bets[selectedBet];
+  const max=cfg.max;
+  if(current+amount>max){toast(`この練習版のMAXは ${fmt(max)}`);return}
+  if(bank<amount){toast('残高が不足しています');return}
+  bets[selectedBet]+=amount;bank-=amount;
+  sfxChip();updateAll();
+  $('message').textContent=`${BET_LABEL[selectedBet]} ${fmt(bets[selectedBet])}`;
+}
+$('clearBtn').onclick=()=>{
+  if(phase!=='bet'||busy)return;
+  bank+=totalBets();bets=blankBets();sfxChip();updateAll();$('message').textContent='BETをクリアしました';
+};
+$('repeatBtn').onclick=()=>{
+  if(phase!=='bet'||busy)return;
+  const total=totalBets(lastBets);
+  if(!total){toast('前回BETがありません');return}
+  if(totalBets()){toast('先にCLEARしてください');return}
+  if(bank<total){toast('残高が不足しています');return}
+  bets={...lastBets};bank-=total;updateAll();sfxChip();$('message').textContent='前回BETをセットしました';
+};
+$('customBtn').onclick=()=>{
+  if(phase!=='bet'||busy)return;
+  $('customSub').textContent=`${BET_LABEL[selectedBet]} に追加`;
+  $('customAmount').value='';
+  $('customAmount').min=cfg.min;
+  $('customModal').classList.remove('hidden');
+  setTimeout(()=>$('customAmount').focus(),80);
+};
+$('customApply').onclick=()=>{
+  let a=Math.floor(Number($('customAmount').value)||0);
+  if(a<cfg.min){toast(`指定BETは ${fmt(cfg.min)} 以上`);return}
+  if(a%1000!==0){toast('₩1,000単位で入力してください');return}
+  $('customModal').classList.add('hidden');addBet(a);
+};
+
+function hasValidBet(){
+  const t=totalBets();
+  if(!t)return false;
+  // Main bets and side bets are all permitted independently in this trainer.
+  for(const k of BET_KEYS)if(bets[k]>0&&bets[k]<cfg.min)return false;
+  return true;
+}
+$('dealBtn').onclick=async()=>{
+  if(phase!=='bet'||busy)return;
+  if(!hasValidBet()){toast(`各BETは ${fmt(cfg.min)} 以上にしてください`);return}
+  lastBets={...bets};stats.wagered+=totalBets();
+  await dealRound();
+};
+
+function prepareBetRound(){
+  if(needShuffle()){
+    buildDeck();
+    toast('NEW SHOE');
+  }
+  playerHand=[];bankerHand=[];lastResult=null;phase='bet';busy=false;
+  $('resultBanner').className='resultBanner';$('resultBanner').textContent='';
+  $('playerPoint').textContent='–';$('bankerPoint').textContent='–';
+  $('playerCards').innerHTML='';$('bankerCards').innerHTML='';
+  setState('player','');setState('banker','');
+  $('betArea').classList.remove('hidden');$('nextRoundBtn').classList.add('hidden');
+  phaseLabel('PLACE YOUR BETS');$('message').textContent='ベット先を選択してください';
+  updateAll();
+}
+async function dealRound(){
+  busy=true;phase='deal';phaseLabel('NO MORE BETS');$('message').textContent='NO MORE BETS';
+  $('dealBtn').disabled=true;$('repeatBtn').disabled=true;$('clearBtn').disabled=true;$('customBtn').disabled=true;
+  document.querySelectorAll('.betSpot,.chip').forEach(x=>x.disabled=true);
+  playerHand=[];bankerHand=[];$('playerCards').innerHTML='';$('bankerCards').innerHTML='';
+  $('resultBanner').className='resultBanner';setState('player','');setState('banker','');
+  await sleep(280);
+
+  const seq=[
+    ['player','p1'],['banker','b1'],['player','p2'],['banker','b2']
+  ];
+  for(const [side,key] of seq){
+    const c=draw(testDeal[key]);
+    (side==='player'?playerHand:bankerHand).push(c);
+    appendCard(side,c);updateShoe();await sleep(390);
+  }
+
+  const p0=handPoint(playerHand),b0=handPoint(bankerHand);
+  if(p0>=8||b0>=8){
+    setState('player',p0>=8?`NATURAL ${p0}`:'','natural');
+    setState('banker',b0>=8?`NATURAL ${b0}`:'','natural');
+    phaseLabel('NATURAL');await sleep(700);
+    return settleRound();
+  }
+
+  let playerThird=null;
+  if(p0<=5){
+    setState('player',`PLAYER ${p0} → DRAW`);
+    await sleep(420);
+    playerThird=draw(testDeal.p3);playerHand.push(playerThird);appendCard('player',playerThird);updateShoe();await sleep(520);
+  }else{
+    setState('player',`PLAYER ${p0} → STAND`);
+    await sleep(360);
+  }
+
+  const bInitial=b0;
+  let bankerDraw=false;
+  if(!playerThird){
+    bankerDraw=bInitial<=5;
+  }else{
+    const pv=cardPoint(playerThird);
+    if(bInitial<=2) bankerDraw=true;
+    else if(bInitial===3) bankerDraw=pv!==8;
+    else if(bInitial===4) bankerDraw=pv>=2&&pv<=7;
+    else if(bInitial===5) bankerDraw=pv>=4&&pv<=7;
+    else if(bInitial===6) bankerDraw=pv===6||pv===7;
+    else bankerDraw=false;
+  }
+
+  if(bankerDraw){
+    setState('banker',`BANKER ${bInitial} → DRAW`);
+    await sleep(420);
+    const c=draw(testDeal.b3);bankerHand.push(c);appendCard('banker',c);updateShoe();await sleep(520);
+  }else{
+    setState('banker',`BANKER ${bInitial} → STAND`);
+    await sleep(420);
+  }
+  settleRound();
+}
+function updateShoe(){$('shoeText').textContent=`SHOE ${shoeNo} ・ ${deck.length} cards`}
+
+function settleRound(){
+  const p=handPoint(playerHand),b=handPoint(bankerHand);
+  const outcome=p>b?'P':b>p?'B':'T';
+  const pp=isPair(playerHand),bp=isPair(bankerHand);
+  let returned=0,profit=0,details=[];
+
+  function winBet(key,rate,label){
+    const stake=bets[key];if(!stake)return;
+    const pr=stake*rate;returned+=stake+pr;profit+=pr;
+    details.push({label,stake,result:`WIN +${fmt(pr)}`});
+  }
+  function loseBet(key,label){
+    const stake=bets[key];if(!stake)return;
+    details.push({label,stake,result:'LOSE'});
+  }
+  function pushBet(key,label){
+    const stake=bets[key];if(!stake)return;
+    returned+=stake;details.push({label,stake,result:'PUSH'});
+  }
+
+  if(outcome==='P'){winBet('player',1,'PLAYER');loseBet('banker','BANKER');loseBet('tie','TIE')}
+  if(outcome==='B'){winBet('banker',.95,'BANKER');loseBet('player','PLAYER');loseBet('tie','TIE')}
+  if(outcome==='T'){pushBet('player','PLAYER');pushBet('banker','BANKER');winBet('tie',8,'TIE')}
+
+  if(pp)winBet('playerPair',11,'PLAYER PAIR');else loseBet('playerPair','PLAYER PAIR');
+  if(bp)winBet('bankerPair',11,'BANKER PAIR');else loseBet('bankerPair','BANKER PAIR');
+
+  bank+=returned;
+  const roundNet=returned-totalBets(bets);
+  stats.rounds++;stats.profit+=roundNet;if(roundNet>0)stats.wins++;
+  if(outcome==='P')stats.p++;else if(outcome==='B')stats.b++;else stats.t++;
+  history.push(outcome);
+
+  const name=outcome==='P'?'PLAYER WIN':outcome==='B'?'BANKER WIN':'TIE';
+  $('resultBanner').textContent=`${name}  ${p} - ${b}`;
+  $('resultBanner').className=`resultBanner show ${outcome.toLowerCase()}`;
+  phaseLabel(name);$('message').textContent=`${name} / ${roundNet>=0?'+':''}${fmt(roundNet)}`;
+  if(roundNet>0){sfxWin();$('tableStage').classList.add('winFlash');setTimeout(()=>$('tableStage').classList.remove('winFlash'),800)}
+  else sfxLose();
+
+  lastResult={outcome,p,b,pp,bp,roundNet,details,bankAfter:bank};
+  renderRoad();updateAll();
+  showResult();
+  phase='result';busy=false;
+  $('betArea').classList.add('hidden');$('nextRoundBtn').classList.remove('hidden');
+}
+function showResult(){
+  if(!lastResult)return;
+  const r=lastResult;
+  $('resultSub').textContent=`ROUND ${roundNo} ・ ${r.outcome==='P'?'PLAYER WIN':r.outcome==='B'?'BANKER WIN':'TIE'}`;
+  let rows=[
+    `<div class="resultRow"><span>PLAYER / BANKER</span><b>${r.p} / ${r.b}</b></div>`,
+    `<div class="resultRow"><span>PAIR</span><b>P ${r.pp?'YES':'NO'} / B ${r.bp?'YES':'NO'}</b></div>`
+  ];
+  for(const d of r.details){
+    rows.push(`<div class="resultRow"><span>${d.label} ${fmt(d.stake)}</span><b class="${d.result.startsWith('WIN')?'resultDelta win':d.result==='LOSE'?'resultDelta lose':''}">${d.result}</b></div>`);
+  }
+  rows.push(`<div class="resultRow"><span>ROUND損益</span><b class="${r.roundNet>=0?'resultDelta win':'resultDelta lose'}">${r.roundNet>=0?'+':''}${fmt(r.roundNet)}</b></div>`);
+  rows.push(`<div class="resultRow"><span>BANK</span><b>${fmt(r.bankAfter)}</b></div>`);
+  $('resultContent').innerHTML=rows.join('');
+  $('resultModal').classList.remove('hidden');
+}
+$('nextRoundBtn').onclick=()=>{
+  $('resultModal').classList.add('hidden');
+  if(bank<=0){toast('残高がありません。トップから資金を設定してください');return}
+  roundNo++;bets=blankBets();prepareBetRound();
+};
+$('resultBanner').onclick=showResult;
+
+function helpHtml(mode){
+  if(mode==='basic')return `
+    <div class="helpCard"><h3>勝敗</h3><b>PLAYER</b> と <b>BANKER</b> のどちらが9に近くなるかを予想します。カード合計が2桁になった場合は下一桁だけを使います。</div>
+    <div class="helpCard"><h3>カードの点数</h3>A = 1、2〜9 = 表示どおり、10/J/Q/K = 0。最初の2枚が8または9なら NATURAL で追加カードなしです。</div>
+    <div class="helpCard"><h3>プレイヤーがカードを選ぶゲームではない</h3>追加カードを引く・引かないはディーラーがドローイングルールに従って自動で決定します。参加者が選ぶのは基本的にBET先と金額です。</div>`;
+  if(mode==='draw')return `
+    <div class="helpCard"><h3>PLAYER</h3>最初の2枚が <b>0〜5ならDRAW</b>、<b>6〜7ならSTAND</b>。どちらかが8/9ならNATURALで終了。</div>
+    <div class="helpCard"><h3>BANKER：PLAYERが3枚目を引いた場合</h3>
+      <table class="ruleTable"><tr><th>BANKER 2枚計</th><th>DRAW条件（PLAYER 3枚目）</th></tr>
+      <tr><td>0〜2</td><td>常にDRAW</td></tr>
+      <tr><td>3</td><td>8以外</td></tr>
+      <tr><td>4</td><td>2〜7</td></tr>
+      <tr><td>5</td><td>4〜7</td></tr>
+      <tr><td>6</td><td>6〜7</td></tr>
+      <tr><td>7</td><td>STAND</td></tr></table>
+    </div>
+    <div class="helpCard"><h3>PLAYERがSTANDした場合</h3>BANKERは0〜5でDRAW、6〜7でSTANDします。</div>`;
+  if(mode==='payout')return `
+    <div class="helpCard"><h3>メインBET</h3><b>PLAYER</b> 1:1<br><b>BANKER</b> 0.95:1（5%コミッション控除後）<br><b>TIE</b> 8:1</div>
+    <div class="helpCard"><h3>TIE時のPLAYER / BANKER</h3>TIEになった場合、PLAYER・BANKERへのメインBETは勝敗を付けず <b>PUSH（元金返却）</b> として扱います。</div>
+    <div class="helpCard"><h3>このゲームのMAX</h3>実テーブルの上限はテーブルごとに異なるため、練習版ではBLACKJACKと同様に <b>MIN×100</b> をゲーム上のMAXにしています。</div>`;
+  return `
+    <div class="helpCard"><h3>PLAYER PAIR / BANKER PAIR</h3>各サイドの最初の2枚が同じランクならPAIR成立。この練習版では公式案内どおり <b>11:1</b> です。</div>
+    <div class="helpCard"><h3>PAIR判定</h3>10と10、JとJなどはPAIR。10とJ、JとK、QとKは点数上はいずれも0ですがPAIRではありません。</div>
+    <div class="helpCard"><h3>サイドBETのみ</h3>PLAYER/BANKERのメインBETを置かず、TIEやPAIRだけにBETする形も選択できます。</div>`;
+}
+let helpMode='basic';
+function renderHelp(){
+  $('helpContent').innerHTML=helpHtml(helpMode);
+  document.querySelectorAll('[data-help]').forEach(x=>x.classList.toggle('active',x.dataset.help===helpMode));
+}
+$('helpBtn').onclick=()=>{helpMode='basic';renderHelp();$('helpModal').classList.remove('hidden')};
+document.querySelectorAll('[data-help]').forEach(x=>x.onclick=()=>{helpMode=x.dataset.help;renderHelp()});
+
+$('statsBtn').onclick=()=>{
+  const roi=stats.wagered?stats.profit/stats.wagered*100:0;
+  $('statsContent').innerHTML=`
+    <div class="statsGrid">
+      <div class="statBox"><b>${stats.rounds}</b><span>ROUNDS</span></div>
+      <div class="statBox"><b>${stats.p}</b><span>PLAYER</span></div>
+      <div class="statBox"><b>${stats.b}</b><span>BANKER</span></div>
+      <div class="statBox"><b>${stats.t}</b><span>TIE</span></div>
+      <div class="statBox"><b>${stats.wins}</b><span>＋ROUND</span></div>
+      <div class="statBox"><b>${roi.toFixed(1)}%</b><span>BET ROI</span></div>
+    </div>
+    <div class="resultContent" style="margin-top:8px">
+      <div class="resultRow"><span>SESSION損益</span><b class="${stats.profit>=0?'resultDelta win':'resultDelta lose'}">${stats.profit>=0?'+':''}${fmt(stats.profit)}</b></div>
+      <div class="resultRow"><span>BANK</span><b>${fmt(bank)}</b></div>
+    </div>`;
+  $('statsModal').classList.remove('hidden');
+};
+$('settingsBtn').onclick=()=>{
+  $('settingsContent').innerHTML=`
+    <div class="resultRow"><span>PLAYER</span><b>${escapeHtml(cfg.name)}</b></div>
+    <div class="resultRow"><span>TABLE LIMIT</span><b>${fmt(cfg.min)} / ${fmt(cfg.max)}</b></div>
+    <div class="resultRow"><span>BANKER</span><b>5% COMMISSION</b></div>
+    <div class="resultRow"><span>SHOE</span><b>8 DECK</b></div>`;
+  $('settingsModal').classList.remove('hidden');
+};
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+
+$('topBtn').onclick=()=>{$('confirmModal').classList.remove('hidden')};
+$('confirmTop').onclick=()=>{
+  stopBgm(true);$('confirmModal').classList.add('hidden');$('gameScreen').style.display='none';$('setupScreen').style.display='block';phase='setup';
+  window.scrollTo({top:0,behavior:'instant'});
+};
+document.querySelectorAll('[data-close]').forEach(btn=>btn.onclick=()=>$(btn.dataset.close).classList.add('hidden'));
+document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.add('hidden')}));
+$('testToggle').onclick=()=>$('testPanel').classList.toggle('hidden');
+
+/* AUDIO */
+let audioCtx=null,bgmOn=false,bgmTimer=null,bgmNodes=[],bgmSession=0,bgmWasPlaying=false,audioRestoreBusy=false;
+function ensureAudio(){
+  if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+  if(audioCtx.state==='suspended')audioCtx.resume().catch(()=>{});
+  return audioCtx;
+}
+function tone(freq,dur=.08,type='sine',gain=.035,when=0){
+  try{
+    const ctx=ensureAudio(),o=ctx.createOscillator(),g=ctx.createGain();
+    o.type=type;o.frequency.value=freq;g.gain.setValueAtTime(gain,ctx.currentTime+when);
+    g.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+when+dur);
+    o.connect(g);g.connect(ctx.destination);o.start(ctx.currentTime+when);o.stop(ctx.currentTime+when+dur);
+  }catch{}
+}
+function sfxCard(){tone(520,.045,'triangle',.025);tone(350,.055,'triangle',.016,.025)}
+function sfxChip(){tone(900,.055,'sine',.025);tone(1200,.05,'sine',.018,.035)}
+function sfxWin(){tone(660,.12,'sine',.03);tone(880,.16,'sine',.035,.10);tone(1320,.22,'sine',.025,.20)}
+function sfxLose(){tone(240,.14,'triangle',.025);tone(190,.18,'triangle',.018,.10)}
+function startBgmFromGesture(){
+  if(!bgmOn)return;
+  startBgm();
+}
+function startBgm(){
+  stopBgm(false);bgmOn=true;const ctx=ensureAudio();const session=++bgmSession;
+  const master=ctx.createGain();master.gain.value=.035;master.connect(ctx.destination);bgmNodes.push(master);
+  const chords=[[220,277.18,329.63],[196,246.94,293.66],[174.61,220,261.63],[196,246.94,329.63]];
+  let step=0;
+  const play=()=>{
+    if(!bgmOn||session!==bgmSession)return;
+    const chord=chords[step++%chords.length];
+    chord.forEach((f,i)=>{
+      const o=ctx.createOscillator(),g=ctx.createGain();o.type=i===0?'sine':'triangle';o.frequency.value=f;
+      g.gain.setValueAtTime(i===0?.10:.045,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+1.7);
+      o.connect(g);g.connect(master);o.start();o.stop(ctx.currentTime+1.8);bgmNodes.push(o,g);
+    });
+    bgmTimer=setTimeout(play,1650);
+  };play();$('soundBtn').textContent='BGM ON';
+}
+function stopBgm(update=true){
+  bgmSession++;clearTimeout(bgmTimer);bgmTimer=null;
+  bgmNodes.forEach(n=>{try{n.disconnect()}catch{}});bgmNodes=[];
+  if(update){bgmOn=false;$('soundBtn').textContent='BGM'}
+}
+$('soundBtn').onclick=()=>{
+  ensureAudio();
+  if(bgmOn)stopBgm(true);else{bgmOn=true;startBgm()}
+};
+function pauseAudio(){
+  bgmWasPlaying=bgmOn;
+  if(audioCtx&&audioCtx.state==='running')audioCtx.suspend().catch(()=>{});
+}
+async function restoreAudio(){
+  if(audioRestoreBusy)return;audioRestoreBusy=true;
+  try{
+    if(audioCtx&&audioCtx.state==='suspended')await audioCtx.resume().catch(()=>{});
+    if(bgmWasPlaying&&bgmOn&&!bgmTimer)startBgm();
+  }finally{audioRestoreBusy=false}
+}
+document.addEventListener('visibilitychange',()=>{if(document.hidden)pauseAudio();else restoreAudio()});
+window.addEventListener('pagehide',pauseAudio);window.addEventListener('pageshow',restoreAudio);window.addEventListener('focus',restoreAudio);
+document.addEventListener('pointerdown',()=>{if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume().catch(()=>{})},{capture:true,passive:true});
+</script>
+</body>
+</html>
