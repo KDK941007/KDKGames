@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#07523a">
-<title>Paradise Baccarat Practice v1.11</title>
+<title>Paradise Baccarat Practice v1.12</title>
 <style>
 :root{
   --bg:#04110d;
@@ -1475,7 +1475,7 @@ function addBet(amount){
 
   u.bets[selectedBet]+=actual;
   u.bank-=actual;
-  sfxChip();updateAll();
+  sfxBet();updateAll();
 
   if(actual<requested){
     $('message').textContent=`${u.name}：残高分 ${fmt(actual)} をBET`;
@@ -1487,7 +1487,7 @@ function addBet(amount){
 $('clearBtn').onclick=()=>{
   if(phase!=='bet'||busy)return;
   const u=currentUser();if(!u)return;
-  u.bank+=totalBets(u.bets);u.bets=blankBets();sfxChip();updateAll();
+  u.bank+=totalBets(u.bets);u.bets=blankBets();sfxClear();updateAll();
   $('message').textContent=`${u.name}：BETをクリアしました`;
 };
 $('repeatBtn').onclick=()=>{
@@ -1499,7 +1499,7 @@ $('repeatBtn').onclick=()=>{
   if(BET_KEYS.some(k=>(u.lastBets[k]||0)>cfg.max)){toast('前回BETが現在のMAXを超えています');return}
 
   if(u.bank>=total){
-    u.bets={...u.lastBets};u.bank-=total;sfxChip();updateAll();
+    u.bets={...u.lastBets};u.bank-=total;sfxBet();updateAll();
     $('message').textContent=`${u.name}：前回BETをセットしました`;
     return;
   }
@@ -1522,7 +1522,7 @@ $('repeatBtn').onclick=()=>{
 
   u.bets=scaled;
   u.bank=0;
-  sfxChip();updateAll();
+  sfxBet();updateAll();
   $('message').textContent=`${u.name}：残高分 ${fmt(available)} で前回BETを再現`;
   toast(`残高分 ${fmt(available)} をBETしました`);
 };
@@ -1569,7 +1569,7 @@ $('dealBtn').onclick=async()=>{
   const next=findNextEligibleUnconfirmed(activeUser+1);
   if(next>=0){
     activeUser=next;
-    sfxChip();
+    sfxBet();
     showBetTurn();
     return;
   }
@@ -1729,8 +1729,14 @@ function settleRound(){
   phaseLabel(name);
   const totalNet=userResults.reduce((s,r)=>s+r.roundNet,0);
   $('message').textContent=`${name} / USER合計 ${signedFmt(totalNet)}`;
-  if(userResults.some(r=>r.roundNet>0)){sfxWin();$('tableStage').classList.add('winFlash');setTimeout(()=>$('tableStage').classList.remove('winFlash'),800)}
-  else sfxLose();
+  if(userResults.some(r=>r.roundNet>0)){
+    sfxPayout();
+    setTimeout(sfxWin,110);
+    $('tableStage').classList.add('winFlash');
+    setTimeout(()=>$('tableStage').classList.remove('winFlash'),800);
+  }else{
+    sfxLose();
+  }
 
   lastResult={outcome,p,b,pp,bp,userResults,gameMode:cfg.gameMode};
   renderRoad();renderUserStrip();
@@ -1982,19 +1988,84 @@ function ensureAudio(){
   if(audioCtx.state==='suspended')audioCtx.resume().catch(()=>{});
   return audioCtx;
 }
-function tone(freq,dur=.08,type='sine',gain=.035,when=0){
+function sfxTone(freq=440,dur=.06,vol=.045,type='sine',endFreq=null,delay=0){
   try{
-    const ctx=ensureAudio(),o=ctx.createOscillator(),g=ctx.createGain();
-    o.type=type;o.frequency.value=freq;g.gain.setValueAtTime(gain,ctx.currentTime+when);
-    g.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+when+dur);
-    o.connect(g);g.connect(ctx.destination);o.start(ctx.currentTime+when);o.stop(ctx.currentTime+when+dur);
+    const ac=ensureAudio(),t=ac.currentTime+delay;
+    const o=ac.createOscillator(),g=ac.createGain(),f=ac.createBiquadFilter();
+    o.type=type;
+    o.frequency.setValueAtTime(freq,t);
+    if(endFreq)o.frequency.exponentialRampToValueAtTime(endFreq,t+dur);
+    f.type='lowpass';
+    f.frequency.value=3500;
+    g.gain.setValueAtTime(.0001,t);
+    g.gain.exponentialRampToValueAtTime(vol,t+.008);
+    g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+    o.connect(f);f.connect(g);g.connect(ac.destination);
+    o.start(t);o.stop(t+dur+.02);
   }catch{}
 }
-function sfxCard(){tone(520,.055,'triangle',.022);tone(350,.065,'triangle',.014,.035)}
-function sfxReveal(){tone(620,.07,'triangle',.018);tone(760,.06,'sine',.012,.05)}
-function sfxChip(){tone(900,.055,'sine',.025);tone(1200,.05,'sine',.018,.035)}
-function sfxWin(){tone(660,.12,'sine',.03);tone(880,.16,'sine',.035,.10);tone(1320,.22,'sine',.025,.20)}
-function sfxLose(){tone(240,.14,'triangle',.025);tone(190,.18,'triangle',.018,.10)}
+function sfxNoise(dur=.055,vol=.03,highpass=1000,delay=0){
+  try{
+    const ac=ensureAudio(),t=ac.currentTime+delay;
+    const len=Math.floor(ac.sampleRate*dur);
+    const buf=ac.createBuffer(1,len,ac.sampleRate);
+    const d=buf.getChannelData(0);
+    for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*(1-i/len);
+    const s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain();
+    s.buffer=buf;
+    f.type='highpass';
+    f.frequency.value=highpass;
+    g.gain.value=vol;
+    s.connect(f);f.connect(g);g.connect(ac.destination);
+    s.start(t);
+  }catch{}
+}
+
+// Blackjackと同じ「カードがテーブルへ滑る」系の音。
+function sfxCard(){
+  sfxNoise(.05,.024,1600);
+  sfxTone(190,.045,.018,'triangle',145,.008);
+}
+
+// SQUEEZEで表面を開いた時だけ、カード音と同系統の軽い確認音を追加。
+function sfxReveal(){
+  sfxNoise(.035,.014,1800);
+  sfxTone(420,.05,.018,'triangle',540,.012);
+}
+
+// BlackjackのBETチップ音と同一。
+function sfxBet(){
+  sfxTone(760,.045,.035,'sine',520);
+  sfxTone(1040,.035,.024,'sine',800,.035);
+}
+
+// BlackjackのCLEAR系の戻し音。
+function sfxClear(){
+  sfxTone(400,.05,.02,'triangle',250);
+}
+
+// Blackjackの配当チップ音。
+function sfxPayout(){
+  sfxTone(660,.05,.032,'triangle',880);
+  sfxTone(880,.06,.03,'triangle',1180,.055);
+}
+
+// Blackjackと同じ「チャリーン」系WIN音。
+function sfxWin(){
+  sfxTone(1480,.055,.040,'sine',1760,0);
+  sfxTone(2217,.045,.025,'sine',2489,.012);
+  sfxTone(1760,.065,.035,'triangle',2093,.040);
+  sfxTone(2637,.055,.020,'sine',2960,.060);
+  sfxTone(2093,.12,.032,'sine',2349,.095);
+  sfxTone(3136,.16,.018,'sine',3322,.120);
+  sfxNoise(.025,.008,2600,.018);
+}
+
+// Blackjackと同じ下降系LOSE音。
+function sfxLose(){
+  sfxTone(440,.12,.038,'triangle',330,0);
+  sfxTone(330,.16,.035,'triangle',220,.12);
+}
 function startBgm(){
   stopBgm(false);bgmOn=true;const ctx=ensureAudio();const session=++bgmSession;
   const master=ctx.createGain();master.gain.value=.035;master.connect(ctx.destination);bgmNodes.push(master);
