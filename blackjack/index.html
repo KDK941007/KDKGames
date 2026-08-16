@@ -8,7 +8,27 @@
 :root{--bg:#04110d;--felt:#07523a;--felt2:#063d2d;--panel:rgba(4,20,15,.88);--line:rgba(255,255,255,.13);--text:#fffaf0;--muted:#afc7bb;--gold:#e2c064;--red:#a63d3d;--green:#62d395;--lose:#ff7676;--win:#7df0a5}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% 0,#0e7450 0,#07523a 34%,#03110c 88%);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--text);overflow-x:hidden}.app{width:min(100%,560px);margin:auto;min-height:100vh;padding:10px 10px calc(16px + env(safe-area-inset-bottom))}
 header{display:flex;align-items:center;justify-content:space-between;padding:6px 2px 10px}.brand{font-weight:900;letter-spacing:.055em}.brand small{display:block;color:var(--gold);font-size:10px;letter-spacing:.16em}.shoe{font-size:11px;text-align:right;color:var(--muted)}
-.panel{border:1px solid var(--line);background:rgba(2,15,11,.72);border-radius:18px;padding:14px;box-shadow:0 10px 28px rgba(0,0,0,.28)}h2{font-size:20px;margin:0 0 12px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{display:flex;flex-direction:column;gap:6px}.full{grid-column:1/-1}.field label{font-size:12px;font-weight:800;color:var(--muted)}input,select,button{font:inherit}.field input,.field select{width:100%;background:#081913;color:var(--text);border:1px solid var(--line);border-radius:12px;padding:12px}.primary,.small,.action,.chip{border:0;font-weight:900}.primary{width:100%;margin-top:12px;padding:14px;border-radius:14px;background:var(--gold);color:#211a08}.small{padding:9px 11px;border-radius:10px;background:#213a30;color:#fff;border:1px solid var(--line)}.hint{font-size:11px;color:var(--muted);line-height:1.5}
+.panel{border:1px solid var(--line);background:rgba(2,15,11,.72);border-radius:18px;padding:14px;box-shadow:0 10px 28px rgba(0,0,0,.28)}h2{font-size:20px;margin:0 0 12px}
+.setupHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 12px}
+.setupHead h2{margin:0}
+.portalBackBtn{
+  flex:0 0 auto;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:32px;
+  padding:0 10px;
+  border:1px solid rgba(226,192,100,.32);
+  border-radius:999px;
+  background:rgba(226,192,100,.08);
+  color:var(--gold);
+  text-decoration:none;
+  font-size:10px;
+  font-weight:950;
+  letter-spacing:.03em;
+}
+.portalBackBtn:active{background:rgba(226,192,100,.18)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{display:flex;flex-direction:column;gap:6px}.full{grid-column:1/-1}.field label{font-size:12px;font-weight:800;color:var(--muted)}input,select,button{font:inherit}.field input,.field select{width:100%;background:#081913;color:var(--text);border:1px solid var(--line);border-radius:12px;padding:12px}.primary,.small,.action,.chip{border:0;font-weight:900}.primary{width:100%;margin-top:12px;padding:14px;border-radius:14px;background:var(--gold);color:#211a08}.small{padding:9px 11px;border-radius:10px;background:#213a30;color:#fff;border:1px solid var(--line)}.hint{font-size:11px;color:var(--muted);line-height:1.5}
 .playerBankRow{
   padding:8px;
   border:1px solid rgba(255,255,255,.06);
@@ -897,7 +917,10 @@ header{display:flex;align-items:center;justify-content:space-between;padding:6px
 <body><div class="app">
 <header><div class="brand">BLACKJACK <small>PARADISE PRACTICE</small></div><div class="shoe"><b>8 DECK SHOE</b><br><span id="shoeCount">416 cards</span></div></header>
 <section id="setup" class="panel">
-<h2>テーブル設定</h2>
+<div class="setupHead">
+  <h2>テーブル設定</h2>
+  <a class="portalBackBtn" href="../" aria-label="ミニゲームポータルへ戻る">← ポータルへ戻る</a>
+</div>
 <div class="grid">
 <div class="field"><label>プレイヤー数</label><select id="playerCount"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></div>
 <div class="field"><label>テーブル MIN</label><select id="tableMin"><option value="10000">₩10,000</option><option value="30000" selected>₩30,000</option><option value="50000">₩50,000</option><option value="100000">₩100,000</option></select></div>
