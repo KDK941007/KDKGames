@@ -131,20 +131,20 @@ header{display:flex;align-items:center;justify-content:space-between;padding:6px
   transform:scale(.88);
   backdrop-filter:blur(4px);
 }
-.handSignalVisual.show{animation:signalBox 1.8s ease both}
+.handSignalVisual.show{animation:signalBox 1.5s ease both}
 .signalHand{position:relative;width:60px;height:57px;transform:scale(.82);transform-origin:center}
 .signalPalm{position:absolute;left:22px;top:25px;width:40px;height:34px;border-radius:18px 18px 13px 13px;background:#e8c6a4;box-shadow:inset 0 -4px 0 rgba(0,0,0,.08)}
 .signalFinger{position:absolute;width:11px;height:39px;border-radius:8px;background:#e8c6a4;transform-origin:50% 100%}
 .signalFinger.f1{left:24px;top:0}.signalFinger.f2{left:40px;top:2px}.signalFinger.f3{left:54px;top:9px;height:32px}.signalFinger.f4{left:10px;top:13px;height:28px;transform:rotate(-20deg)}
 .signalLabel{font-size:11px;font-weight:950;color:var(--gold);letter-spacing:.07em}
-.handSignalVisual.hit .signalHand{animation:tapHand 1.45s ease}
-.handSignalVisual.stand .signalHand{animation:waveHand 1.55s ease}
+.handSignalVisual.hit .signalHand{animation:tapHand 1.22s ease}
+.handSignalVisual.stand .signalHand{animation:waveHand 1.28s ease}
 .handSignalVisual.double .signalFinger:not(.f1),.handSignalVisual.double .signalPalm:after{opacity:.18}
-.handSignalVisual.double .signalHand{animation:pointOne 1.5s ease}
+.handSignalVisual.double .signalHand{animation:pointOne 1.25s ease}
 .handSignalVisual.split .signalFinger.f3,.handSignalVisual.split .signalFinger.f4{opacity:.18}
-.handSignalVisual.split .signalHand{animation:pointTwo 1.5s ease}
-.handSignalVisual.surrender .signalHand{animation:drawLine 1.55s ease}
-.handSignalVisual.surrender:after{content:'';position:absolute;width:90px;height:3px;border-radius:4px;background:var(--gold);transform:translateY(22px) scaleX(0);transform-origin:left;animation:lineDraw 1.15s .18s ease forwards}
+.handSignalVisual.split .signalHand{animation:pointTwo 1.25s ease}
+.handSignalVisual.surrender .signalHand{animation:drawLine 1.28s ease}
+.handSignalVisual.surrender:after{content:'';position:absolute;width:90px;height:3px;border-radius:4px;background:var(--gold);transform:translateY(22px) scaleX(0);transform-origin:left;animation:lineDraw .95s .14s ease forwards}
 @keyframes signalBox{0%{opacity:0;transform:scale(.88)}15%,75%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.96)}}
 @keyframes tapHand{0%,100%{transform:translateY(-5px)}35%{transform:translateY(12px)}55%{transform:translateY(2px)}75%{transform:translateY(12px)}}
 @keyframes waveHand{0%,100%{transform:rotate(0)}25%{transform:rotate(-18deg)}50%{transform:rotate(18deg)}75%{transform:rotate(-14deg)}}
@@ -279,7 +279,26 @@ header{display:flex;align-items:center;justify-content:space-between;padding:6px
 .resultDelta.win{color:var(--win)}
 .resultDelta.lose{color:var(--lose)}
 .resultDelta.push{color:#f6d87a}
-.result{font-weight:950;font-size:12px;line-height:20px;min-height:20px;display:inline-block}.result.win{color:var(--win)}.result.lose{color:var(--lose)}.result.push{color:#f6d87a}.result.surrender{color:#e9a0a0}.chipStack{display:flex;align-items:center;justify-content:center;height:34px;min-height:34px;gap:0;margin:3px 0 1px;overflow:hidden}.chipDisc{width:30px;height:30px;border-radius:50%;border:3px dashed rgba(0,0,0,.35);background:#efe2bd;color:#211a08;display:grid;place-items:center;font-size:8px;font-weight:950;margin-left:-7px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.6),0 2px 4px rgba(0,0,0,.3)}.chipDisc:first-child{margin-left:0}.flyingChip{position:fixed;z-index:9999;pointer-events:none;will-change:transform,opacity;transform-origin:center;box-shadow:inset 0 0 0 3px rgba(255,255,255,.55),0 8px 18px rgba(0,0,0,.45)!important}.payoutChip{width:38px;height:38px;border-radius:50%;border:3px dashed rgba(0,0,0,.35);background:#efe2bd;color:#211a08;display:grid;place-items:center;font-size:9px;font-weight:950;text-align:center;line-height:1.05}.bankFlash{animation:bankFlash .7s ease}@keyframes bankFlash{0%,100%{color:inherit;transform:none}35%{color:var(--gold);transform:scale(1.12)}}
+.result{font-weight:950;font-size:12px;line-height:20px;min-height:20px;display:inline-block}.result.win{color:var(--win)}.result.lose{color:var(--lose)}.result.push{color:#f6d87a}.result.surrender{color:#e9a0a0}.chipStack{display:flex;align-items:center;justify-content:center;height:34px;min-height:34px;gap:0;margin:3px 0 1px;overflow:hidden}.chipDisc{width:30px;height:30px;border-radius:50%;border:3px dashed rgba(0,0,0,.35);background:#efe2bd;color:#211a08;display:grid;place-items:center;font-size:8px;font-weight:950;margin-left:-7px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.6),0 2px 4px rgba(0,0,0,.3)}.chipDisc:first-child{margin-left:0}.flyingChip{position:fixed;z-index:9999;pointer-events:none;will-change:transform,opacity;transform-origin:center;box-shadow:inset 0 0 0 3px rgba(255,255,255,.55),0 8px 18px rgba(0,0,0,.45)!important}.cpuBetFlyingChip{
+  display:grid!important;
+  place-items:center!important;
+  padding:0!important;
+  text-align:center;
+  line-height:1;
+  box-sizing:border-box;
+  font:900 13px/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+.payoutChip{
+  width:38px;height:38px;border-radius:50%;
+  border:3px dashed rgba(0,0,0,.35);
+  background:#efe2bd;color:#211a08;
+  display:grid;place-items:center;
+  padding:0 2px;
+  box-sizing:border-box;
+  font-size:8px;font-weight:950;
+  text-align:center;line-height:1;
+  white-space:nowrap;overflow:hidden
+}.bankFlash{animation:bankFlash .7s ease}@keyframes bankFlash{0%,100%{color:inherit;transform:none}35%{color:var(--gold);transform:scale(1.12)}}
 .controlTopRow{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:22px}
 .controlTopRow .roundBanner{flex:1;min-width:0}
 .roundResultBtn{flex:0 0 auto;min-width:82px;height:30px;padding:0 10px;border-radius:999px;border:1px solid rgba(226,192,100,.5);background:rgba(226,192,100,.12);color:var(--gold);font-size:10px;font-weight:950}
@@ -642,10 +661,54 @@ header{display:flex;align-items:center;justify-content:space-between;padding:6px
 .settingsSheet{width:min(100%,560px);background:#071b14;border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:0 -12px 30px rgba(0,0,0,.4)}
 .settingsHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
 
+/* v14.6: game settings must stay inside the iPhone visual viewport.
+   Multiple-player test-deal controls scroll inside the sheet while the close button remains visible. */
+#settingsModal{
+  align-items:center;
+  box-sizing:border-box;
+  padding-top:max(12px,env(safe-area-inset-top));
+  padding-bottom:max(12px,env(safe-area-inset-bottom));
+  overflow:hidden;
+}
+#settingsModal .settingsMainSheet{
+  width:min(100%,560px);
+  height:82vh;
+  height:82dvh;
+  max-height:calc(100vh - 24px);
+  max-height:calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  box-sizing:border-box;
+}
+#settingsModal .settingsMainHead{
+  flex:0 0 auto;
+  margin-bottom:10px;
+  padding-bottom:10px;
+  border-bottom:1px solid var(--line);
+  background:#071b14;
+  position:relative;
+  z-index:2;
+}
+#settingsModal .settingsMainBody{
+  flex:1 1 auto;
+  min-height:0;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+  padding-right:2px;
+}
+#settingsModal #closeSettings{
+  flex:0 0 auto;
+  position:relative;
+  z-index:3;
+}
+
 .settingsTestSection{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);display:grid;gap:10px;min-height:0}
 .settingsTestHead{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
 .settingsTestHead b{font-size:12px;color:var(--gold)}
-.settingsTestSection .testPlayerCards{max-height:28vh;overflow-y:auto;overscroll-behavior:contain;padding-right:2px}
+.settingsTestSection .testPlayerCards{overflow:visible;padding-right:2px}
 
 
 .betHintSheet{
@@ -1380,31 +1443,34 @@ header{display:flex;align-items:center;justify-content:space-between;padding:6px
   </div>
 </div>
 <div id="settingsModal" class="settingsModal hidden" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
-  <div class="settingsSheet">
-    <div class="settingsHead">
+  <div class="settingsSheet settingsMainSheet">
+    <div class="settingsHead settingsMainHead">
       <b id="settingsTitle">現在のテーブル設定</b>
       <button id="closeSettings" class="small">閉じる</button>
     </div>
-    <div id="settingsSummary" class="settingsSummary"></div>
 
-    <div class="settingsTestSection">
-      <div class="settingsTestHead">
-        <div>
-          <b>テスト配札</b>
-          <div class="helpSub">指定したカードだけ固定。未指定は通常のランダム配札です。</div>
+    <div class="settingsMainBody">
+      <div id="settingsSummary" class="settingsSummary"></div>
+
+      <div class="settingsTestSection">
+        <div class="settingsTestHead">
+          <div>
+            <b>テスト配札</b>
+            <div class="helpSub">指定したカードだけ固定。未指定は通常のランダム配札です。</div>
+          </div>
+          <button id="clearTestDeal" type="button" class="small">クリア</button>
         </div>
-        <button id="clearTestDeal" type="button" class="small">クリア</button>
-      </div>
 
-      <div class="testDealGroup">
-        <div class="testDealTitle">DEALER</div>
-        <div class="testCardRow">
-          <label>1枚目<select id="testDealer1" class="testCardSelect"></select></label>
-          <label>2枚目<select id="testDealer2" class="testCardSelect"></select></label>
+        <div class="testDealGroup">
+          <div class="testDealTitle">DEALER</div>
+          <div class="testCardRow">
+            <label>1枚目<select id="testDealer1" class="testCardSelect"></select></label>
+            <label>2枚目<select id="testDealer2" class="testCardSelect"></select></label>
+          </div>
         </div>
-      </div>
 
-      <div id="testPlayerCards" class="testPlayerCards"></div>
+        <div id="testPlayerCards" class="testPlayerCards"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -1429,6 +1495,23 @@ header{display:flex;align-items:center;justify-content:space-between;padding:6px
 <div id="toast" class="toast"></div>
 <script>
 const $=id=>document.getElementById(id), fmt=n=>'₩'+Math.round(n).toLocaleString('ko-KR'), sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function chipAmountLabel(amount,prefix=''){
+  const n=Math.max(0,Math.round(amount));
+  let body='';
+  if(n>=100000000){
+    const v=n/100000000;
+    body=(Number.isInteger(v)?v:v.toFixed(1).replace(/\.0$/,''))+'億';
+  }else if(n>=10000){
+    const v=n/10000;
+    body=(Number.isInteger(v)?v:v.toFixed(1).replace(/\.0$/,''))+'万';
+  }else if(n>=1000){
+    const v=n/1000;
+    body=(Number.isInteger(v)?v:v.toFixed(1).replace(/\.0$/,''))+'千';
+  }else{
+    body=String(n);
+  }
+  return prefix+body;
+}
 const suits=['♠','♥','♦','♣'],ranks=['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
 let mode='krw', cfg={}, players=[], deck=[], dealer=[], activePlayer=0, activeHand=0, phase='setup', currentBet=0, reveal=false, insuranceIndex=0, animating=false, roundNo=0, settlingPlayer=-1, blackjackAnnouncePlayer=-1, testDeal={dealer:[null,null],players:[]};let cardSeq=0,seenCards=new Set(),audioCtx=null,bgmOn=false,bgmTimer=null,bgmMode='lounge',bgmSession=0,bgmMaster=null,bgmWasPlayingBeforeHide=false,bgmResumeMode=null,audioRestoreBusy=false,cutCardRemaining=0,cutCardSeen=false,shuffleAfterRound=false,shoeNo=0,hintMode='basic',hiLoRunning=0,hiLoCountedIds=new Set(),dealtCardMap=new Map(),cpuSerial=0,cpuTurnPending=false;
 function buildBankInputs(){
@@ -1682,19 +1765,42 @@ function sfxHandSignal(type){
     sfxNoise(.08,.02,800);sfxTone(300,.09,.022,'triangle',210,.02);
   }
 }
+const HAND_SIGNAL_MS=1550;
+let handSignalTimer=0;
+let handSignalResolve=null;
 function showHandSignal(type,label){
   const overlay=$('handSignalOverlay'),visual=$('handSignalVisual');
-  if(!overlay||!visual)return;
+  if(!overlay||!visual)return Promise.resolve();
+
+  // 同一プレイヤーが次HAND/次アクションへすぐ進んだ場合は、
+  // まだ表示中の旧サインを新しいサインで安全に置き換える。
+  if(handSignalTimer){
+    clearTimeout(handSignalTimer);
+    handSignalTimer=0;
+  }
+  if(handSignalResolve){
+    handSignalResolve();
+    handSignalResolve=null;
+  }
+
   overlay.classList.remove('hidden');
+  visual.classList.remove('show');
   visual.className=`handSignalVisual ${type}`;
   $('signalLabel').textContent=label;
   void visual.offsetWidth;
   visual.classList.add('show');
   sfxHandSignal(type);
-  setTimeout(()=>{
-    visual.classList.remove('show');
-    overlay.classList.add('hidden');
-  },1850);
+
+  return new Promise(resolve=>{
+    handSignalResolve=resolve;
+    handSignalTimer=setTimeout(()=>{
+      handSignalTimer=0;
+      handSignalResolve=null;
+      visual.classList.remove('show');
+      overlay.classList.add('hidden');
+      resolve();
+    },HAND_SIGNAL_MS);
+  });
 }
 function playRoundResultSfx(){
   const results=[];
@@ -1792,7 +1898,48 @@ function renderChips(){
     repeat.disabled=!(v>=cfg.min&&v<=cfg.max&&v<=p.bank+currentBet);
     repeat.textContent=v?`前回 ${v>=10000?(v/10000)+'万':v}`:'前回BET';
   }
-}async function flyChipToBet(btn,v){let seat=document.querySelectorAll('.seat')[activePlayer];if(!seat)return;let from=btn.getBoundingClientRect(),to=seat.getBoundingClientRect();let clone=btn.cloneNode(true);clone.classList.add('flyingChip');clone.style.left=from.left+'px';clone.style.top=from.top+'px';clone.style.width=from.width+'px';clone.style.height=from.height+'px';clone.style.margin='0';document.body.appendChild(clone);let dx=(to.left+to.width/2)-(from.left+from.width/2),dy=(to.top+44)-(from.top+from.height/2);let a=clone.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:`translate(${dx*.58}px,${dy*.48-34}px) scale(.92) rotate(7deg)`,opacity:1,offset:.55},{transform:`translate(${dx}px,${dy}px) scale(.62) rotate(-4deg)`,opacity:.2}],{duration:360,easing:'cubic-bezier(.2,.75,.2,1)',fill:'forwards'});await a.finished.catch(()=>{});clone.remove();toast(`${v>=10000?(v/10000)+'万':v}チップ BET`) }function chipStackHTML(amount){if(!amount)return '';let vals=chipValues().slice().reverse(),left=amount,out=[];for(const v of vals){while(left>=v&&out.length<8){out.push(v);left-=v}}if(left>0&&out.length<8)out.push(left);return out.length?`<div class="chipStack">${out.map(v=>`<span class="chipDisc">${v>=10000?(v/10000)+'万':v}</span>`).join('')}</div>`:''}function resultClass(r=''){if(r.includes('BLACKJACK')||r.includes('WIN'))return'win';if(r.includes('PUSH'))return'push';if(r.includes('SURRENDER'))return'surrender';if(r.includes('LOSE')||r.includes('BUST'))return'lose';return''}
+}async function flyChipToBet(btn,v){let seat=document.querySelectorAll('.seat')[activePlayer];if(!seat)return;let from=btn.getBoundingClientRect(),to=seat.getBoundingClientRect();let clone=btn.cloneNode(true);clone.classList.add('flyingChip');clone.style.left=from.left+'px';clone.style.top=from.top+'px';clone.style.width=from.width+'px';clone.style.height=from.height+'px';clone.style.margin='0';document.body.appendChild(clone);let dx=(to.left+to.width/2)-(from.left+from.width/2),dy=(to.top+44)-(from.top+from.height/2);let a=clone.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:`translate(${dx*.58}px,${dy*.48-34}px) scale(.92) rotate(7deg)`,opacity:1,offset:.55},{transform:`translate(${dx}px,${dy}px) scale(.62) rotate(-4deg)`,opacity:.2}],{duration:360,easing:'cubic-bezier(.2,.75,.2,1)',fill:'forwards'});await a.finished.catch(()=>{});clone.remove();toast(`${v>=10000?(v/10000)+'万':v}チップ BET`) }async function flyCpuChipToBet(pi,v){
+  await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+  const seat=document.querySelectorAll('.seat')[pi];
+  const controls=document.querySelector('.controls');
+  if(!seat||!controls)return;
+
+  const from=controls.getBoundingClientRect();
+  const to=seat.getBoundingClientRect();
+
+  const chip=document.createElement('div');
+  chip.className='chip flyingChip cpuBetFlyingChip';
+  chip.textContent=chipAmountLabel(v);
+
+  const size=48;
+  const startX=from.left+from.width/2-size/2;
+  const startY=from.top+Math.min(60,from.height/2)-size/2;
+  chip.style.left=startX+'px';
+  chip.style.top=startY+'px';
+  chip.style.width=size+'px';
+  chip.style.minWidth=size+'px';
+  chip.style.height=size+'px';
+  chip.style.margin='0';
+  document.body.appendChild(chip);
+
+  const targetX=to.left+to.width/2-size/2;
+  const targetY=to.top+46-size/2;
+  const dx=targetX-startX;
+  const dy=targetY-startY;
+
+  sfxBet();
+  const a=chip.animate([
+    {transform:'translate(0,0) scale(.88)',opacity:.35},
+    {transform:`translate(${dx*.52}px,${dy*.45-42}px) scale(1.08) rotate(8deg)`,opacity:1,offset:.52},
+    {transform:`translate(${dx}px,${dy}px) scale(.72) rotate(-3deg)`,opacity:.18}
+  ],{
+    duration:620,
+    easing:'cubic-bezier(.18,.76,.2,1)',
+    fill:'forwards'
+  });
+  await a.finished.catch(()=>{});
+  chip.remove();
+}function chipStackHTML(amount){if(!amount)return '';let vals=chipValues().slice().reverse(),left=amount,out=[];for(const v of vals){while(left>=v&&out.length<8){out.push(v);left-=v}}if(left>0&&out.length<8)out.push(left);return out.length?`<div class="chipStack">${out.map(v=>`<span class="chipDisc">${v>=10000?(v/10000)+'万':v}</span>`).join('')}</div>`:''}function resultClass(r=''){if(r.includes('BLACKJACK')||r.includes('WIN'))return'win';if(r.includes('PUSH'))return'push';if(r.includes('SURRENDER'))return'surrender';if(r.includes('LOSE')||r.includes('BUST'))return'lose';return''}
 
 function allUsersBankrupt(){
   const users=players.filter(p=>p.type==='user');
@@ -1852,22 +1999,43 @@ function showBetTurn(){
 }
 async function cpuPlaceBet(){
   if(phase!=='bet'||animating)return;
-  const p=players[activePlayer];
+  const pi=activePlayer;
+  const p=players[pi];
   if(!p||p.type!=='cpu')return;
+
   const amount=cpuBetAmount(p);
   if(amount<cfg.min){
     p.bet=0;
   }else{
-    p.bank-=amount;p.bet=amount;p.lastBet=amount;
+    animating=true;
     $('message').textContent=`${p.name}：CPU BET ${fmt(amount)}`;
     render();
-    await sleep(800);
+    ensurePlayerVisible(pi,'smooth');
+
+    // スクロール後にチップがCPU席へ飛ぶ演出を見せる。
+    await sleep(280);
+    await flyCpuChipToBet(pi,amount);
+
+    p.bank-=amount;
+    p.bet=amount;
+    p.lastBet=amount;
+    render();
+
+    // BETチップが席に積まれた状態も認識できる間を残す。
+    await sleep(520);
+    animating=false;
   }
-  const next=nextBetPlayerIndex(activePlayer+1);
-  if(next>=0){activePlayer=next;showBetTurn()}
-  else await dealInitial();
+
+  const next=nextBetPlayerIndex(pi+1);
+  if(next>=0){
+    activePlayer=next;
+    showBetTurn();
+  }else{
+    await dealInitial();
+  }
 }
 function cpuChosenAction(p,h){
+  if(value(h.cards)===21)return 'S';
   const d=dealerUpValue();
   let result;
   if(p.cpuLevel==='basic')result=basicStrategyHint(h,d);
@@ -2512,6 +2680,30 @@ function canSplitHand(p,h){
     splitValue(h.cards[0])===splitValue(h.cards[1])&&
     p.bank>=h.bet&&p.hands.length<3);
 }
+function hasNextPlayableHandSamePlayer(p,fromHandIndex){
+  if(!p)return false;
+  for(let i=fromHandIndex;i<p.hands.length;i++){
+    const h=p.hands[i];
+    if(!h||h.done)continue;
+    // advancePlayer() が自動確定するNaturalは、操作対象HANDとして数えない。
+    if(natural(h.cards,h.splitOrigin))continue;
+    return true;
+  }
+  return false;
+}
+async function finishHandAndAdvance(signalDone,extraWait=null){
+  const p=players[activePlayer];
+  const waitNextPlayer=!hasNextPlayableHandSamePlayer(p,activeHand+1);
+
+  if(extraWait)await extraWait;
+  // 次HANDが同じプレイヤーなら、ハンドサイン消滅を待たず即移動。
+  // 次プレイヤー（またはDealer）へ移る時だけサイン終了を待つ。
+  if(waitNextPlayer&&signalDone)await signalDone;
+
+  activeHand++;
+  animating=false;
+  advancePlayer();
+}
 
 function advancePlayer(){
   while(activePlayer<players.length){
@@ -2529,7 +2721,18 @@ function advancePlayer(){
   }
   dealerTurn();
 }
-function updateButtons(){let p=players[activePlayer],h=currentHand(),two=h&&h.cards.length===2;$('doubleBtn').disabled=!(two&&p.bank>=h.bet);$('splitBtn').disabled=!canSplitHand(p,h);$('surrenderBtn').disabled=!(two&&!h.splitOrigin)}
+function updateButtons(){
+  let p=players[activePlayer],h=currentHand(),two=h&&h.cards.length===2;
+  const total=h?value(h.cards):0;
+  const standOnly=total===21;
+  const locked=animating;
+
+  $('hitBtn').disabled=locked||!h||standOnly;
+  $('standBtn').disabled=locked||!h;
+  $('doubleBtn').disabled=locked||standOnly||!(two&&p.bank>=h.bet);
+  $('splitBtn').disabled=locked||standOnly||!canSplitHand(p,h);
+  $('surrenderBtn').disabled=locked||standOnly||!(two&&!h.splitOrigin);
+}
 
 
 $('betHintBtn').addEventListener('click',openBetStrategyHint);
@@ -2549,15 +2752,101 @@ document.querySelectorAll('.hintModeBtn').forEach(btn=>btn.addEventListener('cli
   document.querySelectorAll('.hintModeBtn').forEach(b=>b.classList.toggle('active',b===btn));
   renderStrategyHint();
 }));
-$('hitBtn').onclick=async()=>{showHandSignal('hit','HIT');if(animating)return;let h=currentHand();animating=true;h.cards.push(draw());render();await sleep(340);if(value(h.cards)>=21){h.done=true;activeHand++}animating=false;advancePlayer()};
-$('standBtn').onclick=()=>{showHandSignal('stand','STAND');let h=currentHand();h.done=true;activeHand++;advancePlayer()};
-$('doubleBtn').onclick=async()=>{showHandSignal('double','DOUBLE');if(animating)return;let p=players[activePlayer],h=currentHand();if(h.cards.length!==2||p.bank<h.bet)return;p.bank-=h.bet;h.bet*=2;animating=true;h.cards.push(draw());render();ensurePlayerVisible(activePlayer,'auto');$('message').textContent=`${p.name}${p.hands.length>1?` HAND ${activeHand+1}`:''}：DOUBLE — 引いたカードを確認`;await sleep(1250);h.done=true;activeHand++;animating=false;advancePlayer()};
-$('surrenderBtn').onclick=()=>{showHandSignal('surrender','SURRENDER');let p=players[activePlayer],h=currentHand();if(h.cards.length!==2||h.splitOrigin)return;h.surrendered=true;h.done=true;p.bank+=h.bet/2;h.result=`SURRENDER -${fmt(h.bet/2)}`;activeHand++;advancePlayer();render()};
+$('hitBtn').onclick=async()=>{
+  if(animating)return;
+  let h=currentHand();
+  if(!h||value(h.cards)>=21)return;
+
+  animating=true;
+  updateButtons();
+  const signalDone=showHandSignal('hit','HIT');
+
+  h.cards.push(draw());
+  render();
+  await sleep(340);
+
+  const total=value(h.cards);
+
+  if(total>21){
+    h.done=true;
+    // BUSTで次HANDが同じプレイヤーなら即移動。
+    // 最後のHANDなら、サイン消滅後に次プレイヤーへ移動。
+    await finishHandAndAdvance(signalDone);
+    return;
+  }
+
+  if(total===21){
+    // TOTAL 21は同一HANDなのでサインを待たずSTANDだけ操作可能にする。
+    animating=false;
+    const p=players[activePlayer];
+    $('message').textContent=`${p.name}${p.hands.length>1?` HAND ${activeHand+1}`:''}：TOTAL 21 — STANDで確定`;
+    updateButtons();
+    render();
+    ensurePlayerVisible(activePlayer,'auto');
+    if(p.type==='cpu')scheduleCpuAction();
+    return;
+  }
+
+  // 同一HANDの次アクションもサイン消滅を待たない。
+  animating=false;
+  advancePlayer();
+};
+$('standBtn').onclick=async()=>{
+  if(animating)return;
+  const h=currentHand();
+  if(!h)return;
+
+  animating=true;
+  updateButtons();
+  const signalDone=showHandSignal('stand','STAND');
+
+  h.done=true;
+  await finishHandAndAdvance(signalDone);
+};
+$('doubleBtn').onclick=async()=>{
+  if(animating)return;
+  let p=players[activePlayer],h=currentHand();
+  if(!h||h.cards.length!==2||p.bank<h.bet)return;
+
+  animating=true;
+  updateButtons();
+  const signalDone=showHandSignal('double','DOUBLE');
+
+  p.bank-=h.bet;
+  h.bet*=2;
+  h.cards.push(draw());
+  render();
+  ensurePlayerVisible(activePlayer,'auto');
+  $('message').textContent=`${p.name}${p.hands.length>1?` HAND ${activeHand+1}`:''}：DOUBLE — 引いたカードを確認`;
+
+  h.done=true;
+  await finishHandAndAdvance(signalDone,sleep(1250));
+};
+$('surrenderBtn').onclick=async()=>{
+  if(animating)return;
+  let p=players[activePlayer],h=currentHand();
+  if(!h||h.cards.length!==2||h.splitOrigin)return;
+
+  animating=true;
+  updateButtons();
+  const signalDone=showHandSignal('surrender','SURRENDER');
+
+  h.surrendered=true;
+  h.done=true;
+  p.bank+=h.bet/2;
+  h.result=`SURRENDER -${fmt(h.bet/2)}`;
+  render();
+
+  await finishHandAndAdvance(signalDone);
+};
 $('splitBtn').onclick=async()=>{
-  showHandSignal('split','SPLIT');
   if(animating)return;
   let p=players[activePlayer],h=currentHand();
   if(!canSplitHand(p,h))return;
+
+  animating=true;
+  updateButtons();
+  const signalDone=showHandSignal('split','SPLIT');
 
   p.bank-=h.bet;
   const splitRank=h.cards[0].r;
@@ -2566,7 +2855,6 @@ $('splitBtn').onclick=async()=>{
   h.splitOrigin=true;
   p.hands.splice(activeHand+1,0,h2);
 
-  animating=true;
 
   // Deal one card to each split hand, but keep the first hand active.
   h.cards.push(draw());
@@ -2584,22 +2872,64 @@ $('splitBtn').onclick=async()=>{
     await sleep(1400);
     h.done=true;
     h2.done=true;
+
+    // activeHand+2 以降に操作対象HANDがなければ次プレイヤーへ移るため待つ。
+    const waitNextPlayer=!hasNextPlayableHandSamePlayer(p,activeHand+2);
+    if(waitNextPlayer)await signalDone;
+
     activeHand+=2;
-  }else{
-    // Normal split: HAND 1 remains active and can HIT/STAND/DOUBLE/etc.
-    // HAND 2 is played only after HAND 1 is finished.
-    h.done=false;
-    h2.done=false;
+    animating=false;
+    advancePlayer();
+    return;
   }
 
+  // Normal splitは同じプレイヤーのHAND 1をそのまま継続。
+  // ハンドサインが残っていても次アクションへ進める。
+  h.done=false;
+  h2.done=false;
   animating=false;
   advancePlayer();
 };
 async function dealerTurn(){document.querySelector('.controls').classList.remove('betCompact','playCompact');phase='dealer';reveal=true;$('playActions').classList.add('hidden');document.querySelector('.controls').classList.add('dealerHidden');$('message').textContent='Dealer reveals hole card';render();await sleep(650);while(value(dealer)<17){$('message').textContent=`Dealer ${value(dealer)} — HIT`;await sleep(420);dealer.push(draw());render();await sleep(520)}$('message').textContent=`Dealer ${value(dealer)} — STAND`;await sleep(600);await settle()}
-async function flyDealerPayout(pi,amount,label){if(!amount)return;await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));let dealerEl=document.querySelector('.dealer'),seat=document.querySelectorAll('.seat')[pi];if(!dealerEl||!seat)return;sfxPayout();let from=dealerEl.getBoundingClientRect(),to=seat.getBoundingClientRect();let chip=document.createElement('div');chip.className='flyingChip payoutChip';chip.textContent=label||('+'+fmt(amount));chip.style.left=(from.left+from.width/2-19)+'px';chip.style.top=(from.top+34)+'px';document.body.appendChild(chip);let dx=(to.left+to.width/2)-(from.left+from.width/2),dy=(to.top+38)-(from.top+53);let a=chip.animate([{transform:'translate(0,0) scale(.85)',opacity:.25},{transform:`translate(${dx*.55}px,${dy*.45-38}px) scale(1.08)`,opacity:1,offset:.55},{transform:`translate(${dx}px,${dy}px) scale(.92)`,opacity:1}],{duration:680,easing:'cubic-bezier(.18,.75,.18,1)',fill:'forwards'});await a.finished.catch(()=>{});await sleep(170);chip.remove()}
+async function flyDealerPayout(pi,amount){
+  if(!amount)return;
+  await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+  let dealerEl=document.querySelector('.dealer'),seat=document.querySelectorAll('.seat')[pi];
+  if(!dealerEl||!seat)return;
+  sfxPayout();
+
+  let from=dealerEl.getBoundingClientRect(),to=seat.getBoundingClientRect();
+  let chip=document.createElement('div');
+  chip.className='flyingChip payoutChip';
+
+  // 配当比率ではなく、実際に受け取る利益額をチップ上へ表示。
+  // 38px内で崩れないよう「3万」「4.5万」等のコンパクト表記にする。
+  chip.textContent=chipAmountLabel(amount,'+');
+
+  chip.style.left=(from.left+from.width/2-19)+'px';
+  chip.style.top=(from.top+34)+'px';
+  document.body.appendChild(chip);
+
+  let dx=(to.left+to.width/2)-(from.left+from.width/2),
+      dy=(to.top+38)-(from.top+53);
+
+  let a=chip.animate([
+    {transform:'translate(0,0) scale(.85)',opacity:.25},
+    {transform:`translate(${dx*.55}px,${dy*.45-38}px) scale(1.08)`,opacity:1,offset:.55},
+    {transform:`translate(${dx}px,${dy}px) scale(.92)`,opacity:1}
+  ],{
+    duration:680,
+    easing:'cubic-bezier(.18,.75,.18,1)',
+    fill:'forwards'
+  });
+
+  await a.finished.catch(()=>{});
+  await sleep(170);
+  chip.remove();
+}
 async function flyBetBackToBank(pi,amount,label='BET RETURN'){if(!amount)return;await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));let seat=document.querySelectorAll('.seat')[pi];if(!seat)return;let bank=seat.querySelector('.seatHead span:last-child');if(!bank)return;sfxCollect();let sr=seat.getBoundingClientRect(),br=bank.getBoundingClientRect();let chip=document.createElement('div');chip.className='flyingChip payoutChip';chip.textContent=label;chip.style.left=(sr.left+sr.width/2-19)+'px';chip.style.top=(sr.top+42)+'px';document.body.appendChild(chip);let dx=(br.left+br.width/2)-(sr.left+sr.width/2),dy=(br.top+br.height/2)-(sr.top+61);let a=chip.animate([{transform:'translate(0,0) scale(.9)',opacity:1},{transform:`translate(${dx*.55}px,${dy-26}px) scale(.95)`,opacity:1,offset:.55},{transform:`translate(${dx}px,${dy}px) scale(.55)`,opacity:.15}],{duration:560,easing:'cubic-bezier(.22,.7,.2,1)',fill:'forwards'});await a.finished.catch(()=>{});chip.remove();bank.classList.add('bankFlash');setTimeout(()=>bank.classList.remove('bankFlash'),720)}
-async function settleDealerBlackjack(){phase='settling';$('playActions').classList.add('hidden');$('insuranceBox').style.display='none';for(let pi=0;pi<players.length;pi++){let p=players[pi];settlingPlayer=pi;render();ensurePlayerVisible(pi,'smooth');await sleep(280);let returned=0;for(const h of p.hands){if(natural(h.cards,h.splitOrigin)){h.result='PUSH';returned+=h.bet}else h.result='LOSE'}render();if(returned){$('message').textContent=`${p.name}：PUSH — BET返却`;await flyBetBackToBank(pi,returned);p.bank+=returned;render()}if(p.insurance){$('message').textContent=`${p.name}：Insurance WIN`;await flyDealerPayout(pi,p.insurance*2,'INS +2:1');await flyBetBackToBank(pi,p.insurance,'INS BET');p.bank+=p.insurance*3;for(const h of p.hands)h.result+=(h.result?' / ':'')+`Insurance WIN +${fmt(p.insurance*2)}`;render()}await settlePlayerCue(pi);await sleep(120)}phase='result';$('message').textContent='Dealer BLACKJACK';showRoundBanner();render();showResultPanel();if(allPlayersBankrupt()){showGameOver()}}
-async function settle(){let dv=value(dealer);phase='settling';for(let pi=0;pi<players.length;pi++){let p=players[pi];settlingPlayer=pi;render();ensurePlayerVisible(pi,'smooth');await sleep(280);for(let hi=0;hi<p.hands.length;hi++){let h=p.hands[hi];if(h.surrendered)continue;let pv=value(h.cards),profit=0,returnBet=0;if(pv>21){h.result='BUST / LOSE'}else if(natural(h.cards,h.splitOrigin)){profit=h.bet*1.5;returnBet=h.bet;h.result=`BLACKJACK +${fmt(profit)}`;h.payoutFormula=`${fmt(h.bet)} × 1.5 = ${fmt(profit)}`}else if(dv>21||pv>dv){profit=h.bet;returnBet=h.bet;h.result=`WIN +${fmt(profit)}`;h.payoutFormula=`${fmt(h.bet)} × 1 = ${fmt(profit)}`}else if(pv===dv){returnBet=h.bet;h.result='PUSH'}else h.result='LOSE';render();if(profit){$('message').textContent=`${p.name}${p.hands.length>1?` HAND ${hi+1}`:''}：${h.result.startsWith('BLACKJACK')?'BLACKJACK':'WIN'} — 配当`;await flyDealerPayout(pi,profit,h.result.startsWith('BLACKJACK')?'+3:2':'+1:1')}if(returnBet){await flyBetBackToBank(pi,returnBet);p.bank+=returnBet+profit;render()}await sleep(260)}await settlePlayerCue(pi)}phase='result';$('message').textContent=`ROUND END — Dealer ${dv}${dv>21?' BUST':''}`;showRoundBanner();render();showResultPanel();if(allPlayersBankrupt()){showGameOver()}}
+async function settleDealerBlackjack(){phase='settling';$('playActions').classList.add('hidden');$('insuranceBox').style.display='none';for(let pi=0;pi<players.length;pi++){let p=players[pi];settlingPlayer=pi;render();ensurePlayerVisible(pi,'smooth');await sleep(280);let returned=0;for(const h of p.hands){if(natural(h.cards,h.splitOrigin)){h.result='PUSH';returned+=h.bet}else h.result='LOSE'}render();if(returned){$('message').textContent=`${p.name}：PUSH — BET返却`;await flyBetBackToBank(pi,returned);p.bank+=returned;render()}if(p.insurance){$('message').textContent=`${p.name}：Insurance WIN`;await flyDealerPayout(pi,p.insurance*2);await flyBetBackToBank(pi,p.insurance,'INS BET');p.bank+=p.insurance*3;for(const h of p.hands)h.result+=(h.result?' / ':'')+`Insurance WIN +${fmt(p.insurance*2)}`;render()}await settlePlayerCue(pi);await sleep(120)}phase='result';$('message').textContent='Dealer BLACKJACK';showRoundBanner();render();showResultPanel();if(allPlayersBankrupt()){showGameOver()}}
+async function settle(){let dv=value(dealer);phase='settling';for(let pi=0;pi<players.length;pi++){let p=players[pi];settlingPlayer=pi;render();ensurePlayerVisible(pi,'smooth');await sleep(280);for(let hi=0;hi<p.hands.length;hi++){let h=p.hands[hi];if(h.surrendered)continue;let pv=value(h.cards),profit=0,returnBet=0;if(pv>21){h.result='BUST / LOSE'}else if(natural(h.cards,h.splitOrigin)){profit=h.bet*1.5;returnBet=h.bet;h.result=`BLACKJACK +${fmt(profit)}`;h.payoutFormula=`${fmt(h.bet)} × 1.5 = ${fmt(profit)}`}else if(dv>21||pv>dv){profit=h.bet;returnBet=h.bet;h.result=`WIN +${fmt(profit)}`;h.payoutFormula=`${fmt(h.bet)} × 1 = ${fmt(profit)}`}else if(pv===dv){returnBet=h.bet;h.result='PUSH'}else h.result='LOSE';render();if(profit){$('message').textContent=`${p.name}${p.hands.length>1?` HAND ${hi+1}`:''}：${h.result.startsWith('BLACKJACK')?'BLACKJACK':'WIN'} — 配当`;await flyDealerPayout(pi,profit)}if(returnBet){await flyBetBackToBank(pi,returnBet);p.bank+=returnBet+profit;render()}await sleep(260)}await settlePlayerCue(pi)}phase='result';$('message').textContent=`ROUND END — Dealer ${dv}${dv>21?' BUST':''}`;showRoundBanner();render();showResultPanel();if(allPlayersBankrupt()){showGameOver()}}
 function allPlayersBankrupt(){return allUsersBankrupt()}
 function showGameOver(){
   phase='gameover';
@@ -3060,6 +3390,8 @@ function showSettings(){buildTestDealInputs();
   ];
   $('settingsSummary').innerHTML=rows.map(r=>`<div class="settingsRow"><span>${r[0]}</span><b>${r[1]}</b></div>`).join('');
   $('settingsModal').classList.remove('hidden');
+  const body=$('settingsModal').querySelector('.settingsMainBody');
+  if(body)body.scrollTop=0;
 }
 function hideSettings(){$('settingsModal').classList.add('hidden')}
 
