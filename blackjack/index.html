@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
-<title>Paradise City Blackjack Trainer v14.18</title>
+<title>Paradise City Blackjack Trainer v14.19</title>
 <style>
 :root{--bg:#04110d;--felt:#07523a;--felt2:#063d2d;--panel:rgba(4,20,15,.88);--line:rgba(255,255,255,.13);--text:#fffaf0;--muted:#afc7bb;--gold:#e2c064;--red:#a63d3d;--green:#62d395;--lose:#ff7676;--win:#7df0a5}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% 0,#0e7450 0,#07523a 34%,#03110c 88%);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--text);overflow-x:hidden}.app{width:min(100%,560px);margin:auto;min-height:100vh;padding:10px 10px calc(16px + env(safe-area-inset-bottom))}
@@ -1470,8 +1470,8 @@ header{display:flex;align-items:center;justify-content:space-between;padding:6px
       <div class="strategyCard"><h3>ディーラーが 7 の場合</h3><div><b>Stand</b>：17以上</div><div><b>Double</b>：10・11</div><div><b>Split</b>：AA・22・33・77・88</div><div><b>それ以外</b>：Hit</div></div>
       <div class="strategyCard"><h3>ディーラーが 8 の場合</h3><div><b>Stand</b>：17以上</div><div><b>Double</b>：10・11</div><div><b>Split</b>：AA・88・99</div><div><b>それ以外</b>：Hit</div></div>
       <div class="strategyCard"><h3>ディーラーが 9 の場合</h3><div><b>Stand</b>：17以上</div><div><b>Double</b>：10・11</div><div><b>Split</b>：AA・88</div><div><b>Surrender</b>：16</div><div><b>それ以外</b>：Hit</div></div>
-      <div class="strategyCard"><h3>ディーラーが 10 の場合</h3><div><b>Stand</b>：17以上</div><div><b>Double</b>：11</div><div><b>Split</b>：AA・88</div><div><b>Surrender</b>：15・16</div><div><b>Insurance</b>：基本は選ばない</div><div><b>それ以外</b>：Hit</div></div>
-      <div class="strategyCard"><h3>ディーラーが A の場合</h3><div><b>Stand</b>：17以上</div><div><b>Double</b>：なし</div><div><b>Split</b>：AA・88</div><div><b>Surrender</b>：16</div><div><b>Insurance</b>：基本は選ばない</div><div><b>それ以外</b>：Hit</div></div>
+      <div class="strategyCard"><h3>ディーラーが 10 の場合</h3><div><b>Stand</b>：17以上</div><div><b>Double</b>：11</div><div><b>Split</b>：AA・88</div><div><b>Surrender</b>：15・16</div><div><b>Insurance</b>：基本は選ばない（CPUは使用しない）</div><div><b>それ以外</b>：Hit</div></div>
+      <div class="strategyCard"><h3>ディーラーが A の場合</h3><div><b>Stand</b>：17以上</div><div><b>Double</b>：なし</div><div><b>Split</b>：AA・88</div><div><b>Surrender</b>：16</div><div><b>Insurance</b>：基本は選ばない（CPUは使用しない）</div><div><b>それ以外</b>：Hit</div></div>
     </div>
 
 
@@ -2561,24 +2561,61 @@ async function announceInitialBlackjacks(){
     await sleep(220);
   }
 }
-function startInsurance(){document.querySelector('.controls').classList.remove('betCompact');phase='insurance';insuranceIndex=0;$('insuranceBox').style.display='block';askInsurance()}
-function askInsurance(){
-  while(insuranceIndex<players.length&&players[insuranceIndex].bank<players[insuranceIndex].bet/2)insuranceIndex++;
-  if(insuranceIndex>=players.length){$('insuranceBox').style.display='none';dealerPeekThenPlay();return}
-  const p=players[insuranceIndex];
-  $('message').textContent=`${p.name}：Insuranceを選択（${fmt(p.bet/2)}）`;
-  render();ensurePlayerVisible(insuranceIndex);
-  if(p.type==='cpu'){
-    setTimeout(()=>{
-      if(phase!=='insurance'||players[insuranceIndex]!==p)return;
-      const take=p.cpuLevel==='expert'&&trueCountSnapshot().raw>=3;
-      $('message').textContent=`${p.name}：CPU Insurance → ${take?'YES':'NO'}`;
-      setTimeout(()=>$(take?'insuranceYes':'insuranceNo').click(),500);
-    },500);
-  }
+function startInsurance(){
+  document.querySelector('.controls').classList.remove('betCompact');
+  phase='insurance';
+  insuranceIndex=0;
+  $('insuranceBox').style.display='none';
+  askInsurance();
 }
-$('insuranceYes').onclick=()=>{let p=players[insuranceIndex],amt=p.bet/2;if(p.bank>=amt){p.bank-=amt;p.insurance=amt}insuranceIndex++;askInsurance()};
-$('insuranceNo').onclick=()=>{insuranceIndex++;askInsurance()};
+function askInsurance(){
+  // CPUのInsuranceは完全非活性。
+  // CPUは候補から除外し、USERだけにYES/NOを表示する。
+  while(insuranceIndex<players.length){
+    const p=players[insuranceIndex];
+    const canUserInsure=
+      p.type==='user' &&
+      p.bank>=p.bet/2;
+
+    if(canUserInsure)break;
+
+    // CPUは常にInsuranceなし。
+    p.insurance=0;
+    insuranceIndex++;
+  }
+
+  if(insuranceIndex>=players.length){
+    $('insuranceBox').style.display='none';
+    dealerPeekThenPlay();
+    return;
+  }
+
+  const p=players[insuranceIndex];
+  $('insuranceBox').style.display='block';
+  $('insuranceYes').disabled=false;
+  $('insuranceNo').disabled=false;
+  $('message').textContent=`${p.name}：Insuranceを選択（${fmt(p.bet/2)}）`;
+  render();
+  ensurePlayerVisible(insuranceIndex);
+}
+$('insuranceYes').onclick=()=>{
+  const p=players[insuranceIndex];
+  if(!p||p.type!=='user')return;
+  const amt=p.bet/2;
+  if(p.bank>=amt){
+    p.bank-=amt;
+    p.insurance=amt;
+  }
+  insuranceIndex++;
+  askInsurance();
+};
+$('insuranceNo').onclick=()=>{
+  const p=players[insuranceIndex];
+  if(!p||p.type!=='user')return;
+  p.insurance=0;
+  insuranceIndex++;
+  askInsurance();
+};
 async function dealerPeekThenPlay(){if(natural(dealer)){reveal=true;render();await sleep(650);await settleDealerBlackjack();return}if(players.some(p=>p.insurance)){players.forEach(p=>{if(p.insurance)p.result='Insurance LOSE'});render();await sleep(500)}phase='play';activePlayer=0;activeHand=0;document.querySelector('.controls').classList.remove('betCompact');document.querySelector('.controls').classList.add('playCompact');$('playActions').classList.remove('hidden');advancePlayer()}
 
 
