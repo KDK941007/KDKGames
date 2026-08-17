@@ -110,8 +110,69 @@
     display:flex;
     align-items:center;
     justify-content:space-between;
-    gap:12px;
-    padding:10px 14px;
+    gap:10px;
+    padding:8px 12px;
+  }
+
+  .status-left{
+    min-width:0;
+    flex:1 1 auto;
+  }
+
+  .starter-area{
+    width:min(100%,270px);
+  }
+
+  .starter-label{
+    margin-bottom:4px;
+    color:var(--muted);
+    font-size:10px;
+    font-weight:800;
+    line-height:1;
+  }
+
+  .starter-inline{
+    display:none;
+    grid-template-columns:1.35fr 1fr 1fr;
+    gap:6px;
+    width:100%;
+  }
+
+  .starter-inline.show{
+    display:grid;
+  }
+
+  .starter-choice{
+    height:36px;
+    min-width:0;
+    border:1px solid var(--line);
+    border-radius:10px;
+    background:#273351;
+    color:var(--text);
+    font-size:11px;
+    font-weight:900;
+    cursor:pointer;
+  }
+
+  .starter-choice.random{
+    background:#f8fafc;
+    color:#111827;
+    border-color:#f8fafc;
+  }
+
+  .starter-choice.o{color:var(--o)}
+  .starter-choice.x{color:var(--x)}
+
+  .turn-view{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    width:100%;
+  }
+
+  .turn-view.hidden{
+    display:none;
   }
 
   .turn-label{
@@ -250,7 +311,32 @@
     background:#273351;
     color:var(--text);
     border:1px solid var(--line);
-    text-decoration:none;
+  }
+
+  .confirm-actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:9px;
+    margin-top:14px;
+  }
+
+  .confirm-btn{
+    height:46px;
+    border-radius:13px;
+    font-weight:900;
+    cursor:pointer;
+  }
+
+  .confirm-cancel{
+    border:1px solid var(--line);
+    background:#273351;
+    color:var(--text);
+  }
+
+  .confirm-go{
+    border:0;
+    background:#f8fafc;
+    color:#111827;
   }
 
   .overlay{
@@ -334,38 +420,6 @@
     margin-bottom:16px;
   }
 
-  .start-description{
-    margin:0 0 14px;
-    color:var(--muted);
-    font-size:12px;
-    line-height:1.5;
-  }
-
-  .start-options{
-    display:grid;
-    gap:8px;
-  }
-
-  .start-btn{
-    width:100%;
-    height:48px;
-    border-radius:14px;
-    border:1px solid var(--line);
-    background:#202a48;
-    color:var(--text);
-    font-weight:800;
-    cursor:pointer;
-  }
-
-  .start-btn.random{
-    background:#f8fafc;
-    color:#111827;
-    border-color:#f8fafc;
-  }
-
-  .start-btn.o{color:var(--o)}
-  .start-btn.x{color:var(--x)}
-
   @media (max-height:700px){
     .card{
       grid-template-rows:
@@ -395,12 +449,25 @@
     </header>
 
     <div class="status-wrap">
-      <div class="status">
-        <div>
-          <div class="turn-label" id="statusLabel">現在のターン</div>
-          <div class="turn-main" id="statusText">開始前</div>
+            <div class="status">
+        <div class="status-left">
+          <div class="turn-view hidden" id="turnView">
+            <div>
+              <div class="turn-label" id="statusLabel">現在のターン</div>
+              <div class="turn-main" id="statusText">○ の番</div>
+            </div>
+            <div class="turn-symbol o" id="turnSymbol">○</div>
+          </div>
+
+          <div class="starter-area" id="starterArea">
+            <div class="starter-label">先攻を選択</div>
+            <div class="starter-inline show" id="starterInline" aria-label="先攻を選択">
+              <button class="starter-choice random" type="button" data-start="random">ランダム</button>
+              <button class="starter-choice o" type="button" data-start="O">○から</button>
+              <button class="starter-choice x" type="button" data-start="X">×から</button>
+            </div>
+          </div>
         </div>
-        <div class="turn-symbol" id="turnSymbol">−</div>
       </div>
     </div>
 
@@ -411,26 +478,11 @@
     <div class="actions">
       <button class="action-btn restart" id="restartBtn">最初から</button>
       <button class="action-btn rules" id="rulesBtn">ルール</button>
-      <a class="action-btn portal" href="../">ポータルへ戻る</a>
+      <button class="action-btn portal" id="portalBtn" type="button">ポータルへ戻る</button>
     </div>
   </section>
 </main>
 
-<div class="overlay show" id="startOverlay">
-  <div class="modal">
-    <h2>先攻を決める</h2>
-    <p class="start-description">
-      ランダムで決めるか、○・×のどちらから始めるか選択できます。
-    </p>
-
-    <div class="start-options">
-      <button class="start-btn random" data-start="random">ランダムで決める</button>
-      <button class="start-btn o" data-start="O">○ から始める</button>
-      <button class="start-btn x" data-start="X">× から始める</button>
-    </div>
-    <button class="close secondary-close" id="closeStart">閉じる</button>
-  </div>
-</div>
 
 <div class="overlay" id="rulesOverlay">
   <div class="modal">
@@ -451,7 +503,18 @@
     <div class="winner-big" id="winnerSymbol">×</div>
     <div class="winner-text" id="winnerText">× の勝ち！</div>
     <div class="winner-sub">3つ並びました</div>
-    <button class="close" id="playAgainBtn">もう一度遊ぶ</button>
+    <button class="close" id="playAgainBtn">閉じる</button>
+  </div>
+</div>
+
+<div class="overlay" id="portalConfirmOverlay">
+  <div class="modal">
+    <h2>ポータルへ戻る</h2>
+    <p>ポータルへ戻りますか？<br>現在のゲーム内容は失われます。</p>
+    <div class="confirm-actions">
+      <button class="confirm-btn confirm-cancel" id="cancelPortalBtn" type="button">キャンセル</button>
+      <button class="confirm-btn confirm-go" id="confirmPortalBtn" type="button">戻る</button>
+    </div>
   </div>
 </div>
 
@@ -461,13 +524,13 @@
   const statusLabel = document.getElementById('statusLabel');
   const statusText = document.getElementById('statusText');
   const turnSymbol = document.getElementById('turnSymbol');
+  const turnView = document.getElementById('turnView');
+  const starterArea = document.getElementById('starterArea');
+  const starterInline = document.getElementById('starterInline');
+  const starterButtons = [...document.querySelectorAll('.starter-choice')];
 
   const restartBtn = document.getElementById('restartBtn');
   const rulesBtn = document.getElementById('rulesBtn');
-
-  const startOverlay = document.getElementById('startOverlay');
-  const startButtons = document.querySelectorAll('.start-btn');
-  const closeStart = document.getElementById('closeStart');
 
   const rulesOverlay = document.getElementById('rulesOverlay');
   const closeRules = document.getElementById('closeRules');
@@ -476,6 +539,11 @@
   const winnerSymbol = document.getElementById('winnerSymbol');
   const winnerText = document.getElementById('winnerText');
   const playAgainBtn = document.getElementById('playAgainBtn');
+
+  const portalBtn = document.getElementById('portalBtn');
+  const portalConfirmOverlay = document.getElementById('portalConfirmOverlay');
+  const cancelPortalBtn = document.getElementById('cancelPortalBtn');
+  const confirmPortalBtn = document.getElementById('confirmPortalBtn');
 
   const WIN_LINES = [
     [0,1,2],[3,4,5],[6,7,8],
@@ -488,7 +556,6 @@
   let history = { X: [], O: [] };
   let gameOver = false;
   let winLine = [];
-  let startMode = 'random';
 
   function getSymbol(player) {
     return player === 'X' ? '×' : '○';
@@ -503,35 +570,36 @@
 
   function resetState() {
     board = Array(9).fill(null);
+    current = null;
     history = { X: [], O: [] };
     gameOver = false;
     winLine = [];
   }
 
-  function startGame(mode = startMode) {
-    startMode = mode;
+  function showStarterSelection() {
     resetState();
-    current = resolveStartPlayer(mode);
-
     winnerOverlay.classList.remove('show');
-    startOverlay.classList.remove('show');
-
+    starterArea.style.display = '';
+    starterInline.classList.add('show');
+    turnView.classList.add('hidden');
     render();
   }
 
-  function openStartSelection() {
+  function startGame(mode) {
+    resetState();
+    current = resolveStartPlayer(mode);
+
+    starterInline.classList.remove('show');
+    starterArea.style.display = 'none';
+    turnView.classList.remove('hidden');
     winnerOverlay.classList.remove('show');
-    rulesOverlay.classList.remove('show');
-    startOverlay.classList.add('show');
+
+    render();
   }
 
   function render() {
     boardEl.innerHTML = '';
 
-    /*
-      勝敗確定後は「次に消える」を一切表示しない。
-      ゲーム中のみ、各プレイヤーが3個置いている場合に最古コマを表示する。
-    */
     const oldestX = !gameOver && history.X.length === 3 ? history.X[0] : -1;
     const oldestO = !gameOver && history.O.length === 3 ? history.O[0] : -1;
 
@@ -540,6 +608,7 @@
       cell.className = 'cell';
       cell.type = 'button';
       cell.setAttribute('aria-label', `${index + 1}番のマス`);
+      cell.disabled = !current || gameOver;
 
       if (value) {
         cell.textContent = getSymbol(value);
@@ -612,33 +681,18 @@
     }, 300);
   }
 
-  startButtons.forEach(button => {
+  starterButtons.forEach(button => {
     button.addEventListener('click', () => {
       startGame(button.dataset.start);
     });
   });
 
-  restartBtn.addEventListener('click', openStartSelection);
+  // 「最初から」は盤面を初期化し、上部の先攻選択へ戻す。
+  restartBtn.addEventListener('click', showStarterSelection);
 
-  /*
-    「もう一度遊ぶ」では前回設定をそのまま使わず、
-    毎回あらためて先攻選択画面を表示する。
-  */
+  // 勝利後の「閉じる」は結果ポップアップを閉じるだけ。
   playAgainBtn.addEventListener('click', () => {
     winnerOverlay.classList.remove('show');
-    startOverlay.classList.add('show');
-  });
-
-  closeStart.addEventListener('click', () => {
-    startOverlay.classList.remove('show');
-
-    // 初回でまだゲームが始まっていない場合は開始前表示のまま。
-    if (!current) {
-      statusLabel.textContent = 'ゲーム';
-      statusText.textContent = '先攻を選択';
-      turnSymbol.textContent = '−';
-      turnSymbol.className = 'turn-symbol';
-    }
   });
 
   rulesBtn.addEventListener('click', () => {
@@ -655,7 +709,25 @@
     }
   });
 
-  render();
+  portalBtn.addEventListener('click', () => {
+    portalConfirmOverlay.classList.add('show');
+  });
+
+  cancelPortalBtn.addEventListener('click', () => {
+    portalConfirmOverlay.classList.remove('show');
+  });
+
+  portalConfirmOverlay.addEventListener('click', e => {
+    if (e.target === portalConfirmOverlay) {
+      portalConfirmOverlay.classList.remove('show');
+    }
+  });
+
+  confirmPortalBtn.addEventListener('click', () => {
+    window.location.href = '../';
+  });
+
+  showStarterSelection();
 })();
 </script>
 </body>
