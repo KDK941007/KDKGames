@@ -52,44 +52,6 @@ a{text-decoration:none;color:inherit}
 }
 h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
 .hero p{margin:9px auto 0;max-width:420px;color:var(--muted);font-size:11px;line-height:1.65}
-.sectionHead{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:4px 2px 10px}
-.sectionHead h2{margin:0;font-size:13px;letter-spacing:.05em}
-.sectionHead span{color:var(--muted);font-size:9px}
-.games{display:grid;gap:10px}
-.gameCard{position:relative;display:grid;grid-template-columns:64px minmax(0,1fr) auto;align-items:center;gap:12px;min-height:104px;padding:14px;overflow:hidden;border:1px solid var(--line);border-radius:17px;background:var(--panel);box-shadow:var(--shadow)}
-.gameCard::after{content:"";position:absolute;right:-36px;top:-36px;width:110px;height:110px;border-radius:50%;background:radial-gradient(circle,rgba(99,102,241,.08),transparent 67%);pointer-events:none}
-.gameCard.available{border-color:rgba(99,102,241,.22)}
-.gameCard.available:active{transform:scale(.995)}
-.gameIcon{
-  width:64px;height:64px;display:grid;place-items:center;
-  border-radius:15px;border:1px solid #e6e9f0;
-  background:linear-gradient(145deg,#f7f8ff,#eef2ff);
-  color:#5b5bd6;font-size:25px;font-weight:950;
-}
-.gameIcon.cards{position:relative}
-.gameIcon.cards span:first-child{transform:translate(-5px,2px) rotate(-10deg)}
-.gameIcon.cards span:last-child{position:absolute;transform:translate(8px,-3px) rotate(9deg);color:#1f2937}
-.gameBody{min-width:0}
-.gameMetaRow{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-bottom:5px}
-.gameStatus{
-  display:inline-flex;align-items:center;min-height:20px;padding:0 7px;
-  border-radius:999px;border:1px solid rgba(16,185,129,.18);
-  background:rgba(16,185,129,.08);color:#047857;
-  font-size:8px;font-weight:900;letter-spacing:.08em;
-}
-.categoryTag{display:inline-flex;align-items:center;min-height:20px;padding:0 7px;border-radius:999px;border:1px solid rgba(99,102,241,.14);background:rgba(99,102,241,.07);color:#5b5bd6;font-size:7px;font-weight:900;letter-spacing:.07em}
-.gameStatus.soon{border-color:#e5e7eb;background:#f3f4f6;color:#8a93a3}
-.gameTitle{margin:0;font-size:16px;font-weight:950;letter-spacing:.03em}
-.gameDesc{margin:5px 0 0;color:var(--muted);font-size:10px;line-height:1.5}
-.launch{
-  position:relative;z-index:1;min-width:58px;height:34px;
-  display:grid;place-items:center;padding:0 10px;border-radius:999px;
-  border:1px solid rgba(99,102,241,.22);
-  background:rgba(99,102,241,.08);color:#5b5bd6;
-  font-size:9px;font-weight:950;white-space:nowrap;
-}
-.disabled .launch{border-color:#e5e7eb;background:#f3f4f6;color:#9aa2b1}
-.genericIcon{color:#8ea198;background:rgba(255,255,255,.025)}
 
 .gameBrowser{display:grid;gap:10px}
 .browserTop{
@@ -267,11 +229,28 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
 .tileAction.muted{color:#9aa2b1}
 
 .gameTile[data-category="casino"]{--tileAccent:#6366f1;--tileSoft:#eef2ff}
+.gameTile[data-category="board"]{--tileAccent:#0f9f8f;--tileSoft:#ecfdf5}
 .gameTile[data-category="other"]{--tileAccent:#ec4899;--tileSoft:#fdf2f8}
+
 .gameTile[data-category="casino"] .tileIcon{background:linear-gradient(145deg,#f7f8ff,var(--tileSoft));color:var(--tileAccent)}
+.gameTile[data-category="board"] .tileIcon{background:linear-gradient(145deg,#f5fffb,var(--tileSoft));color:var(--tileAccent)}
 .gameTile[data-category="other"] .tileIcon{background:linear-gradient(145deg,#fff7fb,var(--tileSoft));color:var(--tileAccent)}
+
+.gameTile[data-category="board"] .tileCategory{color:#0f8b7d}
+.gameTile[data-category="board"]{border-color:rgba(15,159,143,.18)}
 .gameTile[data-category="other"] .tileCategory{color:#db2777}
 .gameTile[data-category="other"]{border-color:rgba(236,72,153,.15)}
+
+.marubatsuIcon{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1px;
+  font-size:15px;
+  line-height:1;
+}
+.marubatsuIcon span:first-child{color:#fb7185}
+.marubatsuIcon span:last-child{color:#60a5fa}
+
 .emptyState{
   min-height:160px;
   display:grid;
@@ -290,7 +269,7 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
 .notice b{display:block;margin-bottom:4px;color:#374151;font-size:10px}
 .notice p{margin:0;color:var(--muted);font-size:9px;line-height:1.55}
 .footer{margin-top:24px;padding-top:14px;border-top:1px solid #dfe4ee;text-align:center;color:#98a1af;font-size:8px;letter-spacing:.12em}
-@media(max-width:390px){.app{padding-left:12px;padding-right:12px}.gameCard{grid-template-columns:58px minmax(0,1fr) auto;gap:9px;padding:12px}.gameIcon{width:58px;height:58px;font-size:22px}.gameTitle{font-size:15px}.gameDesc{font-size:9px}.launch{min-width:52px;padding:0 8px}}
+@media(max-width:390px){.app{padding-left:12px;padding-right:12px}}
 </style>
 </head>
 <body>
@@ -313,11 +292,12 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
       <div class="filterRow" id="categoryFilters" aria-label="カテゴリ絞り込み">
         <button type="button" class="filterChip active" data-filter="all">ALL</button>
         <button type="button" class="filterChip" data-filter="casino">CASINO</button>
+        <button type="button" class="filterChip" data-filter="board">ボードゲーム</button>
         <button type="button" class="filterChip" data-filter="other">OTHER</button>
       </div>
 
       <div class="browserMeta">
-        <span id="resultCount">4 GAMES</span>
+        <span id="resultCount">5 GAMES</span>
         <span>カテゴリで絞り込みできます</span>
       </div>
     </div>
@@ -356,9 +336,20 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
         <div class="tileAction muted">COMING SOON</div>
       </div>
 
+      <a class="gameTile available" href="./marubatsu/" data-category="board" data-search="消える○×ゲーム まるばつ マルバツ ○× tic tac toe 三目並べ ボードゲーム board">
+        <div class="tileTop">
+          <div class="tileIcon marubatsuIcon" aria-hidden="true"><span>○</span><span>×</span></div>
+          <span class="miniStatus playable">PLAYABLE</span>
+        </div>
+        <div class="tileCategory">ボードゲーム</div>
+        <h3>消える○×ゲーム</h3>
+        <p>4個目を置くと一番古いコマが消える三目並べ。</p>
+        <div class="tileAction">PLAY <span>›</span></div>
+      </a>
+
       <div class="gameTile disabled" data-category="other" data-search="next game other puzzle action casual パズル アクション カジュアル">
         <div class="tileTop">
-          <div class="tileIcon genericIcon" aria-hidden="true">＋</div>
+          <div class="tileIcon" aria-hidden="true">＋</div>
           <span class="miniStatus">SOON</span>
         </div>
         <div class="tileCategory">OTHER</div>
@@ -429,6 +420,5 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
   applyFilter();
 })();
 </script>
-
 </body>
 </html>
