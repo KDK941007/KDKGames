@@ -688,9 +688,50 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
 })();
 </script>
 
+
+
 <script>
 (() => {
   if (!('serviceWorker' in navigator)) return;
+
+  function getOfflineTargets() {
+    const urls = new Set([
+      new URL('./', location.href).href,
+      new URL('./index.html', location.href).href
+    ]);
+
+    // ポータルに掲載されているPLAYABLEゲームを自動検出。
+    // 今後ゲームを追加しても、ポータルにリンクを追加するだけで
+    // Service Worker 側の修正は不要。
+    document.querySelectorAll('a.gameTile.available[href]').forEach(link => {
+      try {
+        const url = new URL(link.getAttribute('href'), location.href);
+
+        // 同一GitHub Pagesサイト内だけを対象にする。
+        if (url.origin === location.origin) {
+          urls.add(url.href);
+        }
+      } catch (_) {}
+    });
+
+    return [...urls];
+  }
+
+  async function syncOfflineTargets(registration) {
+    if (!navigator.onLine) return;
+
+    const worker =
+      navigator.serviceWorker.controller ||
+      registration.active ||
+      registration.waiting;
+
+    if (!worker) return;
+
+    worker.postMessage({
+      type: 'CACHE_URLS',
+      urls: getOfflineTargets()
+    });
+  }
 
   window.addEventListener('load', async () => {
     try {
@@ -699,10 +740,26 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
         updateViaCache: 'none'
       });
 
-      // オンラインでポータルを開くたびに Service Worker 自体の更新も確認する。
+      // オンライン時はService Worker自体の更新を確認。
       if (navigator.onLine) {
         registration.update().catch(() => {});
       }
+
+      // activeなService Workerが確定してからゲーム一覧を同期。
+      const readyRegistration = await navigator.serviceWorker.ready;
+      await syncOfflineTargets(readyRegistration);
+
+      // Service Worker更新直後にも再同期。
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        setTimeout(() => {
+          syncOfflineTargets(readyRegistration).catch(() => {});
+        }, 100);
+      });
+
+      // オフライン→オンライン復帰時にも最新版を再保存。
+      window.addEventListener('online', () => {
+        syncOfflineTargets(readyRegistration).catch(() => {});
+      });
     } catch (error) {
       console.warn('Service Worker registration failed:', error);
     }
