@@ -118,6 +118,7 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
   border-color:rgba(99,102,241,.28);
   background:linear-gradient(135deg,rgba(99,102,241,.12),rgba(56,189,248,.09));
   color:#4f46e5;
+  box-shadow:0 5px 14px rgba(79,70,229,.10);
 }
 .browserMeta{
   display:flex;
@@ -128,6 +129,28 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
   font-size:8px;
   font-weight:800;
 }
+.categoryViewport{
+  position:relative;
+  overflow:hidden;
+  margin:0 -4px;
+  padding:0 4px;
+  touch-action:pan-y;
+}
+
+.categoryTrack{
+  position:relative;
+  will-change:transform;
+  transform:translate3d(0,0,0);
+}
+
+.categoryTrack.dragging{
+  transition:none!important;
+}
+
+.categoryTrack.animating{
+  transition:transform .24s cubic-bezier(.22,.75,.28,1);
+}
+
 .gameGrid{
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
@@ -301,6 +324,9 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
         <span>カテゴリで絞り込みできます</span>
       </div>
     </div>
+    <div class="categoryViewport" id="categoryViewport">
+      <div class="categoryTrack" id="categoryTrack">
+
 
     <div class="gameGrid" id="gameGrid">
       <a class="gameTile available" href="./blackjack/" data-category="casino" data-search="blackjack ブラックジャック casino カジノ 実戦 練習">
@@ -363,6 +389,8 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
       <b>該当するゲームがありません</b>
       <span>検索条件やカテゴリを変更してください。</span>
     </div>
+      </div>
+    </div>
   </section>
 
   <section class="notice">
@@ -381,19 +409,40 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
   const cards = [...document.querySelectorAll('.gameTile')];
   const count = document.getElementById('resultCount');
   const empty = document.getElementById('emptyState');
+  const viewport = document.getElementById('categoryViewport');
+  const track = document.getElementById('categoryTrack');
+
+  const categories = filters.map(btn => btn.dataset.filter);
+
   let category = 'all';
+  let activeIndex = 0;
+
+  let pointerDown = false;
+  let dragging = false;
+  let startX = 0;
+  let startY = 0;
+  let deltaX = 0;
+  let width = 1;
+  let animationLock = false;
+
+  const SWIPE_RATIO = 0.22;
+  const SWIPE_MIN = 56;
 
   function normalize(v){
     return String(v || '').toLowerCase().trim();
   }
 
-  function applyFilter(){
+  function renderCategory(){
     const q = normalize(search.value);
     let visible = 0;
 
     cards.forEach(card => {
       const categoryMatch = category === 'all' || card.dataset.category === category;
-      const searchMatch = !q || normalize(card.dataset.search).includes(q) || normalize(card.textContent).includes(q);
+      const searchMatch =
+        !q ||
+        normalize(card.dataset.search).includes(q) ||
+        normalize(card.textContent).includes(q);
+
       const show = categoryMatch && searchMatch;
       card.classList.toggle('hidden', !show);
       if(show) visible++;
@@ -402,22 +451,240 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
     count.textContent = `${visible} GAME${visible === 1 ? '' : 'S'}`;
     empty.classList.toggle('hidden', visible !== 0);
     clear.style.visibility = search.value ? 'visible' : 'hidden';
+
+    filters.forEach((btn, i) => {
+      const active = i === activeIndex;
+      btn.classList.toggle('active', active);
+      btn.setAttribute('aria-selected', active ? 'true' : 'false');
+    });
+
+    // 選択中カテゴリが画面外にある場合は、チップ列も自然に追従。
+    filters[activeIndex]?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'nearest',
+      inline: 'center'
+    });
   }
 
-  filters.forEach(btn => btn.addEventListener('click', () => {
-    category = btn.dataset.filter;
-    filters.forEach(b => b.classList.toggle('active', b === btn));
-    applyFilter();
-  }));
+  function setTrackX(px, animate = false){
+    track.classList.toggle('animating', animate);
+    track.style.transform = `translate3d(${px}px,0,0)`;
+  }
 
-  search.addEventListener('input', applyFilter);
+  function finishAnimation(callback){
+    let completed = false;
+
+    const done = () => {
+      if(completed) return;
+      completed = true;
+
+      track.removeEventListener('transitionend', done);
+      track.classList.remove('animating');
+      callback?.();
+    };
+
+    track.addEventListener('transitionend', done, { once:true });
+
+    // transitionend が取りこぼされた場合の保険。
+    // completed で多重実行を防止する。
+    setTimeout(done, 320);
+  }
+
+  function moveToIndex(nextIndex, direction = 0){
+    if(animationLock) return;
+    if(nextIndex < 0 || nextIndex >= categories.length) return;
+    if(nextIndex === activeIndex) {
+      setTrackX(0, true);
+      return;
+    }
+
+    animationLock = true;
+    width = Math.max(1, viewport.clientWidth);
+
+    const dir = direction || (nextIndex > activeIndex ? -1 : 1);
+
+    // 現在の一覧を横へスライドアウト
+    setTrackX(dir * width, true);
+
+    finishAnimation(() => {
+      activeIndex = nextIndex;
+      category = categories[activeIndex];
+      renderCategory();
+
+      // 次カテゴリを反対側から配置
+      track.style.transition = 'none';
+      track.style.transform = `translate3d(${-dir * width}px,0,0)`;
+
+      // レイアウト確定後に中央へスライドイン
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          track.style.transition = '';
+          setTrackX(0, true);
+
+          finishAnimation(() => {
+            setTrackX(0, false);
+            animationLock = false;
+          });
+        });
+      });
+    });
+  }
+
+  function settleFromDrag(){
+    width = Math.max(1, viewport.clientWidth);
+    const threshold = Math.max(SWIPE_MIN, width * SWIPE_RATIO);
+
+    const canGoNext = activeIndex < categories.length - 1;
+    const canGoPrev = activeIndex > 0;
+
+    if(deltaX <= -threshold && canGoNext){
+      // 指を左へ動かしたので次カテゴリ
+      const remaining = -width;
+      animationLock = true;
+      setTrackX(remaining, true);
+
+      finishAnimation(() => {
+        activeIndex += 1;
+        category = categories[activeIndex];
+        renderCategory();
+
+        track.style.transition = 'none';
+        track.style.transform = `translate3d(${width}px,0,0)`;
+
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            track.style.transition = '';
+            setTrackX(0, true);
+            finishAnimation(() => {
+              setTrackX(0, false);
+              animationLock = false;
+            });
+          });
+        });
+      });
+      return;
+    }
+
+    if(deltaX >= threshold && canGoPrev){
+      // 指を右へ動かしたので前カテゴリ
+      animationLock = true;
+      setTrackX(width, true);
+
+      finishAnimation(() => {
+        activeIndex -= 1;
+        category = categories[activeIndex];
+        renderCategory();
+
+        track.style.transition = 'none';
+        track.style.transform = `translate3d(${-width}px,0,0)`;
+
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            track.style.transition = '';
+            setTrackX(0, true);
+            finishAnimation(() => {
+              setTrackX(0, false);
+              animationLock = false;
+            });
+          });
+        });
+      });
+      return;
+    }
+
+    // 閾値未満、または端カテゴリなら元位置へ戻す
+    setTrackX(0, true);
+    finishAnimation(() => setTrackX(0, false));
+  }
+
+  filters.forEach((btn, index) => {
+    btn.addEventListener('click', () => {
+      if(index === activeIndex || animationLock) return;
+      moveToIndex(index);
+    });
+  });
+
+  search.addEventListener('input', renderCategory);
+
   clear.addEventListener('click', () => {
     search.value = '';
     search.focus();
-    applyFilter();
+    renderCategory();
   });
 
-  applyFilter();
+  viewport.addEventListener('pointerdown', e => {
+    if(animationLock) return;
+
+    pointerDown = true;
+    dragging = false;
+    startX = e.clientX;
+    startY = e.clientY;
+    deltaX = 0;
+    width = Math.max(1, viewport.clientWidth);
+
+    track.classList.add('dragging');
+    track.classList.remove('animating');
+  });
+
+  viewport.addEventListener('pointermove', e => {
+    if(!pointerDown || animationLock) return;
+
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+
+    // 縦スクロール操作を邪魔しない。
+    if(!dragging){
+      if(Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+
+      if(Math.abs(dy) > Math.abs(dx)){
+        pointerDown = false;
+        track.classList.remove('dragging');
+        return;
+      }
+
+      dragging = true;
+      try{ viewport.setPointerCapture(e.pointerId); }catch(_){}
+    }
+
+    deltaX = dx;
+
+    // 端では抵抗を付けて「これ以上ない」感を出す
+    if(
+      (activeIndex === 0 && deltaX > 0) ||
+      (activeIndex === categories.length - 1 && deltaX < 0)
+    ){
+      deltaX *= 0.28;
+    }
+
+    setTrackX(deltaX, false);
+  });
+
+  function endPointer(e){
+    if(!pointerDown && !dragging) return;
+
+    pointerDown = false;
+    track.classList.remove('dragging');
+
+    try{ viewport.releasePointerCapture(e.pointerId); }catch(_){}
+
+    if(!dragging){
+      setTrackX(0, false);
+      deltaX = 0;
+      return;
+    }
+
+    dragging = false;
+    settleFromDrag();
+    deltaX = 0;
+  }
+
+  viewport.addEventListener('pointerup', endPointer);
+  viewport.addEventListener('pointercancel', endPointer);
+
+  // 画像・リンクをドラッグ扱いにしない
+  viewport.addEventListener('dragstart', e => e.preventDefault());
+
+  renderCategory();
 })();
 </script>
 </body>
