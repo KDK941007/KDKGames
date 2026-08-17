@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
-<title>Paradise City Blackjack Trainer v14.13</title>
+<title>Paradise City Blackjack Trainer v14.18</title>
 <style>
 :root{--bg:#04110d;--felt:#07523a;--felt2:#063d2d;--panel:rgba(4,20,15,.88);--line:rgba(255,255,255,.13);--text:#fffaf0;--muted:#afc7bb;--gold:#e2c064;--red:#a63d3d;--green:#62d395;--lose:#ff7676;--win:#7df0a5}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% 0,#0e7450 0,#07523a 34%,#03110c 88%);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--text);overflow-x:hidden}.app{width:min(100%,560px);margin:auto;min-height:100vh;padding:10px 10px calc(16px + env(safe-area-inset-bottom))}
@@ -110,26 +110,34 @@ header{display:flex;align-items:center;justify-content:space-between;padding:6px
   inset:0;
   z-index:38;
   pointer-events:none;
-  display:flex;
-  align-items:flex-end;
-  justify-content:center;
-  padding:0 0 calc(205px + env(safe-area-inset-bottom));
+  display:block;
+  padding:0;
   box-sizing:border-box;
 }
 .handSignalVisual{
-  width:112px;
-  height:112px;
-  border-radius:18px;
-  background:rgba(0,0,0,.56);
-  border:1px solid rgba(255,255,255,.14);
+  position:fixed;
+  left:50%;
+  bottom:150px;
+  width:82px;
+  height:82px;
+  border-radius:15px;
+  background:rgba(0,0,0,.48);
+  border:1px solid rgba(255,255,255,.13);
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  gap:4px;
+  gap:2px;
   opacity:0;
-  transform:scale(.88);
+  transform:translateX(-50%) scale(.88);
   backdrop-filter:blur(4px);
+  box-shadow:0 5px 14px rgba(0,0,0,.24);
+}
+.handSignalVisual .signalHand{
+  margin-top:-3px;
+}
+.handSignalVisual .signalLabel{
+  font-size:9px;
 }
 .handSignalVisual.show{animation:signalBox 1.5s ease both}
 .signalHand{position:relative;width:60px;height:57px;transform:scale(.82);transform-origin:center}
@@ -145,7 +153,11 @@ header{display:flex;align-items:center;justify-content:space-between;padding:6px
 .handSignalVisual.split .signalHand{animation:pointTwo 1.25s ease}
 .handSignalVisual.surrender .signalHand{animation:drawLine 1.28s ease}
 .handSignalVisual.surrender:after{content:'';position:absolute;width:90px;height:3px;border-radius:4px;background:var(--gold);transform:translateY(22px) scaleX(0);transform-origin:left;animation:lineDraw .95s .14s ease forwards}
-@keyframes signalBox{0%{opacity:0;transform:scale(.88)}15%,75%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.96)}}
+@keyframes signalBox{
+  0%{opacity:0;transform:translateX(-50%) scale(.88)}
+  15%,75%{opacity:1;transform:translateX(-50%) scale(1)}
+  100%{opacity:0;transform:translateX(-50%) scale(.96)}
+}
 @keyframes tapHand{0%,100%{transform:translateY(-5px)}35%{transform:translateY(12px)}55%{transform:translateY(2px)}75%{transform:translateY(12px)}}
 @keyframes waveHand{0%,100%{transform:rotate(0)}25%{transform:rotate(-18deg)}50%{transform:rotate(18deg)}75%{transform:rotate(-14deg)}}
 @keyframes pointOne{0%{transform:translateY(8px) scale(.94)}45%{transform:translateY(-9px) scale(1.06)}100%{transform:none}}
@@ -279,14 +291,16 @@ header{display:flex;align-items:center;justify-content:space-between;padding:6px
 .resultDelta.win{color:var(--win)}
 .resultDelta.lose{color:var(--lose)}
 .resultDelta.push{color:#f6d87a}
-.result{font-weight:950;font-size:12px;line-height:20px;min-height:20px;display:inline-block}.result.win{color:var(--win)}.result.lose{color:var(--lose)}.result.push{color:#f6d87a}.result.surrender{color:#e9a0a0}.chipStack{display:flex;align-items:center;justify-content:center;height:34px;min-height:34px;gap:0;margin:3px 0 1px;overflow:hidden}.chipDisc{width:30px;height:30px;border-radius:50%;border:3px dashed rgba(0,0,0,.35);background:#efe2bd;color:#211a08;display:grid;place-items:center;font-size:8px;font-weight:950;margin-left:-7px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.6),0 2px 4px rgba(0,0,0,.3)}.chipDisc:first-child{margin-left:0}.flyingChip{position:fixed;z-index:9999;pointer-events:none;will-change:transform,opacity;transform-origin:center;box-shadow:inset 0 0 0 3px rgba(255,255,255,.55),0 8px 18px rgba(0,0,0,.45)!important}.cpuBetFlyingChip{
-  display:grid!important;
-  place-items:center!important;
-  padding:0!important;
-  text-align:center;
-  line-height:1;
-  box-sizing:border-box;
-  font:900 13px/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+.result{font-weight:950;font-size:12px;line-height:20px;min-height:20px;display:inline-block}.result.win{color:var(--win)}.result.lose{color:var(--lose)}.result.push{color:#f6d87a}.result.surrender{color:#e9a0a0}.chipStack{display:flex;align-items:center;justify-content:center;height:34px;min-height:34px;gap:0;margin:3px 0 1px;overflow:hidden}.chipDisc{width:30px;height:30px;border-radius:50%;border:3px dashed rgba(0,0,0,.35);background:#efe2bd;color:#211a08;display:grid;place-items:center;font-size:8px;font-weight:950;margin-left:-7px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.6),0 2px 4px rgba(0,0,0,.3)}.chipDisc:first-child{margin-left:0}.flyingChip{position:fixed;z-index:9999;pointer-events:none;will-change:transform,opacity;transform-origin:center;box-shadow:inset 0 0 0 3px rgba(255,255,255,.55),0 8px 18px rgba(0,0,0,.45)!important}.controls.cpuBetTurn #betArea{
+  pointer-events:none;
+}
+.controls.cpuBetTurn #betArea .chip,
+.controls.cpuBetTurn #betArea button{
+  cursor:default;
+}
+
+  45%{transform:scale(1.12);opacity:1}
+  100%{transform:scale(1);opacity:1}
 }
 .payoutChip{
   width:38px;height:38px;border-radius:50%;
@@ -2069,6 +2083,44 @@ function sfxHandSignal(type){
 const HAND_SIGNAL_MS=1550;
 let handSignalTimer=0;
 let handSignalResolve=null;
+function positionHandSignal(){
+  const visual=$('handSignalVisual');
+  const playActions=$('playActions');
+  const actionFrame=document.querySelector('.controls .controlFrame');
+  const controls=document.querySelector('.controls');
+
+  // ハンドサインはPLAY中しか使わないため、
+  // 実際の5ボタン領域 #playActions を最優先で基準にする。
+  const anchor=playActions&&!playActions.classList.contains('hidden')
+    ?playActions
+    :(actionFrame||controls);
+
+  if(!visual||!anchor)return;
+
+  const r=anchor.getBoundingClientRect();
+  const vv=window.visualViewport;
+  const viewportTop=vv?.offsetTop||0;
+  const viewportHeight=vv?.height||window.innerHeight;
+  const viewportBottom=viewportTop+viewportHeight;
+
+  const w=82;
+  const h=82;
+
+  // #playActions の幾何学的中心へ配置。
+  const centerX=Math.min(
+    window.innerWidth-w/2-8,
+    Math.max(w/2+8,r.left+r.width/2)
+  );
+  const centeredTop=r.top+(r.height-h)/2;
+  const top=Math.max(
+    viewportTop+8,
+    Math.min(centeredTop,viewportBottom-h-8)
+  );
+
+  visual.style.left=`${centerX}px`;
+  visual.style.top=`${top}px`;
+  visual.style.bottom='auto';
+}
 function showHandSignal(type,label){
   const overlay=$('handSignalOverlay'),visual=$('handSignalVisual');
   if(!overlay||!visual)return Promise.resolve();
@@ -2084,6 +2136,7 @@ function showHandSignal(type,label){
     handSignalResolve=null;
   }
 
+  positionHandSignal();
   overlay.classList.remove('hidden');
   visual.classList.remove('show');
   visual.className=`handSignalVisual ${type}`;
@@ -2203,48 +2256,7 @@ function renderChips(){
     repeat.disabled=!(v>=cfg.min&&v<=cfg.max&&v<=p.bank+currentBet);
     repeat.textContent=v?`前回 ${v>=10000?(v/10000)+'万':v}`:'前回BET';
   }
-}async function flyChipToBet(btn,v){let seat=document.querySelectorAll('.seat')[activePlayer];if(!seat)return;let from=btn.getBoundingClientRect(),to=seat.getBoundingClientRect();let clone=btn.cloneNode(true);clone.classList.add('flyingChip');clone.style.left=from.left+'px';clone.style.top=from.top+'px';clone.style.width=from.width+'px';clone.style.height=from.height+'px';clone.style.margin='0';document.body.appendChild(clone);let dx=(to.left+to.width/2)-(from.left+from.width/2),dy=(to.top+44)-(from.top+from.height/2);let a=clone.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:`translate(${dx*.58}px,${dy*.48-34}px) scale(.92) rotate(7deg)`,opacity:1,offset:.55},{transform:`translate(${dx}px,${dy}px) scale(.62) rotate(-4deg)`,opacity:.2}],{duration:360,easing:'cubic-bezier(.2,.75,.2,1)',fill:'forwards'});await a.finished.catch(()=>{});clone.remove();toast(`${v>=10000?(v/10000)+'万':v}チップ BET`) }async function flyCpuChipToBet(pi,v){
-  await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
-  const seat=document.querySelectorAll('.seat')[pi];
-  const controls=document.querySelector('.controls');
-  if(!seat||!controls)return;
-
-  const from=controls.getBoundingClientRect();
-  const to=seat.getBoundingClientRect();
-
-  const chip=document.createElement('div');
-  chip.className='chip flyingChip cpuBetFlyingChip';
-  chip.textContent=chipAmountLabel(v);
-
-  const size=48;
-  const startX=from.left+from.width/2-size/2;
-  const startY=from.top+Math.min(60,from.height/2)-size/2;
-  chip.style.left=startX+'px';
-  chip.style.top=startY+'px';
-  chip.style.width=size+'px';
-  chip.style.minWidth=size+'px';
-  chip.style.height=size+'px';
-  chip.style.margin='0';
-  document.body.appendChild(chip);
-
-  const targetX=to.left+to.width/2-size/2;
-  const targetY=to.top+46-size/2;
-  const dx=targetX-startX;
-  const dy=targetY-startY;
-
-  sfxBet();
-  const a=chip.animate([
-    {transform:'translate(0,0) scale(.88)',opacity:.35},
-    {transform:`translate(${dx*.52}px,${dy*.45-42}px) scale(1.08) rotate(8deg)`,opacity:1,offset:.52},
-    {transform:`translate(${dx}px,${dy}px) scale(.72) rotate(-3deg)`,opacity:.18}
-  ],{
-    duration:620,
-    easing:'cubic-bezier(.18,.76,.2,1)',
-    fill:'forwards'
-  });
-  await a.finished.catch(()=>{});
-  chip.remove();
-}function chipStackHTML(amount){if(!amount)return '';let vals=chipValues().slice().reverse(),left=amount,out=[];for(const v of vals){while(left>=v&&out.length<8){out.push(v);left-=v}}if(left>0&&out.length<8)out.push(left);return out.length?`<div class="chipStack">${out.map(v=>`<span class="chipDisc">${v>=10000?(v/10000)+'万':v}</span>`).join('')}</div>`:''}function resultClass(r=''){if(r.includes('BLACKJACK')||r.includes('WIN'))return'win';if(r.includes('PUSH'))return'push';if(r.includes('SURRENDER'))return'surrender';if(r.includes('LOSE')||r.includes('BUST'))return'lose';return''}
+}async function flyChipToBet(btn,v){let seat=document.querySelectorAll('.seat')[activePlayer];if(!seat)return;let from=btn.getBoundingClientRect(),to=seat.getBoundingClientRect();let clone=btn.cloneNode(true);clone.classList.add('flyingChip');clone.style.left=from.left+'px';clone.style.top=from.top+'px';clone.style.width=from.width+'px';clone.style.height=from.height+'px';clone.style.margin='0';document.body.appendChild(clone);let dx=(to.left+to.width/2)-(from.left+from.width/2),dy=(to.top+44)-(from.top+from.height/2);let a=clone.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:`translate(${dx*.58}px,${dy*.48-34}px) scale(.92) rotate(7deg)`,opacity:1,offset:.55},{transform:`translate(${dx}px,${dy}px) scale(.62) rotate(-4deg)`,opacity:.2}],{duration:360,easing:'cubic-bezier(.2,.75,.2,1)',fill:'forwards'});await a.finished.catch(()=>{});clone.remove();toast(`${v>=10000?(v/10000)+'万':v}チップ BET`) }function chipStackHTML(amount){if(!amount)return '';let vals=chipValues().slice().reverse(),left=amount,out=[];for(const v of vals){while(left>=v&&out.length<8){out.push(v);left-=v}}if(left>0&&out.length<8)out.push(left);return out.length?`<div class="chipStack">${out.map(v=>`<span class="chipDisc">${v>=10000?(v/10000)+'万':v}</span>`).join('')}</div>`:''}function resultClass(r=''){if(r.includes('BLACKJACK')||r.includes('WIN'))return'win';if(r.includes('PUSH'))return'push';if(r.includes('SURRENDER'))return'surrender';if(r.includes('LOSE')||r.includes('BUST'))return'lose';return''}
 
 function allUsersBankrupt(){
   const users=players.filter(p=>p.type==='user');
@@ -2293,11 +2305,16 @@ function showBetTurn(){
   if(activePlayer<0||activePlayer>=players.length){dealInitial();return}
   const p=players[activePlayer];
   currentBet=0;$('betAmount').textContent=fmt(0);
+  const controls=document.querySelector('.controls');
   if(p.type==='cpu'){
+    // CPUもUSERと同じBETチップUIを表示し、同じ場所から同じアニメーションでBETする。
+    renderChips();
+    controls?.classList.add('cpuBetTurn');
     $('message').textContent=`${p.name}（CPU ${String(p.cpuLevel).toUpperCase()}）：BETを判断中…`;
     render();ensurePlayerVisible(activePlayer,'smooth');
     setTimeout(cpuPlaceBet,650);
   }else{
+    controls?.classList.remove('cpuBetTurn');
     $('message').textContent=`${p.name}：ベットしてください（MIN ${fmt(cfg.min)} / MAX ${fmt(cfg.max)}）`;
     renderChips();render();ensurePlayerVisible(activePlayer,'auto');
   }
@@ -2317,19 +2334,33 @@ async function cpuPlaceBet(){
     render();
     ensurePlayerVisible(pi,'smooth');
 
-    // スクロール後にチップがCPU席へ飛ぶ演出を見せる。
+    // USERと同じチップボタンから、USERと同じ flyChipToBet() で席へ飛ばす。
     await sleep(280);
-    await flyCpuChipToBet(pi,amount);
+    const source=
+      $('chips').querySelector(`.chip[data-v="${amount}"]`) ||
+      $('customBetBtn');
 
+    sfxBet();
+    if(source)await flyChipToBet(source,amount);
+
+    // USERと同様、飛行後にcurrentBetへ反映して席にチップを表示する。
     p.bank-=amount;
-    p.bet=amount;
-    p.lastBet=amount;
+    currentBet=amount;
+    $('betAmount').textContent=fmt(currentBet);
     render();
 
-    // BETチップが席に積まれた状態も認識できる間を残す。
-    await sleep(520);
+    // 置かれたチップを認識できる間を残す。
+    await sleep(650);
+
+    // USERのBET確定と同じ形で正式BETへ移す。
+    p.bet=currentBet;
+    p.lastBet=p.bet;
+    currentBet=0;
+    $('betAmount').textContent=fmt(0);
     animating=false;
   }
+
+  document.querySelector('.controls')?.classList.remove('cpuBetTurn');
 
   const next=nextBetPlayerIndex(pi+1);
   if(next>=0){
@@ -2374,8 +2405,15 @@ function scheduleCpuAction(){
     setTimeout(()=>{
       if(phase!=='play'||players[activePlayer]!==p)return;
       const btn={H:'hitBtn',S:'standBtn',D:'doubleBtn',P:'splitBtn',R:'surrenderBtn'}[a];
-      if(btn&&$(btn)&&!$(btn).disabled)$(btn).click();
-      else $('hitBtn').click();
+      const target=btn?$(btn):null;
+
+      // disabledはUSER操作を止めるためのもの。
+      // CPUはイベントハンドラを直接実行してアクションする。
+      if(target&&typeof target.onclick==='function'){
+        target.onclick();
+      }else if(typeof $('hitBtn').onclick==='function'){
+        $('hitBtn').onclick();
+      }
     },600);
   },450);
 }
@@ -3031,12 +3069,15 @@ function updateButtons(){
   const total=h?value(h.cards):0;
   const standOnly=total===21;
   const locked=animating;
+  const cpuTurn=!!p&&p.type==='cpu';
 
-  $('hitBtn').disabled=locked||!h||standOnly;
-  $('standBtn').disabled=locked||!h;
-  $('doubleBtn').disabled=locked||standOnly||!(two&&p.bank>=h.bet);
-  $('splitBtn').disabled=locked||standOnly||!canSplitHand(p,h);
-  $('surrenderBtn').disabled=locked||standOnly||!(two&&!h.splitOrigin);
+  // CPUターン中は見た目・操作とも全ボタン非活性。
+  // CPU自身の実行はonclick関数を直接呼び出すため、disabledでも進行できる。
+  $('hitBtn').disabled=locked||cpuTurn||!h||standOnly;
+  $('standBtn').disabled=locked||cpuTurn||!h;
+  $('doubleBtn').disabled=locked||cpuTurn||standOnly||!(two&&p.bank>=h.bet);
+  $('splitBtn').disabled=locked||cpuTurn||standOnly||!canSplitHand(p,h);
+  $('surrenderBtn').disabled=locked||cpuTurn||standOnly||!(two&&!h.splitOrigin);
 }
 
 
@@ -3073,9 +3114,20 @@ $('hitBtn').onclick=async()=>{
   const total=value(h.cards);
 
   if(total>21){
+    const p=players[activePlayer];
+
+    // 決着処理まで待たず、その場でBUSTを明示。
+    h.result='BUST';
     h.done=true;
-    // BUSTで次HANDが同じプレイヤーなら即移動。
-    // 最後のHANDなら、サイン消滅後に次プレイヤーへ移動。
+    $('message').textContent=`${p.name}${p.hands.length>1?` HAND ${activeHand+1}`:''}：BUST — TOTAL ${total}`;
+    render();
+    ensurePlayerVisible(activePlayer,'auto');
+
+    // 赤いBUST表示とTOTALを認識できる短い間を残す。
+    await sleep(700);
+
+    // 同一プレイヤーの次HANDならハンドサイン終了を待たず移動。
+    // 次プレイヤーへ移る場合だけ、従来どおりサイン終了を待つ。
     await finishHandAndAdvance(signalDone);
     return;
   }
@@ -3809,6 +3861,16 @@ function unlockAudioFromGesture(){
   // A real touch/pointer event is accepted as the fallback unlock gesture.
   restoreAudioAfterPageReturn();
 }
+
+window.addEventListener('resize',()=>{
+  if(!$('handSignalOverlay').classList.contains('hidden'))positionHandSignal();
+});
+window.visualViewport?.addEventListener('resize',()=>{
+  if(!$('handSignalOverlay').classList.contains('hidden'))positionHandSignal();
+});
+window.visualViewport?.addEventListener('scroll',()=>{
+  if(!$('handSignalOverlay').classList.contains('hidden'))positionHandSignal();
+});
 
 document.addEventListener('visibilitychange',()=>{
   if(document.visibilityState==='hidden')pauseAudioForPageHide();
