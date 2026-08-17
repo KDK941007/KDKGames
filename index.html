@@ -687,5 +687,28 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
   renderCategory();
 })();
 </script>
+
+<script>
+(() => {
+  if (!('serviceWorker' in navigator)) return;
+
+  window.addEventListener('load', async () => {
+    try {
+      const registration = await navigator.serviceWorker.register('./sw.js', {
+        scope: './',
+        updateViaCache: 'none'
+      });
+
+      // オンラインでポータルを開くたびに Service Worker 自体の更新も確認する。
+      if (navigator.onLine) {
+        registration.update().catch(() => {});
+      }
+    } catch (error) {
+      console.warn('Service Worker registration failed:', error);
+    }
+  });
+})();
+</script>
+
 </body>
 </html>
