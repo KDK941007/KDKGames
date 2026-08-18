@@ -321,6 +321,38 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
   opacity:.65;
 }
 
+.laserEscapeIcon{
+  position:relative;
+  overflow:hidden;
+  color:#f97316;
+}
+.laserEscapeIcon::before,
+.laserEscapeIcon::after{
+  content:"";
+  position:absolute;
+  left:7px;
+  right:7px;
+  height:3px;
+  background:#fb7185;
+  box-shadow:0 0 0 1px rgba(251,113,133,.12);
+}
+.laserEscapeIcon::before{
+  top:14px;
+  transform:rotate(18deg);
+}
+.laserEscapeIcon::after{
+  bottom:14px;
+  transform:rotate(-18deg);
+}
+.laserEscapeIcon span{
+  position:relative;
+  z-index:1;
+  font-size:15px;
+  font-weight:1000;
+  color:#ea580c;
+  text-shadow:0 0 0 #fff;
+}
+
 .emptyState{
   min-height:160px;
   display:grid;
@@ -398,7 +430,7 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
       </div>
 
       <div class="browserMeta">
-        <span id="resultCount">6 GAMES</span>
+        <span id="resultCount">7 GAMES</span>
         <span>カテゴリで絞り込みできます</span>
       </div>
     </div>
@@ -462,6 +494,17 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
             <div class="tileAction">PLAY <span>›</span></div>
           </a>
 
+          <a class="gameTile available" href="./laser-escape/" data-category="action" data-search="laser escape レーザーエスケープ レーザー 回避 サバイバル ドットゲーム アクション action survival">
+            <div class="tileTop">
+              <div class="tileIcon laserEscapeIcon" aria-hidden="true"><span>LE</span></div>
+              <span class="miniStatus playable">PLAYABLE</span>
+            </div>
+            <div class="tileCategory">ACTION</div>
+            <h3>LASER ESCAPE</h3>
+            <p>迫りくるレーザーを避け続けるドット絵サバイバル。</p>
+            <div class="tileAction">PLAY <span>›</span></div>
+          </a>
+
           <div class="gameTile disabled" data-category="other" data-search="next game other puzzle action casual パズル アクション カジュアル">
             <div class="tileTop">
               <div class="tileIcon" aria-hidden="true">＋</div>
@@ -503,6 +546,36 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
   const track = document.getElementById('categoryTrack');
 
   const categories = filters.map(btn => btn.dataset.filter);
+
+  function sortCardsByCategoryAndName(){
+    const categoryOrder = new Map(
+      categories
+        .filter(name => name !== 'all')
+        .map((name, index) => [name, index])
+    );
+
+    const sorted = [...cards].sort((a, b) => {
+      const categoryA = categoryOrder.get(a.dataset.category) ?? 999;
+      const categoryB = categoryOrder.get(b.dataset.category) ?? 999;
+
+      if(categoryA !== categoryB){
+        return categoryA - categoryB;
+      }
+
+      const nameA = a.querySelector('h3')?.textContent?.trim() || '';
+      const nameB = b.querySelector('h3')?.textContent?.trim() || '';
+
+      return nameA.localeCompare(nameB, 'ja', {
+        numeric:true,
+        sensitivity:'base'
+      });
+    });
+
+    const grid = document.getElementById('gameGrid');
+    sorted.forEach(card => grid.appendChild(card));
+  }
+
+  sortCardsByCategoryAndName();
 
   let category = 'all';
   let activeIndex = 0;
