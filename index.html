@@ -547,21 +547,8 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
 
   const categories = filters.map(btn => btn.dataset.filter);
 
-  function sortCardsByCategoryAndName(){
-    const categoryOrder = new Map(
-      categories
-        .filter(name => name !== 'all')
-        .map((name, index) => [name, index])
-    );
-
+  function sortCardsByName(){
     const sorted = [...cards].sort((a, b) => {
-      const categoryA = categoryOrder.get(a.dataset.category) ?? 999;
-      const categoryB = categoryOrder.get(b.dataset.category) ?? 999;
-
-      if(categoryA !== categoryB){
-        return categoryA - categoryB;
-      }
-
       const nameA = a.querySelector('h3')?.textContent?.trim() || '';
       const nameB = b.querySelector('h3')?.textContent?.trim() || '';
 
@@ -575,7 +562,10 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
     sorted.forEach(card => grid.appendChild(card));
   }
 
-  sortCardsByCategoryAndName();
+  // ALL表示もカテゴリ絞り込み時も、常にゲーム名順。
+  // カテゴリ絞り込みは表示/非表示だけを切り替えるため、
+  // 各カテゴリ内でもこの名前順がそのまま維持される。
+  sortCardsByName();
 
   let category = 'all';
   let activeIndex = 0;
