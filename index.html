@@ -20,7 +20,13 @@
   --shadow:0 12px 30px rgba(31,41,55,.08);
 }
 *{box-sizing:border-box}
-html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Sans","Yu Gothic UI",Meiryo,sans-serif}
+html,body{
+  margin:0;
+  min-height:100%;
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Sans","Yu Gothic UI",Meiryo,sans-serif
+}
 body{
   min-height:100dvh;
   background:
@@ -29,7 +35,12 @@ body{
     linear-gradient(180deg,#fbfcff 0%,#f5f7fb 48%,#eef2f8 100%);
 }
 a{text-decoration:none;color:inherit}
-.app{width:min(100%,620px);min-height:100dvh;margin:0 auto;padding:calc(22px + env(safe-area-inset-top)) 16px calc(26px + env(safe-area-inset-bottom))}
+.app{
+  width:min(100%,620px);
+  min-height:100dvh;
+  margin:0 auto;
+  padding:calc(22px + env(safe-area-inset-top)) 16px calc(26px + env(safe-area-inset-bottom))
+}
 .hero{padding:4px 2px 22px;text-align:center}
 .brandMark{
   width:54px;height:54px;margin:0 auto 12px;
@@ -51,7 +62,13 @@ a{text-decoration:none;color:inherit}
   font-size:10px;font-weight:900;letter-spacing:.22em;
 }
 h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
-.hero p{margin:9px auto 0;max-width:420px;color:var(--muted);font-size:11px;line-height:1.65}
+.hero p{
+  margin:9px auto 0;
+  max-width:420px;
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.65
+}
 
 .gameBrowser{display:grid;gap:10px}
 .browserTop{
@@ -136,17 +153,12 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
   padding:0 4px;
   touch-action:pan-y;
 }
-
 .categoryTrack{
   position:relative;
   will-change:transform;
   transform:translate3d(0,0,0);
 }
-
-.categoryTrack.dragging{
-  transition:none!important;
-}
-
+.categoryTrack.dragging{transition:none!important}
 .categoryTrack.animating{
   transition:transform .24s cubic-bezier(.22,.75,.28,1);
 }
@@ -193,7 +205,11 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
 }
 .tileIcon.cards{position:relative}
 .tileIcon.cards span:first-child{transform:translate(-4px,2px) rotate(-10deg)}
-.tileIcon.cards span:last-child{position:absolute;transform:translate(6px,-2px) rotate(9deg);color:#1f2937}
+.tileIcon.cards span:last-child{
+  position:absolute;
+  transform:translate(6px,-2px) rotate(9deg);
+  color:#1f2937
+}
 .miniStatus{
   flex:0 0 auto;
   min-height:19px;
@@ -253,14 +269,30 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
 
 .gameTile[data-category="casino"]{--tileAccent:#6366f1;--tileSoft:#eef2ff}
 .gameTile[data-category="board"]{--tileAccent:#0f9f8f;--tileSoft:#ecfdf5}
+.gameTile[data-category="action"]{--tileAccent:#f97316;--tileSoft:#fff7ed}
 .gameTile[data-category="other"]{--tileAccent:#ec4899;--tileSoft:#fdf2f8}
 
-.gameTile[data-category="casino"] .tileIcon{background:linear-gradient(145deg,#f7f8ff,var(--tileSoft));color:var(--tileAccent)}
-.gameTile[data-category="board"] .tileIcon{background:linear-gradient(145deg,#f5fffb,var(--tileSoft));color:var(--tileAccent)}
-.gameTile[data-category="other"] .tileIcon{background:linear-gradient(145deg,#fff7fb,var(--tileSoft));color:var(--tileAccent)}
+.gameTile[data-category="casino"] .tileIcon{
+  background:linear-gradient(145deg,#f7f8ff,var(--tileSoft));
+  color:var(--tileAccent)
+}
+.gameTile[data-category="board"] .tileIcon{
+  background:linear-gradient(145deg,#f5fffb,var(--tileSoft));
+  color:var(--tileAccent)
+}
+.gameTile[data-category="action"] .tileIcon{
+  background:linear-gradient(145deg,#fffaf5,var(--tileSoft));
+  color:var(--tileAccent)
+}
+.gameTile[data-category="other"] .tileIcon{
+  background:linear-gradient(145deg,#fff7fb,var(--tileSoft));
+  color:var(--tileAccent)
+}
 
 .gameTile[data-category="board"] .tileCategory{color:#0f8b7d}
 .gameTile[data-category="board"]{border-color:rgba(15,159,143,.18)}
+.gameTile[data-category="action"] .tileCategory{color:#ea580c}
+.gameTile[data-category="action"]{border-color:rgba(249,115,22,.18)}
 .gameTile[data-category="other"] .tileCategory{color:#db2777}
 .gameTile[data-category="other"]{border-color:rgba(236,72,153,.15)}
 
@@ -273,6 +305,21 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
 }
 .marubatsuIcon span:first-child{color:#fb7185}
 .marubatsuIcon span:last-child{color:#60a5fa}
+
+.flashRushIcon{
+  position:relative;
+  font-size:21px;
+  overflow:hidden;
+}
+.flashRushIcon::after{
+  content:"";
+  position:absolute;
+  inset:auto 8px 7px;
+  height:3px;
+  border-radius:999px;
+  background:linear-gradient(90deg,#ec4899,#f59e0b);
+  opacity:.65;
+}
 
 .emptyState{
   min-height:160px;
@@ -288,17 +335,47 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
 .emptyState b{font-size:11px;color:#4b5563}
 .emptyState span{font-size:9px}
 .hidden{display:none!important}
-.notice{margin-top:14px;padding:12px 13px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.72);box-shadow:0 8px 24px rgba(31,41,55,.04)}
-.notice b{display:block;margin-bottom:4px;color:#374151;font-size:10px}
-.notice p{margin:0;color:var(--muted);font-size:9px;line-height:1.55}
-.footer{margin-top:24px;padding-top:14px;border-top:1px solid #dfe4ee;text-align:center;color:#98a1af;font-size:8px;letter-spacing:.12em}
-@media(max-width:390px){.app{padding-left:12px;padding-right:12px}}
+.notice{
+  margin-top:14px;
+  padding:12px 13px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:rgba(255,255,255,.72);
+  box-shadow:0 8px 24px rgba(31,41,55,.04)
+}
+.notice b{
+  display:block;
+  margin-bottom:4px;
+  color:#374151;
+  font-size:10px
+}
+.notice p{
+  margin:0;
+  color:var(--muted);
+  font-size:9px;
+  line-height:1.55
+}
+.footer{
+  margin-top:24px;
+  padding-top:14px;
+  border-top:1px solid #dfe4ee;
+  text-align:center;
+  color:#98a1af;
+  font-size:8px;
+  letter-spacing:.12em
+}
+@media(max-width:390px){
+  .app{padding-left:12px;padding-right:12px}
+}
 </style>
 </head>
 <body>
 <main class="app">
   <header class="hero">
-    <div class="brandMark" aria-hidden="true"><span class="brandTile">M</span><span class="brandTile">G</span></div>
+    <div class="brandMark" aria-hidden="true">
+      <span class="brandTile">M</span>
+      <span class="brandTile">G</span>
+    </div>
     <div class="eyebrow">MINI GAME PORTAL</div>
     <h1>MINI GAME HUB</h1>
     <p>ジャンルを問わず、遊びたいゲームをここから選択できます。各ゲームは独立して動作します。</p>
@@ -316,79 +393,92 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
         <button type="button" class="filterChip active" data-filter="all">ALL</button>
         <button type="button" class="filterChip" data-filter="casino">CASINO</button>
         <button type="button" class="filterChip" data-filter="board">ボードゲーム</button>
+        <button type="button" class="filterChip" data-filter="action">ACTION</button>
         <button type="button" class="filterChip" data-filter="other">OTHER</button>
       </div>
 
       <div class="browserMeta">
-        <span id="resultCount">5 GAMES</span>
+        <span id="resultCount">6 GAMES</span>
         <span>カテゴリで絞り込みできます</span>
       </div>
     </div>
+
     <div class="categoryViewport" id="categoryViewport">
       <div class="categoryTrack" id="categoryTrack">
+        <div class="gameGrid" id="gameGrid">
 
+          <a class="gameTile available" href="./blackjack/" data-category="casino" data-search="blackjack ブラックジャック casino カジノ 実戦 練習">
+            <div class="tileTop">
+              <div class="tileIcon cards" aria-hidden="true"><span>A</span><span>♠</span></div>
+              <span class="miniStatus playable">PLAYABLE</span>
+            </div>
+            <div class="tileCategory">CASINO</div>
+            <h3>BLACKJACK</h3>
+            <p>実戦を想定したブラックジャック練習ゲーム。</p>
+            <div class="tileAction">PLAY <span>›</span></div>
+          </a>
 
-    <div class="gameGrid" id="gameGrid">
-      <a class="gameTile available" href="./blackjack/" data-category="casino" data-search="blackjack ブラックジャック casino カジノ 実戦 練習">
-        <div class="tileTop">
-          <div class="tileIcon cards" aria-hidden="true"><span>A</span><span>♠</span></div>
-          <span class="miniStatus playable">PLAYABLE</span>
+          <a class="gameTile available" href="./baccarat/" data-category="casino" data-search="baccarat バカラ casino カジノ パラダイス 練習">
+            <div class="tileTop">
+              <div class="tileIcon" aria-hidden="true">B</div>
+              <span class="miniStatus playable">PLAYABLE</span>
+            </div>
+            <div class="tileCategory">CASINO</div>
+            <h3>BACCARAT</h3>
+            <p>パラダイス実戦を想定したバカラ練習ゲーム。</p>
+            <div class="tileAction">PLAY <span>›</span></div>
+          </a>
+
+          <div class="gameTile disabled" data-category="casino" data-search="roulette ルーレット casino カジノ">
+            <div class="tileTop">
+              <div class="tileIcon" aria-hidden="true">◎</div>
+              <span class="miniStatus">SOON</span>
+            </div>
+            <div class="tileCategory">CASINO</div>
+            <h3>ROULETTE</h3>
+            <p>今後追加予定。</p>
+            <div class="tileAction muted">COMING SOON</div>
+          </div>
+
+          <a class="gameTile available" href="./marubatsu/" data-category="board" data-search="消える○×ゲーム まるばつ マルバツ ○× tic tac toe 三目並べ ボードゲーム board">
+            <div class="tileTop">
+              <div class="tileIcon marubatsuIcon" aria-hidden="true"><span>○</span><span>×</span></div>
+              <span class="miniStatus playable">PLAYABLE</span>
+            </div>
+            <div class="tileCategory">ボードゲーム</div>
+            <h3>消える○×ゲーム</h3>
+            <p>4個目を置くと一番古いコマが消える三目並べ。</p>
+            <div class="tileAction">PLAY <span>›</span></div>
+          </a>
+
+          <a class="gameTile available" href="./flash-rush/" data-category="action" data-search="flash rush フラッシュラッシュ 瞬間ゲーム ミニゲーム ドットゲーム アクション action micro game">
+            <div class="tileTop">
+              <div class="tileIcon flashRushIcon" aria-hidden="true">⚡</div>
+              <span class="miniStatus playable">PLAYABLE</span>
+            </div>
+            <div class="tileCategory">ACTION</div>
+            <h3>FLASH RUSH</h3>
+            <p>100種類の瞬間ミニゲームをハイテンポで連続攻略。</p>
+            <div class="tileAction">PLAY <span>›</span></div>
+          </a>
+
+          <div class="gameTile disabled" data-category="other" data-search="next game other puzzle action casual パズル アクション カジュアル">
+            <div class="tileTop">
+              <div class="tileIcon" aria-hidden="true">＋</div>
+              <span class="miniStatus">SOON</span>
+            </div>
+            <div class="tileCategory">OTHER</div>
+            <h3>NEXT GAME</h3>
+            <p>カジノ以外のゲームもここへ追加。</p>
+            <div class="tileAction muted">COMING SOON</div>
+          </div>
+
         </div>
-        <div class="tileCategory">CASINO</div>
-        <h3>BLACKJACK</h3>
-        <p>実戦を想定したブラックジャック練習ゲーム。</p>
-        <div class="tileAction">PLAY <span>›</span></div>
-      </a>
 
-      <a class="gameTile available" href="./baccarat/" data-category="casino" data-search="baccarat バカラ casino カジノ パラダイス 練習">
-        <div class="tileTop">
-          <div class="tileIcon" aria-hidden="true">B</div>
-          <span class="miniStatus playable">PLAYABLE</span>
+        <div id="emptyState" class="emptyState hidden">
+          <b>該当するゲームがありません</b>
+          <span>検索条件やカテゴリを変更してください。</span>
         </div>
-        <div class="tileCategory">CASINO</div>
-        <h3>BACCARAT</h3>
-        <p>パラダイス実戦を想定したバカラ練習ゲーム。</p>
-        <div class="tileAction">PLAY <span>›</span></div>
-      </a>
-
-      <div class="gameTile disabled" data-category="casino" data-search="roulette ルーレット casino カジノ">
-        <div class="tileTop">
-          <div class="tileIcon" aria-hidden="true">◎</div>
-          <span class="miniStatus">SOON</span>
-        </div>
-        <div class="tileCategory">CASINO</div>
-        <h3>ROULETTE</h3>
-        <p>今後追加予定。</p>
-        <div class="tileAction muted">COMING SOON</div>
-      </div>
-
-      <a class="gameTile available" href="./marubatsu/" data-category="board" data-search="消える○×ゲーム まるばつ マルバツ ○× tic tac toe 三目並べ ボードゲーム board">
-        <div class="tileTop">
-          <div class="tileIcon marubatsuIcon" aria-hidden="true"><span>○</span><span>×</span></div>
-          <span class="miniStatus playable">PLAYABLE</span>
-        </div>
-        <div class="tileCategory">ボードゲーム</div>
-        <h3>消える○×ゲーム</h3>
-        <p>4個目を置くと一番古いコマが消える三目並べ。</p>
-        <div class="tileAction">PLAY <span>›</span></div>
-      </a>
-
-      <div class="gameTile disabled" data-category="other" data-search="next game other puzzle action casual パズル アクション カジュアル">
-        <div class="tileTop">
-          <div class="tileIcon" aria-hidden="true">＋</div>
-          <span class="miniStatus">SOON</span>
-        </div>
-        <div class="tileCategory">OTHER</div>
-        <h3>NEXT GAME</h3>
-        <p>カジノ以外のゲームもここへ追加。</p>
-        <div class="tileAction muted">COMING SOON</div>
-      </div>
-    </div>
-
-    <div id="emptyState" class="emptyState hidden">
-      <b>該当するゲームがありません</b>
-      <span>検索条件やカテゴリを変更してください。</span>
-    </div>
       </div>
     </div>
   </section>
@@ -437,7 +527,10 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
     let visible = 0;
 
     cards.forEach(card => {
-      const categoryMatch = category === 'all' || card.dataset.category === category;
+      const categoryMatch =
+        category === 'all' ||
+        card.dataset.category === category;
+
       const searchMatch =
         !q ||
         normalize(card.dataset.search).includes(q) ||
@@ -445,6 +538,7 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
 
       const show = categoryMatch && searchMatch;
       card.classList.toggle('hidden', !show);
+
       if(show) visible++;
     });
 
@@ -458,11 +552,10 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
       btn.setAttribute('aria-selected', active ? 'true' : 'false');
     });
 
-    // 選択中カテゴリが画面外にある場合は、チップ列も自然に追従。
     filters[activeIndex]?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'nearest',
-      inline: 'center'
+      behavior:'smooth',
+      block:'nearest',
+      inline:'center'
     });
   }
 
@@ -483,17 +576,15 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
       callback?.();
     };
 
-    track.addEventListener('transitionend', done, { once:true });
-
-    // transitionend が取りこぼされた場合の保険。
-    // completed で多重実行を防止する。
+    track.addEventListener('transitionend', done, {once:true});
     setTimeout(done, 320);
   }
 
   function moveToIndex(nextIndex, direction = 0){
     if(animationLock) return;
     if(nextIndex < 0 || nextIndex >= categories.length) return;
-    if(nextIndex === activeIndex) {
+
+    if(nextIndex === activeIndex){
       setTrackX(0, true);
       return;
     }
@@ -503,7 +594,6 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
 
     const dir = direction || (nextIndex > activeIndex ? -1 : 1);
 
-    // 現在の一覧を横へスライドアウト
     setTrackX(dir * width, true);
 
     finishAnimation(() => {
@@ -511,11 +601,9 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
       category = categories[activeIndex];
       renderCategory();
 
-      // 次カテゴリを反対側から配置
       track.style.transition = 'none';
       track.style.transform = `translate3d(${-dir * width}px,0,0)`;
 
-      // レイアウト確定後に中央へスライドイン
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           track.style.transition = '';
@@ -532,16 +620,19 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
 
   function settleFromDrag(){
     width = Math.max(1, viewport.clientWidth);
-    const threshold = Math.max(SWIPE_MIN, width * SWIPE_RATIO);
 
-    const canGoNext = activeIndex < categories.length - 1;
-    const canGoPrev = activeIndex > 0;
+    const threshold =
+      Math.max(SWIPE_MIN, width * SWIPE_RATIO);
+
+    const canGoNext =
+      activeIndex < categories.length - 1;
+
+    const canGoPrev =
+      activeIndex > 0;
 
     if(deltaX <= -threshold && canGoNext){
-      // 指を左へ動かしたので次カテゴリ
-      const remaining = -width;
       animationLock = true;
-      setTrackX(remaining, true);
+      setTrackX(-width, true);
 
       finishAnimation(() => {
         activeIndex += 1;
@@ -555,6 +646,7 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
           requestAnimationFrame(() => {
             track.style.transition = '';
             setTrackX(0, true);
+
             finishAnimation(() => {
               setTrackX(0, false);
               animationLock = false;
@@ -562,11 +654,11 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
           });
         });
       });
+
       return;
     }
 
     if(deltaX >= threshold && canGoPrev){
-      // 指を右へ動かしたので前カテゴリ
       animationLock = true;
       setTrackX(width, true);
 
@@ -582,6 +674,7 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
           requestAnimationFrame(() => {
             track.style.transition = '';
             setTrackX(0, true);
+
             finishAnimation(() => {
               setTrackX(0, false);
               animationLock = false;
@@ -589,10 +682,10 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
           });
         });
       });
+
       return;
     }
 
-    // 閾値未満、または端カテゴリなら元位置へ戻す
     setTrackX(0, true);
     finishAnimation(() => setTrackX(0, false));
   }
@@ -632,7 +725,6 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
     const dx = e.clientX - startX;
     const dy = e.clientY - startY;
 
-    // 縦スクロール操作を邪魔しない。
     if(!dragging){
       if(Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
 
@@ -643,12 +735,14 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
       }
 
       dragging = true;
-      try{ viewport.setPointerCapture(e.pointerId); }catch(_){}
+
+      try{
+        viewport.setPointerCapture(e.pointerId);
+      }catch(_){}
     }
 
     deltaX = dx;
 
-    // 端では抵抗を付けて「これ以上ない」感を出す
     if(
       (activeIndex === 0 && deltaX > 0) ||
       (activeIndex === categories.length - 1 && deltaX < 0)
@@ -665,7 +759,9 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
     pointerDown = false;
     track.classList.remove('dragging');
 
-    try{ viewport.releasePointerCapture(e.pointerId); }catch(_){}
+    try{
+      viewport.releasePointerCapture(e.pointerId);
+    }catch(_){}
 
     if(!dragging){
       setTrackX(0, false);
@@ -680,92 +776,93 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
 
   viewport.addEventListener('pointerup', endPointer);
   viewport.addEventListener('pointercancel', endPointer);
-
-  // 画像・リンクをドラッグ扱いにしない
   viewport.addEventListener('dragstart', e => e.preventDefault());
 
   renderCategory();
 })();
 </script>
 
-
-
 <script>
 (() => {
-  if (!('serviceWorker' in navigator)) return;
+  if(!('serviceWorker' in navigator)) return;
 
-  function getOfflineTargets() {
+  function getOfflineTargets(){
     const urls = new Set([
       new URL('./', location.href).href,
       new URL('./index.html', location.href).href
     ]);
 
-    // ポータルに掲載されているPLAYABLEゲームを自動検出。
-    // 今後ゲームを追加しても、ポータルにリンクを追加するだけで
-    // Service Worker 側の修正は不要。
+    // ポータル上のPLAYABLEゲームを自動検出する。
+    // ゲーム追加時にsw.jsへ個別パスを追加する必要はない。
     document.querySelectorAll('a.gameTile.available[href]').forEach(link => {
-      try {
-        const url = new URL(link.getAttribute('href'), location.href);
+      try{
+        const url =
+          new URL(link.getAttribute('href'), location.href);
 
-        // 同一GitHub Pagesサイト内だけを対象にする。
-        if (url.origin === location.origin) {
+        if(url.origin === location.origin){
           urls.add(url.href);
         }
-      } catch (_) {}
+      }catch(_){}
     });
 
     return [...urls];
   }
 
-  async function syncOfflineTargets(registration) {
-    if (!navigator.onLine) return;
+  async function syncOfflineTargets(registration){
+    if(!navigator.onLine) return;
 
     const worker =
       navigator.serviceWorker.controller ||
       registration.active ||
       registration.waiting;
 
-    if (!worker) return;
+    if(!worker) return;
 
     worker.postMessage({
-      type: 'CACHE_URLS',
-      urls: getOfflineTargets()
+      type:'CACHE_URLS',
+      urls:getOfflineTargets()
     });
   }
 
   window.addEventListener('load', async () => {
-    try {
-      const registration = await navigator.serviceWorker.register('./sw.js', {
-        scope: './',
-        updateViaCache: 'none'
-      });
+    try{
+      const registration =
+        await navigator.serviceWorker.register('./sw.js', {
+          scope:'./',
+          updateViaCache:'none'
+        });
 
-      // オンライン時はService Worker自体の更新を確認。
-      if (navigator.onLine) {
+      if(navigator.onLine){
         registration.update().catch(() => {});
       }
 
-      // activeなService Workerが確定してからゲーム一覧を同期。
-      const readyRegistration = await navigator.serviceWorker.ready;
+      const readyRegistration =
+        await navigator.serviceWorker.ready;
+
       await syncOfflineTargets(readyRegistration);
 
-      // Service Worker更新直後にも再同期。
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
-        setTimeout(() => {
-          syncOfflineTargets(readyRegistration).catch(() => {});
-        }, 100);
-      });
+      navigator.serviceWorker.addEventListener(
+        'controllerchange',
+        () => {
+          setTimeout(() => {
+            syncOfflineTargets(readyRegistration)
+              .catch(() => {});
+          }, 100);
+        }
+      );
 
-      // オフライン→オンライン復帰時にも最新版を再保存。
       window.addEventListener('online', () => {
-        syncOfflineTargets(readyRegistration).catch(() => {});
+        syncOfflineTargets(readyRegistration)
+          .catch(() => {});
       });
-    } catch (error) {
-      console.warn('Service Worker registration failed:', error);
+    }catch(error){
+      console.warn(
+        'Service Worker registration failed:',
+        error
+      );
     }
   });
 })();
 </script>
-
 </body>
 </html>
