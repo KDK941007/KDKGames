@@ -1,1 +1,1723 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#07101f">
+<title>LASER ESCAPE</title>
+<style>
+:root{
+  --bg:#050914;
+  --panel:#0b1426;
+  --panel2:#101c33;
+  --line:#29405f;
+  --text:#eef7ff;
+  --muted:#8ba3bd;
+  --cyan:#38e8ff;
+  --green:#59f39a;
+  --yellow:#ffd84a;
+  --pink:#ff4f9a;
+  --red:#ff4664;
+  --shadow:#02040a;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{
+  margin:0;
+  min-height:100%;
+  background:var(--bg);
+  color:var(--text);
+  font-family:"Courier New","Hiragino Kaku Gothic ProN","Yu Gothic",monospace;
+}
+body{
+  min-height:100dvh;
+  overflow-x:hidden;
+  background:
+    linear-gradient(rgba(56,232,255,.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(56,232,255,.035) 1px,transparent 1px),
+    radial-gradient(circle at 50% -10%,#173054 0,#07101f 38%,#050914 72%);
+  background-size:18px 18px,18px 18px,auto;
+}
+button,input{font:inherit}
+button{cursor:pointer}
+.screen{display:none;min-height:100dvh}
+.screen.active{display:block}
+.wrap{
+  width:min(100%,480px);
+  min-height:100dvh;
+  margin:0 auto;
+  padding:calc(18px + env(safe-area-inset-top)) 14px calc(18px + env(safe-area-inset-bottom));
+}
+.pixelPanel{
+  border:3px solid var(--line);
+  background:linear-gradient(180deg,rgba(16,28,51,.97),rgba(8,16,31,.98));
+  box-shadow:6px 6px 0 var(--shadow),inset 0 0 0 2px rgba(255,255,255,.025);
+}
+.titleMark{
+  width:96px;height:72px;margin:5px auto 12px;position:relative;
+  filter:drop-shadow(5px 5px 0 #02040a)
+}
+.titleMark .core{
+  position:absolute;left:30px;top:10px;width:36px;height:44px;
+  background:var(--cyan);
+  clip-path:polygon(25% 0,75% 0,75% 18%,100% 18%,100% 82%,75% 82%,75% 100%,25% 100%,25% 82%,0 82%,0 18%,25% 18%);
+}
+.titleMark .beamA,.titleMark .beamB{
+  position:absolute;height:8px;background:var(--pink);top:32px
+}
+.titleMark .beamA{left:0;width:28px}
+.titleMark .beamB{right:0;width:28px}
+.kicker{text-align:center;color:var(--cyan);font-size:10px;font-weight:900;letter-spacing:.24em}
+h1{
+  margin:4px 0 5px;text-align:center;font-size:32px;line-height:1;
+  letter-spacing:.04em;text-shadow:4px 4px 0 #02040a
+}
+.sub{
+  margin:0 auto 18px;text-align:center;color:var(--muted);
+  font-size:11px;line-height:1.7;max-width:360px
+}
+.startCard{padding:15px}
+.fieldLabel{
+  display:block;margin-bottom:7px;color:var(--yellow);
+  font-size:10px;font-weight:900;letter-spacing:.08em
+}
+.nameInput{
+  width:100%;height:48px;border:3px solid #355272;background:#07111f;color:#fff;
+  padding:0 12px;outline:none;font-weight:900;font-size:16px;
+  box-shadow:inset 0 0 0 2px #020813
+}
+.nameInput:focus{border-color:var(--cyan)}
+.nameError{
+  min-height:18px;padding-top:5px;color:#ff8395;font-size:9px;font-weight:900
+}
+.startBtn,.primaryBtn,.secondaryBtn,.dangerBtn{
+  width:100%;min-height:48px;border:0;color:#06111a;font-weight:1000;
+  text-transform:uppercase;letter-spacing:.08em;box-shadow:4px 4px 0 #02040a
+}
+.startBtn,.primaryBtn{background:var(--cyan)}
+.secondaryBtn{background:#d9e7f5}
+.dangerBtn{background:#ff6b7f}
+.startBtn:active,.primaryBtn:active,.secondaryBtn:active,.dangerBtn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 #02040a}
+.rankCard{margin-top:14px;padding:13px}
+.rankHead{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:9px;color:var(--yellow);font-size:11px;font-weight:1000
+}
+.rankRow{
+  display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:8px;align-items:center;
+  min-height:38px;padding:7px 8px;border-top:2px solid #1a2c47;font-size:11px
+}
+.rankRow:first-of-type{border-top:0}
+.rankNo{color:var(--cyan);font-weight:1000}
+.rankName{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:900}
+.rankScore{color:var(--green);font-weight:1000}
+.ruleMini{
+  margin-top:14px;padding:12px 13px;color:var(--muted);font-size:9px;line-height:1.65
+}
+.ruleMini b{color:#e5f2ff}
 
+.gameWrap{
+  width:min(100%,540px);min-height:100dvh;margin:0 auto;
+  padding:calc(10px + env(safe-area-inset-top)) 10px calc(10px + env(safe-area-inset-bottom));
+}
+.hud{
+  display:grid;grid-template-columns:1fr auto;gap:8px;align-items:stretch;margin-bottom:8px
+}
+.hudMain{
+  padding:8px 9px;border:3px solid var(--line);background:#091426;
+  box-shadow:4px 4px 0 #02040a
+}
+.hudTop,.hudBottom{
+  display:flex;justify-content:space-between;gap:8px;align-items:center
+}
+.hudTop{margin-bottom:7px}
+.playerName{
+  min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  color:var(--cyan);font-size:10px;font-weight:1000
+}
+.levelLabel{
+  flex:0 0 auto;
+  min-width:104px;
+  padding:5px 8px;
+  border:3px solid #6f5d19;
+  background:#241d08;
+  color:var(--yellow);
+  text-align:center;
+  font-size:18px;
+  line-height:1;
+  font-weight:1000;
+  letter-spacing:.04em;
+  box-shadow:3px 3px 0 #02040a
+}
+.scoreLabel{font-size:18px;font-weight:1000;line-height:1}
+.timeLabel{color:var(--green);font-size:13px;font-weight:1000}
+.pauseBtn{
+  width:50px;border:3px solid var(--line);background:#12243f;color:#fff;
+  box-shadow:4px 4px 0 #02040a;font-size:19px;font-weight:1000
+}
+.pauseBtn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 #02040a}
+
+.arenaFrame{
+  position:relative;
+  height:min(72dvh,610px);
+  min-height:430px;
+  border:4px solid #314f71;
+  background:#06101d;
+  box-shadow:7px 7px 0 #02040a;
+  overflow:hidden
+}
+.arenaFrame::before{
+  content:"";
+  position:absolute;inset:0;pointer-events:none;z-index:1;
+  background:
+    linear-gradient(rgba(56,232,255,.05) 2px,transparent 2px),
+    linear-gradient(90deg,rgba(56,232,255,.05) 2px,transparent 2px),
+    radial-gradient(circle at center,rgba(24,61,92,.55),transparent 66%);
+  background-size:32px 32px,32px 32px,auto
+}
+.arenaFrame::after{
+  content:"";
+  position:absolute;left:0;right:0;top:0;height:7px;z-index:2;
+  background:repeating-linear-gradient(90deg,#2a496d 0 14px,#152b48 14px 28px)
+}
+.arena{
+  position:absolute;inset:7px 0 0;touch-action:none;overflow:hidden;z-index:3
+}
+.edgeRail{
+  position:absolute;z-index:3;pointer-events:none;background:#142941
+}
+.edgeRail.left,.edgeRail.right{top:0;bottom:0;width:9px}
+.edgeRail.left{left:0}.edgeRail.right{right:0}
+.edgeRail.top,.edgeRail.bottom{left:0;right:0;height:9px}
+.edgeRail.top{top:0}.edgeRail.bottom{bottom:0}
+
+.pilot{
+  position:absolute;z-index:30;width:34px;height:34px;
+  transform:translate(-50%,-50%);
+  touch-action:none;
+  filter:drop-shadow(3px 3px 0 #02040a)
+}
+.pilotBody{
+  position:absolute;inset:3px;
+  background:var(--cyan);
+  clip-path:polygon(
+    33% 0,67% 0,67% 10%,82% 10%,82% 22%,94% 22%,94% 78%,
+    82% 78%,82% 90%,67% 90%,67% 100%,33% 100%,33% 90%,
+    18% 90%,18% 78%,6% 78%,6% 22%,18% 22%,18% 10%,33% 10%
+  )
+}
+.pilotCore{
+  position:absolute;left:12px;top:12px;width:10px;height:10px;background:#07111f
+}
+.pilot.hit{animation:hitFlash .08s steps(2,end) 5}
+@keyframes hitFlash{50%{filter:brightness(3) drop-shadow(3px 3px 0 #02040a)}}
+.arenaFrame.hitShake{animation:arenaHitShake .92s steps(2,end)}
+@keyframes arenaHitShake{
+  0%,100%{transform:translate(0,0)}
+  8%{transform:translate(-9px,4px)}
+  16%{transform:translate(10px,-5px)}
+  25%{transform:translate(-8px,-6px)}
+  34%{transform:translate(8px,5px)}
+  44%{transform:translate(-6px,4px)}
+  56%{transform:translate(6px,-3px)}
+  70%{transform:translate(-4px,2px)}
+  84%{transform:translate(3px,-2px)}
+}
+.hitFlashLayer{
+  position:absolute;inset:0;z-index:55;pointer-events:none;
+  background:#ff315d;opacity:0
+}
+.hitFlashLayer.show{animation:screenHitFlash 1.05s steps(6,end)}
+@keyframes screenHitFlash{
+  0%{opacity:.78}
+  12%{opacity:.18}
+  23%{opacity:.62}
+  38%{opacity:.12}
+  54%{opacity:.42}
+  72%{opacity:.10}
+  100%{opacity:0}
+}
+.hitBurst{
+  position:absolute;z-index:54;width:9px;height:9px;
+  background:#fff4f7;pointer-events:none;
+  box-shadow:0 0 0 2px #ff3f6a,3px 3px 0 #02040a
+}
+.hitText{
+  position:absolute;z-index:58;left:50%;top:46%;
+  transform:translate(-50%,-50%) scale(.7);
+  min-width:180px;
+  padding:10px 12px;
+  border:5px solid #fff;
+  background:#ff315d;
+  color:#fff;
+  text-align:center;
+  font-size:26px;
+  line-height:1;
+  font-weight:1000;
+  letter-spacing:.08em;
+  text-shadow:3px 3px 0 #7d102a;
+  box-shadow:7px 7px 0 #02040a;
+  opacity:0;
+  pointer-events:none
+}
+.hitText.show{animation:hitTextPop 1.14s steps(6,end)}
+@keyframes hitTextPop{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.55)}
+  10%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}
+  22%,68%{opacity:1;transform:translate(-50%,-50%) scale(1)}
+  82%{opacity:1;transform:translate(-50%,-50%) scale(.92)}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(.82)}
+}
+.attackLabel{
+  position:absolute;z-index:40;left:50%;top:18px;transform:translateX(-50%);
+  min-width:138px;padding:5px 9px;border:3px solid #4c6586;
+  background:#091629;color:var(--yellow);text-align:center;
+  font-size:9px;font-weight:1000;letter-spacing:.08em;
+  box-shadow:4px 4px 0 #02040a;opacity:0;pointer-events:none
+}
+.attackLabel.show{animation:attackLabelPop .72s steps(3,end)}
+@keyframes attackLabelPop{
+  0%{opacity:0;transform:translate(-50%,-5px)}
+  14%,76%{opacity:1;transform:translate(-50%,0)}
+  100%{opacity:0;transform:translate(-50%,0)}
+}
+
+.cannon{
+  position:absolute;z-index:11;width:26px;height:26px;background:#1f3d61;
+  border:3px solid #5d7ea3;pointer-events:none;
+  clip-path:polygon(20% 0,80% 0,80% 15%,100% 15%,100% 85%,80% 85%,80% 100%,20% 100%,20% 85%,0 85%,0 15%,20% 15%)
+}
+.warning{
+  position:absolute;z-index:8;pointer-events:none;opacity:.92;
+  background:repeating-linear-gradient(90deg,rgba(255,255,255,.98) 0 8px,transparent 8px 16px);
+  animation:warnBlink .16s steps(2,end) infinite
+}
+.warning.v{
+  top:0;bottom:0;width:8px;transform:translateX(-50%);
+  background:repeating-linear-gradient(180deg,rgba(255,255,255,.98) 0 8px,transparent 8px 16px)
+}
+.warning.h{left:0;right:0;height:8px;transform:translateY(-50%)}
+@keyframes warnBlink{50%{opacity:.25}}
+
+.laser{
+  position:absolute;z-index:20;pointer-events:none;background:#ff3f6a;
+  box-shadow:0 0 0 3px #ff9bb1,0 0 14px 5px rgba(255,63,106,.8);
+  animation:beamPulse .08s steps(2,end) infinite
+}
+.laser.v{top:0;bottom:0;width:14px;transform:translateX(-50%)}
+.laser.h{left:0;right:0;height:14px;transform:translateY(-50%)}
+@keyframes beamPulse{50%{background:#fff3f7}}
+
+.levelOverlay,.pauseOverlay,.gameOverOverlay{
+  position:absolute;inset:0;z-index:60;display:none;place-items:center;
+  background:rgba(2,7,15,.78);backdrop-filter:blur(2px)
+}
+.levelOverlay.show,.pauseOverlay.show,.gameOverOverlay.show{display:grid}
+.levelMessage{
+  width:min(88%,360px);padding:20px 14px;text-align:center;
+  border:4px solid #405f82;background:#091629;box-shadow:7px 7px 0 #02040a
+}
+.levelMessage .big{
+  color:var(--yellow);font-size:26px;font-weight:1000;text-shadow:4px 4px 0 #02040a
+}
+.levelMessage .small{margin-top:8px;color:var(--muted);font-size:10px;line-height:1.6}
+
+.levelOverlay.clearMode{
+  background:
+    radial-gradient(circle at center,rgba(56,232,255,.23),rgba(2,7,15,.88) 58%);
+  animation:clearOverlayFlash 1.6s steps(6,end)
+}
+.levelOverlay.clearMode .levelMessage{
+  border-color:var(--green);
+  background:#09231d;
+  box-shadow:
+    7px 7px 0 #02040a,
+    0 0 0 4px rgba(56,232,255,.22);
+  animation:clearCardPop 1.6s steps(7,end)
+}
+.levelOverlay.clearMode .big{
+  color:var(--green);
+  text-shadow:4px 4px 0 #02040a,0 0 12px rgba(89,243,154,.5)
+}
+.levelOverlay.clearMode .small{color:#c6ffe0}
+
+.levelOverlay.countdownMode{
+  background:
+    radial-gradient(circle at center,rgba(56,232,255,.16),rgba(2,7,15,.88) 62%);
+}
+.levelOverlay.countdownMode .levelMessage{
+  border-color:var(--cyan);
+  background:#081c2a;
+  box-shadow:7px 7px 0 #02040a,0 0 0 4px rgba(56,232,255,.12);
+}
+.levelOverlay.countdownMode .big{
+  color:var(--cyan);
+  font-size:54px;
+  line-height:1;
+  text-shadow:5px 5px 0 #02040a;
+}
+.levelOverlay.countdownMode .big.countGo{
+  color:var(--green);
+  font-size:38px;
+}
+.levelOverlay.countdownMode .countPulse{
+  animation:countPulse .68s steps(5,end)
+}
+@keyframes countPulse{
+  0%{transform:scale(.55);filter:brightness(2.5);opacity:.35}
+  16%{transform:scale(1.20);filter:brightness(1.8);opacity:1}
+  38%{transform:scale(.96);filter:brightness(1.15)}
+  70%{transform:scale(1);opacity:1}
+  100%{transform:scale(.90);opacity:.15}
+}
+
+@keyframes clearOverlayFlash{
+  0%{background-color:rgba(89,243,154,.50)}
+  10%{background-color:rgba(56,232,255,.16)}
+  22%{background-color:rgba(89,243,154,.34)}
+  38%{background-color:rgba(2,7,15,.70)}
+  54%{background-color:rgba(56,232,255,.16)}
+  100%{background-color:rgba(2,7,15,.78)}
+}
+@keyframes clearCardPop{
+  0%{transform:scale(.55);filter:brightness(2.3)}
+  12%{transform:scale(1.16);filter:brightness(1.55)}
+  25%{transform:scale(.96);filter:brightness(1.2)}
+  38%,74%{transform:scale(1);filter:brightness(1)}
+  86%{transform:scale(1.04)}
+  100%{transform:scale(1)}
+}
+.clearBurst{
+  position:absolute;
+  z-index:62;
+  width:8px;
+  height:8px;
+  pointer-events:none;
+  background:var(--green);
+  box-shadow:2px 2px 0 #02040a
+}
+.clearRing{
+  position:absolute;
+  z-index:61;
+  left:50%;
+  top:50%;
+  width:40px;
+  height:40px;
+  border:7px solid var(--cyan);
+  transform:translate(-50%,-50%);
+  opacity:0;
+  pointer-events:none
+}
+.levelOverlay.clearMode .clearRing{
+  animation:clearRingExpand 1.05s steps(8,end) forwards
+}
+@keyframes clearRingExpand{
+  0%{width:40px;height:40px;opacity:.95}
+  60%{opacity:.7}
+  100%{width:300px;height:300px;opacity:0}
+}
+
+.modalCard{
+  width:min(88%,360px);padding:16px;border:4px solid #405f82;
+  background:#091629;box-shadow:7px 7px 0 #02040a
+}
+.modalTitle{text-align:center;color:var(--yellow);font-size:22px;font-weight:1000;margin-bottom:12px}
+.modalBtns{display:grid;gap:9px}
+.gameOverStats{
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px
+}
+.statBox{
+  padding:9px;border:2px solid #29405f;background:#07111f;text-align:center
+}
+.statBox span{display:block;color:var(--muted);font-size:8px;margin-bottom:4px}
+.statBox b{font-size:16px;color:#fff}
+.newRank{
+  display:none;margin:-2px 0 12px;text-align:center;color:var(--green);
+  font-size:11px;font-weight:1000
+}
+.newRank.show{display:block}
+.gameHint{
+  text-align:center;margin-top:8px;color:#7290ad;font-size:8px;line-height:1.4
+}
+@media(max-width:380px){
+  h1{font-size:28px}
+  .arenaFrame{min-height:400px}
+  .scoreLabel{font-size:16px}
+}
+</style>
+</head>
+<body>
+
+<section id="startScreen" class="screen active">
+  <div class="wrap">
+    <div class="titleMark" aria-hidden="true">
+      <i class="beamA"></i><i class="core"></i><i class="beamB"></i>
+    </div>
+    <div class="kicker">PIXEL SURVIVAL</div>
+    <h1>LASER ESCAPE</h1>
+    <p class="sub">30秒生き残ってLEVELを突破。<br>レーザーを避け続け、どこまでスコアを伸ばせるか。</p>
+
+    <div class="startCard pixelPanel">
+      <label class="fieldLabel" for="playerNameInput">PLAYER NAME</label>
+      <input id="playerNameInput" class="nameInput" maxlength="12" autocomplete="nickname" placeholder="名前を入力">
+      <div id="nameError" class="nameError"></div>
+      <button id="startBtn" class="startBtn" type="button">START</button>
+    </div>
+
+    <div class="rankCard pixelPanel">
+      <div class="rankHead"><span>TOP 3 RANKING</span><span>LOCAL</span></div>
+      <div id="rankingList"></div>
+    </div>
+
+    <div class="ruleMini pixelPanel">
+      <b>RULE</b><br>
+      プレイヤーを指でドラッグして移動。レーザーに1回でも触れるとGAME OVER。<br>
+      1 LEVEL = 30秒。LEVELが高いほどスコア倍率とレーザー密度が上昇します。
+    </div>
+  </div>
+</section>
+
+<section id="gameScreen" class="screen">
+  <div class="gameWrap">
+    <div class="hud">
+      <div class="hudMain">
+        <div class="hudTop">
+          <span id="hudName" class="playerName">PLAYER</span>
+          <span id="hudLevel" class="levelLabel">LEVEL 1</span>
+        </div>
+        <div class="hudBottom">
+          <span id="hudScore" class="scoreLabel">000000</span>
+          <span id="hudTime" class="timeLabel">30.0</span>
+        </div>
+      </div>
+      <button id="pauseBtn" class="pauseBtn" type="button" aria-label="一時停止">Ⅱ</button>
+    </div>
+
+    <div id="arenaFrame" class="arenaFrame">
+      <div class="edgeRail left"></div><div class="edgeRail right"></div>
+      <div class="edgeRail top"></div><div class="edgeRail bottom"></div>
+
+      <div id="arena" class="arena">
+        <div id="attackLabel" class="attackLabel">LASER BURST</div>
+        <div id="pilot" class="pilot">
+          <div class="pilotBody"></div>
+          <div class="pilotCore"></div>
+        </div>
+      </div>
+
+      <div id="hitFlashLayer" class="hitFlashLayer"></div>
+      <div id="hitText" class="hitText">LASER HIT!</div>
+
+      <div id="levelOverlay" class="levelOverlay">
+        <div id="clearRing" class="clearRing"></div>
+        <div class="levelMessage">
+          <div id="levelBig" class="big">LEVEL 1 START!</div>
+          <div id="levelSmall" class="small">READY</div>
+        </div>
+      </div>
+
+      <div id="pauseOverlay" class="pauseOverlay">
+        <div class="modalCard">
+          <div class="modalTitle">PAUSE</div>
+          <div class="modalBtns">
+            <button id="resumeBtn" class="primaryBtn" type="button">再開</button>
+            <button id="quitBtn" class="dangerBtn" type="button">トップ画面に戻る</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="gameOverOverlay" class="gameOverOverlay">
+        <div class="modalCard">
+          <div class="modalTitle">GAME OVER</div>
+          <div class="gameOverStats">
+            <div class="statBox"><span>SCORE</span><b id="finalScore">0</b></div>
+            <div class="statBox"><span>LEVEL</span><b id="finalLevel">1</b></div>
+            <div class="statBox"><span>SURVIVAL</span><b id="finalTime">0.0s</b></div>
+            <div class="statBox"><span>PLAYER</span><b id="finalName">-</b></div>
+          </div>
+          <div id="newRank" class="newRank">RANK IN!</div>
+          <div class="modalBtns">
+            <button id="retryBtn" class="primaryBtn" type="button">RETRY</button>
+            <button id="topBtn" class="secondaryBtn" type="button">トップ画面に戻る</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="gameHint">DRAG PLAYER / ONE HIT = GAME OVER</div>
+  </div>
+</section>
+
+<script>
+(() => {
+  'use strict';
+
+  const BUILD = '1.9.0';
+  const LEVEL_SECONDS = 30;
+  const SCORE_PER_SECOND = 100;
+  const STORAGE_RANKING = 'laser_escape_ranking_v1';
+  const STORAGE_NAME = 'laser_escape_last_name_v1';
+
+  const $ = s => document.querySelector(s);
+
+  const startScreen = $('#startScreen');
+  const gameScreen = $('#gameScreen');
+  const nameInput = $('#playerNameInput');
+  const nameError = $('#nameError');
+  const rankingList = $('#rankingList');
+
+  const arenaFrame = $('#arenaFrame');
+  const arena = $('#arena');
+  const pilot = $('#pilot');
+  const attackLabel = $('#attackLabel');
+  const hitFlashLayer = $('#hitFlashLayer');
+  const hitText = $('#hitText');
+
+  const hudName = $('#hudName');
+  const hudLevel = $('#hudLevel');
+  const hudScore = $('#hudScore');
+  const hudTime = $('#hudTime');
+
+  const levelOverlay = $('#levelOverlay');
+  const levelBig = $('#levelBig');
+  const levelSmall = $('#levelSmall');
+  const pauseOverlay = $('#pauseOverlay');
+  const gameOverOverlay = $('#gameOverOverlay');
+
+  const finalScore = $('#finalScore');
+  const finalLevel = $('#finalLevel');
+  const finalTime = $('#finalTime');
+  const finalName = $('#finalName');
+  const newRank = $('#newRank');
+
+  const state = {
+    running:false,
+    paused:false,
+    transitioning:false,
+    gameOver:false,
+    playerName:'',
+    level:1,
+    levelElapsed:0,
+    totalSurvival:0,
+    score:0,
+    lastTs:0,
+    spawnAccumulator:0,
+    raf:0,
+    drag:false,
+    dragOffsetX:0,
+    dragOffsetY:0,
+    lasers:new Set(),
+    timers:new Set(),
+    sequence:null,
+    audioCtx:null,
+    bgmTimer:0,
+    bgmStep:0,
+    warningGroup:null,
+    shotGroupSeq:0,
+    runToken:0
+  };
+
+  function safeJsonParse(text, fallback){
+    try{return JSON.parse(text)}catch(_){return fallback}
+  }
+
+  function ensureAudio(){
+    try{
+      if(!state.audioCtx){
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if(AC) state.audioCtx = new AC();
+      }
+
+      const ctx = state.audioCtx;
+      if(!ctx) return null;
+
+      if(ctx.state === 'suspended'){
+        ctx.resume().catch(()=>{});
+      }
+
+      // iOS向けのユーザー操作内アンロック音。ほぼ無音だがAudioContextを確実に開始させる。
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      gain.gain.value = .00001;
+      osc.frequency.value = 220;
+      osc.connect(gain).connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + .02);
+
+      return ctx;
+    }catch(_){
+      return null;
+    }
+  }
+
+  function playTone(freq, duration=.12, volume=.05, type='square', when=0){
+    const ctx = state.audioCtx;
+    if(!ctx || ctx.state === 'closed') return;
+
+    const now = ctx.currentTime + when;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = type;
+    osc.frequency.setValueAtTime(Math.max(30,freq),now);
+    gain.gain.setValueAtTime(.0001,now);
+    gain.gain.exponentialRampToValueAtTime(Math.max(.0002,volume),now+.008);
+    gain.gain.exponentialRampToValueAtTime(.0001,now+duration);
+
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now+duration+.02);
+  }
+
+  function hitSfx(){
+    const ctx = ensureAudio();
+    if(!ctx) return;
+    const now = ctx.currentTime;
+
+    // 大きめの電撃下降音
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const filter = ctx.createBiquadFilter();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(1450, now);
+    osc.frequency.exponentialRampToValueAtTime(70, now + .55);
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(1900,now);
+    filter.frequency.exponentialRampToValueAtTime(380,now+.5);
+    filter.Q.value = 1.1;
+    gain.gain.setValueAtTime(.0001, now);
+    gain.gain.exponentialRampToValueAtTime(.42, now + .012);
+    gain.gain.exponentialRampToValueAtTime(.0001, now + .62);
+    osc.connect(filter).connect(gain).connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + .65);
+
+    // 衝撃低音
+    const bass = ctx.createOscillator();
+    const bassGain = ctx.createGain();
+    bass.type = 'square';
+    bass.frequency.setValueAtTime(150, now);
+    bass.frequency.exponentialRampToValueAtTime(38, now + .34);
+    bassGain.gain.setValueAtTime(.34, now);
+    bassGain.gain.exponentialRampToValueAtTime(.0001, now + .42);
+    bass.connect(bassGain).connect(ctx.destination);
+    bass.start(now);
+    bass.stop(now + .44);
+
+    // 焼けるノイズ
+    const length = Math.max(1, Math.floor(ctx.sampleRate * .46));
+    const buffer = ctx.createBuffer(1, length, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for(let i=0;i<length;i++){
+      const env = 1 - i/length;
+      data[i] = (Math.random()*2-1) * env;
+    }
+    const noise = ctx.createBufferSource();
+    const noiseGain = ctx.createGain();
+    const hp = ctx.createBiquadFilter();
+    noise.buffer = buffer;
+    hp.type = 'highpass';
+    hp.frequency.value = 850;
+    noiseGain.gain.setValueAtTime(.27, now);
+    noiseGain.gain.exponentialRampToValueAtTime(.0001, now + .48);
+    noise.connect(hp).connect(noiseGain).connect(ctx.destination);
+    noise.start(now);
+
+    // 二段目のビープで「被弾」を明確化
+    playTone(760,.12,.15,'square',.16);
+    playTone(380,.18,.14,'square',.28);
+  }
+
+  function countdownSfx(number){
+    ensureAudio();
+    if(number>0){
+      const base = number===1 ? 620 : 520;
+      playTone(base,.13,.12,'square');
+      playTone(base*2,.08,.035,'sine',.015);
+    }else{
+      playTone(784,.12,.13,'square');
+      playTone(1046.5,.22,.12,'square',.10);
+      playTone(1568,.20,.055,'sine',.20);
+    }
+  }
+
+  function clearSfx(){
+    const ctx = ensureAudio();
+    if(!ctx) return;
+
+    // 明るい上昇アルペジオ＋最後の長い決定音。
+    const notes = [
+      [392,.00,.14,.11],
+      [523.25,.12,.14,.12],
+      [659.25,.24,.15,.13],
+      [783.99,.36,.16,.14],
+      [1046.5,.50,.38,.16]
+    ];
+
+    for(const [freq,when,dur,vol] of notes){
+      playTone(freq,dur,vol,'square',when);
+      playTone(freq*2,dur*.72,vol*.38,'triangle',when+.015);
+    }
+
+    // SFらしい高音のキラッとした余韻
+    playTone(1318.5,.20,.07,'sine',.63);
+    playTone(1568,.25,.055,'sine',.75);
+  }
+
+  function laserSfx(orientation){
+    const ctx = ensureAudio();
+    if(!ctx) return;
+    const now = ctx.currentTime;
+
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const filter = ctx.createBiquadFilter();
+
+    osc.type = 'sawtooth';
+    const startFreq = orientation === 'v' ? 880 : 720;
+    osc.frequency.setValueAtTime(startFreq, now);
+    osc.frequency.exponentialRampToValueAtTime(180, now + .18);
+
+    filter.type = 'highpass';
+    filter.frequency.value = 420;
+
+    gain.gain.setValueAtTime(.0001,now);
+    gain.gain.exponentialRampToValueAtTime(.095,now+.006);
+    gain.gain.exponentialRampToValueAtTime(.0001,now+.2);
+
+    osc.connect(filter).connect(gain).connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now+.22);
+
+    // 「ジュッ」という短いノイズ
+    const len = Math.max(1,Math.floor(ctx.sampleRate*.08));
+    const buffer = ctx.createBuffer(1,len,ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for(let i=0;i<len;i++) data[i]=(Math.random()*2-1)*(1-i/len);
+    const noise=ctx.createBufferSource();
+    const ng=ctx.createGain();
+    noise.buffer=buffer;
+    ng.gain.setValueAtTime(.055,now);
+    ng.gain.exponentialRampToValueAtTime(.0001,now+.085);
+    noise.connect(ng).connect(ctx.destination);
+    noise.start(now);
+  }
+
+  function bgmNote(step){
+    const ctx = state.audioCtx;
+    if(!ctx || ctx.state !== 'running') return;
+
+    // SF感を出すため、低いパルス＋浮遊するアルペジオ。
+    const scale = [0,3,5,7,10,12,15,17];
+    const root = 73.42; // D2
+    const note = scale[step % scale.length];
+    const freq = root * Math.pow(2,note/12);
+
+    if(step % 2 === 0){
+      playTone(freq*2,.14,.026,'square');
+    }else{
+      playTone(freq*4,.11,.018,'triangle');
+    }
+
+    if(step % 4 === 0){
+      playTone(root,.32,.038,'sawtooth');
+      playTone(root/2,.28,.018,'triangle');
+    }
+
+    // 1小節ごとの短いレーダー音
+    if(step % 16 === 12){
+      playTone(660,.08,.022,'sine');
+      playTone(990,.11,.016,'sine',.06);
+    }
+  }
+
+  function startBgm(){
+    ensureAudio();
+    stopBgm();
+    state.bgmStep = 0;
+
+    const tick = () => {
+      if(
+        state.running &&
+        !state.paused &&
+        !state.gameOver &&
+        !state.transitioning
+      ){
+        bgmNote(state.bgmStep++);
+      }
+    };
+
+    tick();
+    state.bgmTimer = window.setInterval(tick,155);
+  }
+
+  function stopBgm(){
+    if(state.bgmTimer){
+      clearInterval(state.bgmTimer);
+      state.bgmTimer = 0;
+    }
+  }
+
+  function loadRanking(){
+    const rows = safeJsonParse(localStorage.getItem(STORAGE_RANKING), []);
+    return Array.isArray(rows) ? rows.slice(0,3) : [];
+  }
+
+  function saveRanking(rows){
+    localStorage.setItem(STORAGE_RANKING, JSON.stringify(rows.slice(0,3)));
+  }
+
+  function renderRanking(){
+    const rows = loadRanking();
+    rankingList.innerHTML = '';
+
+    for(let i=0;i<3;i++){
+      const row = rows[i];
+      const el = document.createElement('div');
+      el.className = 'rankRow';
+      if(row){
+        el.innerHTML =
+          `<span class="rankNo">${i+1}.</span>` +
+          `<span class="rankName"></span>` +
+          `<span class="rankScore">${String(row.score).padStart(6,'0')}</span>`;
+        el.querySelector('.rankName').textContent = row.name;
+      }else{
+        el.innerHTML =
+          `<span class="rankNo">${i+1}.</span>` +
+          `<span class="rankName">---</span>` +
+          `<span class="rankScore">------</span>`;
+      }
+      rankingList.appendChild(el);
+    }
+  }
+
+  function addRanking(name, score, level){
+    const rows = loadRanking();
+    const entry = {
+      id:`${Date.now()}-${Math.random().toString(36).slice(2,8)}`,
+      name,score,level,t:Date.now()
+    };
+    rows.push(entry);
+    rows.sort((a,b)=>b.score-a.score || a.t-b.t);
+    const index = rows.findIndex(r => r.id===entry.id);
+    saveRanking(rows);
+    return index >= 0 && index < 3 ? index + 1 : null;
+  }
+
+  function multiplier(level){
+    return 1 + (level - 1) * 0.5;
+  }
+
+  function formatScore(score){
+    return String(Math.floor(score)).padStart(6,'0');
+  }
+
+  function showScreen(which){
+    startScreen.classList.toggle('active', which==='start');
+    gameScreen.classList.toggle('active', which==='game');
+  }
+
+  function setTimer(fn, ms){
+    const token = state.runToken;
+    const id = setTimeout(() => {
+      state.timers.delete(id);
+      if(token !== state.runToken) return;
+      fn();
+    }, ms);
+    state.timers.add(id);
+    return id;
+  }
+
+  function clearTimers(){
+    state.timers.forEach(clearTimeout);
+    state.timers.clear();
+  }
+
+  function clearLasers(){
+    state.lasers.forEach(obj => {
+      obj.warning?.remove();
+      obj.beam?.remove();
+      obj.cannon?.remove();
+    });
+    state.lasers.clear();
+    state.warningGroup = null;
+    arena.querySelectorAll('.warning,.laser,.cannon').forEach(el=>el.remove());
+  }
+
+  function resetPilot(){
+    requestAnimationFrame(() => {
+      const r = arena.getBoundingClientRect();
+      pilot.style.left = (r.width/2) + 'px';
+      pilot.style.top = (r.height*0.72) + 'px';
+    });
+  }
+
+  function updateHud(){
+    hudName.textContent = state.playerName;
+    hudLevel.textContent = `LEVEL ${state.level}`;
+    hudScore.textContent = formatScore(state.score);
+    hudTime.textContent = Math.max(0, LEVEL_SECONDS - state.levelElapsed).toFixed(1);
+  }
+
+  function warningDuration(){
+    const progress = Math.min(1, state.levelElapsed / LEVEL_SECONDS);
+    const levelCut = Math.min(260, (state.level - 1) * 22);
+    return Math.max(330, 920 - progress * 330 - levelCut);
+  }
+
+  function beamDuration(){
+    const progress = Math.min(1, state.levelElapsed / LEVEL_SECONDS);
+    return Math.max(260, 560 - progress * 140 - Math.min(90,(state.level-1)*8));
+  }
+
+  function spawnInterval(){
+    const progress = Math.min(1, state.levelElapsed / LEVEL_SECONDS);
+    const levelCut = Math.min(360, (state.level - 1) * 30);
+    return Math.max(700, 1750 - progress * 420 - levelCut);
+  }
+
+  function randomInt(min,max){
+    return Math.floor(Math.random()*(max-min+1))+min;
+  }
+
+  function createCannon(orientation, pos){
+    const c = document.createElement('div');
+    c.className = 'cannon';
+    const r = arena.getBoundingClientRect();
+
+    if(orientation==='v'){
+      c.style.left = `calc(${pos}% - 13px)`;
+      c.style.top = '2px';
+    }else{
+      c.style.left = '2px';
+      c.style.top = `calc(${pos}% - 13px)`;
+    }
+    arena.appendChild(c);
+    return c;
+  }
+
+  function createLaser(orientation, pos, delay, group, warningMs=null){
+    const obj = {
+      orientation,
+      pos,
+      group,
+      warningMs,
+      phase:'delay',
+      remaining:delay/1000,
+      warning:null,
+      beam:null,
+      cannon:null,
+      active:false,
+      dead:false
+    };
+    state.lasers.add(obj);
+    return obj;
+  }
+
+  function showWarning(obj){
+    if(obj.dead) return;
+    const warning = document.createElement('div');
+    warning.className = `warning ${obj.orientation}`;
+    if(obj.orientation==='v') warning.style.left = obj.pos + '%';
+    else warning.style.top = obj.pos + '%';
+
+    obj.warning = warning;
+    obj.cannon = createCannon(obj.orientation,obj.pos);
+    obj.phase = 'warning';
+    obj.remaining = (obj.warningMs ?? warningDuration())/1000;
+    arena.appendChild(warning);
+  }
+
+  function releaseWarningGroupIfFinished(group){
+    if(state.warningGroup !== group) return;
+    const stillPending = [...state.lasers].some(x =>
+      !x.dead &&
+      x.group === group &&
+      (x.phase === 'warning' || x.phase === 'beamWait')
+    );
+    if(!stillPending) state.warningGroup = null;
+  }
+
+  function showBeam(obj){
+    if(obj.dead) return;
+
+    // LEVEL number is the hard cap for lasers that are actually firing simultaneously.
+    if(activeBeamCount() >= Math.max(1,state.level)){
+      obj.phase = 'beamWait';
+      obj.remaining = .045;
+      return;
+    }
+
+    obj.warning?.remove();
+    obj.warning = null;
+
+    const beam = document.createElement('div');
+    beam.className = `laser ${obj.orientation}`;
+    if(obj.orientation==='v') beam.style.left = obj.pos + '%';
+    else beam.style.top = obj.pos + '%';
+
+    obj.beam = beam;
+    obj.active = true;
+    obj.phase = 'beam';
+    obj.remaining = beamDuration()/1000;
+    arena.appendChild(beam);
+    laserSfx(obj.orientation);
+    releaseWarningGroupIfFinished(obj.group);
+  }
+
+  function updateLasers(dt){
+    for(const obj of [...state.lasers]){
+      if(obj.dead) continue;
+
+      obj.remaining -= dt;
+      if(obj.remaining > 0) continue;
+
+      if(obj.phase==='delay' || obj.phase==='warningWait'){
+        if(state.warningGroup === null || state.warningGroup === obj.group){
+          state.warningGroup = obj.group;
+          showWarning(obj);
+        }else{
+          // 先の攻撃は予約だけ保持し、警告線はまだ出さない。
+          obj.phase = 'warningWait';
+          obj.remaining = .03;
+        }
+      }else if(obj.phase==='warning' || obj.phase==='beamWait'){
+        showBeam(obj);
+      }else if(obj.phase==='beam'){
+        cleanupLaser(obj);
+      }
+    }
+  }
+
+  function cleanupLaser(obj){
+    if(!obj || obj.dead) return;
+    obj.dead = true;
+    obj.active = false;
+    obj.warning?.remove();
+    obj.beam?.remove();
+    obj.cannon?.remove();
+    state.lasers.delete(obj);
+  }
+
+  function activeBeamCount(){
+    let n = 0;
+    for(const obj of state.lasers){
+      if(obj.active && !obj.dead) n++;
+    }
+    return n;
+  }
+
+  function chooseVolleyCount(level){
+    const roll = Math.random();
+    if(roll < 0.60) return randomInt(1, Math.min(level,3));
+    if(roll < 0.90) return randomInt(1, Math.max(1,Math.ceil(level/2)));
+    return randomInt(1, level);
+  }
+
+  function nextShotGroup(){
+    return ++state.shotGroupSeq;
+  }
+
+  function makeShot(orientation,pos,delay=0,group=null,warningMs=null){
+    createLaser(
+      orientation,
+      Math.max(7,Math.min(93,pos)),
+      delay,
+      group ?? nextShotGroup(),
+      warningMs
+    );
+  }
+
+  function flashAttackLabel(text){
+    attackLabel.textContent = text;
+    attackLabel.classList.remove('show');
+    void attackLabel.offsetWidth;
+    attackLabel.classList.add('show');
+  }
+
+  function spawnSimultaneous(){
+    const count = chooseVolleyCount(Math.max(1,state.level));
+    const chosenV = [], chosenH = [];
+    const group = nextShotGroup();
+
+    for(let i=0;i<count;i++){
+      const orientation = Math.random() < .5 ? 'v' : 'h';
+      const list = orientation==='v' ? chosenV : chosenH;
+      let pos = randomInt(8,92), tries=0;
+      while(list.some(v=>Math.abs(v-pos)<8) && tries++<12) pos=randomInt(8,92);
+      list.push(pos);
+      makeShot(orientation,pos,0,group);
+    }
+  }
+
+  function rapidWarningMs(first=false){
+    if(first) return Math.max(460, warningDuration() * .72);
+    const progress = Math.min(1,state.levelElapsed/LEVEL_SECONDS);
+    return Math.max(190, 330 - state.level*8 - progress*55);
+  }
+
+  function spawnBurst(){
+    // 基本となる連続射撃。LEVEL1でも5〜8発を連続して撃つ。
+    const waves = Math.min(12, randomInt(5,8) + Math.floor((state.level-1)/2));
+    const scheduleGap = Math.max(55, 115 - state.level*3);
+    let delay = 0;
+    flashAttackLabel('RAPID CHAIN');
+
+    for(let w=0;w<waves;w++){
+      const orientation = Math.random() < .5 ? 'v' : 'h';
+
+      // LEVEL1は必ず1本。LEVEL2以降は、ときどき複数本の波を混ぜる。
+      let count = 1;
+      if(state.level>=2 && Math.random()<Math.min(.48,.18+state.level*.035)){
+        count = randomInt(2,Math.min(state.level,3));
+      }
+
+      const base = randomInt(13,87);
+      const group = nextShotGroup();
+      const warn = rapidWarningMs(w===0);
+
+      for(let i=0;i<count;i++){
+        const spread = count===1 ? 0 : (i-(count-1)/2)*18;
+        makeShot(orientation,base+spread,delay,group,warn);
+      }
+
+      // 予約自体は短間隔。実照射はwarningGroupと同時照射上限で安全に直列化される。
+      delay += scheduleGap;
+    }
+  }
+
+  function spawnAlternating(){
+    const waves = Math.min(12, randomInt(6,9) + Math.floor(state.level/3));
+    const scheduleGap = Math.max(55,105-state.level*3);
+    let delay = 0;
+    flashAttackLabel('V / H RAPID');
+
+    for(let w=0;w<waves;w++){
+      const orientation = w%2===0 ? 'v' : 'h';
+      const group = nextShotGroup();
+      const warn = rapidWarningMs(w===0);
+      makeShot(orientation,randomInt(11,89),delay,group,warn);
+
+      if(state.level>=3 && Math.random()<.28){
+        const pos2=randomInt(11,89);
+        makeShot(orientation,pos2,delay,group,warn);
+      }
+      delay += scheduleGap;
+    }
+  }
+
+  function spawnSweep(){
+    // 画面の端から端まで埋めるスイープは禁止。
+    // 必ず片側に十分な退避スペースを残す「部分スイープ」にする。
+    const count = Math.min(8, randomInt(5,7)+Math.floor(state.level/5));
+    const vertical = Math.random()<.5;
+    const reverse = Math.random()<.5;
+
+    // スイープ幅は画面全体の28〜42%まで。
+    // どのパターンでも最低28%以上の広い安全地帯が反対側に残る。
+    const sweepWidth = randomInt(28,42);
+    const startMin = 10;
+    const startMax = 90 - sweepWidth;
+    let start = randomInt(startMin,startMax);
+    let end = start + sweepWidth;
+
+    if(reverse){
+      [start,end] = [end,start];
+    }
+
+    const scheduleGap = Math.max(65,115-state.level*2);
+    flashAttackLabel(vertical ? 'V-SWEEP ZONE' : 'H-SWEEP ZONE');
+
+    for(let i=0;i<count;i++){
+      const t = count<=1 ? 0 : i/(count-1);
+      const pos = start + (end-start)*t;
+
+      makeShot(
+        vertical?'v':'h',
+        pos,
+        i*scheduleGap,
+        nextShotGroup(),
+        rapidWarningMs(i===0)
+      );
+    }
+  }
+
+  function spawnCrossfire(){
+    const waves = Math.min(10, randomInt(4,7)+Math.floor(state.level/3));
+    const scheduleGap = Math.max(70,130-state.level*3);
+    let delay = 0;
+    flashAttackLabel('CROSS CHAIN');
+
+    for(let w=0;w<waves;w++){
+      makeShot(
+        'v',
+        randomInt(13,87),
+        delay,
+        nextShotGroup(),
+        rapidWarningMs(w===0)
+      );
+
+      // LEVEL1でも縦→横の連射は行う。ただし同時照射は1本のまま。
+      makeShot(
+        'h',
+        randomInt(13,87),
+        delay + Math.floor(scheduleGap*.55),
+        nextShotGroup(),
+        rapidWarningMs(false)
+      );
+      delay += scheduleGap;
+    }
+  }
+
+  function spawnAttackPattern(){
+    if(!state.running || state.paused || state.transitioning || state.gameOver) return;
+
+    const r = Math.random();
+
+    // 連続攻撃は全体の70%。
+    // 残り30%は通常の同時斉射として、攻撃に緩急を付ける。
+    if(r < .31) return spawnBurst();        // 31%
+    if(r < .49) return spawnAlternating();  // 18%
+    if(r < .61) return spawnSweep();        // 12%
+    if(r < .70) return spawnCrossfire();    //  9%
+    spawnSimultaneous();                    // 30%
+  }
+
+  function rectsOverlap(a,b){
+    return a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+  }
+
+  function collisionCheck(){
+    if(state.paused || state.transitioning || state.gameOver) return;
+    const pr = pilot.getBoundingClientRect();
+
+    for(const obj of state.lasers){
+      if(!obj.active || !obj.beam) continue;
+      const br = obj.beam.getBoundingClientRect();
+
+      // Slight forgiveness on player collision box.
+      const inset = 5;
+      const p = {
+        left:pr.left+inset,right:pr.right-inset,
+        top:pr.top+inset,bottom:pr.bottom-inset
+      };
+
+      if(rectsOverlap(p,br)){
+        hitPlayer();
+        return;
+      }
+    }
+  }
+
+  function spawnHitParticles(){
+    const ar = arena.getBoundingClientRect();
+    const pr = pilot.getBoundingClientRect();
+    const cx = pr.left + pr.width/2 - ar.left;
+    const cy = pr.top + pr.height/2 - ar.top;
+    const parts = 30;
+
+    for(let i=0;i<parts;i++){
+      const p = document.createElement('i');
+      p.className = 'hitBurst';
+      p.style.left = (cx-4) + 'px';
+      p.style.top = (cy-4) + 'px';
+      p.style.background = i%3===0 ? '#ffd84a' : (i%2===0 ? '#ffffff' : '#ff3f6a');
+      arena.appendChild(p);
+
+      const a = (Math.PI*2*i/parts) + (Math.random()-.5)*.25;
+      const dist = 42 + Math.random()*82;
+      const dx = Math.cos(a)*dist;
+      const dy = Math.sin(a)*dist;
+      p.animate(
+        [
+          {transform:'translate(0,0) scale(1)',opacity:1},
+          {transform:`translate(${dx}px,${dy}px) scale(.55)`,opacity:0}
+        ],
+        {duration:720+Math.random()*360,easing:'steps(8,end)'}
+      ).onfinish = ()=>p.remove();
+    }
+  }
+
+  function hitPlayer(){
+    if(state.gameOver) return;
+
+    // 当たったレーザーをしばらく画面に残し、「何に当たったか」が分かるようにする。
+    state.gameOver = true;
+    state.drag = false;
+    stopBgm();
+
+    ensureAudio();
+    hitSfx();
+
+    pilot.classList.add('hit');
+    arenaFrame.classList.remove('hitShake');
+    hitFlashLayer.classList.remove('show');
+    hitText.classList.remove('show');
+    void arenaFrame.offsetWidth;
+    arenaFrame.classList.add('hitShake');
+    hitFlashLayer.classList.add('show');
+    hitText.classList.add('show');
+    spawnHitParticles();
+
+    // 0.7秒は被弾したレーザーを残す。
+    setTimer(() => clearLasers(), 720);
+
+    // 演出を十分見せてからGAME OVERへ。
+    setTimer(() => {
+      pilot.classList.remove('hit');
+      arenaFrame.classList.remove('hitShake');
+      hitFlashLayer.classList.remove('show');
+      hitText.classList.remove('show');
+      endGame(true);
+    }, 1350);
+  }
+
+  function frame(ts){
+    if(!state.running) return;
+
+    if(!state.lastTs) state.lastTs = ts;
+    let dt = Math.min(0.05, (ts - state.lastTs)/1000);
+    state.lastTs = ts;
+
+    if(!state.paused && !state.transitioning && !state.gameOver){
+      state.levelElapsed += dt;
+      state.totalSurvival += dt;
+      state.score += dt * SCORE_PER_SECOND * multiplier(state.level);
+      state.spawnAccumulator += dt * 1000;
+
+      if(state.spawnAccumulator >= spawnInterval()){
+        state.spawnAccumulator = 0;
+        spawnAttackPattern();
+      }
+
+      updateLasers(dt);
+      collisionCheck();
+      updateHud();
+
+      if(state.levelElapsed >= LEVEL_SECONDS){
+        levelClear();
+      }
+    }
+
+    state.raf = requestAnimationFrame(frame);
+  }
+
+  function spawnClearParticles(){
+    const overlayRect = levelOverlay.getBoundingClientRect();
+    const cx = overlayRect.width/2;
+    const cy = overlayRect.height/2;
+    const colors = ['#59f39a','#38e8ff','#ffd84a','#ffffff'];
+    const parts = 34;
+
+    for(let i=0;i<parts;i++){
+      const p = document.createElement('i');
+      p.className = 'clearBurst';
+      p.style.left = (cx-4) + 'px';
+      p.style.top = (cy-4) + 'px';
+      p.style.background = colors[i % colors.length];
+      levelOverlay.appendChild(p);
+
+      const angle = (Math.PI*2*i/parts) + (Math.random()-.5)*.22;
+      const dist = 70 + Math.random()*150;
+      const dx = Math.cos(angle)*dist;
+      const dy = Math.sin(angle)*dist;
+
+      p.animate(
+        [
+          {transform:'translate(0,0) scale(1)',opacity:1},
+          {transform:`translate(${dx*.45}px,${dy*.45}px) scale(1.25)`,opacity:1,offset:.38},
+          {transform:`translate(${dx}px,${dy}px) scale(.55)`,opacity:0}
+        ],
+        {duration:900+Math.random()*450,easing:'steps(9,end)'}
+      ).onfinish = ()=>p.remove();
+    }
+  }
+
+  async function showLevelClear(level){
+    levelBig.textContent = `LEVEL ${level} CLEAR!`;
+    levelSmall.textContent = `SCORE ${formatScore(state.score)}`;
+    levelOverlay.classList.remove('countdownMode');
+    levelOverlay.classList.add('clearMode','show');
+
+    // アニメーションを毎回確実に再スタートさせる。
+    void levelOverlay.offsetWidth;
+    clearSfx();
+    spawnClearParticles();
+
+    await new Promise(resolve => setTimer(resolve, 1600));
+
+    levelOverlay.classList.remove('show','clearMode','countdownMode');
+    levelBig.classList.remove('countPulse','countGo');
+    levelOverlay.querySelectorAll('.clearBurst').forEach(el=>el.remove());
+  }
+
+  async function waitMs(ms){
+    await new Promise(resolve => setTimer(resolve,ms));
+  }
+
+  function pulseCountdownText(text,go=false){
+    levelBig.classList.remove('countPulse','countGo');
+    levelBig.textContent = text;
+    if(go) levelBig.classList.add('countGo');
+    void levelBig.offsetWidth;
+    levelBig.classList.add('countPulse');
+  }
+
+  async function showLevelIntro(level){
+    levelOverlay.classList.remove('clearMode');
+    levelOverlay.classList.add('countdownMode','show');
+
+    levelSmall.textContent = `LEVEL ${level} / READY`;
+    pulseCountdownText(`LEVEL ${level}`,true);
+    playTone(330,.16,.06,'triangle');
+    await waitMs(700);
+
+    for(const n of [3,2,1]){
+      if(!state.running || state.gameOver) return;
+      levelSmall.textContent = `LEVEL ${level} START`;
+      pulseCountdownText(String(n),false);
+      countdownSfx(n);
+      await waitMs(720);
+    }
+
+    if(!state.running || state.gameOver) return;
+    levelSmall.textContent = 'DODGE!';
+    pulseCountdownText('START!',true);
+    countdownSfx(0);
+    await waitMs(650);
+
+    levelOverlay.classList.remove('show','countdownMode');
+    levelBig.classList.remove('countPulse','countGo');
+  }
+
+  async function showLevelMessage(big, small, ms){
+    levelOverlay.classList.remove('clearMode','countdownMode');
+    levelBig.classList.remove('countPulse','countGo');
+    levelBig.textContent = big;
+    levelSmall.textContent = small;
+    levelOverlay.classList.add('show');
+    await new Promise(resolve => setTimer(resolve, ms));
+    levelOverlay.classList.remove('show');
+  }
+
+  function startLevel(level, first=false){
+    state.level = level;
+    state.levelElapsed = 0;
+    state.spawnAccumulator = 0;
+    state.transitioning = true;
+    clearLasers();
+    resetPilot();
+    updateHud();
+
+    showLevelIntro(level)
+      .then(() => {
+        if(!state.running || state.gameOver) return;
+        state.transitioning = false;
+        state.lastTs = performance.now();
+
+        // 開始直後から連続攻撃が体感できるよう少し早めに最初のパターンを出す。
+        state.spawnAccumulator = Math.max(0,spawnInterval()-520);
+      });
+  }
+
+  function levelClear(){
+    if(state.transitioning || state.gameOver) return;
+    state.transitioning = true;
+    clearLasers();
+
+    showLevelClear(state.level)
+      .then(() => {
+        if(!state.running || state.gameOver) return;
+        startLevel(state.level + 1, false);
+      });
+  }
+
+  function beginRun(){
+    const name = nameInput.value.trim();
+
+    if(!name){
+      nameError.textContent = 'ユーザー名を入力してください';
+      nameInput.focus();
+      return;
+    }
+
+    nameError.textContent = '';
+    localStorage.setItem(STORAGE_NAME, name);
+
+    state.runToken++;
+    clearTimers();
+    cancelAnimationFrame(state.raf);
+    clearLasers();
+
+    Object.assign(state,{
+      running:true,
+      paused:false,
+      transitioning:false,
+      gameOver:false,
+      playerName:name,
+      level:1,
+      levelElapsed:0,
+      totalSurvival:0,
+      score:0,
+      lastTs:0,
+      spawnAccumulator:0,
+      drag:false,
+      warningGroup:null,
+      shotGroupSeq:0
+    });
+
+    pauseOverlay.classList.remove('show');
+    gameOverOverlay.classList.remove('show');
+    newRank.classList.remove('show');
+    arenaFrame.classList.remove('hitShake');
+    hitFlashLayer.classList.remove('show');
+    hitText.classList.remove('show');
+    levelOverlay.classList.remove('show','clearMode');
+    levelOverlay.querySelectorAll('.clearBurst').forEach(el=>el.remove());
+    arena.querySelectorAll('.hitBurst').forEach(el=>el.remove());
+
+    showScreen('game');
+    resetPilot();
+    updateHud();
+    startLevel(1,true);
+    startBgm();
+    state.raf = requestAnimationFrame(frame);
+  }
+
+  function pauseGame(){
+    if(!state.running || state.paused || state.transitioning || state.gameOver) return;
+    state.paused = true;
+    pauseOverlay.classList.add('show');
+  }
+
+  function resumeGame(){
+    if(!state.running || !state.paused || state.gameOver) return;
+    state.paused = false;
+    state.lastTs = performance.now();
+    pauseOverlay.classList.remove('show');
+  }
+
+  function quitToTop(){
+    if(state.running && !state.gameOver){
+      if(!confirm('プレイを中断してトップ画面に戻りますか？')) return;
+    }
+    state.runToken++;
+    state.running = false;
+    state.paused = false;
+    state.gameOver = false;
+    clearTimers();
+    cancelAnimationFrame(state.raf);
+    clearLasers();
+    stopBgm();
+    pauseOverlay.classList.remove('show');
+    gameOverOverlay.classList.remove('show');
+    renderRanking();
+    showScreen('start');
+  }
+
+  function endGame(fromHit=false){
+    if(state.gameOver && !fromHit) return;
+
+    state.gameOver = true;
+    state.paused = false;
+    clearLasers();
+    stopBgm();
+
+    const score = Math.floor(state.score);
+    const rank = addRanking(state.playerName, score, state.level);
+
+    finalScore.textContent = formatScore(score);
+    finalLevel.textContent = state.level;
+    finalTime.textContent = `${state.totalSurvival.toFixed(1)}s`;
+    finalName.textContent = state.playerName;
+    newRank.textContent = rank ? `RANK IN!  ${rank}位` : '';
+    newRank.classList.toggle('show', !!rank);
+
+    renderRanking();
+    setTimer(() => gameOverOverlay.classList.add('show'), 350);
+  }
+
+  // Drag control
+  function eventPoint(e){
+    const t = e.touches?.[0] || e.changedTouches?.[0] || e;
+    return {x:t.clientX,y:t.clientY};
+  }
+
+  function startDrag(e){
+    if(!state.running || state.paused || state.transitioning || state.gameOver) return;
+    e.preventDefault();
+    const p = eventPoint(e);
+    const pr = pilot.getBoundingClientRect();
+    state.drag = true;
+    state.dragOffsetX = p.x - (pr.left + pr.width/2);
+    state.dragOffsetY = p.y - (pr.top + pr.height/2);
+    if(e.pointerId!=null){
+      try{arena.setPointerCapture(e.pointerId)}catch(_){}
+    }
+  }
+
+  function moveDrag(e){
+    if(!state.drag || state.paused || state.transitioning || state.gameOver) return;
+    e.preventDefault();
+
+    const p = eventPoint(e);
+    const ar = arena.getBoundingClientRect();
+    const half = 17;
+    const x = Math.max(half+8, Math.min(ar.width-half-8, p.x-ar.left-state.dragOffsetX));
+    const y = Math.max(half+8, Math.min(ar.height-half-8, p.y-ar.top-state.dragOffsetY));
+
+    pilot.style.left = x + 'px';
+    pilot.style.top = y + 'px';
+    collisionCheck();
+  }
+
+  function endDrag(e){
+    state.drag = false;
+    if(e?.pointerId!=null){
+      try{arena.releasePointerCapture(e.pointerId)}catch(_){}
+    }
+  }
+
+  if(window.PointerEvent){
+    arena.addEventListener('pointerdown', e => {
+      if(e.target.closest('#pilot')) startDrag(e);
+    }, {passive:false});
+    arena.addEventListener('pointermove', moveDrag, {passive:false});
+    arena.addEventListener('pointerup', endDrag);
+    arena.addEventListener('pointercancel', endDrag);
+  }else{
+    arena.addEventListener('touchstart', e => {
+      if(e.target.closest('#pilot')) startDrag(e);
+    }, {passive:false});
+    arena.addEventListener('touchmove', moveDrag, {passive:false});
+    arena.addEventListener('touchend', endDrag);
+    arena.addEventListener('touchcancel', endDrag);
+  }
+
+  $('#startBtn').addEventListener('click', () => { ensureAudio(); beginRun(); });
+  $('#pauseBtn').addEventListener('click', pauseGame);
+  $('#resumeBtn').addEventListener('click', resumeGame);
+  $('#quitBtn').addEventListener('click', quitToTop);
+  $('#topBtn').addEventListener('click', quitToTop);
+  $('#retryBtn').addEventListener('click', () => { ensureAudio(); beginRun(); });
+
+  nameInput.addEventListener('input', () => {
+    if(nameInput.value.trim()) nameError.textContent = '';
+  });
+  nameInput.addEventListener('keydown', e => {
+    if(e.key==='Enter') beginRun();
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if(document.hidden && state.running && !state.paused && !state.gameOver && !state.transitioning){
+      pauseGame();
+    }
+  });
+
+  nameInput.value = localStorage.getItem(STORAGE_NAME) || '';
+  renderRanking();
+  document.documentElement.dataset.laserEscapeReady = 'true';
+  document.documentElement.dataset.build = BUILD;
+})();
+</script>
+</body>
+</html>
