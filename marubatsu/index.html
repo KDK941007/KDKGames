@@ -17,6 +17,7 @@
     --x:#60a5fa;
     --o:#fb7185;
     --accent:#fbbf24;
+    --danger:#f87171;
     --shadow:0 18px 50px rgba(0,0,0,.35);
   }
 
@@ -50,7 +51,7 @@
       var(--bg);
   }
 
-  button{font:inherit}
+  button,input{font:inherit}
 
   .app{
     width:min(100%,460px);
@@ -65,7 +66,7 @@
     display:grid;
     grid-template-rows:
       74px
-      76px
+      auto
       minmax(0,1fr)
       62px;
     background:rgba(21,28,49,.94);
@@ -103,7 +104,7 @@
   }
 
   .status{
-    height:64px;
+    min-height:64px;
     background:var(--panel2);
     border:1px solid var(--line);
     border-radius:16px;
@@ -120,9 +121,24 @@
   }
 
   .starter-area{
-    width:min(100%,270px);
+    width:100%;
   }
 
+  .setup-row{
+    width:100%;
+    min-width:0;
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(88px,auto);
+    gap:8px;
+    align-items:end;
+    margin-bottom:9px;
+  }
+
+  .setup-row > *{
+    min-width:0;
+  }
+
+  .time-setting-label,
   .starter-label{
     margin-bottom:4px;
     color:var(--muted);
@@ -131,6 +147,79 @@
     line-height:1;
   }
 
+  .time-input-wrap{
+    width:100%;
+    min-width:0;
+    height:36px;
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto;
+    align-items:center;
+    border:1px solid var(--line);
+    border-radius:10px;
+    background:#10172a;
+    overflow:hidden;
+  }
+
+  .time-input{
+    width:100%;
+    min-width:0;
+    max-width:100%;
+    height:100%;
+    border:0;
+    outline:0;
+    padding:0 8px;
+    color:var(--text);
+    background:transparent;
+    /* iPhone Safariは16px未満のinputをフォーカスすると自動ズームするため16px固定 */
+    font-size:16px;
+    font-weight:900;
+  }
+
+  .time-input:disabled{
+    color:#69758a;
+    opacity:.7;
+  }
+
+  .time-unit{
+    padding-right:9px;
+    color:var(--muted);
+    font-size:10px;
+    font-weight:900;
+  }
+
+  .unlimited-toggle{
+    height:36px;
+    display:flex;
+    align-items:center;
+    gap:5px;
+    padding:0 9px;
+    border:1px solid var(--line);
+    border-radius:10px;
+    background:#273351;
+    color:var(--text);
+    font-size:10px;
+    font-weight:900;
+    white-space:nowrap;
+    cursor:pointer;
+    user-select:none;
+  }
+
+  .unlimited-toggle input{
+    width:16px;
+    height:16px;
+    accent-color:var(--accent);
+  }
+
+  .time-error{
+    display:none;
+    margin:-3px 0 8px;
+    color:var(--danger);
+    font-size:10px;
+    font-weight:800;
+  }
+
+  .time-error.show{display:block}
+
   .starter-inline{
     display:none;
     grid-template-columns:1.35fr 1fr 1fr;
@@ -138,9 +227,7 @@
     width:100%;
   }
 
-  .starter-inline.show{
-    display:grid;
-  }
+  .starter-inline.show{display:grid}
 
   .starter-choice{
     height:36px;
@@ -164,16 +251,14 @@
   .starter-choice.x{color:var(--x)}
 
   .turn-view{
-    display:flex;
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto 42px;
     align-items:center;
-    justify-content:space-between;
     gap:10px;
     width:100%;
   }
 
-  .turn-view.hidden{
-    display:none;
-  }
+  .turn-view.hidden{display:none}
 
   .turn-label{
     font-size:11px;
@@ -186,6 +271,44 @@
     font-size:19px;
     line-height:1.15;
   }
+
+  .turn-timer{
+    min-width:68px;
+    padding:5px 7px;
+    border:1px solid var(--line);
+    border-radius:11px;
+    background:#10172a;
+    text-align:center;
+  }
+
+  .turn-timer.warning{
+    border-color:var(--danger);
+    background:rgba(248,113,113,.09);
+    animation:timerPulse .45s ease-in-out infinite alternate;
+  }
+
+  @keyframes timerPulse{
+    from{filter:brightness(1)}
+    to{filter:brightness(1.45)}
+  }
+
+  .timer-label{
+    color:var(--muted);
+    font-size:9px;
+    font-weight:800;
+    line-height:1;
+    margin-bottom:3px;
+  }
+
+  .timer-value{
+    font-variant-numeric:tabular-nums;
+    color:var(--accent);
+    font-size:16px;
+    font-weight:1000;
+    line-height:1;
+  }
+
+  .turn-timer.warning .timer-value{color:var(--danger)}
 
   .turn-symbol{
     width:42px;
@@ -393,13 +516,6 @@
     font-weight:800;
   }
 
-  .secondary-close{
-    margin-top:9px;
-    background:#273351;
-    color:var(--text);
-    border:1px solid var(--line);
-  }
-
   .winner-panel{text-align:center}
 
   .winner-big{
@@ -420,26 +536,47 @@
     margin-bottom:16px;
   }
 
+  @media (max-width:380px){
+    .setup-row{
+      grid-template-columns:minmax(0,1fr) 84px;
+      gap:6px;
+    }
+
+    .unlimited-toggle{
+      padding:0 6px;
+      font-size:9px;
+    }
+
+    .starter-inline{
+      gap:5px;
+    }
+
+    .starter-choice{
+      font-size:10px;
+    }
+  }
+
   @media (max-height:700px){
     .card{
       grid-template-rows:
         64px
-        68px
+        auto
         minmax(0,1fr)
         56px;
     }
 
     h1{font-size:21px}
     .sub{font-size:10px}
-    .status{height:56px}
     .turn-main{font-size:17px}
     .turn-symbol{font-size:29px}
     .action-btn{height:42px}
     .cell.oldest::after{font-size:8px;padding:3px 5px}
+    .setup-row{margin-bottom:6px}
+    .time-input-wrap,.unlimited-toggle,.starter-choice{height:33px}
   }
 </style>
-
 </head>
+
 <body>
 <main class="app">
   <section class="card">
@@ -449,17 +586,51 @@
     </header>
 
     <div class="status-wrap">
-            <div class="status">
+      <div class="status">
         <div class="status-left">
+
           <div class="turn-view hidden" id="turnView">
             <div>
               <div class="turn-label" id="statusLabel">現在のターン</div>
               <div class="turn-main" id="statusText">○ の番</div>
             </div>
+
+            <div class="turn-timer" id="turnTimerBox">
+              <div class="timer-label">残りタイム</div>
+              <div class="timer-value" id="turnTimer">∞</div>
+            </div>
+
             <div class="turn-symbol o" id="turnSymbol">○</div>
           </div>
 
           <div class="starter-area" id="starterArea">
+            <div class="setup-row">
+              <div>
+                <div class="time-setting-label">1ターンの制限時間</div>
+                <div class="time-input-wrap">
+                  <input
+                    class="time-input"
+                    id="turnTimeInput"
+                    type="number"
+                    min="1"
+                    step="1"
+                    inputmode="numeric"
+                    placeholder="例：10"
+                    disabled
+                    aria-label="1ターンの制限時間（秒）"
+                  >
+                  <span class="time-unit">秒</span>
+                </div>
+              </div>
+
+              <label class="unlimited-toggle">
+                <input id="unlimitedToggle" type="checkbox" checked>
+                無制限
+              </label>
+            </div>
+
+            <div class="time-error" id="timeError">制限時間は1秒以上で入力してください。</div>
+
             <div class="starter-label">先攻を選択</div>
             <div class="starter-inline show" id="starterInline" aria-label="先攻を選択">
               <button class="starter-choice random" type="button" data-start="random">ランダム</button>
@@ -467,6 +638,7 @@
               <button class="starter-choice x" type="button" data-start="X">×から</button>
             </div>
           </div>
+
         </div>
       </div>
     </div>
@@ -483,7 +655,6 @@
   </section>
 </main>
 
-
 <div class="overlay" id="rulesOverlay">
   <div class="modal">
     <h2>遊び方</h2>
@@ -493,6 +664,9 @@
       <li>各プレイヤーが盤面に残せるコマは最大3個です。</li>
       <li>4個目を置くと、そのプレイヤーの一番古いコマが消えます。</li>
       <li>ゲーム中は、黄色い「次に消える」表示で消える予定のコマを確認できます。</li>
+      <li>制限時間を設定した場合、各ターンごとにカウントダウンします。</li>
+      <li>残りタイムが0になるまでに置けなかったプレイヤーは時間切れで負けです。</li>
+      <li>「無制限」を選んだ場合は時間切れになりません。</li>
     </ol>
     <button class="close" id="closeRules">閉じる</button>
   </div>
@@ -502,7 +676,7 @@
   <div class="modal winner-panel">
     <div class="winner-big" id="winnerSymbol">×</div>
     <div class="winner-text" id="winnerText">× の勝ち！</div>
-    <div class="winner-sub">3つ並びました</div>
+    <div class="winner-sub" id="winnerSub">3つ並びました</div>
     <button class="close" id="playAgainBtn">閉じる</button>
   </div>
 </div>
@@ -525,9 +699,16 @@
   const statusText = document.getElementById('statusText');
   const turnSymbol = document.getElementById('turnSymbol');
   const turnView = document.getElementById('turnView');
+  const turnTimerBox = document.getElementById('turnTimerBox');
+  const turnTimer = document.getElementById('turnTimer');
+
   const starterArea = document.getElementById('starterArea');
   const starterInline = document.getElementById('starterInline');
   const starterButtons = [...document.querySelectorAll('.starter-choice')];
+
+  const turnTimeInput = document.getElementById('turnTimeInput');
+  const unlimitedToggle = document.getElementById('unlimitedToggle');
+  const timeError = document.getElementById('timeError');
 
   const restartBtn = document.getElementById('restartBtn');
   const rulesBtn = document.getElementById('rulesBtn');
@@ -538,6 +719,7 @@
   const winnerOverlay = document.getElementById('winnerOverlay');
   const winnerSymbol = document.getElementById('winnerSymbol');
   const winnerText = document.getElementById('winnerText');
+  const winnerSub = document.getElementById('winnerSub');
   const playAgainBtn = document.getElementById('playAgainBtn');
 
   const portalBtn = document.getElementById('portalBtn');
@@ -557,6 +739,11 @@
   let gameOver = false;
   let winLine = [];
 
+  let turnLimitSeconds = null;
+  let turnDeadline = 0;
+  let timerRaf = 0;
+  let audioCtx = null;
+
   function getSymbol(player) {
     return player === 'X' ? '×' : '○';
   }
@@ -568,12 +755,62 @@
     return mode;
   }
 
+  function ensureAudio() {
+    try {
+      if (!audioCtx) {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (AC) audioCtx = new AC();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume().catch(() => {});
+      }
+      return audioCtx;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  function tone(freq, duration, volume, type, when = 0) {
+    const ctx = ensureAudio();
+    if (!ctx) return;
+
+    const start = ctx.currentTime + when;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, start);
+    gain.gain.setValueAtTime(0.0001, start);
+    gain.gain.exponentialRampToValueAtTime(volume, start + 0.008);
+    gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(start);
+    osc.stop(start + duration + 0.03);
+  }
+
+  function playPieceSound(player) {
+    ensureAudio();
+
+    if (player === 'O') {
+      // ○：丸く明るい上昇音
+      tone(420, 0.10, 0.11, 'sine');
+      tone(620, 0.14, 0.09, 'sine', 0.07);
+    } else {
+      // ×：硬く短い下降音
+      tone(340, 0.08, 0.12, 'square');
+      tone(220, 0.12, 0.09, 'triangle', 0.055);
+    }
+  }
+
   function resetState() {
+    stopTurnTimer();
     board = Array(9).fill(null);
     current = null;
     history = { X: [], O: [] };
     gameOver = false;
     winLine = [];
+    turnDeadline = 0;
   }
 
   function showStarterSelection() {
@@ -582,11 +819,34 @@
     starterArea.style.display = '';
     starterInline.classList.add('show');
     turnView.classList.add('hidden');
+    timeError.classList.remove('show');
     render();
   }
 
+  function getTurnLimitFromSetup() {
+    if (unlimitedToggle.checked) {
+      return null;
+    }
+
+    const seconds = Number(turnTimeInput.value);
+    if (!Number.isFinite(seconds) || seconds < 1) {
+      timeError.classList.add('show');
+      turnTimeInput.focus();
+      return undefined;
+    }
+
+    timeError.classList.remove('show');
+    return seconds;
+  }
+
   function startGame(mode) {
+    const selectedLimit = getTurnLimitFromSetup();
+    if (selectedLimit === undefined) return;
+
+    ensureAudio();
     resetState();
+
+    turnLimitSeconds = selectedLimit;
     current = resolveStartPlayer(mode);
 
     starterInline.classList.remove('show');
@@ -595,6 +855,74 @@
     winnerOverlay.classList.remove('show');
 
     render();
+    startTurnTimer();
+  }
+
+  function startTurnTimer() {
+    stopTurnTimer();
+
+    if (!current || gameOver) return;
+
+    if (turnLimitSeconds === null) {
+      turnTimer.textContent = '∞';
+      turnTimerBox.classList.remove('warning');
+      return;
+    }
+
+    turnDeadline = performance.now() + turnLimitSeconds * 1000;
+    updateTurnTimer();
+  }
+
+  function stopTurnTimer() {
+    if (timerRaf) {
+      cancelAnimationFrame(timerRaf);
+      timerRaf = 0;
+    }
+  }
+
+  function updateTurnTimer() {
+    if (!current || gameOver || turnLimitSeconds === null) {
+      timerRaf = 0;
+      return;
+    }
+
+    const remainingMs = Math.max(0, turnDeadline - performance.now());
+    const remainingSec = remainingMs / 1000;
+
+    turnTimer.textContent = remainingSec >= 10
+      ? Math.ceil(remainingSec).toString()
+      : remainingSec.toFixed(1);
+
+    turnTimerBox.classList.toggle('warning', remainingSec <= Math.min(3, turnLimitSeconds * 0.3));
+
+    if (remainingMs <= 0) {
+      timerRaf = 0;
+      handleTimeout();
+      return;
+    }
+
+    timerRaf = requestAnimationFrame(updateTurnTimer);
+  }
+
+  function handleTimeout() {
+    if (!current || gameOver) return;
+
+    const loser = current;
+    const winner = loser === 'X' ? 'O' : 'X';
+
+    gameOver = true;
+    winLine = [];
+    stopTurnTimer();
+    render();
+
+    statusLabel.textContent = '時間切れ';
+    statusText.textContent = `${getSymbol(loser)} の負け`;
+    turnSymbol.textContent = getSymbol(loser);
+    turnSymbol.className = `turn-symbol ${loser.toLowerCase()}`;
+    turnTimer.textContent = '0.0';
+    turnTimerBox.classList.add('warning');
+
+    showWinner(winner, '時間切れ');
   }
 
   function render() {
@@ -638,48 +966,71 @@
   function play(index) {
     if (!current || gameOver || board[index]) return;
 
-    if (history[current].length >= 3) {
-      const oldest = history[current].shift();
+    const playedBy = current;
+
+    if (history[playedBy].length >= 3) {
+      const oldest = history[playedBy].shift();
       board[oldest] = null;
     }
 
-    board[index] = current;
-    history[current].push(index);
+    board[index] = playedBy;
+    history[playedBy].push(index);
 
-    const winning = findWin(current);
+    playPieceSound(playedBy);
+
+    const winning = findWin(playedBy);
 
     if (winning) {
       gameOver = true;
       winLine = winning;
+      stopTurnTimer();
       render();
-      showWinner(current);
+      showWinner(playedBy, '3つ並びました');
       return;
     }
 
-    current = current === 'X' ? 'O' : 'X';
+    current = playedBy === 'X' ? 'O' : 'X';
     render();
+    startTurnTimer();
   }
 
   function findWin(player) {
     return WIN_LINES.find(line => line.every(i => board[i] === player)) || null;
   }
 
-  function showWinner(player) {
+  function showWinner(player, reason) {
     const symbol = getSymbol(player);
 
     winnerSymbol.textContent = symbol;
     winnerSymbol.style.color = player === 'X' ? 'var(--x)' : 'var(--o)';
     winnerText.textContent = `${symbol} の勝ち！`;
+    winnerSub.textContent = reason;
 
-    statusLabel.textContent = 'ゲーム終了';
-    statusText.textContent = `${symbol} の勝ち`;
-    turnSymbol.textContent = symbol;
-    turnSymbol.className = `turn-symbol ${player.toLowerCase()}`;
+    if (reason !== '時間切れ') {
+      statusLabel.textContent = 'ゲーム終了';
+      statusText.textContent = `${symbol} の勝ち`;
+      turnSymbol.textContent = symbol;
+      turnSymbol.className = `turn-symbol ${player.toLowerCase()}`;
+      turnTimerBox.classList.remove('warning');
+    }
 
     setTimeout(() => {
       winnerOverlay.classList.add('show');
     }, 300);
   }
+
+  unlimitedToggle.addEventListener('change', () => {
+    turnTimeInput.disabled = unlimitedToggle.checked;
+    timeError.classList.remove('show');
+
+    if (!unlimitedToggle.checked) {
+      turnTimeInput.focus();
+    }
+  });
+
+  turnTimeInput.addEventListener('input', () => {
+    timeError.classList.remove('show');
+  });
 
   starterButtons.forEach(button => {
     button.addEventListener('click', () => {
@@ -687,10 +1038,8 @@
     });
   });
 
-  // 「最初から」は盤面を初期化し、上部の先攻選択へ戻す。
   restartBtn.addEventListener('click', showStarterSelection);
 
-  // 勝利後の「閉じる」は結果ポップアップを閉じるだけ。
   playAgainBtn.addEventListener('click', () => {
     winnerOverlay.classList.remove('show');
   });
@@ -724,7 +1073,14 @@
   });
 
   confirmPortalBtn.addEventListener('click', () => {
+    stopTurnTimer();
     window.location.href = '../';
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && current && !gameOver && turnLimitSeconds !== null) {
+      updateTurnTimer();
+    }
   });
 
   showStarterSelection();
