@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
-<title>Paradise City Blackjack Trainer v14.21</title>
+<title>Paradise City Blackjack Trainer v14.23</title>
 <style>
 :root{--bg:#04110d;--felt:#07523a;--felt2:#063d2d;--panel:rgba(4,20,15,.88);--line:rgba(255,255,255,.13);--text:#fffaf0;--muted:#afc7bb;--gold:#e2c064;--red:#a63d3d;--green:#62d395;--lose:#ff7676;--win:#7df0a5}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% 0,#0e7450 0,#07523a 34%,#03110c 88%);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--text);overflow-x:hidden}.app{width:min(100%,560px);margin:auto;min-height:100vh;padding:10px 10px calc(16px + env(safe-area-inset-bottom))}
@@ -1359,6 +1359,116 @@ header{display:flex;align-items:center;justify-content:space-between;padding:6px
 }
 .controls.cpuBetTurn #betAmount{
   opacity:.65;
+}
+
+
+/* v14.22: 応用戦略ヒントではヘルプの該当表を表示し、現在位置を行・列で強調 */
+.hintAdvancedTableBlock{
+  margin-top:9px;
+}
+.hintAdvancedTableTitle{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-bottom:6px;
+  padding:0 2px;
+}
+.hintAdvancedTableTitle b{
+  color:var(--gold);
+  font-size:11px;
+}
+.hintAdvancedTableTitle span{
+  color:var(--muted);
+  font-size:8px;
+  text-align:right;
+}
+.hintAdvancedTableWrap{
+  margin:0;
+}
+.hintAdvancedTableWrap .strategyMatrix{
+  min-width:355px;
+}
+.hintAdvancedTableWrap .hintTargetRow{
+  border-top:2px solid var(--gold)!important;
+  border-bottom:2px solid var(--gold)!important;
+}
+.hintAdvancedTableWrap .hintRowStart{
+  border-left:2px solid var(--gold)!important;
+}
+.hintAdvancedTableWrap .hintRowEnd{
+  border-right:2px solid var(--gold)!important;
+}
+.hintAdvancedTableWrap .hintTargetCol{
+  border-left:2px solid #9fdcc1!important;
+  border-right:2px solid #9fdcc1!important;
+}
+.hintAdvancedTableWrap .hintColTop{
+  border-top:2px solid #9fdcc1!important;
+}
+.hintAdvancedTableWrap .hintColBottom{
+  border-bottom:2px solid #9fdcc1!important;
+}
+.hintAdvancedTableWrap .hintTargetCell{
+  background:rgba(226,192,100,.34)!important;
+  color:#fff7d6!important;
+  box-shadow:inset 0 0 0 2px #fff0a6;
+}
+.hintAdvancedNoRow{
+  margin-top:8px;
+  padding:8px 9px;
+  border-radius:9px;
+  background:rgba(226,192,100,.08);
+  border:1px solid rgba(226,192,100,.20);
+  color:#e9d99f;
+  font-size:9px;
+  line-height:1.45;
+}
+
+
+/* v14.23: 戦略ヒント内の応用戦略表を横幅いっぱいに収める */
+.hintAdvancedTableWrap{
+  width:100%;
+  max-width:100%;
+  overflow-x:hidden!important;
+  padding-bottom:0!important;
+}
+.hintAdvancedTableWrap .strategyMatrix{
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  table-layout:fixed!important;
+  border-spacing:1px!important;
+}
+.hintAdvancedTableWrap .strategyMatrix th,
+.hintAdvancedTableWrap .strategyMatrix td{
+  height:24px!important;
+  padding:1px 0!important;
+  font-size:8px!important;
+  line-height:1.05!important;
+  overflow:hidden;
+  white-space:nowrap;
+}
+.hintAdvancedTableWrap .strategyMatrix th:first-child{
+  width:43px!important;
+  min-width:43px!important;
+  max-width:43px!important;
+  font-size:7px!important;
+}
+.hintAdvancedTableWrap .strategyMatrix .cornerHead{
+  width:43px!important;
+  min-width:43px!important;
+  max-width:43px!important;
+  font-size:7px!important;
+}
+.hintAdvancedTableWrap .strategyMatrix .playerHead{
+  width:43px!important;
+  min-width:43px!important;
+  max-width:43px!important;
+  font-size:7px!important;
+}
+.hintAdvancedTableWrap .strategyMatrix .dealerHeader th{
+  font-size:8px!important;
 }
 
 </style>
@@ -3073,6 +3183,128 @@ function strategyAvailabilityNote(action,h){
   }
   return '';
 }
+function advancedHintTableSpec(h){
+  const info=handSoftInfo(h.cards);
+  const pair=pairStrategyValue(h.cards);
+
+  if(pair!==null){
+    return {
+      title:'PAIR',
+      rowLabel:pair==='A'?'A,A':`${pair},${pair}`
+    };
+  }
+
+  if(info.soft){
+    // ヘルプのSOFT HAND表は A,2(13) ～ A,9(20)。
+    if(info.total>=13&&info.total<=20){
+      return {
+        title:'SOFT HAND',
+        rowLabel:`A,${info.total-11}`
+      };
+    }
+    return {
+      title:'SOFT HAND',
+      rowLabel:null
+    };
+  }
+
+  let rowLabel='';
+  if(info.total<=8)rowLabel='8以下';
+  else if(info.total===9)rowLabel='9';
+  else if(info.total===10)rowLabel='10';
+  else if(info.total===11)rowLabel='11';
+  else if(info.total===12)rowLabel='12';
+  else if(info.total===13||info.total===14)rowLabel='13-14';
+  else if(info.total===15)rowLabel='15';
+  else if(info.total===16)rowLabel='16';
+  else rowLabel='17以上';
+
+  return {
+    title:'HARD HAND',
+    rowLabel
+  };
+}
+
+function buildAdvancedHintTableHtml(h,d){
+  const spec=advancedHintTableSpec(h);
+  const sections=[...document.querySelectorAll('#helpAdvanced .advancedSection')];
+  const section=sections.find(s=>s.querySelector('h3')?.textContent.trim()===spec.title);
+  const originalWrap=section?.querySelector('.strategyMatrixWrap');
+
+  if(!originalWrap){
+    return '<div class="hintAdvancedNoRow">応用戦略表を取得できませんでした。</div>';
+  }
+
+  const wrap=originalWrap.cloneNode(true);
+  wrap.classList.add('hintAdvancedTableWrap');
+
+  const table=wrap.querySelector('.strategyMatrix');
+  if(!table){
+    return '<div class="hintAdvancedNoRow">応用戦略表を取得できませんでした。</div>';
+  }
+
+  const dealerLabel=d===11?'A':String(d);
+  const headerRow=table.tHead?.rows?.[1];
+  let dealerColIndex=-1;
+
+  if(headerRow){
+    [...headerRow.cells].forEach((cell,index)=>{
+      if(index>0&&cell.textContent.trim()===dealerLabel){
+        dealerColIndex=index;
+      }
+    });
+  }
+
+  // 現在HANDの行を金色の枠で囲う。
+  let targetRow=null;
+  if(spec.rowLabel){
+    targetRow=[...table.tBodies[0].rows].find(
+      row=>row.cells[0]?.textContent.trim()===spec.rowLabel
+    )||null;
+  }
+
+  if(targetRow){
+    [...targetRow.cells].forEach((cell,index)=>{
+      cell.classList.add('hintTargetRow');
+      if(index===0)cell.classList.add('hintRowStart');
+      if(index===targetRow.cells.length-1)cell.classList.add('hintRowEnd');
+    });
+  }
+
+  // Dealer列を緑系の枠で囲う。
+  if(dealerColIndex>0&&headerRow){
+    const colCells=[headerRow.cells[dealerColIndex]];
+    [...table.tBodies[0].rows].forEach(row=>{
+      if(row.cells[dealerColIndex])colCells.push(row.cells[dealerColIndex]);
+    });
+
+    colCells.forEach((cell,index)=>{
+      cell.classList.add('hintTargetCol');
+      if(index===0)cell.classList.add('hintColTop');
+      if(index===colCells.length-1)cell.classList.add('hintColBottom');
+    });
+
+    if(targetRow?.cells[dealerColIndex]){
+      targetRow.cells[dealerColIndex].classList.add('hintTargetCell');
+    }
+  }
+
+  const noRowNote=!spec.rowLabel
+    ? '<div class="hintAdvancedNoRow">現在のSoft 21は応用戦略表の範囲外です。アクションはSTANDです。</div>'
+    : '';
+
+  return `
+    <div class="hintAdvancedTableBlock">
+      <div class="hintAdvancedTableTitle">
+        <b>${spec.title}</b>
+        <span>金枠＝自分のHAND ／ 緑枠＝Dealer</span>
+      </div>
+      ${wrap.outerHTML}
+      ${noRowNote}
+    </div>
+  `;
+}
+
 function renderStrategyHint(){
   const h=currentHand(),d=dealerUpValue(),root=$('strategyHintContent');
   if(!h||phase!=='play'||!dealer[0]){
@@ -3097,6 +3329,11 @@ function renderStrategyHint(){
   }
   const unavailable=strategyAvailabilityNote(result.action,h);
   const modeName=hintMode==='basic'?'基本戦略のみ':hintMode==='advanced'?'応用戦略のみ':'応用戦略＋上級戦略';
+
+  const explanationHtml=hintMode==='advanced'
+    ?buildAdvancedHintTableHtml(h,d)
+    :`<div class="hintExplain"><b>なぜ？</b><p>${result.reason}</p></div>`;
+
   root.innerHTML=`
     <div class="hintHandSummary">
       <div class="handSide">
@@ -3116,7 +3353,7 @@ function renderStrategyHint(){
         <b>${result.title}</b>
       </div>
     </div>
-    <div class="hintExplain"><b>なぜ？</b><p>${result.reason}</p></div>
+    ${explanationHtml}
     ${hintMode==='expert'?`
       <div class="hintCountBox">
         <div class="hintCountMetric"><span>Running Count</span><b>${count.running>=0?'+':''}${count.running}</b></div>
