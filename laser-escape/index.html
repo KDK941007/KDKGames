@@ -96,7 +96,147 @@ h1{
 .startBtn,.primaryBtn{background:var(--cyan)}
 .secondaryBtn{background:#d9e7f5}
 .dangerBtn{background:#ff6b7f}
-.startBtn:active,.primaryBtn:active,.secondaryBtn:active,.dangerBtn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 #02040a}
+.startBtn:active,.primaryBtn:active,.secondaryBtn:active,.dangerBtn:active{
+  transform:translate(2px,2px);
+  box-shadow:2px 2px 0 #02040a
+}
+
+/* LASER ESCAPE top-screen command buttons */
+.topCommandPanel{
+  margin-top:14px;
+  display:grid;
+  gap:10px;
+}
+.topCommandBtn{
+  position:relative;
+  width:100%;
+  min-height:58px;
+  display:grid;
+  grid-template-columns:42px 1fr 28px;
+  align-items:center;
+  gap:10px;
+  padding:0 12px;
+  border:3px solid #365778;
+  background:
+    linear-gradient(180deg,rgba(19,52,76,.98),rgba(7,24,39,.98));
+  color:#eaf8ff;
+  text-decoration:none;
+  box-shadow:
+    5px 5px 0 #02040a,
+    inset 0 0 0 2px rgba(255,255,255,.035);
+  font-family:"Courier New","SFMono-Regular",monospace;
+  font-weight:1000;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  overflow:hidden;
+}
+.topCommandBtn::before{
+  content:"";
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:5px;
+  background:#365778;
+}
+.topCommandBtn::after{
+  content:"";
+  position:absolute;
+  left:52px;
+  right:38px;
+  bottom:7px;
+  height:2px;
+  background:repeating-linear-gradient(
+    90deg,
+    rgba(255,255,255,.16) 0 7px,
+    transparent 7px 12px
+  );
+}
+.topCommandBtn:active{
+  transform:translate(3px,3px);
+  box-shadow:
+    2px 2px 0 #02040a,
+    inset 0 0 0 2px rgba(255,255,255,.035);
+}
+.topCommandBtn .cmdIcon{
+  position:relative;
+  z-index:1;
+  width:34px;
+  height:34px;
+  display:grid;
+  place-items:center;
+  border:2px solid currentColor;
+  background:#061521;
+  font-size:17px;
+  line-height:1;
+}
+.topCommandBtn .cmdText{
+  position:relative;
+  z-index:1;
+  min-width:0;
+  text-align:left;
+}
+.topCommandBtn .cmdMain{
+  display:block;
+  font-size:16px;
+  line-height:1.05;
+  letter-spacing:.09em;
+}
+.topCommandBtn .cmdSub{
+  display:block;
+  margin-top:5px;
+  color:#7f9ab5;
+  font-size:8px;
+  line-height:1;
+  letter-spacing:.08em;
+}
+.topCommandBtn .cmdArrow{
+  position:relative;
+  z-index:1;
+  justify-self:end;
+  font-size:20px;
+  line-height:1;
+}
+
+.topCommandBtn.startCommand{
+  min-height:66px;
+  border-color:var(--cyan);
+  background:
+    linear-gradient(180deg,rgba(10,66,80,.98),rgba(5,34,46,.98));
+  color:var(--cyan);
+  box-shadow:
+    5px 5px 0 #02040a,
+    inset 0 0 0 2px rgba(56,232,255,.10),
+    0 0 14px rgba(56,232,255,.10);
+}
+.topCommandBtn.startCommand::before{background:var(--cyan)}
+.topCommandBtn.startCommand .cmdIcon{
+  color:#06111a;
+  background:var(--cyan);
+  border-color:#b7f8ff;
+  box-shadow:0 0 8px rgba(56,232,255,.35);
+}
+.topCommandBtn.startCommand .cmdMain{
+  color:#e9fdff;
+  font-size:19px;
+}
+.topCommandBtn.startCommand .cmdSub{color:#8fdce6}
+
+.topCommandBtn.portalCommand{
+  border-color:#40546b;
+  color:#9db2c8;
+  background:
+    linear-gradient(180deg,rgba(22,34,49,.98),rgba(9,18,29,.98));
+}
+.topCommandBtn.portalCommand::before{background:#40546b}
+.topCommandBtn.portalCommand .cmdIcon{
+  color:#9db2c8;
+  border-color:#526b84;
+}
+.topCommandBtn.portalCommand .cmdMain{
+  color:#c5d4e2;
+  font-size:14px;
+}
+.topCommandBtn.portalCommand .cmdSub{color:#6e8399}
+
 .rankCard{margin-top:14px;padding:13px}
 .rankHead{
   display:flex;justify-content:space-between;align-items:center;
@@ -460,7 +600,25 @@ h1{
       <label class="fieldLabel" for="playerNameInput">PLAYER NAME</label>
       <input id="playerNameInput" class="nameInput" maxlength="12" autocomplete="nickname" placeholder="名前を入力">
       <div id="nameError" class="nameError"></div>
-      <button id="startBtn" class="startBtn" type="button">START</button>
+      <div class="topCommandPanel">
+        <button id="startBtn" class="topCommandBtn startCommand" type="button">
+          <span class="cmdIcon" aria-hidden="true">▶</span>
+          <span class="cmdText">
+            <span class="cmdMain">START MISSION</span>
+            <span class="cmdSub">ENTER LASER ZONE</span>
+          </span>
+          <span class="cmdArrow" aria-hidden="true">›</span>
+        </button>
+
+        <a class="topCommandBtn portalCommand" href="../">
+          <span class="cmdIcon" aria-hidden="true">↩</span>
+          <span class="cmdText">
+            <span class="cmdMain">PORTALへ戻る</span>
+            <span class="cmdSub">BACK TO GAME PORTAL</span>
+          </span>
+          <span class="cmdArrow" aria-hidden="true">›</span>
+        </a>
+      </div>
     </div>
 
     <div class="rankCard pixelPanel">
@@ -551,7 +709,7 @@ h1{
 (() => {
   'use strict';
 
-  const BUILD = '1.9.0';
+  const BUILD = '1.11.0';
   const LEVEL_SECONDS = 30;
   const SCORE_PER_SECOND = 100;
   const STORAGE_RANKING = 'laser_escape_ranking_v1';
