@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
-<title>Paradise City Blackjack Trainer v14.23</title>
+<title>Paradise City Blackjack Trainer v14.24</title>
 <style>
 :root{--bg:#04110d;--felt:#07523a;--felt2:#063d2d;--panel:rgba(4,20,15,.88);--line:rgba(255,255,255,.13);--text:#fffaf0;--muted:#afc7bb;--gold:#e2c064;--red:#a63d3d;--green:#62d395;--lose:#ff7676;--win:#7df0a5}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% 0,#0e7450 0,#07523a 34%,#03110c 88%);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--text);overflow-x:hidden}.app{width:min(100%,560px);margin:auto;min-height:100vh;padding:10px 10px calc(16px + env(safe-area-inset-bottom))}
@@ -97,8 +97,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:6px
 .table.betPhase .players{padding-top:6px}
 
 .players{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;display:grid;gap:8px;align-content:start;padding:8px 8px 12px;scrollbar-width:thin;overscroll-behavior:contain;scroll-behavior:smooth}
-.players::-webkit-scrollbar{width:4px}.players::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);border-radius:999px}
-.roundCounter{position:absolute;left:5px;top:5px;padding:5px 8px;border:1px solid var(--line);border-radius:999px;background:rgba(3,25,17,.72);color:var(--gold);font-size:10px;font-weight:950;letter-spacing:.08em;z-index:3}
+.players::-webkit-scrollbar{width:4px}.players::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);border-radius:999px}.roundCounter{position:absolute;left:5px;top:5px;padding:5px 8px;border:1px solid var(--line);border-radius:999px;background:rgba(3,25,17,.72);color:var(--gold);font-size:10px;font-weight:950;letter-spacing:.08em;z-index:3}
 .blackjackNotice{position:fixed;inset:0;z-index:60;pointer-events:none;display:flex;align-items:center;justify-content:center}
 .blackjackNoticeBox{min-width:190px;padding:18px 24px;border-radius:18px;background:rgba(4,24,17,.94);border:2px solid var(--gold);box-shadow:0 0 28px rgba(226,192,100,.32);text-align:center}.blackjackNoticeBox.play{animation:blackjackPop 1.25s ease both}
 .blackjackNoticeTitle{font-size:26px;line-height:1;font-weight:1000;color:var(--gold);letter-spacing:.08em}
@@ -196,9 +195,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:6px
 }
 .handsRow.splitHands .handBlock.activeHand .handTitle{
   margin-top:0;
-}
-
-.handsRow.splitHands .playingCard{width:38px;height:56px;font-size:11px}
+}.handsRow.splitHands .playingCard{width:38px;height:56px;font-size:11px}
 .handsRow.splitHands .cards{height:58px;min-height:58px;margin-top:4px}
 .handsRow.splitHands .handTitle{font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .handsRow.splitHands .seatHead{font-size:12px;font-weight:950;gap:3px}
@@ -297,9 +294,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:6px
 .controls.cpuBetTurn #betArea .chip,
 .controls.cpuBetTurn #betArea button{
   cursor:default;
-}
-
-  45%{transform:scale(1.12);opacity:1}
+}45%{transform:scale(1.12);opacity:1}
   100%{transform:scale(1);opacity:1}
 }
 .payoutChip{
@@ -397,8 +392,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:6px
 .controls.resultCompact{
   height:auto;
   min-height:0;
-  padding:0;
-  border:0;
+  padding:0;border:0;
   border-radius:14px;
   background:transparent;
   box-shadow:none;
@@ -497,8 +491,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:6px
 .betLabelGroup{display:inline-flex;align-items:baseline;gap:9px;min-width:0;white-space:nowrap}
 .betHintInlineBtn{
   height:25px;
-  margin-left:auto;
-  padding:0 9px;
+  margin-left:auto;padding:0 9px;
   border-radius:999px;
   border:1px solid rgba(121,197,164,.34);
   background:rgba(74,132,108,.16);
@@ -647,8 +640,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:6px
   min-height:54px;
   padding:6px 3px;
   border:1px solid var(--line);
-  border-radius:10px;
-  background:rgba(255,255,255,.025);
+  border-radius:10px;background:rgba(255,255,255,.025);
 }
 .statBox b{
   font-size:13px;
@@ -797,8 +789,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:6px
 .historyTable tr:last-child td{border-bottom:0}
 .historyTable th:last-child,.historyTable td:last-child{border-right:0}
 .histDealer{
-  display:inline-flex;
-  align-items:center;
+  display:inline-flex;align-items:center;
   justify-content:center;
   min-width:30px;
   height:22px;
@@ -947,8 +938,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:6px
 .expertTable{width:100%;min-width:330px;border-collapse:separate;border-spacing:2px;table-layout:fixed}
 .expertTable th,.expertTable td{height:25px;padding:2px 4px;border-radius:5px;background:rgba(255,255,255,.035);font-size:9px;text-align:center}
 .expertTable thead th{background:#19362a;color:var(--gold)}
-.expertTable thead th:nth-child(1){width:26px}
-.expertTable thead th:nth-child(2){width:106px}
+.expertTable thead th:nth-child(1){width:26px}.expertTable thead th:nth-child(2){width:106px}
 .expertTable tbody th{color:#fff;background:#10291f}
 .expertTable td:nth-child(3){color:#f4d87b;font-weight:950}
 .expertTable td:last-child{color:#aee8c5;font-weight:900}
@@ -1097,8 +1087,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:6px
   color:#f3d77c;
   font-size:9px;
   font-weight:950;
-  line-height:1;
-}
+  line-height:1;}
 .betHintExplain{
   margin-top:9px;
   padding:9px 10px;
@@ -1247,8 +1236,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:6px
 }
 .handsRow.splitHands .handBlock .handResult.result{
   height:20px;
-  min-height:20px;
-  line-height:20px;
+  min-height:20px;  line-height:20px;
   font-size:12px;
 }
 .handsRow.threeHands .handBlock .handResult.result{
@@ -1470,6 +1458,3447 @@ header{display:flex;align-items:center;justify-content:space-between;padding:6px
 .hintAdvancedTableWrap .strategyMatrix .dealerHeader th{
   font-size:8px!important;
 }
+
+
+/* v14.24: 初期配札中はDEALERと全席を1画面で確認できる俯瞰表示へ切り替える */
+.table.dealingOverview .gameStage{
+  height:402px;
+  display:grid;
+  grid-template-rows:112px minmax(0,1fr);
+  gap:6px;
+  padding:0 2px 6px;
+}
+.table.dealingOverview .dealer{
+  min-height:0;
+  height:112px;
+  flex:none;
+  padding:5px 0 3px;
+  border:1px solid transparent;
+  border-radius:12px;
+  transition:box-shadow .18s ease,border-color .18s ease;
+}
+.table.dealingOverview .dealer .label{font-size:9px}
+.table.dealingOverview #dealerCards{
+  min-height:68px;
+  height:68px;
+  margin-top:3px;
+  gap:4px;
+  flex-wrap:nowrap;
+}
+.table.dealingOverview .dealer .playingCard{
+  width:42px;
+  height:60px;
+  font-size:11px;
+  padding:4px;
+  border-radius:6px;
+}
+.table.dealingOverview .cardShoe{
+  transform:skewX(-8deg) scale(.78);
+  transform-origin:top right;
+}
+.table.dealingOverview .roundCounter{font-size:8px;padding:3px 6px}
+.table.dealingOverview .players{
+  min-height:0;
+  height:auto;
+  overflow:hidden;
+  display:grid;
+  gap:5px;
+  align-content:stretch;
+  padding:0 4px;
+  scroll-behavior:auto;
+}
+.table.dealingOverview[data-deal-seats="1"] .players{
+  grid-template-columns:1fr;
+  grid-template-rows:1fr;
+}
+.table.dealingOverview[data-deal-seats="2"] .players{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-rows:1fr;
+}
+.table.dealingOverview[data-deal-seats="3"] .players{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  grid-template-rows:1fr;
+}
+.table.dealingOverview[data-deal-seats="4"] .players{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-rows:repeat(2,minmax(0,1fr));
+}
+.table.dealingOverview[data-deal-seats="5"] .players,
+.table.dealingOverview[data-deal-seats="6"] .players{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  grid-template-rows:repeat(2,minmax(0,1fr));
+}
+.table.dealingOverview .seat{
+  height:auto;
+  min-height:0;
+  padding:5px 4px 4px;
+  border-radius:10px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+.table.dealingOverview .seatHead{
+  min-height:16px;
+  height:16px;
+  line-height:16px;
+  font-size:8px;
+  gap:4px;
+}
+.table.dealingOverview .seatHead span:first-child{
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.table.dealingOverview .seatHead span:last-child{font-size:6px;white-space:nowrap}
+.table.dealingOverview .cpuBadge{font-size:5px;padding:0 3px;margin-left:2px}
+.table.dealingOverview .chipStack{display:none}
+.table.dealingOverview .handsRow{
+  height:auto;
+  min-height:0;
+  overflow:hidden;
+  display:block;
+}
+.table.dealingOverview .handBlock{
+  height:auto;
+  min-height:0;
+  padding-top:1px;
+}
+.table.dealingOverview .handTitle{
+  height:12px;
+  min-height:12px;
+  line-height:12px;
+  font-size:7px;
+}
+.table.dealingOverview .seat .cards,
+.table.dealingOverview .handsRow:not(.splitHands) .cards{
+  min-height:50px;
+  height:50px;
+  margin-top:1px;
+  gap:3px;
+  flex:0 0 50px;
+  flex-wrap:nowrap;
+  overflow:hidden;
+}
+.table.dealingOverview .seat .playingCard,
+.table.dealingOverview .handsRow:not(.splitHands) .playingCard{
+  width:34px;
+  height:48px;
+  font-size:9px;
+  padding:3px;
+  border-radius:5px;
+}
+.table.dealingOverview .handsRow:not(.splitHands) .handTotal{
+  margin-top:1px;
+  height:14px;
+  min-height:14px;
+  line-height:14px;
+  font-size:8px;
+}
+.table.dealingOverview .handResult{display:none!important}
+.table.dealingOverview .controls{display:none!important}
+.table.dealingOverview .seat.active{
+  border-color:var(--gold);
+  box-shadow:inset 0 0 0 2px var(--gold),0 0 12px rgba(226,192,100,.30);
+}
+.table.dealingOverview.dealerDealActive .dealer{
+  border-color:var(--gold);
+  box-shadow:inset 0 0 0 2px var(--gold),0 0 14px rgba(226,192,100,.30);
+}
+@media(max-width:390px){
+  .table.dealingOverview .seat .playingCard,
+  .table.dealingOverview .handsRow:not(.splitHands) .playingCard{
+    width:31px;
+    height:45px;
+    font-size:8px;
+  }
+}
+
+
+/* v14.25: BET中もテーブル全体を俯瞰表示 */
+.table.betOverview .gameStage{
+  height:318px;
+  display:grid;
+  grid-template-rows:58px minmax(0,1fr);
+  gap:5px;
+  padding:0 2px 5px;
+}
+.table.betOverview .dealer{
+  min-height:0;
+  height:58px;
+  flex:none;
+  padding:4px 0 2px;
+  border-radius:11px;
+}
+.table.betOverview .dealer .label{font-size:9px}
+.table.betOverview #dealerCards{
+  display:none;
+}
+.table.betOverview .cardShoe{
+  transform:skewX(-8deg) scale(.68);
+  transform-origin:top right;
+}
+.table.betOverview .roundCounter{
+  font-size:8px;
+  padding:3px 6px;
+}
+.table.betOverview .players{
+  min-height:0;
+  height:auto;
+  overflow:hidden;
+  display:grid;
+  gap:5px;
+  align-content:stretch;
+  padding:0 4px;
+  scroll-behavior:auto;
+}
+.table.betOverview[data-deal-seats="1"] .players{
+  grid-template-columns:1fr;
+  grid-template-rows:1fr;
+}
+.table.betOverview[data-deal-seats="2"] .players{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-rows:1fr;
+}
+.table.betOverview[data-deal-seats="3"] .players{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  grid-template-rows:1fr;
+}
+.table.betOverview[data-deal-seats="4"] .players{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-rows:repeat(2,minmax(0,1fr));
+}
+.table.betOverview[data-deal-seats="5"] .players,
+.table.betOverview[data-deal-seats="6"] .players{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  grid-template-rows:repeat(2,minmax(0,1fr));
+}
+.table.betOverview .seat{
+  height:auto;
+  min-height:0;
+  padding:6px 5px;
+  border-radius:10px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+.table.betOverview .seatHead{
+  min-height:31px;
+  height:31px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  grid-template-rows:16px 13px;
+  align-content:center;
+  gap:1px;
+  line-height:1;
+  font-size:8px;
+}
+.table.betOverview .seatHead span:first-child{
+  min-width:0;
+  display:block;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:8px;
+  line-height:16px;
+}
+.table.betOverview .seatHead span:last-child{
+  display:block;
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:#b9c9bf;
+  font-size:6.5px;
+  line-height:13px;
+  text-align:left;
+}
+.table.betOverview .cpuBadge{
+  font-size:5px;
+  padding:0 3px;
+  margin-left:2px;
+}
+.table.betOverview .chipStack{
+  height:28px;
+  min-height:28px;
+  margin:2px 0 1px;
+  overflow:visible;
+}
+.table.betOverview .chipDisc{
+  width:25px;
+  height:25px;
+  font-size:7px;
+}
+.table.betOverview .handsRow{
+  height:18px;
+  min-height:18px;
+  overflow:hidden;
+  display:block;
+}
+.table.betOverview .handBlock{
+  height:18px;
+  min-height:18px;
+  padding:0;
+}
+.table.betOverview .handTitle{
+  height:18px;
+  min-height:18px;
+  line-height:18px;
+  font-size:7px;
+  color:#f1df9a;
+}
+.table.betOverview .handPlaceholder .handTitle{
+  visibility:visible;
+}
+.table.betOverview .handPlaceholder .cards,
+.table.betOverview .handPlaceholder .handTotal,
+.table.betOverview .handPlaceholder .handResult{
+  display:none!important;
+}
+.table.betOverview .seat.active{
+  border-color:var(--gold);
+  box-shadow:inset 0 0 0 2px var(--gold),0 0 12px rgba(226,192,100,.30);
+}
+
+
+/* v14.25: 配当中は全席を見渡しながらチップ移動を確認 */
+.table.payoutOverview .gameStage{
+  height:402px;
+  display:grid;
+  grid-template-rows:108px minmax(0,1fr);
+  gap:5px;
+  padding:0 2px 6px;
+}
+.table.payoutOverview .dealer{
+  min-height:0;
+  height:108px;
+  flex:none;
+  padding:4px 0 2px;
+  border:1px solid rgba(226,192,100,.18);
+  border-radius:12px;
+}
+.table.payoutOverview .dealer .label{font-size:9px}
+.table.payoutOverview #dealerCards{
+  min-height:66px;
+  height:66px;
+  margin-top:3px;
+  gap:4px;
+  flex-wrap:nowrap;
+}
+.table.payoutOverview .dealer .playingCard{
+  width:41px;
+  height:59px;
+  font-size:10px;
+  padding:4px;
+  border-radius:6px;
+}
+.table.payoutOverview .cardShoe{
+  transform:skewX(-8deg) scale(.76);
+  transform-origin:top right;
+}
+.table.payoutOverview .roundCounter{
+  font-size:8px;
+  padding:3px 6px;
+}
+.table.payoutOverview .players{
+  min-height:0;
+  height:auto;
+  overflow:hidden;
+  display:grid;
+  gap:5px;
+  align-content:stretch;
+  padding:0 4px;
+  scroll-behavior:auto;
+}
+.table.payoutOverview[data-deal-seats="1"] .players{
+  grid-template-columns:1fr;
+  grid-template-rows:1fr;
+}
+.table.payoutOverview[data-deal-seats="2"] .players{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-rows:1fr;
+}
+.table.payoutOverview[data-deal-seats="3"] .players{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  grid-template-rows:1fr;
+}
+.table.payoutOverview[data-deal-seats="4"] .players{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-rows:repeat(2,minmax(0,1fr));
+}
+.table.payoutOverview[data-deal-seats="5"] .players,
+.table.payoutOverview[data-deal-seats="6"] .players{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  grid-template-rows:repeat(2,minmax(0,1fr));
+}
+.table.payoutOverview .seat{
+  height:auto;
+  min-height:0;
+  padding:4px 3px 3px;
+  border-radius:9px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+}
+.table.payoutOverview .seatHead{
+  min-height:15px;
+  height:15px;
+  line-height:15px;
+  font-size:7px;
+  gap:3px;
+}
+.table.payoutOverview .seatHead span:first-child{
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.table.payoutOverview .seatHead span:last-child{
+  font-size:5.5px;
+  white-space:nowrap;
+}
+.table.payoutOverview .cpuBadge{
+  font-size:4.5px;
+  padding:0 2px;
+  margin-left:1px;
+}
+.table.payoutOverview .chipStack{display:none}
+.table.payoutOverview .handsRow,
+.table.payoutOverview .handsRow.splitHands,
+.table.payoutOverview .handsRow.threeHands{
+  width:100%;
+  height:auto;
+  min-height:0;
+  display:flex;
+  flex-direction:row;
+  gap:2px;
+  overflow:hidden;
+  scroll-snap-type:none;
+}
+.table.payoutOverview .handBlock,
+.table.payoutOverview .handsRow.splitHands .handBlock,
+.table.payoutOverview .handsRow.threeHands .handBlock{
+  min-width:0;
+  flex:1 1 0;
+  height:auto;
+  min-height:0;
+  padding:0;
+  overflow:hidden;
+  transform:none;
+  opacity:1;
+  background:transparent;
+  box-shadow:none;
+}
+.table.payoutOverview .handBlock::before{
+  display:none!important;
+}
+.table.payoutOverview .handTitle,
+.table.payoutOverview .handsRow.splitHands .handTitle,
+.table.payoutOverview .handsRow.threeHands .handTitle{
+  height:9px;
+  min-height:9px;
+  line-height:9px;
+  margin:0;
+  font-size:5.5px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.table.payoutOverview .seat .cards,
+.table.payoutOverview .handsRow:not(.splitHands) .cards,
+.table.payoutOverview .handsRow.splitHands .cards,
+.table.payoutOverview .handsRow.threeHands .cards{
+  height:35px;
+  min-height:35px;
+  flex:0 0 35px;
+  margin-top:1px;
+  gap:0;
+  justify-content:center;
+  align-items:flex-start;
+  flex-wrap:nowrap;
+  overflow:hidden;
+}
+.table.payoutOverview .seat .playingCard,
+.table.payoutOverview .handsRow:not(.splitHands) .playingCard,
+.table.payoutOverview .handsRow.splitHands .playingCard,
+.table.payoutOverview .handsRow.threeHands .playingCard{
+  width:24px;
+  height:34px;
+  min-width:24px;
+  font-size:6px;
+  padding:2px;
+  border-radius:4px;
+  margin-left:-5px;
+}
+.table.payoutOverview .seat .playingCard:first-child,
+.table.payoutOverview .handsRow .playingCard:first-child{
+  margin-left:0;
+}
+.table.payoutOverview .handTotal,
+.table.payoutOverview .handsRow:not(.splitHands) .handTotal,
+.table.payoutOverview .handsRow.splitHands .handTotal,
+.table.payoutOverview .handsRow.threeHands .handTotal{
+  height:10px;
+  min-height:10px;
+  line-height:10px;
+  margin:0;
+  font-size:6px;
+}
+.table.payoutOverview .handBlock .handResult.result,
+.table.payoutOverview .handsRow.splitHands .handBlock .handResult.result,
+.table.payoutOverview .handsRow.threeHands .handBlock .handResult.result{
+  display:block;
+  width:100%;
+  min-width:0;
+  max-width:100%;
+  height:11px;
+  min-height:11px;
+  line-height:9px;
+  margin:1px 0 0;
+  padding:0 1px;
+  border-radius:5px;
+  font-size:5px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.table.payoutOverview .controls{
+  display:none!important;
+}
+.table.payoutOverview .seat.active{
+  border-color:var(--gold);
+  box-shadow:inset 0 0 0 2px var(--gold),0 0 12px rgba(226,192,100,.30);
+}
+
+
+/* v14.26: overview <-> action camera morph
+   Layout dimensions are swapped while almost transparent, then scale/opacity
+   reconnect the two states. This avoids janky grid-height interpolation on iPhone. */
+.table .gameStage,
+.table .controls{
+  transform-origin:50% 42%;
+}
+
+.table.viewMorphOutToAction .gameStage,
+.table.viewMorphOutToAction .controls{
+  animation:viewMorphOutToAction .18s cubic-bezier(.4,0,.7,1) both;
+}
+.table.viewMorphInToAction .gameStage,
+.table.viewMorphInToAction .controls{
+  animation:viewMorphInToAction .30s cubic-bezier(.16,.8,.24,1) both;
+}
+
+.table.viewMorphOutToOverview .gameStage,
+.table.viewMorphOutToOverview .controls{
+  animation:viewMorphOutToOverview .18s cubic-bezier(.4,0,.7,1) both;
+}
+.table.viewMorphInToOverview .gameStage,
+.table.viewMorphInToOverview .controls{
+  animation:viewMorphInToOverview .30s cubic-bezier(.16,.8,.24,1) both;
+}
+
+@keyframes viewMorphOutToAction{
+  from{opacity:1;transform:scale(1);filter:blur(0)}
+  to{opacity:.16;transform:scale(1.055);filter:blur(1px)}
+}
+@keyframes viewMorphInToAction{
+  from{opacity:.16;transform:scale(.93);filter:blur(1px)}
+  58%{opacity:1;transform:scale(1.012);filter:blur(0)}
+  to{opacity:1;transform:scale(1);filter:blur(0)}
+}
+
+@keyframes viewMorphOutToOverview{
+  from{opacity:1;transform:scale(1);filter:blur(0)}
+  to{opacity:.16;transform:scale(.94);filter:blur(1px)}
+}
+@keyframes viewMorphInToOverview{
+  from{opacity:.16;transform:scale(1.07);filter:blur(1px)}
+  58%{opacity:1;transform:scale(.988);filter:blur(0)}
+  to{opacity:1;transform:scale(1);filter:blur(0)}
+}
+
+/* Transition中の意図しないタップを防止 */
+.table.viewMorphBusy .gameStage,
+.table.viewMorphBusy .controls{
+  pointer-events:none!important;
+}
+
+/* motionを減らすOS設定にも対応 */
+@media (prefers-reduced-motion: reduce){
+  .table.viewMorphOutToAction .gameStage,
+  .table.viewMorphOutToAction .controls,
+  .table.viewMorphInToAction .gameStage,
+  .table.viewMorphInToAction .controls,
+  .table.viewMorphOutToOverview .gameStage,
+  .table.viewMorphOutToOverview .controls,
+  .table.viewMorphInToOverview .gameStage,
+  .table.viewMorphInToOverview .controls{
+    animation-duration:.01ms!important;
+  }
+}
+
+
+/* v14.27: normal view keeps the wrapper layout-neutral */
+.overviewChipSlot{
+  display:contents;
+}
+
+
+/* BET俯瞰：名前 / BANKを中央揃え、チップ置き場を常時確保 */
+.table.betOverview .seat{
+  justify-content:flex-start;
+  text-align:center;
+}
+
+.table.betOverview .seatHead{
+  min-height:35px;
+  height:35px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  grid-template-rows:18px 14px;
+  align-content:center;
+  justify-items:center;
+  gap:1px;
+  line-height:1;
+  text-align:center;
+}
+
+.table.betOverview .seatHead span:first-child{
+  width:100%;
+  min-width:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+  overflow:hidden;
+  white-space:nowrap;
+  font-size:8px;
+  line-height:18px;
+  text-align:center;
+}
+
+.table.betOverview .seatHead span:first-child > .cpuBadge{
+  flex:0 0 auto;
+}
+
+.table.betOverview .seatHead span:last-child{
+  width:100%;
+  display:block;
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:#b9c9bf;
+  font-size:6.5px;
+  line-height:14px;
+  text-align:center;
+}
+
+.table.betOverview .overviewChipSlot{
+  width:100%;
+  min-height:31px;
+  height:31px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:2px 0 2px;
+}
+
+.table.betOverview .overviewChipSlot .chipStack{
+  width:100%;
+  min-height:28px;
+  height:28px;
+  margin:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:visible;
+}
+
+.table.betOverview .overviewChipSlot:empty::before{
+  content:"";
+  display:block;
+  width:25px;
+  height:25px;
+  opacity:0;
+}
+
+.table.betOverview .handsRow{
+  margin-top:0;
+}
+
+.table.betOverview .handTitle{
+  text-align:center;
+}
+
+
+/* 配当俯瞰もBET俯瞰と同じ席ヘッダ/チップ配置思想に統一 */
+.table.payoutOverview .seat{
+  justify-content:flex-start;
+  text-align:center;
+}
+
+.table.payoutOverview .seatHead{
+  min-height:31px;
+  height:31px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  grid-template-rows:16px 13px;
+  align-content:center;
+  justify-items:center;
+  gap:1px;
+  line-height:1;
+  text-align:center;
+}
+
+.table.payoutOverview .seatHead span:first-child{
+  width:100%;
+  min-width:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:2px;
+  overflow:hidden;
+  white-space:nowrap;
+  font-size:7px;
+  line-height:16px;
+  text-align:center;
+}
+
+.table.payoutOverview .seatHead span:first-child > .cpuBadge{
+  flex:0 0 auto;
+}
+
+.table.payoutOverview .seatHead span:last-child{
+  width:100%;
+  display:block;
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:#b9c9bf;
+  font-size:5.8px;
+  line-height:13px;
+  text-align:center;
+}
+
+.table.payoutOverview .overviewChipSlot{
+  width:100%;
+  min-height:25px;
+  height:25px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:1px 0 2px;
+}
+
+.table.payoutOverview .overviewChipSlot .chipStack{
+  width:100%;
+  min-height:23px;
+  height:23px;
+  margin:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:visible;
+}
+
+.table.payoutOverview .overviewChipSlot:empty::before{
+  content:"";
+  display:block;
+  width:21px;
+  height:21px;
+  opacity:0;
+}
+
+.table.payoutOverview .chipDisc{
+  width:21px;
+  height:21px;
+  font-size:5.5px;
+}
+
+/* 旧v14.25で配当時のchipStackを非表示にしていた指定を上書き */
+.table.payoutOverview .chipStack{
+  display:flex!important;
+}
+
+.table.payoutOverview .handTitle,
+.table.payoutOverview .handTotal,
+.table.payoutOverview .handResult{
+  text-align:center;
+}
+
+/* ヘッダ＋チップ領域を確保した分、配当俯瞰の縦サイズを少し拡張 */
+.table.payoutOverview .gameStage{
+  height:430px;
+}
+
+@media(max-width:390px){
+  .table.betOverview .seatHead{
+    min-height:34px;
+    height:34px;
+  }
+  .table.betOverview .seatHead span:first-child{
+    font-size:7.5px;
+  }
+  .table.betOverview .seatHead span:last-child{
+    font-size:6px;
+  }
+
+  .table.payoutOverview .gameStage{
+    height:424px;
+  }
+  .table.payoutOverview .seatHead span:first-child{
+    font-size:6.5px;
+  }
+  .table.payoutOverview .seatHead span:last-child{
+    font-size:5.4px;
+  }
+}
+
+
+
+/* v14.28: 俯瞰カードの重なりを明確化 */
+.table.dealingOverview .seat .cards,
+.table.payoutOverview .seat .cards{
+  isolation:isolate;
+}
+
+.table.dealingOverview .seat .playingCard,
+.table.payoutOverview .seat .playingCard{
+  position:relative;
+  overflow:hidden;
+  flex:0 0 auto;
+  background:#fff;
+  background-clip:padding-box;
+}
+
+/* 後から置かれたカードを必ず上面にする */
+.table.dealingOverview .seat .playingCard:nth-child(1),
+.table.payoutOverview .seat .playingCard:nth-child(1){z-index:1}
+.table.dealingOverview .seat .playingCard:nth-child(2),
+.table.payoutOverview .seat .playingCard:nth-child(2){z-index:2}
+.table.dealingOverview .seat .playingCard:nth-child(3),
+.table.payoutOverview .seat .playingCard:nth-child(3){z-index:3}
+.table.dealingOverview .seat .playingCard:nth-child(4),
+.table.payoutOverview .seat .playingCard:nth-child(4){z-index:4}
+.table.dealingOverview .seat .playingCard:nth-child(5),
+.table.payoutOverview .seat .playingCard:nth-child(5){z-index:5}
+.table.dealingOverview .seat .playingCard:nth-child(6),
+.table.payoutOverview .seat .playingCard:nth-child(6){z-index:6}
+.table.dealingOverview .seat .playingCard:nth-child(7),
+.table.payoutOverview .seat .playingCard:nth-child(7){z-index:7}
+.table.dealingOverview .seat .playingCard:nth-child(8),
+.table.payoutOverview .seat .playingCard:nth-child(8){z-index:8}
+
+/* 俯瞰の小さいカードでは右下の重複表記を省き、
+   重ねたカードの境界から数字/マークだけが浮いて見えるのを防ぐ */
+.table.dealingOverview .seat .playingCard .b,
+.table.payoutOverview .seat .playingCard .b{
+  display:none;
+}
+
+/* 配当後のRESULT状態でも俯瞰を維持しつつ、結果ボタンだけ再操作可能にする */
+.table.payoutOverview .controls.resultCompact{
+  display:block!important;
+  width:calc(100% - 20px);
+  margin:8px 10px 0;
+}
+.table.payoutOverview .controls.resultCompact .controlTopRow{
+  display:block!important;
+}
+.table.payoutOverview .controls.resultCompact .roundResultBtn{
+  display:flex!important;
+}
+
+
+/* v14.29: 俯瞰席の共通レイアウト
+   PLAYER NAME / BANK / CPU情報を必ず別行にし、人数に関係なく中央配置 */
+.table.dealingOverview .seat,
+.table.betOverview .seat,
+.table.payoutOverview .seat{
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  justify-content:center!important;
+  text-align:center;
+}
+
+.table.dealingOverview .seatHead,
+.table.betOverview .seatHead,
+.table.payoutOverview .seatHead{
+  width:100%;
+  height:auto!important;
+  min-height:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:1px!important;
+  line-height:1!important;
+  text-align:center!important;
+}
+
+/* 名前行 */
+.table.dealingOverview .seatHead > span:first-child,
+.table.betOverview .seatHead > span:first-child,
+.table.payoutOverview .seatHead > span:first-child{
+  width:100%!important;
+  min-width:0!important;
+  height:auto!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:1px!important;
+  overflow:hidden!important;
+  white-space:nowrap!important;
+  text-align:center!important;
+  line-height:1.15!important;
+}
+
+/* BANK行 */
+.table.dealingOverview .seatHead > span:last-child,
+.table.betOverview .seatHead > span:last-child,
+.table.payoutOverview .seatHead > span:last-child{
+  width:100%!important;
+  min-width:0!important;
+  display:block!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+  text-align:center!important;
+  line-height:1.15!important;
+  color:#b9c9bf;
+}
+
+/* CPU LEVELは名前と横並びにせず独立した小さい行にする */
+.table.dealingOverview .seatHead .cpuBadge,
+.table.betOverview .seatHead .cpuBadge,
+.table.payoutOverview .seatHead .cpuBadge{
+  display:block!important;
+  width:max-content!important;
+  max-width:94%!important;
+  margin:1px auto 0!important;
+  padding:1px 4px!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+  line-height:1.1!important;
+}
+
+/* 俯瞰時は席の中身一式を中央にまとめる */
+.table.dealingOverview .handsRow,
+.table.betOverview .handsRow,
+.table.payoutOverview .handsRow,
+.table.dealingOverview .overviewChipSlot,
+.table.betOverview .overviewChipSlot,
+.table.payoutOverview .overviewChipSlot{
+  flex-shrink:0;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+.table.dealingOverview .handTitle,
+.table.dealingOverview .handTotal,
+.table.betOverview .handTitle,
+.table.betOverview .handTotal,
+.table.payoutOverview .handTitle,
+.table.payoutOverview .handTotal,
+.table.payoutOverview .handResult{
+  text-align:center!important;
+}
+
+/* 配札俯瞰 */
+.table.dealingOverview .seatHead > span:first-child{font-size:8px!important}
+.table.dealingOverview .seatHead > span:last-child{font-size:6px!important}
+.table.dealingOverview .seatHead .cpuBadge{font-size:4.5px!important}
+.table.dealingOverview .seatHead{margin-bottom:2px}
+
+/* BET俯瞰 */
+.table.betOverview .seatHead > span:first-child{font-size:8px!important}
+.table.betOverview .seatHead > span:last-child{font-size:6.5px!important}
+.table.betOverview .seatHead .cpuBadge{font-size:4.5px!important}
+.table.betOverview .seatHead{margin-bottom:2px}
+
+/* 配当俯瞰 */
+.table.payoutOverview .seatHead > span:first-child{font-size:7px!important}
+.table.payoutOverview .seatHead > span:last-child{font-size:5.8px!important}
+.table.payoutOverview .seatHead .cpuBadge{font-size:4px!important}
+.table.payoutOverview .seatHead{margin-bottom:1px}
+
+
+/* v14.29: アクティブ席を中心にしたカメラズーム */
+.table .gameStage{
+  transform-origin:var(--morph-x,50%) var(--morph-y,50%)!important;
+  will-change:transform,opacity,filter;
+}
+.table .controls{
+  transform-origin:50% 50%!important;
+  will-change:transform,opacity;
+}
+
+/* 俯瞰 → ACTION：対象席へ寄る */
+@keyframes viewMorphOutToAction{
+  from{
+    opacity:1;
+    transform:scale(1);
+    filter:blur(0);
+  }
+  to{
+    opacity:.10;
+    transform:scale(1.16);
+    filter:blur(1px);
+  }
+}
+@keyframes viewMorphInToAction{
+  from{
+    opacity:.10;
+    transform:scale(1.10);
+    filter:blur(1px);
+  }
+  62%{
+    opacity:1;
+    transform:scale(.992);
+    filter:blur(0);
+  }
+  to{
+    opacity:1;
+    transform:scale(1);
+    filter:blur(0);
+  }
+}
+
+/* ACTION → 俯瞰：現在席から引く */
+@keyframes viewMorphOutToOverview{
+  from{
+    opacity:1;
+    transform:scale(1);
+    filter:blur(0);
+  }
+  to{
+    opacity:.10;
+    transform:scale(.86);
+    filter:blur(1px);
+  }
+}
+@keyframes viewMorphInToOverview{
+  from{
+    opacity:.10;
+    transform:scale(.88);
+    filter:blur(1px);
+  }
+  62%{
+    opacity:1;
+    transform:scale(1.008);
+    filter:blur(0);
+  }
+  to{
+    opacity:1;
+    transform:scale(1);
+    filter:blur(0);
+  }
+}
+
+.table.viewMorphOutToAction .gameStage,
+.table.viewMorphOutToOverview .gameStage{
+  animation-duration:.22s!important;
+}
+.table.viewMorphInToAction .gameStage,
+.table.viewMorphInToOverview .gameStage{
+  animation-duration:.34s!important;
+}
+
+/* controlsは席位置へ動かさず、カメラ切替に合わせて軽くフェード */
+.table.viewMorphOutToAction .controls,
+.table.viewMorphOutToOverview .controls{
+  animation-duration:.18s!important;
+}
+.table.viewMorphInToAction .controls,
+.table.viewMorphInToOverview .controls{
+  animation-duration:.28s!important;
+}
+
+@media(max-width:390px){
+  .table.dealingOverview .seatHead > span:first-child,
+  .table.betOverview .seatHead > span:first-child{
+    font-size:7.5px!important;
+  }
+  .table.payoutOverview .seatHead > span:first-child{
+    font-size:6.5px!important;
+  }
+}
+
+
+/* =========================================================
+   v14.30 — layout stability
+   BET / DEAL / ACTION / PAYOUTで外枠とDEALER領域の基準寸法を統一。
+   レイアウト切替時の「カクッ」を最小化する。
+   ========================================================= */
+.table .gameStage,
+.table.betPhase .gameStage,
+.table.betOverview .gameStage,
+.table.dealingOverview .gameStage,
+.table.payoutOverview .gameStage{
+  height:402px!important;
+  min-height:402px!important;
+}
+
+.table .dealer,
+.table.betPhase .dealer,
+.table.betOverview .dealer,
+.table.dealingOverview .dealer,
+.table.payoutOverview .dealer{
+  height:112px!important;
+  min-height:112px!important;
+  flex:0 0 112px!important;
+  padding:5px 0 3px!important;
+  box-sizing:border-box;
+}
+
+/* BET中もDEALER枠そのものの高さは変えず、カード領域だけ空にする */
+.table.betPhase #dealerCards,
+.table.betOverview #dealerCards{
+  display:flex!important;
+  visibility:hidden;
+  height:68px!important;
+  min-height:68px!important;
+  margin-top:3px!important;
+  overflow:hidden;
+}
+
+.table.betPhase .cardShoe,
+.table.betOverview .cardShoe,
+.table.dealingOverview .cardShoe,
+.table.payoutOverview .cardShoe{
+  transform:skewX(-8deg) scale(.78)!important;
+  transform-origin:top right;
+}
+
+.table.betPhase .roundCounter,
+.table.betOverview .roundCounter,
+.table.dealingOverview .roundCounter,
+.table.payoutOverview .roundCounter{
+  font-size:8px!important;
+  padding:3px 6px!important;
+}
+
+
+/* =========================================================
+   v14.30 — overview responsive sizing
+   席の大きさに合わせて内容全体を連動拡縮。
+   ========================================================= */
+.table.betOverview,
+.table.dealingOverview,
+.table.payoutOverview{
+  --ov-name:8px;
+  --ov-bank:6.4px;
+  --ov-cpu:4.3px;
+  --ov-chip:25px;
+  --ov-card-w:24px;
+  --ov-card-h:35px;
+  --ov-card-font:6px;
+  --ov-total:6px;
+  --ov-title:5.8px;
+  --ov-result:5.2px;
+  --ov-seat-pad:5px;
+}
+
+/* 2人：枠が大きいので表示も大きく */
+.table[data-deal-seats="2"].betOverview,
+.table[data-deal-seats="2"].dealingOverview,
+.table[data-deal-seats="2"].payoutOverview{
+  --ov-name:12px;
+  --ov-bank:9px;
+  --ov-cpu:6px;
+  --ov-chip:38px;
+  --ov-card-w:40px;
+  --ov-card-h:58px;
+  --ov-card-font:10px;
+  --ov-total:9px;
+  --ov-title:8px;
+  --ov-result:8px;
+  --ov-seat-pad:8px;
+}
+
+/* 3人 */
+.table[data-deal-seats="3"].betOverview,
+.table[data-deal-seats="3"].dealingOverview,
+.table[data-deal-seats="3"].payoutOverview{
+  --ov-name:10px;
+  --ov-bank:8px;
+  --ov-cpu:5.2px;
+  --ov-chip:33px;
+  --ov-card-w:34px;
+  --ov-card-h:49px;
+  --ov-card-font:8px;
+  --ov-total:8px;
+  --ov-title:7px;
+  --ov-result:7px;
+  --ov-seat-pad:7px;
+}
+
+/* 4人 */
+.table[data-deal-seats="4"].betOverview,
+.table[data-deal-seats="4"].dealingOverview,
+.table[data-deal-seats="4"].payoutOverview{
+  --ov-name:9.5px;
+  --ov-bank:7.4px;
+  --ov-cpu:4.8px;
+  --ov-chip:30px;
+  --ov-card-w:30px;
+  --ov-card-h:44px;
+  --ov-card-font:7px;
+  --ov-total:7px;
+  --ov-title:6.5px;
+  --ov-result:6.3px;
+  --ov-seat-pad:6px;
+}
+
+/* 5〜6人 */
+.table[data-deal-seats="5"].betOverview,
+.table[data-deal-seats="5"].dealingOverview,
+.table[data-deal-seats="5"].payoutOverview,
+.table[data-deal-seats="6"].betOverview,
+.table[data-deal-seats="6"].dealingOverview,
+.table[data-deal-seats="6"].payoutOverview{
+  --ov-name:8px;
+  --ov-bank:6.4px;
+  --ov-cpu:4.2px;
+  --ov-chip:25px;
+  --ov-card-w:24px;
+  --ov-card-h:35px;
+  --ov-card-font:6px;
+  --ov-total:6px;
+  --ov-title:5.7px;
+  --ov-result:5px;
+  --ov-seat-pad:5px;
+}
+
+.table.betOverview .seat,
+.table.dealingOverview .seat,
+.table.payoutOverview .seat{
+  padding:var(--ov-seat-pad)!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+}
+
+.table.betOverview .seatHead,
+.table.dealingOverview .seatHead,
+.table.payoutOverview .seatHead{
+  width:100%!important;
+  flex:0 0 auto;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:2px!important;
+  margin:0 0 3px!important;
+  text-align:center!important;
+}
+
+.table.betOverview .seatHead > span:first-child,
+.table.dealingOverview .seatHead > span:first-child,
+.table.payoutOverview .seatHead > span:first-child{
+  width:100%!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  font-size:var(--ov-name)!important;
+  line-height:1.1!important;
+  text-align:center!important;
+}
+
+.table.betOverview .seatHead > span:last-child,
+.table.dealingOverview .seatHead > span:last-child,
+.table.payoutOverview .seatHead > span:last-child{
+  width:100%!important;
+  display:block!important;
+  font-size:var(--ov-bank)!important;
+  line-height:1.1!important;
+  text-align:center!important;
+  color:#b9c9bf!important;
+}
+
+.table.betOverview .cpuBadge,
+.table.dealingOverview .cpuBadge,
+.table.payoutOverview .cpuBadge{
+  display:block!important;
+  width:max-content!important;
+  max-width:95%!important;
+  margin:2px auto 0!important;
+  font-size:var(--ov-cpu)!important;
+  line-height:1.1!important;
+}
+
+.table.betOverview .overviewChipSlot,
+.table.dealingOverview .overviewChipSlot,
+.table.payoutOverview .overviewChipSlot{
+  width:100%!important;
+  min-height:calc(var(--ov-chip) + 5px)!important;
+  height:calc(var(--ov-chip) + 5px)!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  margin:2px auto!important;
+}
+
+.table.betOverview .overviewChipSlot:empty::before,
+.table.dealingOverview .overviewChipSlot:empty::before,
+.table.payoutOverview .overviewChipSlot:empty::before{
+  content:"";
+  width:var(--ov-chip);
+  height:var(--ov-chip);
+  opacity:0;
+}
+
+.table.betOverview .chipStack,
+.table.dealingOverview .chipStack,
+.table.payoutOverview .chipStack{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:var(--ov-chip)!important;
+  height:var(--ov-chip)!important;
+  margin:0!important;
+}
+
+.table.betOverview .chipDisc,
+.table.dealingOverview .chipDisc,
+.table.payoutOverview .chipDisc{
+  width:var(--ov-chip)!important;
+  height:var(--ov-chip)!important;
+  font-size:calc(var(--ov-chip) * .27)!important;
+}
+
+.table.dealingOverview .handsRow,
+.table.payoutOverview .handsRow{
+  width:100%!important;
+  flex:0 0 auto!important;
+  align-items:center!important;
+  justify-content:center!important;
+  margin:1px auto 0!important;
+}
+
+.table.dealingOverview .handTitle,
+.table.payoutOverview .handTitle{
+  font-size:var(--ov-title)!important;
+  text-align:center!important;
+}
+
+.table.dealingOverview .seat .cards,
+.table.payoutOverview .seat .cards,
+.table.dealingOverview .handsRow .cards,
+.table.payoutOverview .handsRow .cards{
+  height:calc(var(--ov-card-h) + 2px)!important;
+  min-height:calc(var(--ov-card-h) + 2px)!important;
+  flex:0 0 calc(var(--ov-card-h) + 2px)!important;
+  align-items:center!important;
+  justify-content:center!important;
+  margin:2px auto 0!important;
+}
+
+.table.dealingOverview .seat .playingCard,
+.table.payoutOverview .seat .playingCard,
+.table.dealingOverview .handsRow .playingCard,
+.table.payoutOverview .handsRow .playingCard{
+  width:var(--ov-card-w)!important;
+  min-width:var(--ov-card-w)!important;
+  height:var(--ov-card-h)!important;
+  font-size:var(--ov-card-font)!important;
+  padding:calc(var(--ov-card-w) * .09)!important;
+  border-radius:calc(var(--ov-card-w) * .14)!important;
+}
+
+.table.dealingOverview .handTotal,
+.table.payoutOverview .handTotal{
+  font-size:var(--ov-total)!important;
+  line-height:1.15!important;
+  text-align:center!important;
+}
+
+.table.payoutOverview .handResult{
+  font-size:var(--ov-result)!important;
+  line-height:1.15!important;
+  text-align:center!important;
+}
+
+
+/* =========================================================
+   v14.30 — HAND SIGNAL redesign
+   ========================================================= */
+.handSignalVisual{
+  width:118px!important;
+  height:116px!important;
+  border-radius:20px!important;
+  border:1px solid rgba(226,192,100,.42)!important;
+  background:
+    radial-gradient(circle at 50% 42%,rgba(15,89,63,.74),rgba(2,24,17,.94) 72%)!important;
+  box-shadow:
+    0 12px 28px rgba(0,0,0,.40),
+    inset 0 0 0 2px rgba(255,255,255,.035),
+    0 0 18px rgba(226,192,100,.08)!important;
+  backdrop-filter:blur(8px)!important;
+  gap:0!important;
+}
+
+.handSignalVisual::before{
+  content:"";
+  position:absolute;
+  left:13px;
+  right:13px;
+  top:12px;
+  height:70px;
+  border-radius:50%;
+  border:1px solid rgba(226,192,100,.13);
+  background:
+    radial-gradient(circle,rgba(226,192,100,.07) 0 2px,transparent 3px);
+  background-size:10px 10px;
+  opacity:.85;
+}
+
+.handSignalVisual .signalHand{
+  width:78px!important;
+  height:76px!important;
+  margin-top:-7px!important;
+  transform:scale(.92);
+  filter:drop-shadow(0 5px 4px rgba(0,0,0,.30));
+}
+
+.signalPalm{
+  left:27px!important;
+  top:33px!important;
+  width:45px!important;
+  height:38px!important;
+  border-radius:20px 20px 14px 14px!important;
+  background:
+    linear-gradient(145deg,#f4d4b4 0%,#d9ac83 62%,#c58f68 100%)!important;
+  box-shadow:
+    inset 4px 3px 0 rgba(255,255,255,.13),
+    inset -3px -5px 0 rgba(111,63,38,.13)!important;
+}
+
+/* wrist */
+.signalPalm::before{
+  content:"";
+  position:absolute;
+  width:25px;
+  height:23px;
+  left:10px;
+  top:30px;
+  border-radius:0 0 8px 8px;
+  background:linear-gradient(180deg,#d9aa82,#bd805c);
+  box-shadow:inset -3px 0 0 rgba(90,48,29,.10);
+}
+
+/* palm crease */
+.signalPalm::after{
+  content:"";
+  position:absolute;
+  left:9px;
+  right:7px;
+  top:19px;
+  height:7px;
+  border-top:1px solid rgba(117,65,40,.20);
+  border-radius:50%;
+}
+
+.signalFinger{
+  width:12px!important;
+  border-radius:9px 9px 7px 7px!important;
+  background:
+    linear-gradient(90deg,#d5a67f 0%,#f2cfac 44%,#d7a47d 100%)!important;
+  box-shadow:
+    inset 2px 0 0 rgba(255,255,255,.09),
+    inset -2px 0 0 rgba(102,56,35,.09)!important;
+}
+
+/* fingernails */
+.signalFinger::after{
+  content:"";
+  position:absolute;
+  left:3px;
+  top:3px;
+  width:6px;
+  height:8px;
+  border-radius:5px 5px 4px 4px;
+  background:rgba(255,231,213,.62);
+  border:1px solid rgba(133,84,58,.16);
+}
+
+.signalFinger.f1{left:29px!important;top:2px!important;height:43px!important}
+.signalFinger.f2{left:44px!important;top:0!important;height:45px!important}
+.signalFinger.f3{left:58px!important;top:6px!important;height:39px!important}
+.signalFinger.f4{left:15px!important;top:20px!important;height:31px!important;transform:rotate(-28deg)!important}
+
+.handSignalVisual .signalLabel{
+  position:absolute;
+  left:8px;
+  right:8px;
+  bottom:8px;
+  font-size:10px!important;
+  color:#f5d57a!important;
+  text-shadow:0 2px 3px rgba(0,0,0,.5);
+  letter-spacing:.13em!important;
+  text-align:center;
+}
+
+/* HIT: tapping ripple */
+.handSignalVisual.hit::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:68px;
+  width:18px;
+  height:7px;
+  margin-left:-9px;
+  border:2px solid rgba(245,213,122,.75);
+  border-radius:50%;
+  animation:hitRipple 1.25s ease-out both;
+}
+.handSignalVisual.hit .signalHand{
+  animation:qualityHit 1.42s cubic-bezier(.28,.75,.28,1) both!important;
+}
+
+/* STAND: horizontal sweep trail */
+.handSignalVisual.stand::after{
+  content:"";
+  position:absolute;
+  left:17px;
+  top:60px;
+  width:84px;
+  height:3px;
+  border-radius:999px;
+  background:linear-gradient(90deg,transparent,#f5d57a,transparent);
+  opacity:0;
+  animation:standTrail 1.42s ease both;
+}
+.handSignalVisual.stand .signalHand{
+  animation:qualityStand 1.46s ease-in-out both!important;
+}
+
+/* DOUBLE: clearly show one finger */
+.handSignalVisual.double .signalFinger:not(.f1){
+  opacity:.12!important;
+  transform:scaleY(.70);
+}
+.handSignalVisual.double::after{
+  content:"1";
+  position:absolute;
+  right:13px;
+  top:12px;
+  color:#f5d57a;
+  font-size:15px;
+  font-weight:1000;
+  opacity:.8;
+}
+.handSignalVisual.double .signalHand{
+  animation:qualityPoint 1.42s ease both!important;
+}
+
+/* SPLIT: two fingers emphasized */
+.handSignalVisual.split .signalFinger.f1,
+.handSignalVisual.split .signalFinger.f2{
+  opacity:1!important;
+}
+.handSignalVisual.split .signalFinger.f3,
+.handSignalVisual.split .signalFinger.f4{
+  opacity:.12!important;
+}
+.handSignalVisual.split::after{
+  content:"2";
+  position:absolute;
+  right:13px;
+  top:12px;
+  color:#f5d57a;
+  font-size:15px;
+  font-weight:1000;
+  opacity:.8;
+}
+.handSignalVisual.split .signalHand{
+  animation:qualitySplit 1.42s ease both!important;
+}
+
+/* SURRENDER: table line draw */
+.handSignalVisual.surrender::after{
+  content:"";
+  position:absolute!important;
+  left:18px!important;
+  top:68px!important;
+  width:82px!important;
+  height:4px!important;
+  border-radius:999px!important;
+  background:linear-gradient(90deg,#f5d57a,#fff1bd,#f5d57a)!important;
+  transform:scaleX(0)!important;
+  transform-origin:left center!important;
+  animation:qualitySurrenderLine 1.30s .12s ease forwards!important;
+}
+.handSignalVisual.surrender .signalHand{
+  animation:qualitySurrender 1.35s ease both!important;
+}
+
+@keyframes qualityHit{
+  0%{transform:translateY(-8px) rotate(-8deg) scale(.92)}
+  28%{transform:translateY(11px) rotate(-3deg) scale(.96)}
+  42%{transform:translateY(2px) rotate(-4deg) scale(.94)}
+  66%{transform:translateY(10px) rotate(-2deg) scale(.96)}
+  100%{transform:translateY(-2px) rotate(-5deg) scale(.92)}
+}
+@keyframes hitRipple{
+  0%,20%{opacity:0;transform:scale(.3)}
+  32%{opacity:1;transform:scale(.6)}
+  70%{opacity:0;transform:scale(2.5)}
+  100%{opacity:0}
+}
+@keyframes qualityStand{
+  0%{transform:translateX(-19px) rotate(-5deg) scale(.89)}
+  28%{transform:translateX(18px) rotate(6deg) scale(.93)}
+  52%{transform:translateX(-14px) rotate(-4deg) scale(.91)}
+  76%{transform:translateX(13px) rotate(4deg) scale(.92)}
+  100%{transform:translateX(0) rotate(0) scale(.90)}
+}
+@keyframes standTrail{
+  0%,12%{opacity:0;transform:scaleX(.15)}
+  30%{opacity:.85;transform:scaleX(1)}
+  70%{opacity:.42;transform:scaleX(.72)}
+  100%{opacity:0;transform:scaleX(.2)}
+}
+@keyframes qualityPoint{
+  0%{transform:translateY(8px) scale(.88)}
+  35%{transform:translateY(-9px) scale(1.03)}
+  56%{transform:translateY(-5px) scale(.98)}
+  100%{transform:translateY(0) scale(.92)}
+}
+@keyframes qualitySplit{
+  0%{transform:translateY(8px) rotate(0) scale(.88)}
+  35%{transform:translateY(-9px) rotate(-3deg) scale(1.03)}
+  56%{transform:translateY(-5px) rotate(3deg) scale(.98)}
+  100%{transform:translateY(0) rotate(0) scale(.92)}
+}
+@keyframes qualitySurrender{
+  0%{transform:translateX(-28px) translateY(2px) rotate(84deg) scale(.87)}
+  75%{transform:translateX(29px) translateY(2px) rotate(84deg) scale(.90)}
+  100%{transform:translateX(25px) translateY(2px) rotate(84deg) scale(.88)}
+}
+@keyframes qualitySurrenderLine{
+  0%{transform:scaleX(0)}
+  82%,100%{transform:scaleX(1)}
+}
+
+
+
+/* =========================================================
+   v14.31 — OVERVIEW GEOMETRY FIX
+   DealerとPLAYER領域を完全に別行へ固定し、重なりを禁止。
+   ========================================================= */
+.table.betOverview .gameStage,
+.table.dealingOverview .gameStage,
+.table.payoutOverview .gameStage{
+  display:grid!important;
+  grid-template-rows:112px minmax(0,1fr)!important;
+  gap:6px!important;
+  height:402px!important;
+  min-height:402px!important;
+  padding:0 2px 6px!important;
+  overflow:hidden!important;
+}
+
+.table.betOverview .dealer,
+.table.dealingOverview .dealer,
+.table.payoutOverview .dealer{
+  grid-row:1!important;
+  position:relative!important;
+  height:112px!important;
+  min-height:112px!important;
+  max-height:112px!important;
+  flex:none!important;
+  z-index:2!important;
+  overflow:hidden!important;
+}
+
+.table.betOverview .players,
+.table.dealingOverview .players,
+.table.payoutOverview .players{
+  grid-row:2!important;
+  position:relative!important;
+  min-height:0!important;
+  height:100%!important;
+  max-height:100%!important;
+  overflow:hidden!important;
+  padding:0 4px 2px!important;
+  gap:5px!important;
+  align-content:stretch!important;
+  box-sizing:border-box!important;
+}
+
+/* 俯瞰席は必ずグリッドセル内に収める */
+.table.betOverview .seat,
+.table.dealingOverview .seat,
+.table.payoutOverview .seat{
+  min-width:0!important;
+  min-height:0!important;
+  width:100%!important;
+  height:100%!important;
+  max-height:100%!important;
+  overflow:hidden!important;
+  box-sizing:border-box!important;
+}
+
+
+/* =========================================================
+   v14.31 — 4人以上は「枠に収まること」を最優先に再調整
+   2～3人は従来の見やすい大きさを維持。
+   ========================================================= */
+
+/* 4人 */
+.table[data-deal-seats="4"].betOverview,
+.table[data-deal-seats="4"].dealingOverview,
+.table[data-deal-seats="4"].payoutOverview{
+  --ov-name:8.4px;
+  --ov-bank:6.5px;
+  --ov-cpu:4px;
+  --ov-chip:24px;
+  --ov-card-w:27px;
+  --ov-card-h:39px;
+  --ov-card-font:6.4px;
+  --ov-total:6.2px;
+  --ov-title:5.4px;
+  --ov-result:5.2px;
+  --ov-seat-pad:3px;
+}
+
+/* 5～6人 */
+.table[data-deal-seats="5"].betOverview,
+.table[data-deal-seats="5"].dealingOverview,
+.table[data-deal-seats="5"].payoutOverview,
+.table[data-deal-seats="6"].betOverview,
+.table[data-deal-seats="6"].dealingOverview,
+.table[data-deal-seats="6"].payoutOverview{
+  --ov-name:7.2px;
+  --ov-bank:5.7px;
+  --ov-cpu:3.6px;
+  --ov-chip:21px;
+  --ov-card-w:23px;
+  --ov-card-h:33px;
+  --ov-card-font:5.5px;
+  --ov-total:5.5px;
+  --ov-title:4.9px;
+  --ov-result:4.7px;
+  --ov-seat-pad:2px;
+}
+
+/* 4人以上では縦の余白を明示的に圧縮 */
+.table[data-deal-seats="4"].betOverview .seatHead,
+.table[data-deal-seats="4"].dealingOverview .seatHead,
+.table[data-deal-seats="4"].payoutOverview .seatHead,
+.table[data-deal-seats="5"].betOverview .seatHead,
+.table[data-deal-seats="5"].dealingOverview .seatHead,
+.table[data-deal-seats="5"].payoutOverview .seatHead,
+.table[data-deal-seats="6"].betOverview .seatHead,
+.table[data-deal-seats="6"].dealingOverview .seatHead,
+.table[data-deal-seats="6"].payoutOverview .seatHead{
+  gap:0!important;
+  margin:0 0 1px!important;
+}
+
+.table[data-deal-seats="4"].betOverview .overviewChipSlot,
+.table[data-deal-seats="4"].dealingOverview .overviewChipSlot,
+.table[data-deal-seats="4"].payoutOverview .overviewChipSlot,
+.table[data-deal-seats="5"].betOverview .overviewChipSlot,
+.table[data-deal-seats="5"].dealingOverview .overviewChipSlot,
+.table[data-deal-seats="5"].payoutOverview .overviewChipSlot,
+.table[data-deal-seats="6"].betOverview .overviewChipSlot,
+.table[data-deal-seats="6"].dealingOverview .overviewChipSlot,
+.table[data-deal-seats="6"].payoutOverview .overviewChipSlot{
+  min-height:calc(var(--ov-chip) + 2px)!important;
+  height:calc(var(--ov-chip) + 2px)!important;
+  margin:1px auto!important;
+}
+
+.table[data-deal-seats="4"].payoutOverview .seat .cards,
+.table[data-deal-seats="4"].dealingOverview .seat .cards,
+.table[data-deal-seats="5"].payoutOverview .seat .cards,
+.table[data-deal-seats="5"].dealingOverview .seat .cards,
+.table[data-deal-seats="6"].payoutOverview .seat .cards,
+.table[data-deal-seats="6"].dealingOverview .seat .cards{
+  margin-top:0!important;
+}
+
+.table[data-deal-seats="4"].payoutOverview .handResult,
+.table[data-deal-seats="5"].payoutOverview .handResult,
+.table[data-deal-seats="6"].payoutOverview .handResult{
+  min-height:8px!important;
+  height:8px!important;
+  line-height:7px!important;
+  margin-top:0!important;
+  padding:0 1px!important;
+}
+
+/* 名前/BANKはどの俯瞰でも必ず独立行 */
+.table.betOverview .seatHead > span:first-child,
+.table.dealingOverview .seatHead > span:first-child,
+.table.payoutOverview .seatHead > span:first-child{
+  flex:none!important;
+  width:100%!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  overflow:hidden!important;
+  white-space:nowrap!important;
+  text-align:center!important;
+}
+
+.table.betOverview .seatHead > span:last-child,
+.table.dealingOverview .seatHead > span:last-child,
+.table.payoutOverview .seatHead > span:last-child{
+  flex:none!important;
+  width:100%!important;
+  display:block!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+  text-align:center!important;
+}
+
+
+/* =========================================================
+   v14.31 — HAND SIGNAL
+   リアル質感は廃止。
+   元のフラットなテイストを維持し、指の付け根をPalmの後ろへ
+   潜り込ませて「図形を貼った接合線」を見えなくする。
+   ========================================================= */
+.handSignalVisual{
+  width:98px!important;
+  height:98px!important;
+  border-radius:16px!important;
+  background:rgba(0,0,0,.50)!important;
+  border:1px solid rgba(255,255,255,.14)!important;
+  box-shadow:0 6px 16px rgba(0,0,0,.28)!important;
+  backdrop-filter:blur(4px)!important;
+  gap:1px!important;
+}
+
+.handSignalVisual::before{
+  content:none!important;
+}
+
+.handSignalVisual .signalHand{
+  position:relative!important;
+  width:68px!important;
+  height:67px!important;
+  margin-top:-5px!important;
+  transform:scale(.90);
+  transform-origin:center!important;
+  filter:none!important;
+}
+
+/* 指を先に描き、その上へPalmを重ねて接合部を完全に隠す */
+.signalFinger{
+  position:absolute!important;
+  z-index:1!important;
+  width:12px!important;
+  border-radius:8px 8px 5px 5px!important;
+  background:#e8c6a4!important;
+  box-shadow:none!important;
+  transform-origin:50% 100%!important;
+}
+
+/* リアル化で追加した爪を廃止 */
+.signalFinger::after{
+  content:none!important;
+  display:none!important;
+}
+
+/* 指はPalm内部まで長く伸ばす */
+.signalFinger.f1{
+  left:25px!important;
+  top:1px!important;
+  height:45px!important;
+}
+.signalFinger.f2{
+  left:39px!important;
+  top:0!important;
+  height:47px!important;
+}
+.signalFinger.f3{
+  left:52px!important;
+  top:7px!important;
+  height:39px!important;
+}
+.signalFinger.f4{
+  left:10px!important;
+  top:20px!important;
+  width:13px!important;
+  height:34px!important;
+  transform:rotate(-27deg)!important;
+  border-radius:8px 8px 6px 6px!important;
+}
+
+/* Palmを指の付け根の上に重ねる */
+.signalPalm{
+  position:absolute!important;
+  z-index:3!important;
+  left:20px!important;
+  top:32px!important;
+  width:45px!important;
+  height:35px!important;
+  border-radius:18px 18px 13px 13px!important;
+  background:#e8c6a4!important;
+  box-shadow:inset 0 -4px 0 rgba(0,0,0,.08)!important;
+}
+
+/* リアル化で追加した手首・掌線を廃止 */
+.signalPalm::before,
+.signalPalm::after{
+  content:none!important;
+  display:none!important;
+}
+
+/* 親指はPalmに少しだけ食い込ませ、Palmが接合境界を隠す */
+.signalFinger.f4{
+  z-index:2!important;
+}
+
+/* アクションごとの余計な数字は廃止 */
+.handSignalVisual.double::after,
+.handSignalVisual.split::after{
+  content:none!important;
+}
+
+/* 元のシンプルな動きへ戻す */
+.handSignalVisual.hit .signalHand{
+  animation:tapHand 1.22s ease!important;
+}
+.handSignalVisual.stand .signalHand{
+  animation:waveHand 1.28s ease!important;
+}
+.handSignalVisual.double .signalHand{
+  animation:pointOne 1.25s ease!important;
+}
+.handSignalVisual.split .signalHand{
+  animation:pointTwo 1.25s ease!important;
+}
+.handSignalVisual.surrender .signalHand{
+  animation:drawLine 1.28s ease!important;
+}
+
+/* v14.30のリアル系補助エフェクトを廃止 */
+.handSignalVisual.hit::after,
+.handSignalVisual.stand::after{
+  content:none!important;
+}
+
+.handSignalVisual.surrender::after{
+  content:""!important;
+  position:absolute!important;
+  width:76px!important;
+  height:3px!important;
+  left:11px!important;
+  top:auto!important;
+  bottom:26px!important;
+  border-radius:4px!important;
+  background:var(--gold)!important;
+  transform:scaleX(0)!important;
+  transform-origin:left!important;
+  animation:lineDraw .95s .14s ease forwards!important;
+}
+
+.handSignalVisual .signalLabel{
+  position:absolute!important;
+  left:5px!important;
+  right:5px!important;
+  bottom:6px!important;
+  color:var(--gold)!important;
+  font-size:9px!important;
+  font-weight:950!important;
+  letter-spacing:.08em!important;
+  text-shadow:none!important;
+  text-align:center!important;
+}
+
+/* DOUBLE / SPLITの非対象指は以前のシンプルな薄表示 */
+.handSignalVisual.double .signalFinger:not(.f1){
+  opacity:.18!important;
+}
+.handSignalVisual.split .signalFinger.f3,
+.handSignalVisual.split .signalFinger.f4{
+  opacity:.18!important;
+}
+
+
+
+/* =========================================================
+   v14.32 — ACTION: multiple HAND cards use compact overlap
+   ========================================================= */
+
+/* 通常ACTION画面でHANDが2つ以上なら、俯瞰時と同じように
+   各HAND内のカードを重ねて横幅を節約する。 */
+.table:not(.dealingOverview):not(.payoutOverview):not(.betOverview)
+.handsRow.splitHands .cards{
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  justify-content:center!important;
+  align-items:flex-start!important;
+  overflow:hidden!important;
+  isolation:isolate;
+  padding-left:8px;
+  padding-right:8px;
+}
+
+.table:not(.dealingOverview):not(.payoutOverview):not(.betOverview)
+.handsRow.splitHands .playingCard{
+  position:relative!important;
+  flex:0 0 auto!important;
+  margin-left:-12px!important;
+  background:#fff!important;
+  overflow:hidden!important;
+}
+
+.table:not(.dealingOverview):not(.payoutOverview):not(.betOverview)
+.handsRow.splitHands .playingCard:first-child{
+  margin-left:0!important;
+}
+
+/* 後から引いたカードを必ず上へ */
+.table:not(.dealingOverview):not(.payoutOverview):not(.betOverview)
+.handsRow.splitHands .playingCard:nth-child(1){z-index:1}
+.table:not(.dealingOverview):not(.payoutOverview):not(.betOverview)
+.handsRow.splitHands .playingCard:nth-child(2){z-index:2}
+.table:not(.dealingOverview):not(.payoutOverview):not(.betOverview)
+.handsRow.splitHands .playingCard:nth-child(3){z-index:3}
+.table:not(.dealingOverview):not(.payoutOverview):not(.betOverview)
+.handsRow.splitHands .playingCard:nth-child(4){z-index:4}
+.table:not(.dealingOverview):not(.payoutOverview):not(.betOverview)
+.handsRow.splitHands .playingCard:nth-child(5){z-index:5}
+.table:not(.dealingOverview):not(.payoutOverview):not(.betOverview)
+.handsRow.splitHands .playingCard:nth-child(6){z-index:6}
+.table:not(.dealingOverview):not(.payoutOverview):not(.betOverview)
+.handsRow.splitHands .playingCard:nth-child(7){z-index:7}
+.table:not(.dealingOverview):not(.payoutOverview):not(.betOverview)
+.handsRow.splitHands .playingCard:nth-child(8){z-index:8}
+
+/* 3HANDでも同じ規則でさらに少し深く重ねる */
+.table:not(.dealingOverview):not(.payoutOverview):not(.betOverview)
+.handsRow.threeHands .playingCard{
+  margin-left:-11px!important;
+}
+.table:not(.dealingOverview):not(.payoutOverview):not(.betOverview)
+.handsRow.threeHands .playingCard:first-child{
+  margin-left:0!important;
+}
+
+
+/* =========================================================
+   v14.32 — HAND SIGNAL: seamless flat SVG silhouettes
+   CSSパーツ接合方式を廃止。
+   ========================================================= */
+
+.handSignalVisual{
+  width:98px!important;
+  height:98px!important;
+  border-radius:15px!important;
+  background:rgba(0,0,0,.48)!important;
+  border:1px solid rgba(255,255,255,.13)!important;
+  box-shadow:0 5px 14px rgba(0,0,0,.24)!important;
+  backdrop-filter:blur(4px)!important;
+}
+
+/* 古いCSS手パーツは新HTMLには存在しないが、念のため無効化 */
+.handSignalVisual .signalPalm,
+.handSignalVisual .signalFinger{
+  display:none!important;
+}
+
+.signalHandSvgWrap{
+  position:relative;
+  width:76px;
+  height:69px;
+  margin-top:-6px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.signalSvg{
+  position:absolute;
+  width:74px;
+  height:65px;
+  display:none;
+  overflow:visible;
+  fill:#e8c6a4;
+  filter:drop-shadow(0 3px 0 rgba(0,0,0,.12));
+  transform-origin:50% 70%;
+}
+
+/* HIT / STAND share the coherent open-hand silhouette */
+.handSignalVisual.hit .signalSvgOpen,
+.handSignalVisual.stand .signalSvgOpen{
+  display:block;
+}
+.handSignalVisual.double .signalSvgDouble{
+  display:block;
+}
+.handSignalVisual.split .signalSvgSplit{
+  display:block;
+}
+.handSignalVisual.surrender .signalSvgSurrender{
+  display:block;
+}
+
+.handSignalVisual.hit .signalSvgOpen{
+  animation:svgTapHand 1.22s ease both;
+}
+.handSignalVisual.stand .signalSvgOpen{
+  animation:svgWaveHand 1.28s ease both;
+}
+.handSignalVisual.double .signalSvgDouble{
+  animation:svgPointOne 1.25s ease both;
+}
+.handSignalVisual.split .signalSvgSplit{
+  animation:svgPointTwo 1.25s ease both;
+}
+.handSignalVisual.surrender .signalSvgSurrender{
+  animation:svgDrawHand 1.28s ease both;
+}
+
+/* Surrender line only; all other decorative pseudo effects removed */
+.handSignalVisual.hit::after,
+.handSignalVisual.stand::after,
+.handSignalVisual.double::after,
+.handSignalVisual.split::after{
+  content:none!important;
+}
+
+.handSignalVisual.surrender::after{
+  content:""!important;
+  position:absolute!important;
+  left:11px!important;
+  bottom:26px!important;
+  top:auto!important;
+  width:76px!important;
+  height:3px!important;
+  border-radius:4px!important;
+  background:var(--gold)!important;
+  transform:scaleX(0)!important;
+  transform-origin:left center!important;
+  animation:lineDraw .95s .14s ease forwards!important;
+}
+
+@keyframes svgTapHand{
+  0%,100%{transform:translateY(-5px) rotate(-3deg)}
+  34%{transform:translateY(10px) rotate(-1deg)}
+  54%{transform:translateY(1px) rotate(-2deg)}
+  75%{transform:translateY(10px) rotate(0)}
+}
+
+@keyframes svgWaveHand{
+  0%{transform:translateX(-10px) rotate(-7deg)}
+  30%{transform:translateX(10px) rotate(7deg)}
+  56%{transform:translateX(-8px) rotate(-5deg)}
+  80%{transform:translateX(8px) rotate(5deg)}
+  100%{transform:translateX(0) rotate(0)}
+}
+
+@keyframes svgPointOne{
+  0%{transform:translateY(7px) scale(.94)}
+  35%{transform:translateY(-7px) scale(1.02)}
+  60%{transform:translateY(-3px) scale(.99)}
+  100%{transform:translateY(0) scale(1)}
+}
+
+@keyframes svgPointTwo{
+  0%{transform:translateY(7px) rotate(-2deg) scale(.94)}
+  35%{transform:translateY(-7px) rotate(2deg) scale(1.02)}
+  60%{transform:translateY(-3px) rotate(-1deg) scale(.99)}
+  100%{transform:translateY(0) rotate(0) scale(1)}
+}
+
+@keyframes svgDrawHand{
+  0%{transform:translateX(-18px) rotate(-4deg)}
+  78%{transform:translateX(18px) rotate(4deg)}
+  100%{transform:translateX(15px) rotate(2deg)}
+}
+
+
+
+/* =========================================================
+   v14.33 — USER / CPU vertical alignment
+   ========================================================= */
+.cpuBadgeSpacer{
+  display:none!important;
+}
+
+.table.betOverview .cpuBadgeSpacer,
+.table.dealingOverview .cpuBadgeSpacer,
+.table.payoutOverview .cpuBadgeSpacer{
+  display:block!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+
+/* USERにもCPU badgeと同じ1行分を確保するので、
+   名前/BANK/CHIP/CARD/TOTALのY座標が完全に一致する。 */
+
+
+/* =========================================================
+   v14.33 — cleaner flat hand icon
+   ========================================================= */
+.signalHandSvgWrap{
+  width:82px!important;
+  height:70px!important;
+}
+
+.signalSvg{
+  width:79px!important;
+  height:67px!important;
+  fill:none!important;
+  filter:none!important;
+  overflow:visible!important;
+}
+
+.signalSvg .handShape{
+  fill:#e8c6a4;
+  stroke:#6c513b;
+  stroke-width:2.2;
+  stroke-linejoin:round;
+  stroke-linecap:round;
+  vector-effect:non-scaling-stroke;
+}
+
+.handSignalVisual{
+  background:rgba(0,0,0,.46)!important;
+  border:1px solid rgba(226,192,100,.28)!important;
+  box-shadow:
+    0 5px 14px rgba(0,0,0,.24),
+    inset 0 0 0 1px rgba(255,255,255,.025)!important;
+}
+
+/* サイン自体に装飾を足しすぎず、動きで意味を見せる */
+.handSignalVisual .signalLabel{
+  font-size:9px!important;
+  color:var(--gold)!important;
+  letter-spacing:.11em!important;
+}
+
+
+/* =========================================================
+   v14.33 — Split/multi-hand card overlap
+   ACTIONでも俯瞰でもさらに深く重ね、見切れを防止。
+   ========================================================= */
+
+/* ACTION: 2 HAND */
+.table:not(.dealingOverview):not(.payoutOverview):not(.betOverview)
+.handsRow.splitHands .cards{
+  padding-left:3px!important;
+  padding-right:3px!important;
+  overflow:hidden!important;
+}
+
+.table:not(.dealingOverview):not(.payoutOverview):not(.betOverview)
+.handsRow.splitHands .playingCard{
+  margin-left:-20px!important;
+}
+
+.table:not(.dealingOverview):not(.payoutOverview):not(.betOverview)
+.handsRow.splitHands .playingCard:first-child{
+  margin-left:0!important;
+}
+
+/* ACTION: 3 HAND */
+.table:not(.dealingOverview):not(.payoutOverview):not(.betOverview)
+.handsRow.threeHands .playingCard{
+  margin-left:-21px!important;
+}
+.table:not(.dealingOverview):not(.payoutOverview):not(.betOverview)
+.handsRow.threeHands .playingCard:first-child{
+  margin-left:0!important;
+}
+
+/* 俯瞰: 2〜3人では少し浅め */
+.table[data-deal-seats="2"].dealingOverview .handsRow.splitHands .playingCard,
+.table[data-deal-seats="2"].payoutOverview .handsRow.splitHands .playingCard,
+.table[data-deal-seats="3"].dealingOverview .handsRow.splitHands .playingCard,
+.table[data-deal-seats="3"].payoutOverview .handsRow.splitHands .playingCard{
+  margin-left:-15px!important;
+}
+.table[data-deal-seats="2"].dealingOverview .handsRow.splitHands .playingCard:first-child,
+.table[data-deal-seats="2"].payoutOverview .handsRow.splitHands .playingCard:first-child,
+.table[data-deal-seats="3"].dealingOverview .handsRow.splitHands .playingCard:first-child,
+.table[data-deal-seats="3"].payoutOverview .handsRow.splitHands .playingCard:first-child{
+  margin-left:0!important;
+}
+
+/* 4人は深め */
+.table[data-deal-seats="4"].dealingOverview .handsRow.splitHands .playingCard,
+.table[data-deal-seats="4"].payoutOverview .handsRow.splitHands .playingCard{
+  margin-left:-17px!important;
+}
+.table[data-deal-seats="4"].dealingOverview .handsRow.splitHands .playingCard:first-child,
+.table[data-deal-seats="4"].payoutOverview .handsRow.splitHands .playingCard:first-child{
+  margin-left:0!important;
+}
+
+/* 5〜6人はさらに深く重ねる */
+.table[data-deal-seats="5"].dealingOverview .handsRow.splitHands .playingCard,
+.table[data-deal-seats="5"].payoutOverview .handsRow.splitHands .playingCard,
+.table[data-deal-seats="6"].dealingOverview .handsRow.splitHands .playingCard,
+.table[data-deal-seats="6"].payoutOverview .handsRow.splitHands .playingCard{
+  margin-left:-18px!important;
+}
+.table[data-deal-seats="5"].dealingOverview .handsRow.splitHands .playingCard:first-child,
+.table[data-deal-seats="5"].payoutOverview .handsRow.splitHands .playingCard:first-child,
+.table[data-deal-seats="6"].dealingOverview .handsRow.splitHands .playingCard:first-child,
+.table[data-deal-seats="6"].payoutOverview .handsRow.splitHands .playingCard:first-child{
+  margin-left:0!important;
+}
+
+/* 各HANDのカード列自体を必ず中央に収める */
+.table.dealingOverview .handsRow.splitHands .cards,
+.table.payoutOverview .handsRow.splitHands .cards,
+.table:not(.dealingOverview):not(.payoutOverview):not(.betOverview)
+.handsRow.splitHands .cards{
+  justify-content:center!important;
+  overflow:hidden!important;
+  isolation:isolate!important;
+}
+
+
+
+/* =========================================================
+   v14.34 — zoom speed profile
+   IN : fast -> slow (ease-out)
+   OUT: slow -> fast (ease-in)
+   ========================================================= */
+
+/* 俯瞰 → ACTION：早く寄り始め、対象PLAYER付近でゆっくり止まる */
+.table.viewMorphOutToAction .gameStage,
+.table.viewMorphOutToAction .controls,
+.table.viewMorphInToAction .gameStage,
+.table.viewMorphInToAction .controls{
+  animation-timing-function:cubic-bezier(.16,.92,.28,1)!important;
+}
+
+@keyframes viewMorphOutToAction{
+  0%{
+    opacity:1;
+    transform:scale(1);
+    filter:blur(0);
+  }
+  58%{
+    opacity:.42;
+    transform:scale(1.125);
+    filter:blur(.45px);
+  }
+  100%{
+    opacity:.10;
+    transform:scale(1.16);
+    filter:blur(1px);
+  }
+}
+
+@keyframes viewMorphInToAction{
+  0%{
+    opacity:.10;
+    transform:scale(.92);
+    filter:blur(1px);
+  }
+  55%{
+    opacity:.88;
+    transform:scale(.992);
+    filter:blur(.15px);
+  }
+  100%{
+    opacity:1;
+    transform:scale(1);
+    filter:blur(0);
+  }
+}
+
+/* ACTION → 俯瞰：最初はゆっくり離れ、後半で一気に引く */
+.table.viewMorphOutToOverview .gameStage,
+.table.viewMorphOutToOverview .controls,
+.table.viewMorphInToOverview .gameStage,
+.table.viewMorphInToOverview .controls{
+  animation-timing-function:cubic-bezier(.58,0,.88,.38)!important;
+}
+
+@keyframes viewMorphOutToOverview{
+  0%{
+    opacity:1;
+    transform:scale(1);
+    filter:blur(0);
+  }
+  48%{
+    opacity:.82;
+    transform:scale(.985);
+    filter:blur(.1px);
+  }
+  100%{
+    opacity:.10;
+    transform:scale(.86);
+    filter:blur(1px);
+  }
+}
+
+@keyframes viewMorphInToOverview{
+  0%{
+    opacity:.10;
+    transform:scale(1.16);
+    filter:blur(1px);
+  }
+  38%{
+    opacity:.22;
+    transform:scale(1.13);
+    filter:blur(.7px);
+  }
+  100%{
+    opacity:1;
+    transform:scale(1);
+    filter:blur(0);
+  }
+}
+
+
+/* =========================================================
+   v14.34 — overview card corner indexes
+   実物のトランプ同様、左上 / 右下へ配置。
+   ========================================================= */
+.table.dealingOverview .seat .playingCard:not(.back),
+.table.payoutOverview .seat .playingCard:not(.back){
+  position:relative!important;
+  display:block!important;
+  overflow:hidden!important;
+  padding:0!important;
+  background:#fff!important;
+}
+
+/* 左上 */
+.table.dealingOverview .seat .playingCard:not(.back) > span:first-child,
+.table.payoutOverview .seat .playingCard:not(.back) > span:first-child{
+  position:absolute!important;
+  left:3px!important;
+  top:3px!important;
+  right:auto!important;
+  bottom:auto!important;
+  margin:0!important;
+  padding:0!important;
+  line-height:.9!important;
+  white-space:nowrap!important;
+  transform:none!important;
+}
+
+/* 右下 — v14.28のdisplay:noneを明示的に解除 */
+.table.dealingOverview .seat .playingCard:not(.back) > .b,
+.table.payoutOverview .seat .playingCard:not(.back) > .b{
+  display:block!important;
+  position:absolute!important;
+  right:3px!important;
+  bottom:3px!important;
+  left:auto!important;
+  top:auto!important;
+  margin:0!important;
+  padding:0!important;
+  line-height:.9!important;
+  white-space:nowrap!important;
+  transform:rotate(180deg)!important;
+}
+
+/* 5〜6人の極小カードだけ角余白を2pxへ */
+.table[data-deal-seats="5"].dealingOverview .seat .playingCard:not(.back) > span:first-child,
+.table[data-deal-seats="5"].payoutOverview .seat .playingCard:not(.back) > span:first-child,
+.table[data-deal-seats="6"].dealingOverview .seat .playingCard:not(.back) > span:first-child,
+.table[data-deal-seats="6"].payoutOverview .seat .playingCard:not(.back) > span:first-child{
+  left:2px!important;
+  top:2px!important;
+}
+
+.table[data-deal-seats="5"].dealingOverview .seat .playingCard:not(.back) > .b,
+.table[data-deal-seats="5"].payoutOverview .seat .playingCard:not(.back) > .b,
+.table[data-deal-seats="6"].dealingOverview .seat .playingCard:not(.back) > .b,
+.table[data-deal-seats="6"].payoutOverview .seat .playingCard:not(.back) > .b{
+  right:2px!important;
+  bottom:2px!important;
+}
+
+
+/* =========================================================
+   v14.34 — Dealer chip collection feedback
+   ========================================================= */
+.dealer.dealerCollectFlash{
+  animation:dealerCollectFlash .46s ease-out both!important;
+}
+
+@keyframes dealerCollectFlash{
+  0%{
+    box-shadow:inset 0 0 0 0 rgba(226,192,100,0);
+    filter:brightness(1);
+  }
+  35%{
+    box-shadow:inset 0 0 0 2px rgba(226,192,100,.62),0 0 14px rgba(226,192,100,.20);
+    filter:brightness(1.12);
+  }
+  100%{
+    box-shadow:inset 0 0 0 0 rgba(226,192,100,0);
+    filter:brightness(1);
+  }
+}
+
+.dealerCollectChip{
+  pointer-events:none!important;
+}
+
+
+
+/* =========================================================
+   v14.35 — BET overview -> DEAL overview transition
+   ========================================================= */
+.table.overviewPhaseBusy .gameStage,
+.table.overviewPhaseBusy .controls{
+  pointer-events:none!important;
+  will-change:transform,opacity,filter;
+}
+
+.table.overviewPhaseOut .gameStage{
+  animation:overviewPhaseOut .26s cubic-bezier(.38,0,.62,1) both!important;
+}
+.table.overviewPhaseIn .gameStage{
+  animation:overviewPhaseIn .39s cubic-bezier(.18,.72,.25,1) both!important;
+}
+.table.overviewPhaseOut .controls{
+  animation:overviewControlsOut .22s ease both!important;
+}
+.table.overviewPhaseIn .controls{
+  animation:overviewControlsIn .34s ease both!important;
+}
+
+@keyframes overviewPhaseOut{
+  from{opacity:1;transform:scale(1);filter:blur(0)}
+  to{opacity:.35;transform:scale(.985);filter:blur(.35px)}
+}
+@keyframes overviewPhaseIn{
+  from{opacity:.35;transform:scale(.985);filter:blur(.35px)}
+  65%{opacity:1;transform:scale(1.004);filter:blur(0)}
+  to{opacity:1;transform:scale(1);filter:blur(0)}
+}
+@keyframes overviewControlsOut{
+  from{opacity:1;transform:translateY(0)}
+  to{opacity:.15;transform:translateY(5px)}
+}
+@keyframes overviewControlsIn{
+  from{opacity:.15;transform:translateY(5px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+
+/* =========================================================
+   v14.35 — slower, more cinematic camera
+   IN: fast start -> long soft landing
+   OUT: slow departure -> accelerating pull-back
+   ========================================================= */
+
+/* old inline animation-duration overrides are superseded */
+.table.viewMorphOutToAction .gameStage{
+  animation-duration:.52s!important;
+  animation-timing-function:cubic-bezier(.12,.78,.18,1)!important;
+}
+.table.viewMorphInToAction .gameStage{
+  animation-duration:.68s!important;
+  animation-timing-function:cubic-bezier(.12,.72,.18,1)!important;
+}
+
+.table.viewMorphOutToOverview .gameStage{
+  animation-duration:.52s!important;
+  animation-timing-function:cubic-bezier(.55,.02,.82,.42)!important;
+}
+.table.viewMorphInToOverview .gameStage{
+  animation-duration:.68s!important;
+  animation-timing-function:cubic-bezier(.48,.03,.88,.55)!important;
+}
+
+.table.viewMorphOutToAction .controls,
+.table.viewMorphInToAction .controls,
+.table.viewMorphOutToOverview .controls,
+.table.viewMorphInToOverview .controls{
+  animation-duration:.56s!important;
+}
+
+/* Focus-IN: most of the distance happens early, then eases into player */
+@keyframes viewMorphOutToAction{
+  0%{
+    opacity:1;
+    transform:scale(1);
+    filter:blur(0);
+  }
+  38%{
+    opacity:.82;
+    transform:scale(1.095);
+    filter:blur(.12px);
+  }
+  72%{
+    opacity:.38;
+    transform:scale(1.145);
+    filter:blur(.48px);
+  }
+  100%{
+    opacity:.10;
+    transform:scale(1.16);
+    filter:blur(.9px);
+  }
+}
+
+@keyframes viewMorphInToAction{
+  0%{
+    opacity:.10;
+    transform:scale(.91);
+    filter:blur(.9px);
+  }
+  34%{
+    opacity:.62;
+    transform:scale(.975);
+    filter:blur(.34px);
+  }
+  72%{
+    opacity:.94;
+    transform:scale(.997);
+    filter:blur(.08px);
+  }
+  100%{
+    opacity:1;
+    transform:scale(1);
+    filter:blur(0);
+  }
+}
+
+/* Pull-OUT: barely moves first, then visibly accelerates into overview */
+@keyframes viewMorphOutToOverview{
+  0%{
+    opacity:1;
+    transform:scale(1);
+    filter:blur(0);
+  }
+  42%{
+    opacity:.94;
+    transform:scale(.988);
+    filter:blur(.05px);
+  }
+  70%{
+    opacity:.68;
+    transform:scale(.945);
+    filter:blur(.22px);
+  }
+  100%{
+    opacity:.10;
+    transform:scale(.86);
+    filter:blur(.9px);
+  }
+}
+
+@keyframes viewMorphInToOverview{
+  0%{
+    opacity:.10;
+    transform:scale(1.16);
+    filter:blur(.9px);
+  }
+  38%{
+    opacity:.30;
+    transform:scale(1.125);
+    filter:blur(.58px);
+  }
+  72%{
+    opacity:.78;
+    transform:scale(1.035);
+    filter:blur(.18px);
+  }
+  100%{
+    opacity:1;
+    transform:scale(1);
+    filter:blur(0);
+  }
+}
+
+
+/* =========================================================
+   v14.35 — flat hand silhouette refinement
+   Thumb root gets a smooth S-curve into the palm.
+   ========================================================= */
+.signalSvg .handShape{
+  fill:#e8c6a4!important;
+  stroke:#755a44!important;
+  stroke-width:2!important;
+  stroke-linejoin:round!important;
+  stroke-linecap:round!important;
+}
+
+/* slightly larger icon so the contour reads more clearly */
+.signalSvg{
+  width:81px!important;
+  height:69px!important;
+}
+
+
+
+/* =========================================================
+   v14.36 — Camera transition
+   BEGIN BET is intentionally excluded.
+   ========================================================= */
+
+/* 俯瞰 → PLAYER
+   0.68sで寄り、0.86sでPLAYER表示へゆっくり着地 */
+.table.viewMorphOutToAction .gameStage{
+  animation-duration:.68s!important;
+  animation-timing-function:cubic-bezier(.10,.80,.18,1)!important;
+}
+.table.viewMorphInToAction .gameStage{
+  animation-duration:.86s!important;
+  animation-timing-function:cubic-bezier(.12,.70,.20,1)!important;
+}
+
+/* PLAYER → 俯瞰
+   ゆっくり離れ始め、後半ほど引きが速くなる */
+.table.viewMorphOutToOverview .gameStage{
+  animation-duration:.72s!important;
+  animation-timing-function:cubic-bezier(.58,.02,.86,.38)!important;
+}
+.table.viewMorphInToOverview .gameStage{
+  animation-duration:.90s!important;
+  animation-timing-function:cubic-bezier(.50,.03,.86,.52)!important;
+}
+
+.table.viewMorphOutToAction .controls,
+.table.viewMorphInToAction .controls,
+.table.viewMorphOutToOverview .controls,
+.table.viewMorphInToOverview .controls{
+  animation-duration:.76s!important;
+}
+
+/* 切替地点でほぼ消さず、PLAYERとの位置関係を目で追えるようにする */
+@keyframes viewMorphOutToAction{
+  0%{
+    opacity:1;
+    transform:scale(1);
+    filter:blur(0);
+  }
+  34%{
+    opacity:.96;
+    transform:scale(1.075);
+    filter:blur(0);
+  }
+  68%{
+    opacity:.74;
+    transform:scale(1.125);
+    filter:blur(.18px);
+  }
+  100%{
+    opacity:.46;
+    transform:scale(1.15);
+    filter:blur(.42px);
+  }
+}
+
+@keyframes viewMorphInToAction{
+  0%{
+    opacity:.46;
+    transform:scale(.94);
+    filter:blur(.42px);
+  }
+  35%{
+    opacity:.76;
+    transform:scale(.982);
+    filter:blur(.16px);
+  }
+  72%{
+    opacity:.96;
+    transform:scale(.998);
+    filter:blur(.03px);
+  }
+  100%{
+    opacity:1;
+    transform:scale(1);
+    filter:blur(0);
+  }
+}
+
+@keyframes viewMorphOutToOverview{
+  0%{
+    opacity:1;
+    transform:scale(1);
+    filter:blur(0);
+  }
+  45%{
+    opacity:.96;
+    transform:scale(.988);
+    filter:blur(.03px);
+  }
+  72%{
+    opacity:.78;
+    transform:scale(.95);
+    filter:blur(.15px);
+  }
+  100%{
+    opacity:.48;
+    transform:scale(.89);
+    filter:blur(.40px);
+  }
+}
+
+@keyframes viewMorphInToOverview{
+  0%{
+    opacity:.48;
+    transform:scale(1.08);
+    filter:blur(.40px);
+  }
+  38%{
+    opacity:.68;
+    transform:scale(1.052);
+    filter:blur(.23px);
+  }
+  72%{
+    opacity:.92;
+    transform:scale(1.014);
+    filter:blur(.06px);
+  }
+  100%{
+    opacity:1;
+    transform:scale(1);
+    filter:blur(0);
+  }
+}
+
+
+/* =========================================================
+   v14.36 — Hand silhouette cleanup
+   ========================================================= */
+.signalSvg .handShape{
+  fill:#e8c6a4!important;
+  stroke:#715640!important;
+  stroke-width:1.8!important;
+  stroke-linejoin:round!important;
+  stroke-linecap:round!important;
+}
+
+/* HIT/STANDの親指付け根を強調する影や装飾は一切付けない */
+.handSignalVisual.hit .signalSvgOpen,
+.handSignalVisual.stand .signalSvgOpen{
+  filter:none!important;
+}
+
+
+
+/* =========================================================
+   v14.37 — BET overview / DEAL overview geometry parity
+   フェード無しで切り替えても位置が動かないよう完全統一。
+   ========================================================= */
+.table.betOverview .gameStage,
+.table.dealingOverview .gameStage{
+  display:grid!important;
+  grid-template-rows:112px 284px!important;
+  gap:6px!important;
+  height:402px!important;
+  min-height:402px!important;
+  max-height:402px!important;
+  padding:0 2px 0!important;
+  overflow:hidden!important;
+}
+
+.table.betOverview .dealer,
+.table.dealingOverview .dealer{
+  grid-row:1!important;
+  height:112px!important;
+  min-height:112px!important;
+  max-height:112px!important;
+  flex:0 0 112px!important;
+  margin:0!important;
+  padding:5px 0 3px!important;
+  box-sizing:border-box!important;
+}
+
+.table.betOverview .players,
+.table.dealingOverview .players{
+  grid-row:2!important;
+  height:284px!important;
+  min-height:284px!important;
+  max-height:284px!important;
+  margin:0!important;
+  padding:0 4px 2px!important;
+  gap:5px!important;
+  overflow:hidden!important;
+  box-sizing:border-box!important;
+}
+
+/* BETと配札で各席そのもののセル寸法も同一 */
+.table.betOverview .seat,
+.table.dealingOverview .seat{
+  min-height:0!important;
+  height:100%!important;
+  max-height:100%!important;
+  margin:0!important;
+  box-sizing:border-box!important;
+}
+
+/* 旧BET→DEALフェード処理を完全無効化 */
+.table.overviewPhaseOut .gameStage,
+.table.overviewPhaseIn .gameStage,
+.table.overviewPhaseOut .controls,
+.table.overviewPhaseIn .controls{
+  animation:none!important;
+  opacity:1!important;
+  transform:none!important;
+  filter:none!important;
+}
+
+
+/* =========================================================
+   v14.37 — Lightweight camera
+   filter/blurなし、gameStageのtransform中心。
+   ========================================================= */
+.table .gameStage{
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+  transform:translateZ(0);
+  will-change:transform,opacity;
+}
+
+.table.viewMorphBusy .controls{
+  pointer-events:none!important;
+}
+
+/* controls自体は拡大縮小しない。軽いopacityだけ */
+.table.viewMorphOutToAction .controls,
+.table.viewMorphOutToOverview .controls{
+  animation:cameraControlsOut .28s ease-out both!important;
+}
+.table.viewMorphInToAction .controls,
+.table.viewMorphInToOverview .controls{
+  animation:cameraControlsIn .30s ease-out both!important;
+}
+
+@keyframes cameraControlsOut{
+  from{opacity:1}
+  to{opacity:.72}
+}
+@keyframes cameraControlsIn{
+  from{opacity:.72}
+  to{opacity:1}
+}
+
+/* IN: 早めに寄って、後半ゆっくり */
+.table.viewMorphOutToAction .gameStage{
+  animation:viewMorphOutToAction .62s cubic-bezier(.12,.78,.20,1) both!important;
+}
+.table.viewMorphInToAction .gameStage{
+  animation:viewMorphInToAction .64s cubic-bezier(.16,.74,.22,1) both!important;
+}
+
+@keyframes viewMorphOutToAction{
+  0%{opacity:1;transform:translateZ(0) scale(1)}
+  38%{opacity:.96;transform:translateZ(0) scale(1.07)}
+  72%{opacity:.86;transform:translateZ(0) scale(1.105)}
+  100%{opacity:.76;transform:translateZ(0) scale(1.12)}
+}
+@keyframes viewMorphInToAction{
+  0%{opacity:.76;transform:translateZ(0) scale(.965)}
+  45%{opacity:.92;transform:translateZ(0) scale(.993)}
+  100%{opacity:1;transform:translateZ(0) scale(1)}
+}
+
+/* OUT: 最初ゆっくり、後半に加速 */
+.table.viewMorphOutToOverview .gameStage{
+  animation:viewMorphOutToOverview .65s cubic-bezier(.55,.04,.88,.42) both!important;
+}
+.table.viewMorphInToOverview .gameStage{
+  animation:viewMorphInToOverview .68s cubic-bezier(.48,.04,.86,.54) both!important;
+}
+
+@keyframes viewMorphOutToOverview{
+  0%{opacity:1;transform:translateZ(0) scale(1)}
+  48%{opacity:.97;transform:translateZ(0) scale(.992)}
+  75%{opacity:.88;transform:translateZ(0) scale(.965)}
+  100%{opacity:.77;transform:translateZ(0) scale(.92)}
+}
+@keyframes viewMorphInToOverview{
+  0%{opacity:.77;transform:translateZ(0) scale(1.07)}
+  42%{opacity:.88;transform:translateZ(0) scale(1.04)}
+  75%{opacity:.96;transform:translateZ(0) scale(1.012)}
+  100%{opacity:1;transform:translateZ(0) scale(1)}
+}
+
+
+/* =========================================================
+   v14.37 — hand silhouettes
+   ========================================================= */
+.signalSvg .handShape{
+  fill:#e8c6a4!important;
+  stroke:#705641!important;
+  stroke-width:1.7!important;
+  stroke-linejoin:round!important;
+  stroke-linecap:round!important;
+}
+
+/* 親指根元に影/装飾/追加図形は一切使わない */
+.handSignalVisual .signalSvg{
+  filter:none!important;
+}
+
+
+
+/* =========================================================
+   v14.38 — Dealer check cue
+   ========================================================= */
+.dealerCheckNotice{
+  position:fixed;
+  inset:0;
+  z-index:68;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity .16s ease;
+}
+.dealerCheckNotice.hidden{display:none}
+.dealerCheckNotice.show{opacity:1}
+.dealerCheckBox{
+  min-width:190px;
+  padding:15px 22px;
+  border-radius:16px;
+  background:rgba(3,23,16,.94);
+  border:1px solid rgba(226,192,100,.58);
+  box-shadow:0 8px 26px rgba(0,0,0,.34);
+  text-align:center;
+}
+.dealerCheckTitle{
+  color:#fff;
+  font-size:12px;
+  font-weight:950;
+  letter-spacing:.12em;
+}
+.dealerCheckSub{
+  margin-top:6px;
+  color:var(--gold);
+  font-size:21px;
+  line-height:1;
+  font-weight:1000;
+  letter-spacing:.08em;
+}
+.dealerCheckNotice.blackjack .dealerCheckBox{
+  border-color:#ffcf72;
+  box-shadow:0 0 22px rgba(226,192,100,.25),0 8px 26px rgba(0,0,0,.34);
+}
+
+
+/* =========================================================
+   v14.38 — FLIP camera
+   旧keyframe/blur/opacityズームは使用しない。
+   ========================================================= */
+.table.viewMorphOutToAction .gameStage,
+.table.viewMorphInToAction .gameStage,
+.table.viewMorphOutToOverview .gameStage,
+.table.viewMorphInToOverview .gameStage,
+.table.viewMorphOutToAction .controls,
+.table.viewMorphInToAction .controls,
+.table.viewMorphOutToOverview .controls,
+.table.viewMorphInToOverview .controls{
+  animation:none!important;
+  filter:none!important;
+}
+
+.table.viewMorphBusy .gameStage{
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+  contain:layout paint;
+}
+
+
+/* =========================================================
+   v14.38 — BET overview == DEAL overview seat footprint
+   カードがまだ無い時も2枚分のカード領域/TOTAL/RESULT領域を予約。
+   ========================================================= */
+.table.betOverview .handsRow{
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  overflow:hidden!important;
+  margin:1px auto 0!important;
+}
+
+.table.betOverview .handBlock,
+.table.betOverview .handPlaceholder{
+  width:100%!important;
+  min-width:0!important;
+  height:auto!important;
+  min-height:0!important;
+  padding:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  overflow:hidden!important;
+}
+
+.table.betOverview .handPlaceholder .handTitle{
+  visibility:visible!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  line-height:1.15!important;
+  font-size:var(--ov-title)!important;
+  text-align:center!important;
+}
+
+/* 配札後と同じカード高さを最初から確保 */
+.table.betOverview .handPlaceholder .cards{
+  display:flex!important;
+  position:relative!important;
+  width:100%!important;
+  height:calc(var(--ov-card-h) + 2px)!important;
+  min-height:calc(var(--ov-card-h) + 2px)!important;
+  flex:0 0 calc(var(--ov-card-h) + 2px)!important;
+  align-items:center!important;
+  justify-content:center!important;
+  margin:2px auto 0!important;
+  overflow:hidden!important;
+}
+
+/* 見えない2枚のカードで、配札後と同じ占有サイズにする */
+.table.betOverview .handPlaceholder .cards::before,
+.table.betOverview .handPlaceholder .cards::after{
+  content:"";
+  display:block;
+  flex:0 0 var(--ov-card-w);
+  width:var(--ov-card-w);
+  height:var(--ov-card-h);
+  border-radius:calc(var(--ov-card-w) * .14);
+  visibility:hidden;
+}
+.table.betOverview .handPlaceholder .cards::after{
+  margin-left:-5px;
+}
+
+/* TOTALとRESULTも見えない状態で高さだけ保持 */
+.table.betOverview .handPlaceholder .handTotal{
+  display:block!important;
+  visibility:hidden!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:1em!important;
+  line-height:1.15!important;
+  margin:0!important;
+  font-size:var(--ov-total)!important;
+}
+.table.betOverview .handPlaceholder .handTotal::before{
+  content:"TOTAL 00";
+}
+
+.table.betOverview .handPlaceholder .handResult{
+  display:block!important;
+  visibility:hidden!important;
+  width:100%!important;
+  min-height:8px!important;
+  height:8px!important;
+  margin:0!important;
+  padding:0!important;
+}
+
+/* BET/DEALで席内の縦位置を同一化 */
+.table.betOverview .seat,
+.table.dealingOverview .seat{
+  justify-content:center!important;
+}
+.table.betOverview .seatHead,
+.table.dealingOverview .seatHead{
+  margin-bottom:2px!important;
+}
+.table.betOverview .overviewChipSlot,
+.table.dealingOverview .overviewChipSlot{
+  margin:1px auto!important;
+}
+
+
+
+/* =========================================================
+   v14.39 — Fade-only view switching
+   Zoom / scale / translate camera effects are fully disabled.
+   ========================================================= */
+.table.viewMorphBusy .gameStage,
+.table.viewMorphBusy .controls,
+.table.viewMorphOutToAction .gameStage,
+.table.viewMorphInToAction .gameStage,
+.table.viewMorphOutToOverview .gameStage,
+.table.viewMorphInToOverview .gameStage,
+.table.viewMorphOutToAction .controls,
+.table.viewMorphInToAction .controls,
+.table.viewMorphOutToOverview .controls,
+.table.viewMorphInToOverview .controls{
+  transform:none!important;
+  filter:none!important;
+  animation:none!important;
+}
+
+.table.viewMorphBusy .gameStage{
+  contain:none!important;
+}
+
+
+/* No Hole Card: Dealer1枚時も既存DEALER領域の高さは変えない */
+.table.dealingOverview .dealer .cards,
+.table.payoutOverview .dealer .cards{
+  min-height:68px!important;
+}
+
+
+
+/* =========================================================
+   v14.40 — BET俯瞰 / 配札俯瞰：PLAYER枠内レイアウト完全統一
+   カードが入るかどうか以外で位置・高さを変えない。
+   ========================================================= */
+
+/* PLAYER seat */
+.table.betOverview .seat,
+.table.dealingOverview .seat{
+  padding:var(--ov-seat-pad)!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  overflow:hidden!important;
+  box-sizing:border-box!important;
+}
+
+/* PLAYER NAME / CPU MODE / BANK */
+.table.betOverview .seatHead,
+.table.dealingOverview .seatHead{
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  flex:0 0 auto!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:2px!important;
+  margin:0 0 2px!important;
+  line-height:1!important;
+  text-align:center!important;
+}
+
+.table.betOverview .seatHead > span:first-child,
+.table.dealingOverview .seatHead > span:first-child{
+  width:100%!important;
+  min-width:0!important;
+  height:auto!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:1px!important;
+  font-size:var(--ov-name)!important;
+  line-height:1.1!important;
+  overflow:hidden!important;
+  white-space:nowrap!important;
+  text-align:center!important;
+}
+
+.table.betOverview .seatHead > span:last-child,
+.table.dealingOverview .seatHead > span:last-child{
+  width:100%!important;
+  min-width:0!important;
+  height:auto!important;
+  display:block!important;
+  font-size:var(--ov-bank)!important;
+  line-height:1.1!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+  text-align:center!important;
+  color:#b9c9bf!important;
+}
+
+.table.betOverview .cpuBadge,
+.table.dealingOverview .cpuBadge{
+  display:block!important;
+  width:max-content!important;
+  max-width:95%!important;
+  margin:2px auto 0!important;
+  font-size:var(--ov-cpu)!important;
+  line-height:1.1!important;
+}
+
+/* CHIP AREA — 配札開始後も同じ領域を保持 */
+.table.betOverview .overviewChipSlot,
+.table.dealingOverview .overviewChipSlot{
+  width:100%!important;
+  height:calc(var(--ov-chip) + 5px)!important;
+  min-height:calc(var(--ov-chip) + 5px)!important;
+  flex:0 0 calc(var(--ov-chip) + 5px)!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  margin:1px auto!important;
+  overflow:visible!important;
+}
+
+.table.betOverview .chipStack,
+.table.dealingOverview .chipStack{
+  display:flex!important;
+  height:var(--ov-chip)!important;
+  min-height:var(--ov-chip)!important;
+  align-items:center!important;
+  justify-content:center!important;
+  margin:0!important;
+}
+
+/* HAND AREA */
+.table.betOverview .handsRow,
+.table.dealingOverview .handsRow{
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  flex:0 0 auto!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  overflow:hidden!important;
+  margin:1px auto 0!important;
+}
+
+.table.betOverview .handBlock,
+.table.betOverview .handPlaceholder,
+.table.dealingOverview .handBlock,
+.table.dealingOverview .handPlaceholder{
+  width:100%!important;
+  min-width:0!important;
+  height:auto!important;
+  min-height:0!important;
+  padding:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  overflow:hidden!important;
+}
+
+/* BET label */
+.table.betOverview .handTitle,
+.table.dealingOverview .handTitle{
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  flex:0 0 auto!important;
+  margin:0!important;
+  font-size:var(--ov-title)!important;
+  line-height:1.15!important;
+  text-align:center!important;
+  color:#f1df9a!important;
+}
+
+/* CARD AREA — BET中も配札後と全く同じ高さを予約 */
+.table.betOverview .handPlaceholder .cards,
+.table.dealingOverview .handBlock .cards,
+.table.dealingOverview .handPlaceholder .cards{
+  position:relative!important;
+  width:100%!important;
+  height:calc(var(--ov-card-h) + 2px)!important;
+  min-height:calc(var(--ov-card-h) + 2px)!important;
+  flex:0 0 calc(var(--ov-card-h) + 2px)!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  margin:2px auto 0!important;
+  gap:3px!important;
+  overflow:hidden!important;
+}
+
+/* BET中は見えないカード2枚を置いたのと同じ占有幅 */
+.table.betOverview .handPlaceholder .cards::before,
+.table.betOverview .handPlaceholder .cards::after{
+  content:"";
+  display:block;
+  flex:0 0 var(--ov-card-w)!important;
+  width:var(--ov-card-w)!important;
+  height:var(--ov-card-h)!important;
+  border-radius:calc(var(--ov-card-w) * .14)!important;
+  visibility:hidden!important;
+}
+.table.betOverview .handPlaceholder .cards::after{
+  margin-left:-5px!important;
+}
+
+/* TOTAL AREA */
+.table.betOverview .handTotal,
+.table.dealingOverview .handTotal{
+  width:100%!important;
+  height:1.15em!important;
+  min-height:1.15em!important;
+  flex:0 0 1.15em!important;
+  margin:0!important;
+  padding:0!important;
+  font-size:var(--ov-total)!important;
+  line-height:1.15!important;
+  text-align:center!important;
+}
+
+.table.betOverview .handPlaceholder .handTotal{
+  visibility:hidden!important;
+}
+.table.betOverview .handPlaceholder .handTotal::before{
+  content:"TOTAL 00";
+}
+
+/* RESULT AREA — 初期配札中は空でも高さを維持 */
+.table.betOverview .handResult,
+.table.dealingOverview .handResult{
+  display:block!important;
+  visibility:hidden!important;
+  width:100%!important;
+  height:8px!important;
+  min-height:8px!important;
+  flex:0 0 8px!important;
+  margin:0!important;
+  padding:0!important;
+  line-height:8px!important;
+}
+
+/* 4人以上でもBET/DEAL双方に同じ圧縮規則を適用 */
+.table[data-deal-seats="4"].betOverview .seatHead,
+.table[data-deal-seats="4"].dealingOverview .seatHead,
+.table[data-deal-seats="5"].betOverview .seatHead,
+.table[data-deal-seats="5"].dealingOverview .seatHead,
+.table[data-deal-seats="6"].betOverview .seatHead,
+.table[data-deal-seats="6"].dealingOverview .seatHead{
+  gap:0!important;
+  margin-bottom:1px!important;
+}
+
+.table[data-deal-seats="4"].betOverview .overviewChipSlot,
+.table[data-deal-seats="4"].dealingOverview .overviewChipSlot,
+.table[data-deal-seats="5"].betOverview .overviewChipSlot,
+.table[data-deal-seats="5"].dealingOverview .overviewChipSlot,
+.table[data-deal-seats="6"].betOverview .overviewChipSlot,
+.table[data-deal-seats="6"].dealingOverview .overviewChipSlot{
+  height:calc(var(--ov-chip) + 2px)!important;
+  min-height:calc(var(--ov-chip) + 2px)!important;
+  flex-basis:calc(var(--ov-chip) + 2px)!important;
+}
+
+/* BET→DEAL切替時にはtransitionを一切入れない */
+.table.betOverview .seat,
+.table.dealingOverview .seat,
+.table.betOverview .seat *,
+.table.dealingOverview .seat *{
+  transition-property:border-color,box-shadow!important;
+}
+
 
 </style>
 </head>
@@ -1897,7 +5326,6 @@ header{display:flex;align-items:center;justify-content:space-between;padding:6px
         <b>優先して覚えるなら：</b>まず Insurance +3、16 vs 10、15 vs 10。その後に上から順番にDeviationを増やしていくと覚えやすいです。
       </div>
     </div>
-
     <div id="helpSignal" class="helpPanel hidden">
       <div class="signalRow"><b>Hit</b><span>テーブルを指で軽く叩く</span></div>
       <div class="signalRow"><b>Stand</b><span>手のひらを下に向けて、左右に振る</span></div>
@@ -1982,18 +5410,121 @@ header{display:flex;align-items:center;justify-content:space-between;padding:6px
 </div>
 <div id="handSignalOverlay" class="handSignalOverlay hidden">
   <div id="handSignalVisual" class="handSignalVisual">
-    <div class="signalHand">
-      <span class="signalPalm"></span>
-      <span class="signalFinger f1"></span>
-      <span class="signalFinger f2"></span>
-      <span class="signalFinger f3"></span>
-      <span class="signalFinger f4"></span>
+    <div class="signalHandSvgWrap" aria-hidden="true">
+
+      <!-- HIT / STAND: simple open palm.
+           左側面→親指→掌を浅い斜線でつなぎ、付け根の膨らみを作らない。 -->
+      <svg class="signalSvg signalSvgOpen" viewBox="0 0 120 100">
+        <path class="handShape" d="
+          M31 92
+          C23 89 19 83 19 75
+          L20 64
+          L19 55
+          C18 50 20 46 24 44
+          C27 42 31 44 34 47
+          L42 54
+          L42 26
+          C42 19 46 15 51 15
+          C56 15 59 19 59 26
+          L59 45
+          L61 20
+          C62 14 66 11 71 12
+          C76 13 78 17 77 23
+          L75 46
+          L79 25
+          C80 20 84 17 89 18
+          C94 19 96 23 95 28
+          L90 50
+          L94 39
+          C96 34 100 32 104 34
+          C108 36 109 41 107 46
+          L98 68
+          C94 79 86 87 75 91
+          C63 96 43 96 31 92
+          Z"/>
+      </svg>
+
+      <!-- DOUBLE: recognizable raised index finger -->
+      <svg class="signalSvg signalSvgDouble" viewBox="0 0 120 100">
+        <path class="handShape" d="
+          M33 93
+          C25 90 21 84 21 76
+          C21 69 24 63 29 59
+          C33 56 38 57 42 61
+          L47 66
+          L47 25
+          C47 17 52 12 59 12
+          C66 12 70 17 70 25
+          L69 58
+          C73 54 78 53 82 55
+          C86 57 88 61 87 65
+          C92 64 96 67 97 71
+          C98 75 96 79 92 81
+          C96 84 96 88 93 91
+          C89 95 82 97 73 97
+          L49 97
+          C42 97 37 96 33 93
+          Z"/>
+      </svg>
+
+      <!-- SPLIT: clear V-sign / two raised fingers -->
+      <svg class="signalSvg signalSvgSplit" viewBox="0 0 120 100">
+        <path class="handShape" d="
+          M31 93
+          C23 90 19 84 19 76
+          C19 69 22 63 27 59
+          C31 56 36 57 40 61
+          L45 66
+          L45 28
+          C45 20 50 15 57 15
+          C64 15 68 20 68 28
+          L67 51
+          L72 26
+          C73 19 78 15 84 16
+          C90 17 93 22 91 29
+          L86 57
+          C90 54 95 55 98 59
+          C101 63 100 68 97 71
+          C101 75 100 80 97 84
+          C93 89 86 93 77 95
+          C64 99 43 98 31 93
+          Z"/>
+      </svg>
+
+      <!-- SURRENDER: side-facing pointing hand -->
+      <svg class="signalSvg signalSvgSurrender" viewBox="0 0 130 100">
+        <path class="handShape" d="
+          M25 84
+          C18 80 15 74 17 68
+          C19 62 25 60 32 62
+          L52 69
+          L91 69
+          C99 69 105 73 106 79
+          C107 85 102 90 95 92
+          L64 98
+          C51 100 37 95 25 84
+          Z
+          M52 69
+          L86 46
+          C92 42 99 43 102 48
+          C105 53 103 59 98 63
+          L90 69
+          Z"/>
+      </svg>
+
     </div>
     <div id="signalLabel" class="signalLabel"></div>
   </div>
 </div>
+<div id="dealerCheckNotice" class="dealerCheckNotice hidden">
+  <div class="dealerCheckBox">
+    <div id="dealerCheckTitle" class="dealerCheckTitle">DEALER CHECK</div>
+    <div id="dealerCheckSub" class="dealerCheckSub">BLACKJACK?</div>
+  </div>
+</div>
 <div id="toast" class="toast"></div>
 <script>
+const BUILD='14.40-cpu-default-stable-betdeal';
 const $=id=>document.getElementById(id), fmt=n=>'₩'+Math.round(n).toLocaleString('ko-KR'), sleep=ms=>new Promise(r=>setTimeout(r,ms));
 function chipAmountLabel(amount,prefix=''){
   const n=Math.max(0,Math.round(amount));
@@ -2013,7 +5544,8 @@ function chipAmountLabel(amount,prefix=''){
   return prefix+body;
 }
 const suits=['♠','♥','♦','♣'],ranks=['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
-let mode='krw', cfg={}, players=[], deck=[], dealer=[], activePlayer=0, activeHand=0, phase='setup', currentBet=0, reveal=false, insuranceIndex=0, animating=false, roundNo=0, settlingPlayer=-1, blackjackAnnouncePlayer=-1, testDeal={dealer:[null,null],players:[]};let cardSeq=0,seenCards=new Set(),audioCtx=null,bgmOn=false,bgmTimer=null,bgmMode='lounge',bgmSession=0,bgmMaster=null,bgmWasPlayingBeforeHide=false,bgmResumeMode=null,audioRestoreBusy=false,cutCardRemaining=0,cutCardSeen=false,shuffleAfterRound=false,shoeNo=0,hintMode='basic',hiLoRunning=0,hiLoCountedIds=new Set(),dealtCardMap=new Map(),cpuSerial=0,cpuTurnPending=false,roundHistory=[],lastRecordedRound=0,statsMode='players';
+let mode='krw', cfg={}, players=[], deck=[], dealer=[], activePlayer=0, activeHand=0, phase='setup', currentBet=0, reveal=false, insuranceIndex=0, animating=false, roundNo=0, settlingPlayer=-1, blackjackAnnouncePlayer=-1, lastActionPlayer=0, testDeal={dealer:[null,null],players:[]};let cardSeq=0,seenCards=new Set(),audioCtx=null,bgmOn=false,bgmTimer=null,bgmMode='lounge',bgmSession=0,bgmMaster=null,bgmWasPlayingBeforeHide=false,bgmResumeMode=null,audioRestoreBusy=false,cutCardRemaining=0,cutCardSeen=false,shuffleAfterRound=false,shoeNo=0,hintMode='basic',hiLoRunning=0,hiLoCountedIds=new Set(),dealtCardMap=new Map(),cpuSerial=0,cpuTurnPending=false,roundHistory=[],lastRecordedRound=0,statsMode='players';
+let dealingDealerActive=false;
 function buildBankInputs(){
   const n=+$('playerCount').value,root=$('playerBanks');
   const old=[...root.querySelectorAll('.playerBankRow')].map(row=>({
@@ -2025,7 +5557,9 @@ function buildBankInputs(){
   root.innerHTML='';
   for(let i=0;i<n;i++){
     const prev=old[i]||{};
-    const type=prev.type||'user';
+    // 初期値：PLAYER 1 = USER / PLAYER 2以降 = CPU。
+    // すでにユーザーが変更済みの席は、その選択を維持する。
+    const type=prev.type||(i===0?'user':'cpu');
     const row=document.createElement('div');
     row.className='playerBankRow';
     row.innerHTML=`
@@ -2228,6 +5762,13 @@ function sfxCard(){sfxNoise(.05,.024,1600);sfxTone(190,.045,.018,'triangle',145,
 function sfxBet(){sfxTone(760,.045,.035,'sine',520);sfxTone(1040,.035,.024,'sine',800,.035)}
 function sfxPayout(){sfxTone(660,.05,.032,'triangle',880);sfxTone(880,.06,.03,'triangle',1180,.055)}
 function sfxCollect(){sfxTone(520,.055,.028,'triangle',340);sfxNoise(.04,.014,1300,.018)}
+function sfxDealerCollect(){
+  // 負けBETをDealerが回収する、低めのチップ衝突＋滑る音。
+  sfxNoise(.075,.030,850,0);
+  sfxTone(390,.075,.034,'triangle',260,.012);
+  sfxTone(255,.095,.030,'triangle',175,.075);
+  sfxNoise(.045,.018,1550,.105);
+}
 function sfxClear(){sfxTone(400,.05,.02,'triangle',250)}
 function sfxWin(){
   // Coin / chip payout style "chariin" sound.
@@ -2264,7 +5805,7 @@ function sfxHandSignal(type){
     sfxNoise(.08,.02,800);sfxTone(300,.09,.022,'triangle',210,.02);
   }
 }
-const HAND_SIGNAL_MS=1550;
+const HAND_SIGNAL_MS=1780;
 let handSignalTimer=0;
 let handSignalResolve=null;
 function positionHandSignal(){
@@ -2287,8 +5828,8 @@ function positionHandSignal(){
   const viewportHeight=vv?.height||window.innerHeight;
   const viewportBottom=viewportTop+viewportHeight;
 
-  const w=82;
-  const h=82;
+  const w=98;
+  const h=98;
 
   // #playActions の幾何学的中心へ配置。
   const centerX=Math.min(
@@ -2380,12 +5921,24 @@ $('startBtn').onclick=()=>{
     bank:b,initial:b,roundStartBank:b,bet:0,lastBet:0,hands:[],insurance:0,result:''
   }));
   roundNo=0;
+  lastActionPlayer=0;
   roundHistory=[];
   lastRecordedRound=0;
   statsMode='players';
   deck=[];newShoe();
-  $('setup').style.display='none';$('table').style.display='block';
-  beginBet();
+  $('setup').style.display='none';
+  $('table').style.display='block';
+
+  // iPhoneで設定画面を下までスクロールしていても、
+  // ゲーム開始時は必ずページ最上部から開始する。
+  window.scrollTo({top:0,left:0,behavior:'auto'});
+  document.documentElement.scrollTop=0;
+  document.body.scrollTop=0;
+
+  requestAnimationFrame(()=>{
+    window.scrollTo({top:0,left:0,behavior:'auto'});
+    beginBet();
+  });
 }
 function chipValues(){
   const min=cfg.min,max=cfg.max;
@@ -2620,7 +6173,21 @@ function beginBet(){
   const controls=document.querySelector('.controls');
   controls.classList.remove('resultMode','singleResult','resultCompact','dealerHidden','playCompact');
   controls.classList.add('betCompact');
+  dealingDealerActive=false;
+  $('table').classList.remove(
+    'dealingOverview','dealerDealActive','payoutOverview',
+    'betOverview','viewMorphOutToAction','viewMorphInToAction',
+    'viewMorphOutToOverview','viewMorphInToOverview','viewMorphBusy',
+    'overviewPhaseOut','overviewPhaseIn','overviewPhaseBusy'
+  );
   $('table').classList.add('betPhase');
+  $('table').dataset.dealSeats=String(players.length);
+
+  if(useOverviewMode()){
+    // 「テーブルに着く」「次のラウンド」ではカメラ演出を行わない。
+    // BET俯瞰をそのまま静止状態で表示する。
+    $('table').classList.add('betOverview');
+  }
   $('roundResultModal').classList.add('hidden');
   $('resultBtn').disabled=true;
   settlingPlayer=-1;blackjackAnnouncePlayer=-1;
@@ -2690,34 +6257,89 @@ $('dealBtn').onclick=async()=>{
 }
 async function dealInitial(){
   animating=true;
-  document.querySelector('.controls').classList.remove('betCompact');
-  $('table').classList.remove('betPhase');
+  $('table').classList.remove('dealerDealActive','payoutOverview');
+  $('table').dataset.dealSeats=String(players.length);
+
   phase='dealing';
-  activePlayer=0;  $('betArea').style.display='none';
-  for(const p of players)p.hands=p.bet>0?[{cards:[],bet:p.bet,done:false,surrendered:false,splitOrigin:false,result:''}]:[];
+  dealingDealerActive=false;
+  activePlayer=0;
+
+  // BET俯瞰から配札俯瞰へ切り替える前にHAND構造を準備する。
+  // これにより
+  //   BET placeholder → dealing placeholder → actual empty hand
+  // のような複数段階の再レイアウトを発生させない。
+  for(const p of players){
+    p.hands=p.bet>0
+      ?[{cards:[],bet:p.bet,done:false,surrendered:false,splitOrigin:false,result:''}]
+      :[];
+  }
+
+  if(useOverviewMode()){
+    await transitionBetOverviewToDealing();
+  }else{
+    $('table').classList.remove('betPhase','betOverview','dealingOverview');
+    render();
+  }
+
+  // dealingOverviewに入った後はcontrolsが非表示なので、
+  // ここでBET用controlsを解除しても画面レイアウトには影響しない。
+  document.querySelector('.controls').classList.remove('betCompact');
+  $('betArea').style.display='none';
+
+  const scroller=$('players');
+  if(scroller)scroller.scrollTop=0;
+
+  // transitionBetOverviewToDealing / 上記elseですでに描画済み。
+  await sleep(180);
 
   for(let round=0;round<2;round++){
     for(let i=0;i<players.length;i++){
       if(players[i].bet<=0)continue;
+      dealingDealerActive=false;
       activePlayer=i;
       render();
-      ensurePlayerVisible(i,'smooth');
-      await sleep(180);
+      await sleep(160);
       const forced=testDeal.players?.[i]?.[round]||null;
       players[i].hands[0].cards.push(drawSpecified(forced));
       render();
       await sleep(330);
     }
-    const dealerForced=testDeal.dealer?.[round]||null;
-    dealer.push(drawSpecified(dealerForced));
-    render();
-    await sleep(360);
+
+    // Paradise City公式：No Hole Card。
+    // Dealerは初期配札では表向き1枚のみ。2枚目はPLAYER ACTION後に引く。
+    if(round===0){
+      dealingDealerActive=true;
+      render();
+      await sleep(160);
+      const dealerForced=testDeal.dealer?.[0]||null;
+      dealer.push(drawSpecified(dealerForced));
+      render();
+      await sleep(360);
+    }
   }
+
+  dealingDealerActive=false;
+  const insuranceRequired=dealer[0]?.r==='A';
+
+  // Dealerはまだ1枚しか持っていないため、この時点ではBLACKJACK判定しない。
+  // 複数PLAYERではACTION画面へフェード切替。
+  if(useOverviewMode()){
+    await transitionOverviewToAction();
+  }else{
+    $('table').classList.remove('dealingOverview','dealerDealActive','betOverview','payoutOverview');
+    render();
+  }
+
+  if(scroller)scroller.scrollTop=0;
 
   animating=false;
   await announceInitialBlackjacks();
-  if(dealer[0]?.r==='A'){startInsurance()}
-  else{await dealerPeekThenPlay()}
+
+  if(insuranceRequired){
+    startInsurance();
+  }else{
+    await dealerPeekThenPlay();
+  }
 }
 
 async function announceInitialBlackjacks(){
@@ -2754,7 +6376,7 @@ async function announceInitialBlackjacks(){
     notice.classList.add('hidden');
     blackjackAnnouncePlayer=-1;
     render();
-    await sleep(220);
+    await sleep(520);
   }
 }
 function startInsurance(){
@@ -2787,6 +6409,7 @@ function askInsurance(){
   }
 
   const p=players[insuranceIndex];
+  lastActionPlayer=insuranceIndex;
   $('insuranceBox').style.display='block';
   $('insuranceYes').disabled=false;
   $('insuranceNo').disabled=false;
@@ -2812,7 +6435,47 @@ $('insuranceNo').onclick=()=>{
   insuranceIndex++;
   askInsurance();
 };
-async function dealerPeekThenPlay(){if(natural(dealer)){reveal=true;render();await sleep(650);await settleDealerBlackjack();return}if(players.some(p=>p.insurance)){players.forEach(p=>{if(p.insurance)p.result='Insurance LOSE'});render();await sleep(500)}phase='play';activePlayer=0;activeHand=0;document.querySelector('.controls').classList.remove('betCompact');document.querySelector('.controls').classList.add('playCompact');$('playActions').classList.remove('hidden');advancePlayer()}
+async function showDealerBlackjackCheckCue(isBlackjack){
+  const notice=$('dealerCheckNotice');
+  const title=$('dealerCheckTitle');
+  const sub=$('dealerCheckSub');
+  if(!notice||!title||!sub)return;
+
+  title.textContent='DEALER CHECK';
+  sub.textContent='BLACKJACK?';
+  notice.classList.remove('hidden','blackjack');
+  void notice.offsetWidth;
+  notice.classList.add('show');
+
+  $('message').textContent='Dealer：BLACKJACKを確認中...';
+  sfxTone(420,.11,.025,'triangle',520);
+  await sleep(720);
+
+  if(isBlackjack){
+    notice.classList.add('blackjack');
+    title.textContent='DEALER';
+    sub.textContent='BLACKJACK';
+    sfxTone(250,.12,.035,'triangle',190);
+    await sleep(520);
+  }
+
+  notice.classList.remove('show');
+  await sleep(120);
+  notice.classList.add('hidden');
+}
+
+async function dealerPeekThenPlay(){
+  // Paradise City No Hole Card:
+  // DealerはPLAYER ACTION前には1枚しか持たないため、
+  // ここではBLACKJACKチェックを行わない。
+  phase='play';
+  activePlayer=0;
+  activeHand=0;
+  document.querySelector('.controls').classList.remove('betCompact');
+  document.querySelector('.controls').classList.add('playCompact');
+  $('playActions').classList.remove('hidden');
+  advancePlayer();
+}
 
 
 let betHintMode='tc';
@@ -3415,6 +7078,7 @@ function advancePlayer(){
     if(activeHand<p.hands.length){
       let h=p.hands[activeHand];
       if(natural(h.cards,h.splitOrigin)){h.done=true;activeHand++;continue}
+      lastActionPlayer=activePlayer;
       $('message').textContent=`${p.name}${p.hands.length>1?` HAND ${activeHand+1}`:''}${p.type==='cpu'?'（CPU）':''}：アクション`;
       updateButtons();render();ensurePlayerVisible(activePlayer);
       if(p.type==='cpu')scheduleCpuAction();
@@ -3468,7 +7132,7 @@ $('hitBtn').onclick=async()=>{
 
   h.cards.push(draw());
   render();
-  await sleep(340);
+  await sleep(680);
 
   const total=value(h.cards);
 
@@ -3606,7 +7270,258 @@ $('splitBtn').onclick=async()=>{
   animating=false;
   advancePlayer();
 };
-async function dealerTurn(){document.querySelector('.controls').classList.remove('betCompact','playCompact');phase='dealer';reveal=true;$('playActions').classList.add('hidden');document.querySelector('.controls').classList.add('dealerHidden');$('message').textContent='Dealer reveals hole card';render();await sleep(650);while(value(dealer)<17){$('message').textContent=`Dealer ${value(dealer)} — HIT`;await sleep(420);dealer.push(draw());render();await sleep(520)}$('message').textContent=`Dealer ${value(dealer)} — STAND`;await sleep(600);await settle()}
+let tableViewMorphing=false;
+
+function useOverviewMode(){
+  return players.length>1;
+}
+
+function clampMorphPercent(v){
+  return Math.max(8,Math.min(92,v));
+}
+
+function setMorphOriginForPlayer(pi){
+  const table=$('table');
+  const stage=table?.querySelector('.gameStage');
+  if(!table||!stage||pi==null||pi<0||pi>=players.length){
+    table?.style.setProperty('--morph-x','50%');
+    table?.style.setProperty('--morph-y','50%');
+    return;
+  }
+
+  const seat=$('players')?.querySelector(`[data-player-index="${pi}"]`);
+  if(!seat){
+    table.style.setProperty('--morph-x','50%');
+    table.style.setProperty('--morph-y','50%');
+    return;
+  }
+
+  const sr=stage.getBoundingClientRect();
+  const pr=seat.getBoundingClientRect();
+  if(!sr.width||!sr.height)return;
+
+  const cx=pr.left+pr.width/2;
+  const cy=pr.top+pr.height/2;
+  const x=clampMorphPercent((cx-sr.left)/sr.width*100);
+  const y=clampMorphPercent((cy-sr.top)/sr.height*100);
+
+  table.style.setProperty('--morph-x',`${x}%`);
+  table.style.setProperty('--morph-y',`${y}%`);
+}
+
+function firstActionFocusPlayer(){
+  // Dealer Aなら、最初にInsuranceを選択するUSERを最優先。
+  if(dealer[0]?.r==='A'){
+    const insurancePlayer=players.findIndex(p=>
+      p.type==='user' &&
+      p.bet>0 &&
+      p.bank>=p.bet/2
+    );
+    if(insurancePlayer>=0)return insurancePlayer;
+  }
+
+  // 通常ACTIONで最初に操作するHAND。
+  const playable=players.findIndex(p=>{
+    const h=p.hands?.[0];
+    return !!h && !natural(h.cards,h.splitOrigin);
+  });
+  if(playable>=0)return playable;
+
+  // 全員Natural等の場合は、最初にカードがある席。
+  const firstDealt=players.findIndex(p=>p.hands?.[0]?.cards?.length);
+  return firstDealt>=0?firstDealt:0;
+}
+
+async function morphTableView(direction,mutate,focusPi=null){
+  const table=$('table');
+  const stage=table?.querySelector('.gameStage');
+  const controls=table?.querySelector('.controls');
+
+  if(!table||!stage){
+    mutate?.();
+    render();
+    return;
+  }
+
+  while(tableViewMorphing)await sleep(20);
+  tableViewMorphing=true;
+  table.classList.add('viewMorphBusy');
+
+  // ズーム/移動は完全廃止。
+  // 現在レイアウトを短くフェードアウトし、
+  // 低いopacityの間にレイアウトを切り替えてフェードインする。
+  const fadeTargets=[stage];
+  if(controls)fadeTargets.push(controls);
+
+  const outAnimations=fadeTargets.map(el=>el.animate(
+    [{opacity:1},{opacity:.10}],
+    {
+      duration:180,
+      easing:'ease-out',
+      fill:'forwards'
+    }
+  ));
+  await Promise.all(outAnimations.map(a=>a.finished.catch(()=>{})));
+
+  mutate?.();
+  render();
+
+  const scroller=$('players');
+  if(scroller)scroller.scrollTop=0;
+
+  await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+
+  outAnimations.forEach(a=>a.cancel());
+
+  const inAnimations=fadeTargets.map(el=>el.animate(
+    [{opacity:.10},{opacity:1}],
+    {
+      duration:240,
+      easing:'ease-in-out',
+      fill:'forwards'
+    }
+  ));
+  await Promise.all(inAnimations.map(a=>a.finished.catch(()=>{})));
+  inAnimations.forEach(a=>a.cancel());
+
+  table.classList.remove(
+    'viewMorphBusy',
+    'viewMorphOutToAction','viewMorphInToAction',
+    'viewMorphOutToOverview','viewMorphInToOverview'
+  );
+  table.style.removeProperty('--morph-x');
+  table.style.removeProperty('--morph-y');
+  tableViewMorphing=false;
+}
+
+async function transitionBetOverviewToDealing(){
+  const table=$('table');
+  if(!table)return;
+
+  // BET俯瞰→配札俯瞰では演出を入れない。
+  // 両モードの外枠/DEALER/PLAYERグリッド寸法をCSSで完全に揃え、
+  // classだけを切り替える。
+  table.classList.remove(
+    'overviewPhaseOut','overviewPhaseIn','overviewPhaseBusy',
+    'betOverview','betPhase'
+  );
+
+  if(useOverviewMode())table.classList.add('dealingOverview');
+  render();
+
+  const scroller=$('players');
+  if(scroller)scroller.scrollTop=0;
+}
+
+async function transitionOverviewToAction(){
+  const focusPi=firstActionFocusPlayer();
+  lastActionPlayer=focusPi;
+
+  await morphTableView('action',()=>{
+    const table=$('table');
+    table?.classList.remove(
+      'dealingOverview','dealerDealActive','betOverview','payoutOverview'
+    );
+  },focusPi);
+}
+
+async function enterPayoutOverview(){
+  const table=$('table');
+
+  // Dealer revealからすでに俯瞰へ入っている場合は二重ズームしない。
+  if(table?.classList.contains('payoutOverview'))return;
+
+  if(!useOverviewMode()){
+    table?.classList.remove(
+      'betOverview','dealingOverview','dealerDealActive','payoutOverview',
+      'viewMorphOutToAction','viewMorphInToAction',
+      'viewMorphOutToOverview','viewMorphInToOverview','viewMorphBusy'
+    );
+    return;
+  }
+
+  const focusPi=
+    lastActionPlayer>=0&&lastActionPlayer<players.length
+      ?lastActionPlayer
+      :Math.max(0,Math.min(players.length-1,activePlayer));
+
+  await morphTableView('overview',()=>{
+    const table=$('table');
+    if(!table)return;
+    table.classList.remove('betPhase','betOverview','dealingOverview','dealerDealActive');
+    table.classList.add('payoutOverview');
+    table.dataset.dealSeats=String(players.length);
+  },focusPi);
+}
+
+function leavePayoutOverview(){
+  const table=$('table');
+  if(!table)return;
+  table.classList.remove(
+    'payoutOverview',
+    'viewMorphOutToAction','viewMorphInToAction',
+    'viewMorphOutToOverview','viewMorphInToOverview',
+    'viewMorphBusy'
+  );
+  table.style.removeProperty('--morph-x');
+  table.style.removeProperty('--morph-y');
+  tableViewMorphing=false;
+}
+
+async function dealerTurn(){
+  document.querySelector('.controls').classList.remove('betCompact','playCompact');
+  phase='dealer';
+  $('playActions').classList.add('hidden');
+  document.querySelector('.controls').classList.add('dealerHidden');
+
+  // PLAYER ACTION終了後、まず俯瞰へフェード切替。
+  await enterPayoutOverview();
+
+  // Paradise City No Hole Card:
+  // ここで初めてDealerの2枚目を表向きで引く。
+  $('message').textContent='Dealer：SECOND CARD';
+  await sleep(260);
+
+  if(dealer.length<2){
+    const forced=testDeal.dealer?.[1]||null;
+    dealer.push(drawSpecified(forced));
+  }
+  reveal=true;
+  render();
+  await sleep(620);
+
+  // 2枚目を引いた時点で初めてBLACKJACK判定。
+  if(natural(dealer)){
+    $('message').textContent='Dealer BLACKJACK';
+    await showDealerBlackjackCheckCue(true);
+    await settleDealerBlackjack();
+    return;
+  }
+
+  // DealerがBLACKJACKでなければInsuranceはLOSE。
+  if(players.some(p=>p.insurance)){
+    players.forEach(p=>{
+      if(p.insurance){
+        p.result='Insurance LOSE';
+      }
+    });
+    $('message').textContent='Insurance LOSE';
+    render();
+    await sleep(430);
+  }
+
+  while(value(dealer)<17){
+    $('message').textContent=`Dealer ${value(dealer)} — HIT`;
+    await sleep(430);
+    dealer.push(draw());
+    render();
+    await sleep(540);
+  }
+
+  $('message').textContent=`Dealer ${value(dealer)} — STAND`;
+  await sleep(650);
+  await settle();
+}
 function payoutChipBreakdown(amount,maxChips=8){
   let left=Math.max(0,Math.round(amount));
   if(!left)return [];
@@ -3712,8 +7627,239 @@ async function flyDealerPayout(pi,amount){
   chips.forEach(chip=>chip.remove());
 }
 async function flyBetBackToBank(pi,amount,label='BET RETURN'){if(!amount)return;await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));let seat=document.querySelectorAll('.seat')[pi];if(!seat)return;let bank=seat.querySelector('.seatHead span:last-child');if(!bank)return;sfxCollect();let sr=seat.getBoundingClientRect(),br=bank.getBoundingClientRect();let chip=document.createElement('div');chip.className='flyingChip payoutChipVisual';chip.innerHTML=`<span class="payoutChipValue">${payoutChipLabel(amount)}</span>`;chip.style.left=(sr.left+sr.width/2-19)+'px';chip.style.top=(sr.top+42)+'px';document.body.appendChild(chip);let dx=(br.left+br.width/2)-(sr.left+sr.width/2),dy=(br.top+br.height/2)-(sr.top+61);let a=chip.animate([{transform:'translate(0,0) scale(.9)',opacity:1},{transform:`translate(${dx*.55}px,${dy-26}px) scale(.95)`,opacity:1,offset:.55},{transform:`translate(${dx}px,${dy}px) scale(.55)`,opacity:.15}],{duration:560,easing:'cubic-bezier(.22,.7,.2,1)',fill:'forwards'});await a.finished.catch(()=>{});chip.remove();bank.classList.add('bankFlash');setTimeout(()=>bank.classList.remove('bankFlash'),720)}
-async function settleDealerBlackjack(){phase='settling';$('playActions').classList.add('hidden');$('insuranceBox').style.display='none';for(let pi=0;pi<players.length;pi++){let p=players[pi];settlingPlayer=pi;render();ensurePlayerVisible(pi,'smooth');await sleep(280);let returned=0;for(const h of p.hands){if(natural(h.cards,h.splitOrigin)){h.result='PUSH';returned+=h.bet}else h.result='LOSE'}render();if(returned){$('message').textContent=`${p.name}：PUSH — BET返却`;await flyBetBackToBank(pi,returned);p.bank+=returned;render()}if(p.insurance){$('message').textContent=`${p.name}：Insurance WIN`;await flyDealerPayout(pi,p.insurance*2);await flyBetBackToBank(pi,p.insurance,'INS BET');p.bank+=p.insurance*3;for(const h of p.hands)h.result+=(h.result?' / ':'')+`Insurance WIN +${fmt(p.insurance*2)}`;render()}await settlePlayerCue(pi);await sleep(120)}recordRoundHistory();phase='result';$('message').textContent='Dealer BLACKJACK';showRoundBanner();render();showResultPanel();if(allPlayersBankrupt()){showGameOver()}}
-async function settle(){let dv=value(dealer);phase='settling';for(let pi=0;pi<players.length;pi++){let p=players[pi];settlingPlayer=pi;render();ensurePlayerVisible(pi,'smooth');await sleep(280);for(let hi=0;hi<p.hands.length;hi++){let h=p.hands[hi];if(h.surrendered)continue;let pv=value(h.cards),profit=0,returnBet=0;if(pv>21){h.result='BUST / LOSE'}else if(natural(h.cards,h.splitOrigin)){profit=h.bet*1.5;returnBet=h.bet;h.result=`BLACKJACK +${fmt(profit)}`;h.payoutFormula=`${fmt(h.bet)} × 1.5 = ${fmt(profit)}`}else if(dv>21||pv>dv){profit=h.bet;returnBet=h.bet;h.result=`WIN +${fmt(profit)}`;h.payoutFormula=`${fmt(h.bet)} × 1 = ${fmt(profit)}`}else if(pv===dv){returnBet=h.bet;h.result='PUSH'}else h.result='LOSE';render();if(profit){$('message').textContent=`${p.name}${p.hands.length>1?` HAND ${hi+1}`:''}：${h.result.startsWith('BLACKJACK')?'BLACKJACK':'WIN'} — 配当`;await flyDealerPayout(pi,profit)}if(returnBet){await flyBetBackToBank(pi,returnBet);p.bank+=returnBet+profit;render()}await sleep(260)}await settlePlayerCue(pi)}recordRoundHistory();phase='result';$('message').textContent=`ROUND END — Dealer ${dv}${dv>21?' BUST':''}`;showRoundBanner();render();showResultPanel();if(allPlayersBankrupt()){showGameOver()}}
+async function flyLostBetToDealer(pi,amount){
+  if(!amount)return;
+
+  await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+
+  const seat=document.querySelectorAll('.seat')[pi];
+  const dealerEl=document.querySelector('.dealer');
+  if(!seat||!dealerEl)return;
+
+  const source=
+    seat.querySelector('.overviewChipSlot') ||
+    seat.querySelector('.chipStack') ||
+    seat;
+
+  const sr=source.getBoundingClientRect();
+  const dr=dealerEl.getBoundingClientRect();
+
+  const startX=sr.left+sr.width/2;
+  const startY=sr.top+Math.min(sr.height*.55,42);
+  const endX=dr.left+dr.width/2;
+  const endY=dr.top+dr.height*.58;
+
+  const values=payoutChipBreakdown(amount,6);
+  if(!values.length)return;
+
+  sfxDealerCollect();
+
+  const chips=[];
+  const animations=[];
+
+  values.forEach((value,index)=>{
+    const chip=document.createElement('div');
+    chip.className='flyingChip payoutChipVisual dealerCollectChip';
+    chip.innerHTML=`<span class="payoutChipValue">${payoutChipLabel(value)}</span>`;
+
+    const sx=((index%3)-1)*5;
+    const sy=-Math.floor(index/3)*3;
+
+    chip.style.left=(startX-19+sx)+'px';
+    chip.style.top=(startY-19+sy)+'px';
+    chip.style.zIndex=String(10020+index);
+    document.body.appendChild(chip);
+
+    const dx=endX-(startX+sx);
+    const dy=endY-(startY+sy);
+    const side=(index-(values.length-1)/2)*5;
+
+    const anim=chip.animate([
+      {
+        transform:'translate(0,0) scale(.92)',
+        opacity:1
+      },
+      {
+        transform:`translate(${dx*.26+side}px,${dy*.18-24}px) scale(1) rotate(${side*.45}deg)`,
+        opacity:1,
+        offset:.30
+      },
+      {
+        transform:`translate(${dx*.70}px,${dy*.66-20}px) scale(.82) rotate(${side*.7}deg)`,
+        opacity:.96,
+        offset:.72
+      },
+      {
+        transform:`translate(${dx}px,${dy}px) scale(.42) rotate(0deg)`,
+        opacity:.08
+      }
+    ],{
+      duration:560,
+      delay:index*55,
+      easing:'cubic-bezier(.28,.62,.24,1)',
+      fill:'forwards'
+    });
+
+    chips.push(chip);
+    animations.push(anim.finished.catch(()=>{}));
+  });
+
+  await Promise.all(animations);
+  chips.forEach(chip=>chip.remove());
+
+  dealerEl.classList.remove('dealerCollectFlash');
+  void dealerEl.offsetWidth;
+  dealerEl.classList.add('dealerCollectFlash');
+  setTimeout(()=>dealerEl.classList.remove('dealerCollectFlash'),480);
+
+  await sleep(100);
+}
+
+async function settleDealerBlackjack(){
+  phase='settling';
+  await enterPayoutOverview();
+
+  $('playActions').classList.add('hidden');
+  $('insuranceBox').style.display='none';
+
+  for(let pi=0;pi<players.length;pi++){
+    const p=players[pi];
+    settlingPlayer=pi;
+    render();
+    ensurePlayerVisible(pi,'smooth');
+    await sleep(280);
+
+    let returned=0;
+    let lost=0;
+
+    for(const h of p.hands){
+      if(natural(h.cards,h.splitOrigin)){
+        h.result='PUSH';
+        returned+=h.bet;
+      }else{
+        h.result='LOSE';
+        lost+=h.bet;
+      }
+    }
+
+    render();
+
+    if(lost){
+      $('message').textContent=`${p.name}：LOSE — BETをDealerが回収`;
+      await flyLostBetToDealer(pi,lost);
+    }
+
+    if(returned){
+      $('message').textContent=`${p.name}：PUSH — BET返却`;
+      await flyBetBackToBank(pi,returned);
+      p.bank+=returned;
+      render();
+    }
+
+    if(p.insurance){
+      $('message').textContent=`${p.name}：Insurance WIN`;
+      await flyDealerPayout(pi,p.insurance*2);
+      await flyBetBackToBank(pi,p.insurance,'INS BET');
+      p.bank+=p.insurance*3;
+
+      for(const h of p.hands){
+        h.result+=(h.result?' / ':'')+`Insurance WIN +${fmt(p.insurance*2)}`;
+      }
+      render();
+    }
+
+    await settlePlayerCue(pi);
+    await sleep(120);
+  }
+
+  recordRoundHistory();
+  phase='result';
+  $('message').textContent='Dealer BLACKJACK';
+  showRoundBanner();
+  render();
+  await showResultPanel();
+
+  if(allPlayersBankrupt())showGameOver();
+}
+
+async function settle(){
+  const dv=value(dealer);
+  phase='settling';
+  await enterPayoutOverview();
+
+  for(let pi=0;pi<players.length;pi++){
+    const p=players[pi];
+    settlingPlayer=pi;
+    render();
+    ensurePlayerVisible(pi,'smooth');
+    await sleep(280);
+
+    for(let hi=0;hi<p.hands.length;hi++){
+      const h=p.hands[hi];
+      if(h.surrendered)continue;
+
+      const pv=value(h.cards);
+      let profit=0;
+      let returnBet=0;
+      let lostBet=0;
+
+      if(pv>21){
+        h.result='BUST / LOSE';
+        lostBet=h.bet;
+      }else if(natural(h.cards,h.splitOrigin)){
+        profit=h.bet*1.5;
+        returnBet=h.bet;
+        h.result=`BLACKJACK +${fmt(profit)}`;
+        h.payoutFormula=`${fmt(h.bet)} × 1.5 = ${fmt(profit)}`;
+      }else if(dv>21||pv>dv){
+        profit=h.bet;
+        returnBet=h.bet;
+        h.result=`WIN +${fmt(profit)}`;
+        h.payoutFormula=`${fmt(h.bet)} × 1 = ${fmt(profit)}`;
+      }else if(pv===dv){
+        returnBet=h.bet;
+        h.result='PUSH';
+      }else{
+        h.result='LOSE';
+        lostBet=h.bet;
+      }
+
+      render();
+
+      if(lostBet){
+        $('message').textContent=
+          `${p.name}${p.hands.length>1?` HAND ${hi+1}`:''}：${pv>21?'BUST / ':''}LOSE — BET回収`;
+        await flyLostBetToDealer(pi,lostBet);
+      }
+
+      if(profit){
+        $('message').textContent=
+          `${p.name}${p.hands.length>1?` HAND ${hi+1}`:''}：${h.result.startsWith('BLACKJACK')?'BLACKJACK':'WIN'} — 配当`;
+        await flyDealerPayout(pi,profit);
+      }
+
+      if(returnBet){
+        await flyBetBackToBank(pi,returnBet);
+        p.bank+=returnBet+profit;
+        render();
+      }
+
+      await sleep(260);
+    }
+
+    await settlePlayerCue(pi);
+  }
+
+  recordRoundHistory();
+  phase='result';
+  $('message').textContent=`ROUND END — Dealer ${dv}${dv>21?' BUST':''}`;
+  showRoundBanner();
+  render();
+  await showResultPanel();
+
+  if(allPlayersBankrupt())showGameOver();
+}
+
 function recordRoundHistory(){
   if(roundNo<=0||lastRecordedRound===roundNo)return;
 
@@ -3830,12 +7976,18 @@ function openRoundResult(){
 function closeRoundResult(){
   $('roundResultModal').classList.add('hidden');
 }
-function showResultPanel(){
+async function showResultPanel(){
   settlingPlayer=-1;
+  // 配当後の最終状態を一呼吸見せてから結果一覧を開く。
   const controls=document.querySelector('.controls');
   controls.classList.remove('resultMode','singleResult','dealerHidden');
   controls.classList.add('resultCompact');
   $('resultBtn').disabled=false;
+  render();
+
+  await sleep(950);
+
+  if(phase!=='result'&&phase!=='gameover')return;
   openRoundResult();
 }
 async function settlePlayerCue(pi){
@@ -4019,6 +8171,10 @@ function closeStats(){
 }
 
 function ensurePlayerVisible(pi,behavior='smooth'){
+  const table=$('table');
+  if(table?.classList.contains('dealingOverview')||
+     table?.classList.contains('betOverview')||
+     table?.classList.contains('payoutOverview'))return;
   if(pi==null||pi<0)return;
   requestAnimationFrame(()=>requestAnimationFrame(()=>{
     const scroller=$('players');
@@ -4043,7 +8199,7 @@ function currentFocusPlayer(){
   if(phase==='settling')return settlingPlayer;
   return -1;
 }
-function render(){ $('roundCounter').textContent=`ROUND ${Math.max(roundNo,1)}`;$('shoeCount').textContent=`SHOE ${shoeNo} ・ ${deck.length} cards${cutCardSeen?' ・ LAST GAME':''}`;$('dealerCards').innerHTML=dealer.map((c,i)=>cardHTML(c,!reveal&&i===1)).join('');$('dealerScore').textContent=dealer.length?(reveal?`(${value(dealer)})`:`(${dealer[0]?value([dealer[0]]):''} + ?)`):'';$('players').innerHTML=players.map((p,pi)=>{let tempBet=phase==='bet'&&pi===activePlayer?currentBet:p.bet;return `<div class="seat ${(((phase==='bet'||phase==='play'||phase==='dealing')&&pi===activePlayer)||(phase==='insurance'&&pi===insuranceIndex)||(phase==='settling'&&pi===settlingPlayer))?'active':''} ${pi===blackjackAnnouncePlayer?'blackjackFlash':''}" data-player-index="${pi}"><div class="seatHead"><span>${p.name}${p.type==='cpu'?`<em class="cpuBadge">CPU ${String(p.cpuLevel||'advanced').toUpperCase()}</em>`:''}</span><span>BANK ${fmt(p.bank)}</span></div>${chipStackHTML(tempBet)}${p.hands.length?`<div class="handsRow ${p.hands.length>1?'splitHands':''} ${p.hands.length===3?'threeHands':''}">${p.hands.map((h,hi)=>`<div class="handBlock ${phase==='play'&&pi===activePlayer&&hi===activeHand?'activeHand':''} ${phase==='play'&&pi===activePlayer&&p.hands.length>1&&hi!==activeHand?'dimmedHand':''}"><div class="handTitle">${p.hands.length>1?`HAND ${hi+1} ・ `:''}BET ${fmt(h.bet)}</div><div class="cards">${h.cards.map(c=>cardHTML(c)).join('')}</div><div class="handTotal">TOTAL ${h.cards.length?value(h.cards):''}</div><div class="handResult result ${resultClass(h.result)}">${h.result||''}</div></div>`).join('')}</div>`:`<div class="handsRow"><div class="handBlock handPlaceholder"><div class="handTitle">BET ${fmt(tempBet)}</div><div class="cards"></div><div class="handTotal"></div><div class="handResult"></div></div></div>`}${p.insurance?`<div class="result">Insurance ${fmt(p.insurance)}</div>`:''}</div>`}).join('');markSeen();ensurePlayerVisible(currentFocusPlayer())}
+function render(){ const table=$('table');if(table){table.dataset.dealSeats=String(players.length);table.classList.toggle('dealerDealActive',phase==='dealing'&&dealingDealerActive)} $('roundCounter').textContent=`ROUND ${Math.max(roundNo,1)}`;$('shoeCount').textContent=`SHOE ${shoeNo} ・ ${deck.length} cards${cutCardSeen?' ・ LAST GAME':''}`;$('dealerCards').innerHTML=dealer.map((c,i)=>cardHTML(c,!reveal&&i===1)).join('');$('dealerScore').textContent=dealer.length?(dealer.length===1?`(${value(dealer)})`:(reveal?`(${value(dealer)})`:`(${dealer[0]?value([dealer[0]]):''} + ?)`)):'';$('players').innerHTML=players.map((p,pi)=>{let tempBet=phase==='bet'&&pi===activePlayer?currentBet:p.bet;return `<div class="seat ${(((phase==='bet'||phase==='play'||(phase==='dealing'&&!dealingDealerActive))&&pi===activePlayer)||(phase==='insurance'&&pi===insuranceIndex)||(phase==='settling'&&pi===settlingPlayer))?'active':''} ${pi===blackjackAnnouncePlayer?'blackjackFlash':''}" data-player-index="${pi}"><div class="seatHead"><span>${p.name}${p.type==='cpu'?`<em class="cpuBadge">CPU ${String(p.cpuLevel||'advanced').toUpperCase()}</em>`:`<em class="cpuBadge cpuBadgeSpacer" aria-hidden="true">CPU ADVANCED</em>`}</span><span>BANK ${fmt(p.bank)}</span></div><div class="overviewChipSlot">${chipStackHTML(tempBet)}</div>${p.hands.length?`<div class="handsRow ${p.hands.length>1?'splitHands':''} ${p.hands.length===3?'threeHands':''}">${p.hands.map((h,hi)=>`<div class="handBlock ${phase==='play'&&pi===activePlayer&&hi===activeHand?'activeHand':''} ${phase==='play'&&pi===activePlayer&&p.hands.length>1&&hi!==activeHand?'dimmedHand':''}"><div class="handTitle">${p.hands.length>1?`HAND ${hi+1} ・ `:''}BET ${fmt(h.bet)}</div><div class="cards">${h.cards.map(c=>cardHTML(c)).join('')}</div><div class="handTotal">${h.cards.length?`TOTAL ${value(h.cards)}`:'&nbsp;'}</div><div class="handResult result ${resultClass(h.result)}">${h.result||''}</div></div>`).join('')}</div>`:`<div class="handsRow"><div class="handBlock handPlaceholder"><div class="handTitle">BET ${fmt(tempBet)}</div><div class="cards"></div><div class="handTotal"></div><div class="handResult"></div></div></div>`}${p.insurance?`<div class="result">Insurance ${fmt(p.insurance)}</div>`:''}</div>`}).join('');markSeen();ensurePlayerVisible(currentFocusPlayer())}
 function startLoungeBgm(){
  if(bgmOn)return;
  audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();
@@ -4297,7 +8453,6 @@ window.visualViewport?.addEventListener('resize',()=>{
 window.visualViewport?.addEventListener('scroll',()=>{
   if(!$('handSignalOverlay').classList.contains('hidden'))positionHandSignal();
 });
-
 document.addEventListener('visibilitychange',()=>{
   if(document.visibilityState==='hidden')pauseAudioForPageHide();
   else restoreAudioAfterPageReturn();
@@ -4421,12 +8576,15 @@ function closeBackTopConfirm(){
 }
 function returnToTop(){
   stopBgm();
+  dealingDealerActive=false;
+  $('table').classList.remove('dealingOverview','dealerDealActive','betPhase','betOverview','payoutOverview','viewMorphOutToAction','viewMorphInToAction','viewMorphOutToOverview','viewMorphInToOverview','viewMorphBusy','overviewPhaseOut','overviewPhaseIn','overviewPhaseBusy');
   phase='setup';
   roundNo=0;
   animating=false;
   currentBet=0;
   activePlayer=0;
   activeHand=0;
+  lastActionPlayer=0;
   dealer=[];
   players=[];
   deck=[];
@@ -4457,12 +8615,15 @@ $('backTopModal').addEventListener('click',e=>{
 
 $('gameOverTopBtn').addEventListener('click',()=>{
   stopBgm();
+  dealingDealerActive=false;
+  $('table').classList.remove('dealingOverview','dealerDealActive','betPhase','betOverview','payoutOverview','viewMorphOutToAction','viewMorphInToAction','viewMorphOutToOverview','viewMorphInToOverview','viewMorphBusy','overviewPhaseOut','overviewPhaseIn','overviewPhaseBusy');
   phase='setup';
   roundNo=0;
   animating=false;
   currentBet=0;
   activePlayer=0;
   activeHand=0;
+  lastActionPlayer=0;
   dealer=[];
   players=[];
   deck=[];
