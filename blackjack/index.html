@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
-<title>Paradise City Blackjack Trainer v14.19</title>
+<title>Paradise City Blackjack Trainer v14.21</title>
 <style>
 :root{--bg:#04110d;--felt:#07523a;--felt2:#063d2d;--panel:rgba(4,20,15,.88);--line:rgba(255,255,255,.13);--text:#fffaf0;--muted:#afc7bb;--gold:#e2c064;--red:#a63d3d;--green:#62d395;--lose:#ff7676;--win:#7df0a5}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% 0,#0e7450 0,#07523a 34%,#03110c 88%);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--text);overflow-x:hidden}.app{width:min(100%,560px);margin:auto;min-height:100vh;padding:10px 10px calc(16px + env(safe-area-inset-bottom))}
@@ -1286,6 +1286,81 @@ header{display:flex;align-items:center;justify-content:space-between;padding:6px
 .handsRow.splitHands .handBlock .handResult.result{font-size:10px;padding:0 6px;min-width:54px}
 .handsRow.threeHands .handBlock .handResult.result{font-size:9px;padding:0 4px;min-width:44px}
 
+
+/* v14.20: payout animation uses an actual casino-chip visual, not bare text */
+.payoutChipVisual{
+  position:fixed;
+  width:38px!important;
+  height:38px!important;
+  min-width:38px!important;
+  min-height:38px!important;
+  margin:0!important;
+  padding:0!important;
+  border-radius:50%!important;
+  border:2px solid rgba(255,255,255,.88)!important;
+  display:grid!important;
+  place-items:center!important;
+  box-sizing:border-box!important;
+  color:#241b08!important;
+  font-size:8px!important;
+  line-height:1!important;
+  font-weight:1000!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  pointer-events:none!important;
+  z-index:9999;
+  background:
+    radial-gradient(circle at center,
+      #f8e8b8 0 34%,
+      #c9a94d 35% 43%,
+      #f5df9a 44% 59%,
+      transparent 60%),
+    repeating-conic-gradient(
+      #efe3bd 0deg 18deg,
+      #3a2c18 18deg 28deg,
+      #efe3bd 28deg 46deg
+    )!important;
+  box-shadow:
+    inset 0 0 0 2px rgba(255,255,255,.42),
+    inset 0 0 0 5px rgba(74,54,21,.18),
+    0 5px 12px rgba(0,0,0,.38)!important;
+}
+.payoutChipVisual::before{
+  content:'';
+  position:absolute;
+  inset:6px;
+  border-radius:50%;
+  border:1px dashed rgba(65,47,18,.38);
+  pointer-events:none;
+}
+.payoutChipVisual .payoutChipValue{
+  position:relative;
+  z-index:1;
+  display:grid;
+  place-items:center;
+  width:22px;
+  height:22px;
+  border-radius:50%;
+  background:rgba(255,246,213,.94);
+  box-shadow:inset 0 0 0 1px rgba(76,55,20,.18);
+}
+
+
+/* v14.21: CPU BET中はユーザー操作を完全に非活性化 */
+.controls.cpuBetTurn #betArea{
+  pointer-events:none;
+}
+.controls.cpuBetTurn #betArea .chip,
+.controls.cpuBetTurn #betArea button{
+  opacity:.34!important;
+  filter:grayscale(.45);
+  cursor:not-allowed!important;
+}
+.controls.cpuBetTurn #betAmount{
+  opacity:.65;
+}
+
 </style>
 </head>
 <body><div class="app">
@@ -1503,7 +1578,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:6px
         <span class="advKey surrender">R</span><small>Surrender</small>
       </div>
 
-      
+
 
       <section class="advancedSection">
         <h3>PAIR</h3>
@@ -1896,8 +1971,7 @@ function updateCpuBustModeVisibility(){
   const hasCpu=[...document.querySelectorAll('.playerTypeSelect')].some(s=>s.value==='cpu');
   $('cpuBustModeField').classList.toggle('hidden',!hasCpu);
 }
-function updateBankLabels(){document.querySelectorAll('.bankInput').forEach(i=>{i.placeholder=mode==='krw'?'例：300000':'例：30000'});updateBudgetPreview()}
-function updateBudgetPreview(){let rate=+$('rate').value||0;document.querySelectorAll('.playerBankRow').forEach(row=>{let i=row.querySelector('.bankInput'),c=row.querySelector('.bankCalc'),v=+i.value||0;c.textContent=mode==='jpy'?`→ 約 ${fmt(Math.floor(v*rate/1000)*1000)} 分のチップ`:`開始チップ ${fmt(v)}`})}
+function updateBankLabels(){document.querySelectorAll('.bankInput').forEach(i=>{i.placeholder=mode==='krw'?'例：300000':'例：30000'});updateBudgetPreview()}function updateBudgetPreview(){let rate=+$('rate').value||0;document.querySelectorAll('.playerBankRow').forEach(row=>{let i=row.querySelector('.bankInput'),c=row.querySelector('.bankCalc'),v=+i.value||0;c.textContent=mode==='jpy'?`→ 約 ${fmt(Math.floor(v*rate/1000)*1000)} 分のチップ`:`開始チップ ${fmt(v)}`})}
 $('playerCount').onchange=()=>{buildBankInputs()};buildBankInputs();
 
 const testRanks=['','A','2','3','4','5','6','7','8','9','10','J','Q','K'];
@@ -2301,22 +2375,34 @@ function cpuBetAmount(p){
   if(amount<cfg.min)return 0;
   return amount;
 }
+function setBetControlsDisabled(disabled){
+  const betArea=$('betArea');
+  if(!betArea)return;
+
+  betArea.querySelectorAll('button').forEach(btn=>{
+    btn.disabled=!!disabled;
+  });
+}
+
 function showBetTurn(){
   if(activePlayer<0||activePlayer>=players.length){dealInitial();return}
   const p=players[activePlayer];
   currentBet=0;$('betAmount').textContent=fmt(0);
   const controls=document.querySelector('.controls');
   if(p.type==='cpu'){
-    // CPUもUSERと同じBETチップUIを表示し、同じ場所から同じアニメーションでBETする。
+    // CPUもUSERと同じBETチップUIを表示するが、ユーザー誤操作防止のため全BET操作を非活性化。
     renderChips();
     controls?.classList.add('cpuBetTurn');
+    setBetControlsDisabled(true);
     $('message').textContent=`${p.name}（CPU ${String(p.cpuLevel).toUpperCase()}）：BETを判断中…`;
     render();ensurePlayerVisible(activePlayer,'smooth');
     setTimeout(cpuPlaceBet,650);
   }else{
     controls?.classList.remove('cpuBetTurn');
+    renderChips();
+    setBetControlsDisabled(false);
     $('message').textContent=`${p.name}：ベットしてください（MIN ${fmt(cfg.min)} / MAX ${fmt(cfg.max)}）`;
-    renderChips();render();ensurePlayerVisible(activePlayer,'auto');
+    render();ensurePlayerVisible(activePlayer,'auto');
   }
 }
 async function cpuPlaceBet(){
@@ -2361,6 +2447,7 @@ async function cpuPlaceBet(){
   }
 
   document.querySelector('.controls')?.classList.remove('cpuBetTurn');
+  setBetControlsDisabled(false);
 
   const next=nextBetPlayerIndex(pi+1);
   if(next>=0){
@@ -2496,8 +2583,7 @@ async function dealInitial(){
   document.querySelector('.controls').classList.remove('betCompact');
   $('table').classList.remove('betPhase');
   phase='dealing';
-  activePlayer=0;
-  $('betArea').style.display='none';
+  activePlayer=0;  $('betArea').style.display='none';
   for(const p of players)p.hands=p.bet>0?[{cards:[],bet:p.bet,done:false,surrendered:false,splitOrigin:false,result:''}]:[];
 
   for(let round=0;round<2;round++){
@@ -3096,8 +3182,7 @@ function advancePlayer(){
       updateButtons();render();ensurePlayerVisible(activePlayer);
       if(p.type==='cpu')scheduleCpuAction();
       return;
-    }
-    activePlayer++;activeHand=0;
+    }    activePlayer++;activeHand=0;
   }
   dealerTurn();
 }
@@ -3285,43 +3370,111 @@ $('splitBtn').onclick=async()=>{
   advancePlayer();
 };
 async function dealerTurn(){document.querySelector('.controls').classList.remove('betCompact','playCompact');phase='dealer';reveal=true;$('playActions').classList.add('hidden');document.querySelector('.controls').classList.add('dealerHidden');$('message').textContent='Dealer reveals hole card';render();await sleep(650);while(value(dealer)<17){$('message').textContent=`Dealer ${value(dealer)} — HIT`;await sleep(420);dealer.push(draw());render();await sleep(520)}$('message').textContent=`Dealer ${value(dealer)} — STAND`;await sleep(600);await settle()}
+function payoutChipBreakdown(amount,maxChips=8){
+  let left=Math.max(0,Math.round(amount));
+  if(!left)return [];
+
+  // 現在のテーブルで使用しているチップ額を大きい順に使い、
+  // 実際の配当額を複数枚のチップへ分解する。
+  const vals=chipValues()
+    .slice()
+    .sort((a,b)=>b-a)
+    .filter(v=>v>0);
+
+  const out=[];
+  for(const v of vals){
+    while(left>=v&&out.length<maxChips-1){
+      out.push(v);
+      left-=v;
+    }
+  }
+
+  // 端数や8枚を超える分は最後の1枚へまとめ、配当総額は変えない。
+  if(left>0)out.push(left);
+  return out.length?out:[Math.round(amount)];
+}
+
+function payoutChipLabel(value){
+  const n=Math.max(0,Math.round(value));
+  if(n>=100000000){
+    const v=n/100000000;
+    return `${Number.isInteger(v)?v:v.toFixed(1).replace(/\.0$/,'')}億`;
+  }
+  if(n>=10000){
+    const v=n/10000;
+    return `${Number.isInteger(v)?v:v.toFixed(1).replace(/\.0$/,'')}万`;
+  }
+  if(n>=1000){
+    const v=n/1000;
+    return `${Number.isInteger(v)?v:v.toFixed(1).replace(/\.0$/,'')}千`;
+  }
+  return String(n);
+}
+
 async function flyDealerPayout(pi,amount){
   if(!amount)return;
   await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
-  let dealerEl=document.querySelector('.dealer'),seat=document.querySelectorAll('.seat')[pi];
+
+  const dealerEl=document.querySelector('.dealer');
+  const seat=document.querySelectorAll('.seat')[pi];
   if(!dealerEl||!seat)return;
+
+  const values=payoutChipBreakdown(amount,8);
+  if(!values.length)return;
+
   sfxPayout();
 
-  let from=dealerEl.getBoundingClientRect(),to=seat.getBoundingClientRect();
-  let chip=document.createElement('div');
-  chip.className='flyingChip payoutChip';
+  const from=dealerEl.getBoundingClientRect();
+  const to=seat.getBoundingClientRect();
+  const startX=from.left+from.width/2;
+  const startY=from.top+53;
+  const endX=to.left+to.width/2;
+  const endY=to.top+42;
 
-  // 配当比率ではなく、実際に受け取る利益額をチップ上へ表示。
-  // 38px内で崩れないよう「3万」「4.5万」等のコンパクト表記にする。
-  chip.textContent=chipAmountLabel(amount,'+');
+  const chips=[];
+  const animations=[];
 
-  chip.style.left=(from.left+from.width/2-19)+'px';
-  chip.style.top=(from.top+34)+'px';
-  document.body.appendChild(chip);
+  // 配当額を1つの文字列で飛ばすのではなく、
+  // チップを1枚ずつ少し時間差を付けてディーラーから配る。
+  values.forEach((value,index)=>{
+    const chip=document.createElement('div');
+    chip.className='flyingChip payoutChipVisual';
+    chip.innerHTML=`<span class="payoutChipValue">${payoutChipLabel(value)}</span>`;
 
-  let dx=(to.left+to.width/2)-(from.left+from.width/2),
-      dy=(to.top+38)-(from.top+53);
+    const startOffsetX=((index%3)-1)*6;
+    const startOffsetY=-Math.floor(index/3)*3;
+    const spread=(index-(values.length-1)/2)*8;
 
-  let a=chip.animate([
-    {transform:'translate(0,0) scale(.85)',opacity:.25},
-    {transform:`translate(${dx*.55}px,${dy*.45-38}px) scale(1.08)`,opacity:1,offset:.55},
-    {transform:`translate(${dx}px,${dy}px) scale(.92)`,opacity:1}
-  ],{
-    duration:680,
-    easing:'cubic-bezier(.18,.75,.18,1)',
-    fill:'forwards'
+    chip.style.left=(startX-19+startOffsetX)+'px';
+    chip.style.top=(startY-19+startOffsetY)+'px';
+    chip.style.zIndex=String(9999+index);
+    document.body.appendChild(chip);
+
+    const dx=(endX+spread)-(startX+startOffsetX);
+    const dy=(endY+Math.min(index,4)*2)-(startY+startOffsetY);
+    const rotate=(index%2===0?1:-1)*(5+index*2);
+
+    const animation=chip.animate([
+      {transform:'translate(0,0) scale(.72)',opacity:0},
+      {transform:`translate(${dx*.18}px,${dy*.08-12}px) scale(1) rotate(${rotate*.35}deg)`,opacity:1,offset:.20},
+      {transform:`translate(${dx*.58}px,${dy*.42-44}px) scale(1.04) rotate(${rotate}deg)`,opacity:1,offset:.60},
+      {transform:`translate(${dx}px,${dy}px) scale(.9) rotate(0deg)`,opacity:1}
+    ],{
+      duration:620,
+      delay:index*65,
+      easing:'cubic-bezier(.18,.75,.18,1)',
+      fill:'forwards'
+    });
+
+    chips.push(chip);
+    animations.push(animation.finished.catch(()=>{}));
   });
 
-  await a.finished.catch(()=>{});
-  await sleep(170);
-  chip.remove();
+  await Promise.all(animations);
+  await sleep(180);
+  chips.forEach(chip=>chip.remove());
 }
-async function flyBetBackToBank(pi,amount,label='BET RETURN'){if(!amount)return;await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));let seat=document.querySelectorAll('.seat')[pi];if(!seat)return;let bank=seat.querySelector('.seatHead span:last-child');if(!bank)return;sfxCollect();let sr=seat.getBoundingClientRect(),br=bank.getBoundingClientRect();let chip=document.createElement('div');chip.className='flyingChip payoutChip';chip.textContent=label;chip.style.left=(sr.left+sr.width/2-19)+'px';chip.style.top=(sr.top+42)+'px';document.body.appendChild(chip);let dx=(br.left+br.width/2)-(sr.left+sr.width/2),dy=(br.top+br.height/2)-(sr.top+61);let a=chip.animate([{transform:'translate(0,0) scale(.9)',opacity:1},{transform:`translate(${dx*.55}px,${dy-26}px) scale(.95)`,opacity:1,offset:.55},{transform:`translate(${dx}px,${dy}px) scale(.55)`,opacity:.15}],{duration:560,easing:'cubic-bezier(.22,.7,.2,1)',fill:'forwards'});await a.finished.catch(()=>{});chip.remove();bank.classList.add('bankFlash');setTimeout(()=>bank.classList.remove('bankFlash'),720)}
+async function flyBetBackToBank(pi,amount,label='BET RETURN'){if(!amount)return;await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));let seat=document.querySelectorAll('.seat')[pi];if(!seat)return;let bank=seat.querySelector('.seatHead span:last-child');if(!bank)return;sfxCollect();let sr=seat.getBoundingClientRect(),br=bank.getBoundingClientRect();let chip=document.createElement('div');chip.className='flyingChip payoutChipVisual';chip.innerHTML=`<span class="payoutChipValue">${payoutChipLabel(amount)}</span>`;chip.style.left=(sr.left+sr.width/2-19)+'px';chip.style.top=(sr.top+42)+'px';document.body.appendChild(chip);let dx=(br.left+br.width/2)-(sr.left+sr.width/2),dy=(br.top+br.height/2)-(sr.top+61);let a=chip.animate([{transform:'translate(0,0) scale(.9)',opacity:1},{transform:`translate(${dx*.55}px,${dy-26}px) scale(.95)`,opacity:1,offset:.55},{transform:`translate(${dx}px,${dy}px) scale(.55)`,opacity:.15}],{duration:560,easing:'cubic-bezier(.22,.7,.2,1)',fill:'forwards'});await a.finished.catch(()=>{});chip.remove();bank.classList.add('bankFlash');setTimeout(()=>bank.classList.remove('bankFlash'),720)}
 async function settleDealerBlackjack(){phase='settling';$('playActions').classList.add('hidden');$('insuranceBox').style.display='none';for(let pi=0;pi<players.length;pi++){let p=players[pi];settlingPlayer=pi;render();ensurePlayerVisible(pi,'smooth');await sleep(280);let returned=0;for(const h of p.hands){if(natural(h.cards,h.splitOrigin)){h.result='PUSH';returned+=h.bet}else h.result='LOSE'}render();if(returned){$('message').textContent=`${p.name}：PUSH — BET返却`;await flyBetBackToBank(pi,returned);p.bank+=returned;render()}if(p.insurance){$('message').textContent=`${p.name}：Insurance WIN`;await flyDealerPayout(pi,p.insurance*2);await flyBetBackToBank(pi,p.insurance,'INS BET');p.bank+=p.insurance*3;for(const h of p.hands)h.result+=(h.result?' / ':'')+`Insurance WIN +${fmt(p.insurance*2)}`;render()}await settlePlayerCue(pi);await sleep(120)}recordRoundHistory();phase='result';$('message').textContent='Dealer BLACKJACK';showRoundBanner();render();showResultPanel();if(allPlayersBankrupt()){showGameOver()}}
 async function settle(){let dv=value(dealer);phase='settling';for(let pi=0;pi<players.length;pi++){let p=players[pi];settlingPlayer=pi;render();ensurePlayerVisible(pi,'smooth');await sleep(280);for(let hi=0;hi<p.hands.length;hi++){let h=p.hands[hi];if(h.surrendered)continue;let pv=value(h.cards),profit=0,returnBet=0;if(pv>21){h.result='BUST / LOSE'}else if(natural(h.cards,h.splitOrigin)){profit=h.bet*1.5;returnBet=h.bet;h.result=`BLACKJACK +${fmt(profit)}`;h.payoutFormula=`${fmt(h.bet)} × 1.5 = ${fmt(profit)}`}else if(dv>21||pv>dv){profit=h.bet;returnBet=h.bet;h.result=`WIN +${fmt(profit)}`;h.payoutFormula=`${fmt(h.bet)} × 1 = ${fmt(profit)}`}else if(pv===dv){returnBet=h.bet;h.result='PUSH'}else h.result='LOSE';render();if(profit){$('message').textContent=`${p.name}${p.hands.length>1?` HAND ${hi+1}`:''}：${h.result.startsWith('BLACKJACK')?'BLACKJACK':'WIN'} — 配当`;await flyDealerPayout(pi,profit)}if(returnBet){await flyBetBackToBank(pi,returnBet);p.bank+=returnBet+profit;render()}await sleep(260)}await settlePlayerCue(pi)}recordRoundHistory();phase='result';$('message').textContent=`ROUND END — Dealer ${dv}${dv>21?' BUST':''}`;showRoundBanner();render();showResultPanel();if(allPlayersBankrupt()){showGameOver()}}
 function recordRoundHistory(){
@@ -3696,8 +3849,7 @@ function startUpbeatBgm(){
   if(audioCtx.state==='suspended')audioCtx.resume();
   bgmOn=true;bgmMode='upbeat';const session=++bgmSession;
   $('bgmBtn').textContent='BGM：RUSH';
-
-  const master=audioCtx.createGain(),room=audioCtx.createBiquadFilter();
+   const master=audioCtx.createGain(),room=audioCtx.createBiquadFilter();
   bgmMaster=master;
   master.gain.value=.12;
   room.type='lowpass';room.frequency.value=4800;room.Q.value=.28;
@@ -4100,4 +4252,3 @@ $('statsHistoryTab').onclick=()=>{
 };
 
 </script></body></html>
-
