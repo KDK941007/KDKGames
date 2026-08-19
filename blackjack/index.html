@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
-<title>Paradise City Blackjack Trainer v14.46</title>
+<title>Paradise City Blackjack Trainer v14.47</title>
 <style>
 :root{--bg:#04110d;--felt:#07523a;--felt2:#063d2d;--panel:rgba(4,20,15,.88);--line:rgba(255,255,255,.13);--text:#fffaf0;--muted:#afc7bb;--gold:#e2c064;--red:#a63d3d;--green:#62d395;--lose:#ff7676;--win:#7df0a5}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% 0,#0e7450 0,#07523a 34%,#03110c 88%);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--text);overflow-x:hidden}.app{width:min(100%,560px);margin:auto;min-height:100vh;padding:10px 10px calc(16px + env(safe-area-inset-bottom))}
@@ -49,6 +49,8 @@ header{display:flex;align-items:center;justify-content:space-between;padding:6px
 }
 .cpuLevelWrap.hidden{display:none!important}
 .cpuModeHelp{font-size:9px;color:var(--muted);line-height:1.45;margin-top:4px}
+.portalUserLocked{color:var(--gold)!important;background:rgba(226,192,100,.055)!important;border-color:rgba(226,192,100,.28)!important}
+.portalUserNote{font-size:9px;color:var(--gold);line-height:1.4;margin-top:4px}
 .cpuBadge{
   display:inline-flex;
   margin-left:6px;
@@ -5720,7 +5722,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:6px
       <b id="gameOverTitle">GAME OVER</b>
     </div>
     <div class="settingsSummary">
-      <div class="settingsRow"><span>結果</span><b id="gameOverResultText">全USERの残高が ₩0 になりました</b></div>
+      <div class="settingsRow"><span>結果</span><b id="gameOverResultText">全PLAYERの残高が ₩0 になりました</b></div>
     </div>
     <button id="gameOverTopBtn" class="primary">トップへ戻る</button>
   </div>
@@ -5815,7 +5817,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:6px
 </div>
 <div id="toast" class="toast"></div>
 <script>
-const BUILD='14.46-audio-volume';
+const BUILD='14.47-portal-player';
 const $=id=>document.getElementById(id), fmt=n=>'₩'+Math.round(n).toLocaleString('ko-KR'), sleep=ms=>new Promise(r=>setTimeout(r,ms));
 function chipAmountLabel(amount,prefix=''){
   const n=Math.max(0,Math.round(amount));
@@ -5837,6 +5839,66 @@ function chipAmountLabel(amount,prefix=''){
 const suits=['♠','♥','♦','♣'],ranks=['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
 const AUDIO_BGM_KEY='blackjack_bgm_volume_v1';
 const AUDIO_SFX_KEY='blackjack_sfx_volume_v1';
+const PORTAL_SAVE_KEY='mini_game_portal_save_v1';
+function mgPortalNow(){return new Date().toISOString()}
+function mgPortalNewId(){
+  try{if(globalThis.crypto?.randomUUID)return globalThis.crypto.randomUUID()}catch(_){ }
+  return `mg-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,10)}`;
+}
+function mgPortalDefaultSave(){
+  const now=mgPortalNow();
+  return {
+    schemaVersion:1,
+    player:{playerId:mgPortalNewId(),displayName:'PLAYER',createdAt:now,updatedAt:now},
+    overall:{totalPlays:0,playedGames:0,lastPlayedGameId:null,lastPlayedAt:null},
+    games:{},
+    backup:{lastExportedAt:null,lastImportedAt:null}
+  };
+}
+function mgPortalLoad(){
+  let data=null;
+  try{data=JSON.parse(localStorage.getItem(PORTAL_SAVE_KEY)||'null')}catch(_){data=null}
+  if(!data||typeof data!=='object')data=mgPortalDefaultSave();
+  if(data.schemaVersion!==1)data.schemaVersion=1;
+  if(!data.player||typeof data.player!=='object')data.player=mgPortalDefaultSave().player;
+  if(!data.player.playerId)data.player.playerId=mgPortalNewId();
+  if(!String(data.player.displayName||'').trim())data.player.displayName='PLAYER';
+  if(!data.player.createdAt)data.player.createdAt=mgPortalNow();
+  if(!data.player.updatedAt)data.player.updatedAt=data.player.createdAt;
+  if(!data.overall||typeof data.overall!=='object')data.overall={totalPlays:0,playedGames:0,lastPlayedGameId:null,lastPlayedAt:null};
+  if(!data.games||typeof data.games!=='object')data.games={};
+  if(!data.backup||typeof data.backup!=='object')data.backup={lastExportedAt:null,lastImportedAt:null};
+  try{localStorage.setItem(PORTAL_SAVE_KEY,JSON.stringify(data))}catch(_){ }
+  return data;
+}
+function mgPortalSave(data){
+  if(!data?.player)return;
+  data.player.updatedAt=mgPortalNow();
+  data.overall.playedGames=Object.values(data.games||{}).filter(g=>(Number(g?.plays)||0)>0).length;
+  try{localStorage.setItem(PORTAL_SAVE_KEY,JSON.stringify(data))}catch(_){ }
+}
+function mgPortalProfile(){return mgPortalLoad().player}
+function mgPortalRecordValue(game,key){return Number(game?.records?.[key]?.value)||0}
+function mgPortalSetRecord(game,key,label,value,format='number'){
+  game.records ||= {};
+  game.records[key]={label,value,format};
+}
+function mgPortalRecordPlay(gameId,title,mutate){
+  const data=mgPortalLoad();
+  const now=mgPortalNow();
+  const game=data.games[gameId]||{gameId,title,recordVersion:1,plays:0,lastPlayedAt:null,records:{}};
+  game.title=title;
+  game.recordVersion=1;
+  game.plays=(Number(game.plays)||0)+1;
+  game.lastPlayedAt=now;
+  if(typeof mutate==='function')mutate(game,data);
+  data.games[gameId]=game;
+  data.overall.totalPlays=(Number(data.overall.totalPlays)||0)+1;
+  data.overall.lastPlayedGameId=gameId;
+  data.overall.lastPlayedAt=now;
+  mgPortalSave(data);
+  return game;
+}
 function clamp01(v){return Math.max(0,Math.min(1,Number(v)||0))}
 function loadAudioVolume(key){
   try{
@@ -5854,14 +5916,15 @@ function buildBankInputs(){
   const old=[...root.querySelectorAll('.playerBankRow')].map(row=>({
     name:row.querySelector('.playerNameInput')?.value||'',
     bank:row.querySelector('.bankInput')?.value||'',
-    type:row.querySelector('.playerTypeSelect')?.value||'user',
+    type:row.querySelector('.playerTypeSelect')?.value||'guest',
     level:row.querySelector('.cpuLevelSelect')?.value||'advanced'
   }));
+  const profile=mgPortalProfile();
   root.innerHTML='';
   for(let i=0;i<n;i++){
     const prev=old[i]||{};
-    // 初期値：PLAYER 1 = USER / PLAYER 2以降 = CPU。
-    // すでにユーザーが変更済みの席は、その選択を維持する。
+    // 既存初期配置を維持：PLAYER 1 = USER / PLAYER 2以降 = CPU。
+    // GUESTは人間操作だが、ポータルプロフィール戦績には反映しない。
     const type=prev.type||(i===0?'user':'cpu');
     const row=document.createElement('div');
     row.className='playerBankRow';
@@ -5870,6 +5933,7 @@ function buildBankInputs(){
         <label>参加タイプ
           <select class="playerTypeSelect" data-seat="${i}">
             <option value="user"${type==='user'?' selected':''}>USER</option>
+            <option value="guest"${type==='guest'?' selected':''}>GUEST</option>
             <option value="cpu"${type==='cpu'?' selected':''}>CPU</option>
           </select>
         </label>
@@ -5884,9 +5948,10 @@ function buildBankInputs(){
         </div>
       </div>
       <div class="playerBankMain">
-        <div class="nameWrap"><label>名前</label><input class="playerNameInput" type="text" maxlength="10" value="${prev.name||`PLAYER ${i+1}`}" placeholder="PLAYER ${i+1}"></div>
+        <div class="nameWrap"><label>名前</label><input class="playerNameInput${type==='user'?' portalUserLocked':''}" type="text" maxlength="10" value="${type==='user'?profile.displayName:(prev.name||`${type==='cpu'?'CPU':'GUEST'} ${i+1}`)}" placeholder="${type==='guest'?'GUEST':type==='cpu'?'CPU':'PLAYER'} ${i+1}"${type==='user'?' readonly':''}></div>
         <div class="bankWrap"><label>${mode==='krw'?'開始チップ（KRW）':'予算（JPY）'}</label><input class="bankInput" type="number" inputmode="numeric" min="1000" step="1000" value="${prev.bank||300000}"><div class="bankCalc"></div></div>
       </div>
+      <div class="portalUserNote ${type==='user'?'':'hidden'}">PORTAL PLAYER：${profile.displayName}</div>
       <div class="cpuModeHelp ${type==='cpu'?'':'hidden'}">${cpuLevelDescription(prev.level||'advanced')}</div>`;
     root.appendChild(row);
   }
@@ -5894,6 +5959,7 @@ function buildBankInputs(){
   document.querySelectorAll('.bankInput').forEach(i=>i.addEventListener('input',updateBudgetPreview));
   document.querySelectorAll('.playerTypeSelect').forEach(s=>s.addEventListener('change',handlePlayerTypeChange));
   document.querySelectorAll('.cpuLevelSelect').forEach(s=>s.addEventListener('change',handleCpuLevelChange));
+  refreshParticipationRows();
   updateCpuBustModeVisibility();
 }
 function cpuLevelDescription(level){
@@ -5901,13 +5967,42 @@ function cpuLevelDescription(level){
   if(level==='expert')return 'EXPERT：応用＋Hi-Lo上級戦略で自動アクション / BETはTrue Count連動';
   return 'ADVANCED：応用戦略で自動アクション / BETはテーブルMIN固定';
 }
+function refreshParticipationRows(){
+  const profile=mgPortalProfile();
+  const selects=[...document.querySelectorAll('.playerTypeSelect')];
+  const userIndex=selects.findIndex(s=>s.value==='user');
+  selects.forEach((select,i)=>{
+    const row=select.closest('.playerBankRow');
+    const type=select.value;
+    const cpu=type==='cpu',user=type==='user';
+    const userOption=select.querySelector('option[value="user"]');
+    if(userOption)userOption.disabled=userIndex>=0&&i!==userIndex;
+    row.querySelector('.cpuLevelWrap')?.classList.toggle('hidden',!cpu);
+    row.querySelector('.cpuModeHelp')?.classList.toggle('hidden',!cpu);
+    row.querySelector('.portalUserNote')?.classList.toggle('hidden',!user);
+    const name=row.querySelector('.playerNameInput');
+    name.readOnly=user;
+    name.classList.toggle('portalUserLocked',user);
+    if(user){
+      name.value=profile.displayName;
+      row.querySelector('.portalUserNote').textContent=`PORTAL PLAYER：${profile.displayName}`;
+    }
+  });
+}
 function handlePlayerTypeChange(e){
-  const row=e.target.closest('.playerBankRow'),cpu=e.target.value==='cpu';
-  row.querySelector('.cpuLevelWrap').classList.toggle('hidden',!cpu);
-  row.querySelector('.cpuModeHelp').classList.toggle('hidden',!cpu);
+  const row=e.target.closest('.playerBankRow');
+  const type=e.target.value;
+  const seat=+e.target.dataset.seat;
+  // USERは登録プロフィール本人なので、1セッションにつき1席だけ。
+  if(type==='user'){
+    document.querySelectorAll('.playerTypeSelect').forEach(s=>{
+      if(s!==e.target&&s.value==='user')s.value='guest';
+    });
+  }
   const name=row.querySelector('.playerNameInput');
-  if(cpu && /^PLAYER \d+$/i.test(name.value.trim()))name.value=`CPU ${+e.target.dataset.seat+1}`;
-  if(!cpu && /^CPU \d+$/i.test(name.value.trim()))name.value=`PLAYER ${+e.target.dataset.seat+1}`;
+  if(type==='cpu' && (!name.value.trim()||/^(PLAYER|GUEST) \d+$/i.test(name.value.trim())))name.value=`CPU ${seat+1}`;
+  if(type==='guest' && (!name.value.trim()||/^CPU \d+$/i.test(name.value.trim())||name.readOnly))name.value=`GUEST ${seat+1}`;
+  refreshParticipationRows();
   updateCpuBustModeVisibility();
 }
 function handleCpuLevelChange(e){
@@ -6221,18 +6316,21 @@ $('startBtn').onclick=()=>{
   const raw=rows.map(r=>+r.querySelector('.bankInput').value);
   const types=rows.map(r=>r.querySelector('.playerTypeSelect').value);
   const levels=rows.map(r=>r.querySelector('.cpuLevelSelect').value);
+  const profile=mgPortalProfile();
   const names=rows.map((r,i)=>{
-    const fallback=types[i]==='cpu'?`CPU ${i+1}`:`PLAYER ${i+1}`;
+    if(types[i]==='user')return profile.displayName.slice(0,10);
+    const fallback=types[i]==='cpu'?`CPU ${i+1}`:`GUEST ${i+1}`;
     return (r.querySelector('.playerNameInput').value||fallback).trim().slice(0,10)||fallback;
   });
-  if(!types.includes('user')){alert('CPUだけでは開始できません。最低1人はUSERにしてください。');return}
+  if(types.filter(t=>t==='user').length>1){alert('USERは1セッションにつき1人だけ設定できます。');return}
+  if(!types.some(t=>t!=='cpu')){alert('CPUだけでは開始できません。USERまたはGUESTを最低1人設定してください。');return}
   if(!max||max<min){alert('テーブルMAXはMIN以上に設定してください。');return}
   const banks=raw.map(v=>mode==='jpy'?Math.floor(v*rate/1000)*1000:v);
   if(banks.some(v=>!v||v<min)){alert('全プレイヤーの開始資金をテーブルMIN以上にしてください。');return}
   cfg={min,max,rate,banks:[...banks],count:banks.length,cpuBustMode:$('cpuBustMode').value};
   cpuSerial=types.filter(t=>t==='cpu').length;
   players=banks.map((b,i)=>({
-    name:names[i],type:types[i],cpuLevel:levels[i]||'advanced',
+    name:names[i],type:types[i],playerId:types[i]==='user'?profile.playerId:null,cpuLevel:levels[i]||'advanced',
     bank:b,initial:b,roundStartBank:b,bet:0,lastBet:0,hands:[],insurance:0,result:''
   }));
   roundNo=0;
@@ -6244,8 +6342,6 @@ $('startBtn').onclick=()=>{
   $('setup').style.display='none';
   $('table').style.display='block';
 
-  // iPhoneで設定画面を下までスクロールしていても、
-  // ゲーム開始時は必ずページ最上部から開始する。
   window.scrollTo({top:0,left:0,behavior:'auto'});
   document.documentElement.scrollTop=0;
   document.body.scrollTop=0;
@@ -6311,8 +6407,8 @@ function renderChips(){
 }async function flyChipToBet(btn,v){let seat=document.querySelectorAll('.seat')[activePlayer];if(!seat)return;let from=btn.getBoundingClientRect(),to=seat.getBoundingClientRect();let clone=btn.cloneNode(true);clone.classList.add('flyingChip');clone.style.left=from.left+'px';clone.style.top=from.top+'px';clone.style.width=from.width+'px';clone.style.height=from.height+'px';clone.style.margin='0';document.body.appendChild(clone);let dx=(to.left+to.width/2)-(from.left+from.width/2),dy=(to.top+44)-(from.top+from.height/2);let a=clone.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:`translate(${dx*.58}px,${dy*.48-34}px) scale(.92) rotate(7deg)`,opacity:1,offset:.55},{transform:`translate(${dx}px,${dy}px) scale(.62) rotate(-4deg)`,opacity:.2}],{duration:360,easing:'cubic-bezier(.2,.75,.2,1)',fill:'forwards'});await a.finished.catch(()=>{});clone.remove();toast(`${v>=10000?(v/10000)+'万':v}チップ BET`) }function chipStackHTML(amount){if(!amount)return '';let vals=chipValues().slice().reverse(),left=amount,out=[];for(const v of vals){while(left>=v&&out.length<8){out.push(v);left-=v}}if(left>0&&out.length<8)out.push(left);return out.length?`<div class="chipStack">${out.map(v=>`<span class="chipDisc">${v>=10000?(v/10000)+'万':v}</span>`).join('')}</div>`:''}function resultClass(r=''){if(r.includes('BLACKJACK')||r.includes('EVEN MONEY')||r.includes('WIN'))return'win';if(r.includes('PUSH'))return'push';if(r.includes('SURRENDER'))return'surrender';if(r.includes('LOSE')||r.includes('BUST'))return'lose';return''}
 
 function allUsersBankrupt(){
-  const users=players.filter(p=>p.type==='user');
-  return users.length>0&&users.every(p=>p.bank<=0);
+  const humans=players.filter(p=>p.type!=='cpu');
+  return humans.length>0&&humans.every(p=>p.bank<=0);
 }
 function prepareCpuSeatsForNextRound(){
   let changed=false;
@@ -6722,7 +6818,7 @@ function askInsurance(){
     const h=p.hands?.[0];
     const isBlackjack=!!h && natural(h.cards,h.splitOrigin);
     const canUserInsure=
-      p.type==='user' &&
+      p.type!=='cpu' &&
       !isBlackjack &&
       p.bank>=p.bet/2;
 
@@ -6756,7 +6852,7 @@ function askEvenMoneyForActiveBlackjack(pi,hi){
 
   // Dealer A + Natural BJ のUSERだけが選択対象。
   // CPUは既存方針どおりInsurance系の判断を行わず、自動的にNO。
-  if(!p||!h||p.type!=='user'||dealer[0]?.r!=='A'||!natural(h.cards,h.splitOrigin)){
+  if(!p||!h||p.type==='cpu'||dealer[0]?.r!=='A'||!natural(h.cards,h.splitOrigin)){
     return Promise.resolve(false);
   }
 
@@ -6796,7 +6892,7 @@ $('insuranceYes').onclick=()=>{
   }
 
   const p=players[insuranceIndex];
-  if(!p||p.type!=='user')return;
+  if(!p||p.type==='cpu')return;
   const amt=p.bet/2;
   if(p.bank>=amt){
     p.bank-=amt;
@@ -6813,7 +6909,7 @@ $('insuranceNo').onclick=()=>{
   }
 
   const p=players[insuranceIndex];
-  if(!p||p.type!=='user')return;
+  if(!p||p.type==='cpu')return;
   p.insurance=0;
   insuranceIndex++;
   askInsurance();
@@ -7515,7 +7611,7 @@ function advancePlayer(){
 
           if(takeEvenMoney){
             await settleEvenMoneyNow(bjPlayer,bjHand);
-          }else if(dealer[0]?.r==='A' && players[bjPlayer]?.type==='user'){
+          }else if(dealer[0]?.r==='A' && players[bjPlayer]?.type!=='cpu'){
             $('message').textContent=`${players[bjPlayer].name}：EVEN MONEYを選択しない`;
             render();
             await sleep(300);
@@ -7770,10 +7866,10 @@ function setMorphOriginForPlayer(pi){
 }
 
 function firstActionFocusPlayer(){
-  // Dealer Aなら、最初にInsuranceを選択するUSERを最優先。
+  // Dealer Aなら、最初にInsuranceを選択する人間PLAYER（USER/GUEST）を最優先。
   if(dealer[0]?.r==='A'){
     const insurancePlayer=players.findIndex(p=>
-      p.type==='user' &&
+      p.type!=='cpu' &&
       p.bet>0 &&
       p.bank>=p.bet/2
     );
@@ -8376,13 +8472,30 @@ function recordRoundHistory(){
     pushes:snapshots.reduce((s,x)=>s+x.pushes,0)
   });
 
+  const portalUser=snapshots.find(x=>x.type==='user');
+  if(portalUser){
+    // ポータル戦績はHAND数ではなくROUND単位で集計する。
+    // Split等で複数HANDになっても、1 ROUND = 1 PLAY / 1 RESULTを維持する。
+    mgPortalRecordPlay('blackjack','BLACKJACK',game=>{
+      const wins=mgPortalRecordValue(game,'wins')+(portalUser.net>0?1:0);
+      const losses=mgPortalRecordValue(game,'losses')+(portalUser.net<0?1:0);
+      const pushes=mgPortalRecordValue(game,'pushes')+(portalUser.net===0?1:0);
+      mgPortalSetRecord(game,'wins','WIN',wins);
+      mgPortalSetRecord(game,'losses','LOSE',losses);
+      mgPortalSetRecord(game,'pushes','PUSH',pushes);
+      const decided=wins+losses;
+      mgPortalSetRecord(game,'winRate','WIN RATE',decided?wins/decided*100:0,'percent');
+      mgPortalSetRecord(game,'maxBank','MAX BANK',Math.max(mgPortalRecordValue(game,'maxBank'),portalUser.bankAfter),'krw');
+    });
+  }
+
   lastRecordedRound=roundNo;
 }
 function allPlayersBankrupt(){return allUsersBankrupt()}
 function showGameOver(){
   phase='gameover';
-  $('message').textContent='GAME OVER — 全USERの残高が ₩0 になりました';
-  const result=$('gameOverResultText');if(result)result.textContent='全USERの残高が ₩0 になりました';
+  $('message').textContent='GAME OVER — 全PLAYERの残高が ₩0 になりました';
+  const result=$('gameOverResultText');if(result)result.textContent='全PLAYERの残高が ₩0 になりました';
   $('gameOverModal').classList.remove('hidden');
 }
 function showRoundBanner(){if(players.length>1){let el=$('roundBanner');el.className='roundBanner';el.textContent='';return}let rs=players.flatMap(p=>p.hands.map(h=>h.result));let w=rs.filter(r=>r.includes('WIN')||r.includes('BLACKJACK')||r.includes('EVEN MONEY')).length,l=rs.filter(r=>r.includes('LOSE')||r.includes('BUST')).length;let el=$('roundBanner');el.className='roundBanner show '+(w>l?'win':l>w?'lose':'push');el.textContent=w>l?`PLAYER WIN × ${w}`:l>w?`PLAYER LOSE × ${l}`:`PUSH / MIXED RESULT`}
@@ -8559,7 +8672,7 @@ function renderStatsModal(){
       const level=p.type==='cpu'&&p.cpuLevel?` ${String(p.cpuLevel).toUpperCase()}`:'';
       return `<div class="statsPlayerCard">
         <div class="statsPlayerHead">
-          <span>${escStats(p.name)}<em class="statsPlayerType">${p.type==='cpu'?`CPU${level}`:'USER'}</em></span>
+          <span>${escStats(p.name)}<em class="statsPlayerType">${p.type==='cpu'?`CPU${level}`:p.type==='guest'?'GUEST':'USER'}</em></span>
           <b class="statsProfit ${diffClass}">${signedFmt(diff)}</b>
         </div>
         <div class="statsPlayerMeta">
@@ -8663,7 +8776,7 @@ function currentFocusPlayer(){
   if(phase==='settling')return settlingPlayer;
   return -1;
 }
-function render(){ const table=$('table');if(table){table.dataset.dealSeats=String(players.length);table.classList.toggle('dealerDealActive',phase==='dealing'&&dealingDealerActive)} $('roundCounter').textContent=`ROUND ${Math.max(roundNo,1)}`;$('shoeCount').textContent=`SHOE ${shoeNo} ・ ${deck.length} cards${cutCardSeen?' ・ LAST GAME':''}`;$('dealerCards').innerHTML=dealer.map((c,i)=>cardHTML(c,!reveal&&i===1)).join('');$('dealerScore').textContent=dealer.length?(dealer.length===1?`(${value(dealer)})`:(reveal?`(${value(dealer)})`:`(${dealer[0]?value([dealer[0]]):''} + ?)`)):'';$('players').innerHTML=players.map((p,pi)=>{let tempBet=phase==='bet'&&pi===activePlayer?currentBet:p.bet;return `<div class="seat ${(((phase==='bet'||phase==='play'||(phase==='dealing'&&!dealingDealerActive))&&pi===activePlayer)||(phase==='insurance'&&pi===insuranceIndex)||(phase==='settling'&&pi===settlingPlayer))?'active':''} ${pi===blackjackAnnouncePlayer?'blackjackFlash':''}" data-player-index="${pi}"><div class="seatHead"><span>${p.name}${p.type==='cpu'?`<em class="cpuBadge">CPU ${String(p.cpuLevel||'advanced').toUpperCase()}</em>`:`<em class="cpuBadge cpuBadgeSpacer" aria-hidden="true">CPU ADVANCED</em>`}</span><span>BANK ${fmt(p.bank)}</span></div><div class="overviewChipSlot">${chipStackHTML(tempBet)}</div>${p.hands.length?`<div class="handsRow ${p.hands.length>1?'splitHands':''} ${p.hands.length===3?'threeHands':''}">${p.hands.map((h,hi)=>`<div class="handBlock ${phase==='play'&&pi===activePlayer&&hi===activeHand?'activeHand':''} ${phase==='play'&&pi===activePlayer&&p.hands.length>1&&hi!==activeHand?'dimmedHand':''}"><div class="handTitle">${p.hands.length>1?`HAND ${hi+1} ・ `:''}BET ${fmt(h.bet)}</div><div class="cards">${h.cards.map(c=>cardHTML(c)).join('')}</div><div class="handTotal">${h.cards.length?`TOTAL ${value(h.cards)}`:'&nbsp;'}</div><div class="handResult result ${resultClass(h.result)}">${h.result||''}</div></div>`).join('')}</div>`:`<div class="handsRow"><div class="handBlock handPlaceholder"><div class="handTitle">BET ${fmt(tempBet)}</div><div class="cards"></div><div class="handTotal"></div><div class="handResult"></div></div></div>`}${p.insurance?`<div class="result">Insurance ${fmt(p.insurance)}</div>`:''}</div>`}).join('');markSeen();ensurePlayerVisible(currentFocusPlayer())}
+function render(){ const table=$('table');if(table){table.dataset.dealSeats=String(players.length);table.classList.toggle('dealerDealActive',phase==='dealing'&&dealingDealerActive)} $('roundCounter').textContent=`ROUND ${Math.max(roundNo,1)}`;$('shoeCount').textContent=`SHOE ${shoeNo} ・ ${deck.length} cards${cutCardSeen?' ・ LAST GAME':''}`;$('dealerCards').innerHTML=dealer.map((c,i)=>cardHTML(c,!reveal&&i===1)).join('');$('dealerScore').textContent=dealer.length?(dealer.length===1?`(${value(dealer)})`:(reveal?`(${value(dealer)})`:`(${dealer[0]?value([dealer[0]]):''} + ?)`)):'';$('players').innerHTML=players.map((p,pi)=>{let tempBet=phase==='bet'&&pi===activePlayer?currentBet:p.bet;return `<div class="seat ${(((phase==='bet'||phase==='play'||(phase==='dealing'&&!dealingDealerActive))&&pi===activePlayer)||(phase==='insurance'&&pi===insuranceIndex)||(phase==='settling'&&pi===settlingPlayer))?'active':''} ${pi===blackjackAnnouncePlayer?'blackjackFlash':''}" data-player-index="${pi}"><div class="seatHead"><span>${p.name}${p.type==='cpu'?`<em class="cpuBadge">CPU ${String(p.cpuLevel||'advanced').toUpperCase()}</em>`:p.type==='guest'?`<em class="cpuBadge">GUEST</em>`:`<em class="cpuBadge cpuBadgeSpacer" aria-hidden="true">CPU ADVANCED</em>`}</span><span>BANK ${fmt(p.bank)}</span></div><div class="overviewChipSlot">${chipStackHTML(tempBet)}</div>${p.hands.length?`<div class="handsRow ${p.hands.length>1?'splitHands':''} ${p.hands.length===3?'threeHands':''}">${p.hands.map((h,hi)=>`<div class="handBlock ${phase==='play'&&pi===activePlayer&&hi===activeHand?'activeHand':''} ${phase==='play'&&pi===activePlayer&&p.hands.length>1&&hi!==activeHand?'dimmedHand':''}"><div class="handTitle">${p.hands.length>1?`HAND ${hi+1} ・ `:''}BET ${fmt(h.bet)}</div><div class="cards">${h.cards.map(c=>cardHTML(c)).join('')}</div><div class="handTotal">${h.cards.length?`TOTAL ${value(h.cards)}`:'&nbsp;'}</div><div class="handResult result ${resultClass(h.result)}">${h.result||''}</div></div>`).join('')}</div>`:`<div class="handsRow"><div class="handBlock handPlaceholder"><div class="handTitle">BET ${fmt(tempBet)}</div><div class="cards"></div><div class="handTotal"></div><div class="handResult"></div></div></div>`}${p.insurance?`<div class="result">Insurance ${fmt(p.insurance)}</div>`:''}</div>`}).join('');markSeen();ensurePlayerVisible(currentFocusPlayer())}
 function startLoungeBgm(){
  if(bgmOn)return;
  audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();
@@ -9054,7 +9167,7 @@ function showSettings(){buildTestDealInputs();
     ['開始資金入力', mode==='jpy'?'日本円から換算':'KRWで入力'],
     ['換算レート', mode==='jpy'?`1円 = ${cfg.rate||$('rate').value} KRW`:'—'],
     ['シュー', `SHOE ${shoeNo} / 残り ${deck.length}枚`],
-    ['USER / CPU', `${players.filter(p=>p.type==='user').length} USER / ${players.filter(p=>p.type==='cpu').length} CPU`],
+    ['PLAYER TYPE', `${players.filter(p=>p.type==='user').length} USER / ${players.filter(p=>p.type==='guest').length} GUEST / ${players.filter(p=>p.type==='cpu').length} CPU`],
     ['CPU残高0時', cfg.cpuBustMode==='replace'?'新しいCPUが参戦':'そのCPUは退場'],
     ['テスト配札', (testDeal.dealer.some(Boolean)||testDeal.players.some(a=>a&&a.some(Boolean)))?'指定あり':'通常（ランダム）']
   ];
