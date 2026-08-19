@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#07523a">
-<title>Paradise Baccarat Practice v1.12</title>
+<title>Paradise Baccarat Practice v1.14</title>
 <style>
 :root{
   --bg:#04110d;
@@ -388,6 +388,110 @@ button{touch-action:manipulation}
   font-size:9px;font-weight:1000
 }
 
+
+/* v1.13 SQUEEZE: temporarily view the table without losing reveal state */
+.squeezeActionRow{
+  display:flex;
+  justify-content:center;
+  gap:8px;
+  margin-top:9px;
+}
+.squeezeActionRow .squeezeOpenBtn{margin-top:0}
+.squeezeTableBtn{
+  min-width:108px;height:36px;border:1px solid rgba(255,255,255,.18);
+  border-radius:999px;background:rgba(255,255,255,.06);color:#dbe9e2;
+  font-size:9px;font-weight:1000
+}
+.betPanel{position:relative}
+.squeezeBetCover{
+  position:absolute;z-index:18;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  padding:12px;
+  border-radius:17px;
+  background:
+    radial-gradient(circle at 50% 45%,rgba(226,192,100,.09),transparent 42%),
+    rgba(3,17,12,.985);
+  box-shadow:inset 0 0 0 1px rgba(226,192,100,.24);
+}
+.squeezeReturnBtn{
+  min-width:190px;min-height:52px;padding:0 22px;
+  border:1px solid rgba(226,192,100,.64);border-radius:14px;
+  background:linear-gradient(180deg,rgba(226,192,100,.18),rgba(226,192,100,.09));
+  color:#f3d986;
+  box-shadow:0 9px 24px rgba(0,0,0,.34),inset 0 0 0 1px rgba(255,255,255,.035);
+  font-size:12px;font-weight:1000;letter-spacing:.04em
+}
+.squeezeReturnBtn:active{transform:scale(.985)}
+
+/* v1.13 Baccarat outcome announcement */
+.outcomeOverlay{
+  position:absolute;z-index:24;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(1,13,9,.60);
+  backdrop-filter:blur(2px);
+  opacity:0;pointer-events:none;
+}
+.outcomeOverlay.play{animation:outcomeBackdrop 1.26s ease both}
+.outcomeCard{
+  min-width:210px;max-width:86%;
+  padding:18px 20px 16px;
+  border-radius:19px;text-align:center;
+  background:rgba(3,18,13,.94);
+  border:1px solid rgba(255,255,255,.18);
+  box-shadow:0 16px 38px rgba(0,0,0,.48);
+  transform:scale(.88);
+}
+.outcomeOverlay.play .outcomeCard{animation:outcomeCardIn 1.26s cubic-bezier(.2,.8,.2,1) both}
+.outcomeKicker{
+  font-size:8px;font-weight:950;letter-spacing:.22em;color:var(--muted);
+  margin-bottom:6px
+}
+.outcomeMain{
+  font-size:27px;font-weight:1000;line-height:1.05;letter-spacing:.055em;
+  text-shadow:0 4px 14px rgba(0,0,0,.42)
+}
+.outcomeScore{
+  margin-top:8px;font-size:13px;font-weight:950;color:#fff;
+  letter-spacing:.08em
+}
+.outcomeOverlay.p .outcomeCard{
+  border-color:rgba(85,168,255,.62);
+  box-shadow:0 16px 38px rgba(0,0,0,.48),0 0 30px rgba(85,168,255,.20)
+}
+.outcomeOverlay.p .outcomeMain{color:#9dceff}
+.outcomeOverlay.b .outcomeCard{
+  border-color:rgba(255,109,117,.62);
+  box-shadow:0 16px 38px rgba(0,0,0,.48),0 0 30px rgba(255,109,117,.18)
+}
+.outcomeOverlay.b .outcomeMain{color:#ffadb3}
+.outcomeOverlay.t .outcomeCard{
+  border-color:rgba(98,211,149,.62);
+  box-shadow:0 16px 38px rgba(0,0,0,.48),0 0 30px rgba(98,211,149,.18)
+}
+.outcomeOverlay.t .outcomeMain{color:#92e6b7}
+
+@keyframes outcomeBackdrop{
+  0%{opacity:0}
+  12%,78%{opacity:1}
+  100%{opacity:0}
+}
+@keyframes outcomeCardIn{
+  0%{opacity:0;transform:translateY(8px) scale(.88)}
+  16%{opacity:1;transform:translateY(0) scale(1.04)}
+  27%,78%{opacity:1;transform:translateY(0) scale(1)}
+  100%{opacity:0;transform:translateY(-3px) scale(.98)}
+}
+
+/* v1.13 Blackjack-compatible BGM selector */
+.bgmSelectActions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+  margin-top:5px
+}
+.bgmSelectActions .smallBtn{min-height:42px}
+.bgmSelectActions .bgmWide{grid-column:1/-1}
+
 /* BLACKJACK-LIKE ROUND RESULT */
 .resultSheet{
   height:82dvh;max-height:82dvh;display:flex;flex-direction:column;overflow:hidden
@@ -689,14 +793,27 @@ button{touch-action:manipulation}
       <div id="squeezeGuide" class="squeezeGuide">上下左右、好きな方向へスワイプして確認<br>または OPEN をタップ</div>
       <div id="squeezeDirection" class="squeezeDirection">DIRECTION —</div>
       <div class="squeezeProgress"><span id="squeezeProgressBar"></span></div>
-      <button id="squeezeOpenBtn" class="squeezeOpenBtn" type="button">OPEN</button>
+      <div class="squeezeActionRow">
+        <button id="squeezeOpenBtn" class="squeezeOpenBtn" type="button">OPEN</button>
+        <button id="squeezeTableBtn" class="squeezeTableBtn" type="button">場を見る</button>
+      </div>
     </div>
 
     <div id="resultBanner" class="resultBanner"></div>
+    <div id="outcomeOverlay" class="outcomeOverlay hidden" aria-hidden="true">
+      <div class="outcomeCard">
+        <div class="outcomeKicker">ROUND RESULT</div>
+        <div id="outcomeMain" class="outcomeMain"></div>
+        <div id="outcomeScore" class="outcomeScore"></div>
+      </div>
+    </div>
     <div class="shoeVisual"></div>
   </section>
 
   <section id="betPanel" class="betPanel">
+    <div id="squeezeBetCover" class="squeezeBetCover hidden">
+      <button id="squeezeReturnBtn" class="squeezeReturnBtn" type="button">SQUEEZEへ戻る</button>
+    </div>
     <div class="betStatus">
       <div id="message" class="message">ベット先を選択してください</div>
       <div id="bankText" class="bankText">BANK ₩300,000</div>
@@ -745,7 +862,7 @@ button{touch-action:manipulation}
     <button id="settingsBtn" class="footerBtn" type="button">設定</button>
     <button id="helpBtn" class="footerBtn" type="button">ヘルプ</button>
     <button id="statsBtn" class="footerBtn" type="button">戦績</button>
-    <button id="soundBtn" class="footerBtn" type="button">BGM</button>
+    <button id="bgmBtn" class="footerBtn" type="button">BGM</button>
     <button id="topBtn" class="footerBtn" type="button">トップへ戻る</button>
   </footer>
 </section>
@@ -852,10 +969,26 @@ button{touch-action:manipulation}
   </div>
 </div>
 
+
+<div id="bgmModal" class="modal hidden">
+  <div class="sheet smallSheet">
+    <div class="sheetHead">
+      <div><div class="sheetTitle">BGM</div><div class="sheetSub">再生するBGMを選択してください</div></div>
+      <button id="closeBgm" class="closeBtn" type="button">×</button>
+    </div>
+    <div class="bgmSelectActions">
+      <button id="bgmJazz" class="smallBtn" type="button">CASINO LOUNGE</button>
+      <button id="bgmUpbeat" class="smallBtn" type="button">CASINO RUSH</button>
+      <button id="bgmOff" class="smallBtn bgmWide" type="button">BGM OFF</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast" class="toast"></div>
 
 <script>
 "use strict";
+const BUILD='1.14-squeeze-bet-cover-return';
 const $=id=>document.getElementById(id);
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const fmt=n=>'₩'+Math.round(n).toLocaleString('ja-JP');
@@ -908,8 +1041,6 @@ function cardFaceHtml(c,large=false){
     center=pip(50,70,false,'acePip');
 
   }else if(['J','Q','K'].includes(val)){
-    // SQUEEZE専用のミラーコートカード。
-    // J/Q/Kで頭飾り・衣装・持ち物を変え、実カードらしい情報量を増やす。
     const royalName=val==='K'?'KING':val==='Q'?'QUEEN':'JACK';
     const bodyClass=val==='Q'?'courtRed':'courtBlue';
 
@@ -1236,7 +1367,7 @@ function revealTableCard(el,c,side){
   sfxReveal();
 }
 let squeezeResolve=null,squeezeProgress=0,squeezeDragStartX=0,squeezeDragStartY=0;
-let squeezeDragBase=0,squeezeDragging=false,squeezeDirection=null,squeezeCompleted=false;
+let squeezeDragBase=0,squeezeDragging=false,squeezeDirection=null,squeezeCompleted=false,squeezeTableViewing=false;
 
 function highestMainBettor(side){
   const key=side==='player'?'player':'banker';
@@ -1250,10 +1381,8 @@ function highestMainBettor(side){
 }
 function squeezeRights(side,cardIndex){
   if(cfg.squeezeMode!=='all')return null;
-  // ParadiseのPair/Tieのみ参加時はオープン配札。メインBETがある側だけSqueeze対象。
   const owner=highestMainBettor(side);
   if(!owner)return null;
-  // 実テーブル寄り：1枚目はDealerがオープン、2枚目と必要時の3枚目を最高BET USERがSqueeze。
   if(cardIndex<1)return null;
   return owner;
 }
@@ -1278,7 +1407,6 @@ function paintSqueezeProgress(p){
   }
 
   $('squeezeFace').classList.toggle('revealing',squeezeProgress>0);
-  // 角の数字・スートはSQUEEZEの推測を楽しめるよう、ほぼ全部めくれた時だけ表示する。
   $('squeezeFace').classList.toggle('showIndex',squeezeProgress>=.88);
   $('squeezeProgressBar').style.width=`${squeezeProgress*100}%`;
   $('squeezeDirection').textContent=squeezeDirection?`DIRECTION ${squeezeDirection.toUpperCase()}`:'DIRECTION —';
@@ -1306,10 +1434,13 @@ function finishSqueeze(){
 function closeSqueezeAfterReview(){
   if(!squeezeResolve||!squeezeCompleted)return;
   $('squeezeOverlay').classList.add('hidden');
+  $('squeezeBetCover').classList.add('hidden');
+  squeezeTableViewing=false;
   const done=squeezeResolve;
   squeezeResolve=null;
   squeezeCompleted=false;
   squeezeDirection=null;
+  squeezeDragging=false;
   $('squeezeOpenBtn').textContent='OPEN';
   $('squeezeGuide').innerHTML='上下左右、好きな方向へスワイプして確認<br>または OPEN をタップ';
   done();
@@ -1350,6 +1481,9 @@ function squeezeReveal(c,side,owner){
   resetCover();
   paintSqueezeProgress(0);
   $('squeezeFace').classList.remove('revealing','showIndex');
+  squeezeTableViewing=false;
+  squeezeDragging=false;
+  $('squeezeBetCover').classList.add('hidden');
   updateSqueezeOverlayBounds();
   $('squeezeOverlay').classList.remove('hidden');
   return new Promise(resolve=>{squeezeResolve=resolve});
@@ -1379,7 +1513,6 @@ $('squeezeCard').addEventListener('pointermove',e=>{
 function endSqueezeDrag(){
   if(!squeezeDragging)return;
   squeezeDragging=false;
-  // 指を離した時点でOPENし切っていなければ、必ず完全に裏向きへ戻す。
   if(squeezeProgress>=.98){
     finishSqueeze();
   }else{
@@ -1398,6 +1531,24 @@ $('squeezeOpenBtn').onclick=()=>{
   finishSqueeze();
 };
 
+$('squeezeTableBtn').onclick=()=>{
+  if(!squeezeResolve)return;
+  squeezeDragging=false;
+  squeezeTableViewing=true;
+  $('squeezeOverlay').classList.add('hidden');
+  $('squeezeBetCover').classList.remove('hidden');
+  $('message').textContent='場のカードを確認中 — SQUEEZEへ戻れます';
+};
+
+$('squeezeReturnBtn').onclick=()=>{
+  if(!squeezeResolve)return;
+  squeezeTableViewing=false;
+  $('squeezeBetCover').classList.add('hidden');
+  updateSqueezeOverlayBounds();
+  $('squeezeOverlay').classList.remove('hidden');
+  $('message').textContent='SQUEEZEを続けてください';
+};
+
 async function dealCard(side,specKey){
   const c=draw(testDeal[specKey]);
   const hand=side==='player'?playerHand:bankerHand;
@@ -1411,7 +1562,6 @@ async function dealCard(side,specKey){
   if(owner){
     await squeezeReveal(c,side,owner);
   }else{
-    // Dealer open: first card, unbet side, No Squeeze, or Tie/Pair-only participation.
     await sleep(cardIndex===0?650:780);
   }
 
@@ -1468,7 +1618,6 @@ function addBet(amount){
   const maxRoom=Math.max(0,cfg.max-u.bets[selectedBet]);
   if(maxRoom<=0){toast(`この練習版のMAXは ${fmt(cfg.max)}`);return}
 
-  // 選択額が残高を超える場合は、残っているBANKをそのままALL-INする。
   const requested=amount;
   const actual=Math.min(requested,u.bank,maxRoom);
   if(actual<=0)return;
@@ -1504,7 +1653,6 @@ $('repeatBtn').onclick=()=>{
     return;
   }
 
-  // 前回BET総額が残高を超える場合は、前回のBET比率を保ちながら残高分だけ配分する。
   const available=u.bank;
   let remaining=available;
   const scaled=blankBets();
@@ -1541,7 +1689,6 @@ $('customApply').onclick=()=>{
 };
 function hasValidBet(obj,u=currentUser()){
   if(!totalBets(obj))return false;
-  // 通常は各BETがMIN以上。残高を使い切ったALL-IN時だけ、最後の端数BETをMIN未満でも許可する。
   const belowMin=BET_KEYS.filter(k=>obj[k]>0&&obj[k]<cfg.min);
   if(!belowMin.length)return true;
   return !!u&&u.bank===0&&belowMin.length===1;
@@ -1618,7 +1765,7 @@ async function dealRound(){
     setState('player',p0>=8?`NATURAL ${p0}`:'','natural');
     setState('banker',b0>=8?`NATURAL ${b0}`:'','natural');
     phaseLabel('NATURAL');await sleep(700);
-    settleRound();return;
+    await settleRound();return;
   }
 
   let playerThird=null;
@@ -1647,7 +1794,7 @@ async function dealRound(){
   }else{
     setState('banker',`BANKER ${bInitial} → STAND`);await sleep(720);
   }
-  settleRound();
+  await settleRound();
 }
 function updateShoe(){$('shoeText').textContent=`SHOE ${shoeNo} ・ ${deck.length} cards`}
 
@@ -1708,10 +1855,14 @@ function settleUser(u,outcome,pp,bp,pPoint,bPoint){
     roundNet,bankAfter:u.bank,details
   };
 }
-function settleRound(){
+async function settleRound(){
   const usedTestDeal=Object.values(testDeal).some(Boolean);
   const p=handPoint(playerHand),b=handPoint(bankerHand);
   const outcome=p>b?'P':b>p?'B':'T',pp=isPair(playerHand),bp=isPair(bankerHand);
+
+  // PLAYER / BANKER / TIE を先に明確に見せてから精算へ。
+  await announceOutcome(outcome,p,b);
+
   const userResults=users.filter(u=>u.confirmed).map(u=>settleUser(u,outcome,pp,bp,p,b));
 
   stats.rounds++;
@@ -1746,12 +1897,11 @@ function settleRound(){
   $('bankText').textContent='';
   $('modalNextRound').disabled=false;
   $('modalNextRound').textContent=allUsersUnableToBet()?'GAME OVER｜トップへ戻る':'次のラウンド';
-  // 結果一覧を表示した直後のタップがボタンへ抜けないよう、操作受付を少し遅らせる。
   resultActionReadyAt=performance.now()+700;
 
-  // テスト配札は1ラウンドだけ有効。使用後に自動クリアして次ラウンドへ持ち越さない。
   if(usedTestDeal)clearTestDeal(false);
 
+  await sleep(360);
   showResult();
 }
 function buildResultHtml(){
@@ -1792,17 +1942,19 @@ function returnToTopScreen(){
   $('statsModal').classList.add('hidden');
   $('settingsModal').classList.add('hidden');
   $('confirmModal').classList.add('hidden');
+  $('bgmModal').classList.add('hidden');
+  $('squeezeOverlay').classList.add('hidden');
+  $('squeezeBetCover').classList.add('hidden');
+  $('outcomeOverlay').classList.add('hidden');
   $('gameScreen').style.display='none';
   $('setupScreen').style.display='block';
   phase='setup';
   window.scrollTo({top:0,behavior:'instant'});
 }
 $('modalNextRound').onclick=()=>{
-  // 結果表示を発生させたタップの「押し抜け」は処理しない。
   if(performance.now()<resultActionReadyAt)return;
 
   if(allUsersUnableToBet()){
-    // GAME OVERは、このボタンをユーザーが明示的に押した時だけトップへ戻る。
     returnToTopScreen();
     return;
   }
@@ -1982,7 +2134,7 @@ $('testToggle').onclick=()=>{
 $('testClearBtn').onclick=()=>clearTestDeal(true);
 
 /* ---------- AUDIO ---------- */
-let audioCtx=null,bgmOn=false,bgmTimer=null,bgmNodes=[],bgmSession=0,bgmWasPlaying=false,audioRestoreBusy=false;
+let audioCtx=null,bgmOn=false,bgmTimer=null,bgmMode='lounge',bgmSession=0,bgmMaster=null,bgmWasPlayingBeforeHide=false,bgmResumeMode=null,audioRestoreBusy=false;
 function ensureAudio(){
   if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();
   if(audioCtx.state==='suspended')audioCtx.resume().catch(()=>{});
@@ -2020,37 +2172,25 @@ function sfxNoise(dur=.055,vol=.03,highpass=1000,delay=0){
     s.start(t);
   }catch{}
 }
-
-// Blackjackと同じ「カードがテーブルへ滑る」系の音。
 function sfxCard(){
   sfxNoise(.05,.024,1600);
   sfxTone(190,.045,.018,'triangle',145,.008);
 }
-
-// SQUEEZEで表面を開いた時だけ、カード音と同系統の軽い確認音を追加。
 function sfxReveal(){
   sfxNoise(.035,.014,1800);
   sfxTone(420,.05,.018,'triangle',540,.012);
 }
-
-// BlackjackのBETチップ音と同一。
 function sfxBet(){
   sfxTone(760,.045,.035,'sine',520);
   sfxTone(1040,.035,.024,'sine',800,.035);
 }
-
-// BlackjackのCLEAR系の戻し音。
 function sfxClear(){
   sfxTone(400,.05,.02,'triangle',250);
 }
-
-// Blackjackの配当チップ音。
 function sfxPayout(){
   sfxTone(660,.05,.032,'triangle',880);
   sfxTone(880,.06,.03,'triangle',1180,.055);
 }
-
-// Blackjackと同じ「チャリーン」系WIN音。
 function sfxWin(){
   sfxTone(1480,.055,.040,'sine',1760,0);
   sfxTone(2217,.045,.025,'sine',2489,.012);
@@ -2060,44 +2200,302 @@ function sfxWin(){
   sfxTone(3136,.16,.018,'sine',3322,.120);
   sfxNoise(.025,.008,2600,.018);
 }
-
-// Blackjackと同じ下降系LOSE音。
 function sfxLose(){
   sfxTone(440,.12,.038,'triangle',330,0);
   sfxTone(330,.16,.035,'triangle',220,.12);
 }
-function startBgm(){
-  stopBgm(false);bgmOn=true;const ctx=ensureAudio();const session=++bgmSession;
-  const master=ctx.createGain();master.gain.value=.035;master.connect(ctx.destination);bgmNodes.push(master);
-  const chords=[[220,277.18,329.63],[196,246.94,293.66],[174.61,220,261.63],[196,246.94,329.63]];
-  let step=0;
-  const play=()=>{
+
+function sfxOutcomePlayer(){
+  sfxNoise(.045,.012,2100,0);
+  sfxTone(520,.11,.027,'triangle',660,.01);
+  sfxTone(660,.14,.032,'sine',880,.105);
+  sfxTone(1046.5,.18,.020,'sine',1174.7,.22);
+}
+function sfxOutcomeBanker(){
+  sfxNoise(.05,.013,1450,0);
+  sfxTone(330,.12,.032,'triangle',392,.01);
+  sfxTone(392,.16,.034,'triangle',523.25,.11);
+  sfxTone(783.99,.18,.018,'sine',880,.23);
+}
+function sfxOutcomeTie(){
+  sfxTone(523.25,.16,.027,'sine',523.25,0);
+  sfxTone(659.25,.18,.027,'sine',659.25,.035);
+  sfxTone(783.99,.22,.024,'sine',783.99,.09);
+  sfxNoise(.035,.008,2600,.05);
+}
+function sfxOutcome(outcome){
+  if(outcome==='P')sfxOutcomePlayer();
+  else if(outcome==='B')sfxOutcomeBanker();
+  else sfxOutcomeTie();
+}
+async function announceOutcome(outcome,p,b){
+  const overlay=$('outcomeOverlay');
+  const main=$('outcomeMain');
+  const score=$('outcomeScore');
+  const name=outcome==='P'?'PLAYER WIN':outcome==='B'?'BANKER WIN':'TIE';
+
+  // 最終カードが見えたあと、勝敗演出の前に一呼吸。
+  phaseLabel('RESULT');
+  $('message').textContent='勝敗判定…';
+  await sleep(680);
+
+  main.textContent=name;
+  score.textContent=`PLAYER ${p}  —  BANKER ${b}`;
+  overlay.className=`outcomeOverlay ${outcome.toLowerCase()}`;
+  overlay.classList.remove('hidden');
+  void overlay.offsetWidth;
+  overlay.classList.add('play');
+  sfxOutcome(outcome);
+
+  await sleep(1260);
+  overlay.classList.remove('play');
+  overlay.classList.add('hidden');
+}
+function startLoungeBgm(){
+  if(bgmOn)return;
+  const ctx=ensureAudio();
+  bgmOn=true;bgmMode='lounge';const session=++bgmSession;
+  $('bgmBtn').textContent='BGM：LOUNGE';
+
+  const master=ctx.createGain(),room=ctx.createBiquadFilter();
+  bgmMaster=master;
+  master.gain.value=.16;
+  room.type='lowpass';room.frequency.value=4200;room.Q.value=.3;
+  room.connect(master);master.connect(ctx.destination);
+
+  const bpm=76,beat=60/bpm,bar=beat*4;
+  const chords=[
+    [261.63,311.13,392.00,466.16],
+    [207.65,261.63,311.13,392.00],
+    [233.08,293.66,349.23,440.00],
+    [196.00,246.94,293.66,349.23]
+  ];
+  const bass=[65.41,51.91,58.27,49.00];
+  let barIndex=0,nextTime=ctx.currentTime+.05;
+
+  function envGain(t,peak,attack,hold,release){
+    const g=ctx.createGain();
+    g.gain.setValueAtTime(.0001,t);
+    g.gain.exponentialRampToValueAtTime(peak,t+attack);
+    g.gain.setValueAtTime(peak,t+attack+hold);
+    g.gain.exponentialRampToValueAtTime(.0001,t+attack+hold+release);
+    return g;
+  }
+  function pianoTone(freq,t,dur,vol=.024){
+    const o=ctx.createOscillator(),g=envGain(t,vol,.012,dur*.5,dur*.45),f=ctx.createBiquadFilter();
+    o.type='triangle';o.frequency.setValueAtTime(freq,t);f.type='lowpass';f.frequency.value=2200;
+    o.connect(f);f.connect(g);g.connect(room);o.start(t);o.stop(t+dur+.08);
+  }
+  function bassTone(freq,t,dur){
+    const o=ctx.createOscillator(),g=envGain(t,.028,.02,dur*.62,dur*.3),f=ctx.createBiquadFilter();
+    o.type='sine';o.frequency.setValueAtTime(freq,t);f.type='lowpass';f.frequency.value=330;
+    o.connect(f);f.connect(g);g.connect(room);o.start(t);o.stop(t+dur+.08);
+  }
+  function vibeTone(freq,t){
+    const o=ctx.createOscillator(),g=envGain(t,.012,.008,.12,.6);
+    o.type='sine';o.frequency.setValueAtTime(freq*2,t);
+    o.connect(g);g.connect(room);o.start(t);o.stop(t+.85);
+  }
+  function brush(t,strong=false){
+    const len=Math.floor(ctx.sampleRate*.08),buf=ctx.createBuffer(1,len,ctx.sampleRate),data=buf.getChannelData(0);
+    for(let i=0;i<len;i++)data[i]=(Math.random()*2-1)*(1-i/len);
+    const s=ctx.createBufferSource(),f=ctx.createBiquadFilter(),g=ctx.createGain();
+    s.buffer=buf;f.type='highpass';f.frequency.value=strong?1500:2500;g.gain.value=strong?.008:.0045;
+    s.connect(f);f.connect(g);g.connect(room);s.start(t);
+  }
+  function scheduleBar(){
     if(!bgmOn||session!==bgmSession)return;
-    const chord=chords[step++%chords.length];
-    chord.forEach((f,i)=>{
-      const o=ctx.createOscillator(),g=ctx.createGain();o.type=i===0?'sine':'triangle';o.frequency.value=f;
-      g.gain.setValueAtTime(i===0?.10:.045,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+1.7);
-      o.connect(g);g.connect(master);o.start();o.stop(ctx.currentTime+1.8);bgmNodes.push(o,g);
-    });
-    bgmTimer=setTimeout(play,1650);
-  };play();$('soundBtn').textContent='BGM ON';
+    const c=chords[barIndex%chords.length],t=nextTime;
+    c.forEach((n,i)=>pianoTone(n,t+i*.018,bar*.92,.018));
+    bassTone(bass[barIndex%bass.length],t,beat*.9);
+    bassTone(bass[barIndex%bass.length]*1.5,t+beat*2,beat*.75);
+    brush(t,true);brush(t+beat);brush(t+beat*2,true);brush(t+beat*3);
+    vibeTone(c[(barIndex+1)%c.length],t+beat*1.5);
+    if(barIndex%2===1)vibeTone(c[(barIndex+2)%c.length]*.5,t+beat*3.25);
+    barIndex++;nextTime+=bar;
+    const delay=Math.max(80,(nextTime-ctx.currentTime-bar*.35)*1000);
+    bgmTimer=setTimeout(scheduleBar,delay);
+  }
+  scheduleBar();
 }
-function stopBgm(update=true){
-  bgmSession++;clearTimeout(bgmTimer);bgmTimer=null;
-  bgmNodes.forEach(n=>{try{n.disconnect()}catch{}});bgmNodes=[];
-  if(update){bgmOn=false;$('soundBtn').textContent='BGM'}
+
+function startUpbeatBgm(){
+  stopBgm(false);
+  const ctx=ensureAudio();
+  bgmOn=true;bgmMode='upbeat';const session=++bgmSession;
+  $('bgmBtn').textContent='BGM：RUSH';
+
+  const master=ctx.createGain(),room=ctx.createBiquadFilter();
+  bgmMaster=master;
+  master.gain.value=.12;
+  room.type='lowpass';room.frequency.value=4800;room.Q.value=.28;
+  room.connect(master);master.connect(ctx.destination);
+
+  const bpm=138,beat=60/bpm;
+  const progression=[
+    [293.66,349.23,440.00,523.25],
+    [392.00,466.16,587.33,698.46],
+    [261.63,311.13,392.00,466.16],
+    [311.13,392.00,466.16,587.33],
+    [349.23,415.30,523.25,622.25],
+    [466.16,554.37,698.46,830.61],
+    [311.13,392.00,466.16,587.33],
+    [392.00,493.88,587.33,739.99]
+  ];
+  const roots=[73.42,98.00,65.41,77.78,87.31,116.54,77.78,98.00];
+  const solo=[523.25,587.33,622.25,698.46,783.99,830.61,932.33,1046.50];
+  let barIndex=0,nextTime=ctx.currentTime+.05;
+
+  function env(t,peak,a,h,r){
+    const g=ctx.createGain();
+    g.gain.setValueAtTime(.0001,t);
+    g.gain.exponentialRampToValueAtTime(peak,t+a);
+    g.gain.setValueAtTime(peak,t+a+h);
+    g.gain.exponentialRampToValueAtTime(.0001,t+a+h+r);
+    return g;
+  }
+  function piano(freq,t,dur,vol=.016){
+    const o=ctx.createOscillator(),g=env(t,vol,.006,dur*.32,dur*.6),f=ctx.createBiquadFilter();
+    o.type='triangle';o.frequency.setValueAtTime(freq,t);f.type='lowpass';f.frequency.value=2450;
+    o.connect(f);f.connect(g);g.connect(room);o.start(t);o.stop(t+dur+.05);
+  }
+  function upright(freq,t,dur,vol=.03){
+    const o=ctx.createOscillator(),o2=ctx.createOscillator(),g=env(t,vol,.008,dur*.42,dur*.5),f=ctx.createBiquadFilter();
+    o.type='sine';o2.type='triangle';o.frequency.setValueAtTime(freq,t);o2.frequency.setValueAtTime(freq*2,t);
+    f.type='lowpass';f.frequency.value=520;
+    const g2=ctx.createGain();g2.gain.value=.12;
+    o.connect(f);o2.connect(g2);g2.connect(f);f.connect(g);g.connect(room);
+    o.start(t);o2.start(t);o.stop(t+dur+.04);o2.stop(t+dur+.04);
+  }
+  function horn(freq,t,dur,vol=.012){
+    const o=ctx.createOscillator(),g=env(t,vol,.012,dur*.3,dur*.58),f=ctx.createBiquadFilter();
+    o.type='sawtooth';o.frequency.setValueAtTime(freq,t);f.type='lowpass';f.frequency.value=1450;
+    o.connect(f);f.connect(g);g.connect(room);o.start(t);o.stop(t+dur+.05);
+  }
+  function brush(t,dur=.055,vol=.013,hp=1800){
+    const len=Math.floor(ctx.sampleRate*dur),buf=ctx.createBuffer(1,len,ctx.sampleRate),d=buf.getChannelData(0);
+    for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*(1-i/len);
+    const s=ctx.createBufferSource(),f=ctx.createBiquadFilter(),g=ctx.createGain();
+    s.buffer=buf;f.type='highpass';f.frequency.value=hp;g.gain.value=vol;
+    s.connect(f);f.connect(g);g.connect(room);s.start(t);
+  }
+  function ride(t,accent=false){brush(t,.028,accent?.013:.007,5600)}
+  function kick(t){
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.type='sine';o.frequency.setValueAtTime(92,t);o.frequency.exponentialRampToValueAtTime(52,t+.07);
+    g.gain.setValueAtTime(.035,t);g.gain.exponentialRampToValueAtTime(.0001,t+.1);
+    o.connect(g);g.connect(room);o.start(t);o.stop(t+.11);
+  }
+  function compChord(chord,t,dur=.28,vol=.011){
+    chord.slice(1).forEach((n,i)=>piano(n*(i===2?2:1),t+i*.009,dur,vol));
+  }
+  function scheduleBar(){
+    if(!bgmOn||session!==bgmSession)return;
+    while(nextTime<ctx.currentTime+1.05){
+      const idx=barIndex%progression.length,chord=progression[idx],root=roots[idx],t=nextTime;
+      const nextRoot=roots[(idx+1)%roots.length];
+      const walk=[root,root*1.5,root*1.78,(nextRoot>root?nextRoot/1.05946:nextRoot*1.05946)];
+      walk.forEach((n,i)=>upright(n,t+beat*i,beat*.72,i===0?.031:.026));
+
+      compChord(chord,t+beat*.48,beat*.34,.012);
+      compChord(chord,t+beat*1.72,beat*.28,.010);
+      if(barIndex%2===0)compChord(chord,t+beat*2.55,beat*.3,.011);
+      else compChord(chord,t+beat*3.18,beat*.26,.011);
+
+      ride(t,true);ride(t+beat*.66,false);ride(t+beat,true);ride(t+beat*1.66,false);
+      ride(t+beat*2,true);ride(t+beat*2.66,false);ride(t+beat*3,true);ride(t+beat*3.66,false);
+      kick(t);kick(t+beat*2);
+      brush(t+beat,.07,.017,1450);brush(t+beat*3,.07,.018,1450);
+
+      if(barIndex%4===0||barIndex%4===2){
+        horn(chord[1]*2,t+beat*1.28,beat*.32,.010);
+        horn(chord[2]*2,t+beat*1.31,beat*.32,.008);
+      }
+      if(barIndex%4===3){
+        chord.slice(1).forEach((n,i)=>horn(n*2,t+beat*3.18+i*.012,beat*.42,.008));
+      }
+
+      if(barIndex%2===1){
+        const base=(barIndex*2)%solo.length;
+        const phrase=[0,2,1,4,3];
+        phrase.forEach((off,i)=>{
+          const swing=i%2?beat*.08:0;
+          piano(solo[(base+off)%solo.length],t+beat*(.18+i*.43)+swing,beat*.24,i===4?.012:.009);
+        });
+      }else if(barIndex%4===2){
+        piano(solo[(barIndex+4)%solo.length],t+beat*3.42,beat*.3,.011);
+      }
+
+      barIndex++;
+      nextTime+=beat*4;
+    }
+    bgmTimer=setTimeout(scheduleBar,110);
+  }
+  scheduleBar();
 }
-$('soundBtn').onclick=()=>{ensureAudio();if(bgmOn)stopBgm(true);else{bgmOn=true;startBgm()}};
-function pauseAudio(){
-  bgmWasPlaying=bgmOn;
-  if(audioCtx&&audioCtx.state==='running')audioCtx.suspend().catch(()=>{});
+function stopBgm(updateLabel=true){
+  bgmOn=false;
+  bgmSession++;
+  if(bgmTimer){clearTimeout(bgmTimer);bgmTimer=null}
+  if(bgmMaster){
+    try{bgmMaster.disconnect()}catch{}
+    bgmMaster=null;
+  }
+  if(updateLabel){
+    bgmWasPlayingBeforeHide=false;
+    bgmResumeMode=null;
+    $('bgmBtn').textContent='BGM';
+  }
 }
-async function restoreAudio(){
-  if(audioRestoreBusy)return;audioRestoreBusy=true;
+function playBgm(mode){
+  stopBgm(false);
+  if(mode==='upbeat')startUpbeatBgm();
+  else startLoungeBgm();
+}
+function pauseAudioForPageHide(){
+  if(bgmOn){
+    bgmWasPlayingBeforeHide=true;
+    bgmResumeMode=bgmMode;
+    bgmOn=false;
+    bgmSession++;
+    if(bgmTimer){clearTimeout(bgmTimer);bgmTimer=null}
+    if(bgmMaster){
+      try{bgmMaster.disconnect()}catch{}
+      bgmMaster=null;
+    }
+  }
+  if(audioCtx&&audioCtx.state==='running'){
+    try{audioCtx.suspend()}catch{}
+  }
+}
+async function ensureAudioContextRunning(){
   try{
-    if(audioCtx&&audioCtx.state==='suspended')await audioCtx.resume().catch(()=>{});
-    if(bgmWasPlaying&&bgmOn&&!bgmTimer)startBgm();
-  }finally{audioRestoreBusy=false}
+    if(!audioCtx||audioCtx.state==='closed'){
+      audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+    }
+    if(audioCtx.state!=='running')await audioCtx.resume();
+    return audioCtx.state==='running';
+  }catch{
+    return false;
+  }
+}
+async function restoreAudioAfterPageReturn(){
+  if(audioRestoreBusy)return;
+  audioRestoreBusy=true;
+  try{
+    const ok=await ensureAudioContextRunning();
+    if(ok&&bgmWasPlayingBeforeHide&&bgmResumeMode){
+      const mode=bgmResumeMode;
+      bgmWasPlayingBeforeHide=false;
+      bgmResumeMode=null;
+      playBgm(mode);
+    }
+  }finally{
+    audioRestoreBusy=false;
+  }
+}
+function unlockAudioFromGesture(){
+  restoreAudioAfterPageReturn();
 }
 window.addEventListener('resize',()=>{
   if(!$('squeezeOverlay').classList.contains('hidden'))updateSqueezeOverlayBounds();
@@ -2107,9 +2505,22 @@ window.addEventListener('orientationchange',()=>{
     if(!$('squeezeOverlay').classList.contains('hidden'))updateSqueezeOverlayBounds();
   },180);
 });
-document.addEventListener('visibilitychange',()=>{if(document.hidden)pauseAudio();else restoreAudio()});
-window.addEventListener('pagehide',pauseAudio);window.addEventListener('pageshow',restoreAudio);window.addEventListener('focus',restoreAudio);
-document.addEventListener('pointerdown',()=>{if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume().catch(()=>{})},{capture:true,passive:true});
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='hidden')pauseAudioForPageHide();
+  else restoreAudioAfterPageReturn();
+});
+window.addEventListener('pagehide',pauseAudioForPageHide);
+window.addEventListener('pageshow',()=>restoreAudioAfterPageReturn());
+window.addEventListener('focus',()=>restoreAudioAfterPageReturn());
+document.addEventListener('pointerdown',unlockAudioFromGesture,{capture:true,passive:true});
+document.addEventListener('touchstart',unlockAudioFromGesture,{capture:true,passive:true});
+
+$('bgmBtn').onclick=()=>{$('bgmModal').classList.remove('hidden')};
+$('bgmJazz').onclick=()=>{playBgm('lounge');$('bgmModal').classList.add('hidden')};
+$('bgmUpbeat').onclick=()=>{playBgm('upbeat');$('bgmModal').classList.add('hidden')};
+$('bgmOff').onclick=()=>{stopBgm(true);$('bgmModal').classList.add('hidden')};
+$('closeBgm').onclick=()=>{$('bgmModal').classList.add('hidden')};
+$('bgmModal').addEventListener('click',e=>{if(e.target===$('bgmModal'))$('bgmModal').classList.add('hidden')});
 </script>
 </body>
 </html>
