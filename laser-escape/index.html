@@ -799,7 +799,7 @@ h1{
 (() => {
   'use strict';
 
-  const BUILD = '1.16.0';
+  const BUILD = '1.16.1';
   const LEVEL_SECONDS = 30;
   const SCORE_PER_SECOND = 100;
   const STORAGE_RANKING = 'laser_escape_ranking_v1';
@@ -1421,10 +1421,10 @@ h1{
   }
 
   function rapidWarningMs(first=false){
-    if(first) return Math.max(520, warningDuration() * .72);
+    if(first) return Math.max(580, warningDuration() * .78);
     const progress = Math.min(1,state.levelElapsed/LEVEL_SECONDS);
-    // 連続攻撃も少しだけ早めに予告する。
-    return Math.max(240, 390 - state.level*8 - progress*55);
+    // 連続攻撃の警告をさらに早め、攻撃密度は変えずに反応猶予を増やす。
+    return Math.max(320, 470 - state.level*8 - progress*55);
   }
 
   function spawnBurst(){
