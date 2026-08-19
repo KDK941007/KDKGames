@@ -266,10 +266,17 @@ h1{
   padding:8px 9px;border:3px solid var(--line);background:#091426;
   box-shadow:4px 4px 0 #02040a
 }
-.hudTop,.hudBottom{
-  display:flex;justify-content:space-between;gap:8px;align-items:center
+.hudTop{
+  display:flex;justify-content:space-between;gap:8px;align-items:center;
+  margin-bottom:7px
 }
-.hudTop{margin-bottom:7px}
+.hudBottom{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
+  gap:0;
+  align-items:center;
+  width:100%
+}
 .playerName{
   min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
   color:var(--cyan);font-size:10px;font-weight:1000
@@ -288,8 +295,86 @@ h1{
   letter-spacing:.04em;
   box-shadow:3px 3px 0 #02040a
 }
-.scoreLabel{font-size:18px;font-weight:1000;line-height:1}
-.timeLabel{color:var(--green);font-size:13px;font-weight:1000}
+.scoreLabel{
+  justify-self:start;
+  font-size:18px;font-weight:1000;line-height:1
+}
+.lifeLabel{
+  justify-self:center;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:2px;
+  width:130px;
+  height:38px;
+  line-height:1;
+}
+.lifeHeart{
+  position:relative;
+  display:inline-block;
+  flex:0 0 42px;
+  width:42px;
+  height:36px;
+  color:#ff5f7f;
+  opacity:1;
+}
+.lifeHeart::before{
+  content:"";
+  position:absolute;
+  left:6px;
+  top:0;
+  width:6px;
+  height:6px;
+  background:currentColor;
+  box-shadow:
+    6px 0 0 currentColor,
+    18px 0 0 currentColor,
+    24px 0 0 currentColor,
+
+    -6px 6px 0 currentColor,
+    0 6px 0 currentColor,
+    6px 6px 0 currentColor,
+    12px 6px 0 currentColor,
+    18px 6px 0 currentColor,
+    24px 6px 0 currentColor,
+    30px 6px 0 currentColor,
+
+    -6px 12px 0 currentColor,
+    0 12px 0 currentColor,
+    6px 12px 0 currentColor,
+    12px 12px 0 currentColor,
+    18px 12px 0 currentColor,
+    24px 12px 0 currentColor,
+    30px 12px 0 currentColor,
+
+    0 18px 0 currentColor,
+    6px 18px 0 currentColor,
+    12px 18px 0 currentColor,
+    18px 18px 0 currentColor,
+    24px 18px 0 currentColor,
+
+    6px 24px 0 currentColor,
+    12px 24px 0 currentColor,
+    18px 24px 0 currentColor,
+
+    12px 30px 0 currentColor;
+  filter:drop-shadow(3px 3px 0 #02040a);
+}
+.lifeHeart.off{
+  opacity:.18;
+}
+.lifeLabel.danger{animation:lifeDanger .34s steps(2,end) infinite}
+@keyframes lifeDanger{50%{opacity:.48}}
+.timeLabel{
+  justify-self:end;
+  min-width:4ch;
+  color:var(--green);
+  font-size:13px;
+  font-weight:1000;
+  text-align:right;
+  font-variant-numeric:tabular-nums;
+  font-feature-settings:"tnum" 1
+}
 .pauseBtn{
   width:50px;border:3px solid var(--line);background:#12243f;color:#fff;
   box-shadow:4px 4px 0 #02040a;font-size:19px;font-weight:1000
@@ -350,6 +435,10 @@ h1{
 }
 .pilot.hit{animation:hitFlash .08s steps(2,end) 5}
 @keyframes hitFlash{50%{filter:brightness(3) drop-shadow(3px 3px 0 #02040a)}}
+.pilot.invulnerable{animation:invulnerableBlink .12s steps(2,end) 9}
+@keyframes invulnerableBlink{
+  50%{opacity:.28;filter:brightness(1.8) drop-shadow(3px 3px 0 #02040a)}
+}
 .arenaFrame.hitShake{animation:arenaHitShake .92s steps(2,end)}
 @keyframes arenaHitShake{
   0%,100%{transform:translate(0,0)}
@@ -628,7 +717,7 @@ h1{
 
     <div class="ruleMini pixelPanel">
       <b>RULE</b><br>
-      プレイヤーを指でドラッグして移動。レーザーに1回でも触れるとGAME OVER。<br>
+      プレイヤーを指でドラッグして移動。体力は3。3回被弾するとGAME OVER。<br>
       1 LEVEL = 30秒。LEVELが高いほどスコア倍率とレーザー密度が上昇します。
     </div>
   </div>
@@ -644,6 +733,7 @@ h1{
         </div>
         <div class="hudBottom">
           <span id="hudScore" class="scoreLabel">000000</span>
+          <span id="hudLives" class="lifeLabel" aria-label="残り体力"><span class="lifeHeart"></span><span class="lifeHeart"></span><span class="lifeHeart"></span></span>
           <span id="hudTime" class="timeLabel">30.0</span>
         </div>
       </div>
@@ -701,7 +791,7 @@ h1{
       </div>
     </div>
 
-    <div class="gameHint">DRAG PLAYER / ONE HIT = GAME OVER</div>
+    <div class="gameHint">DRAG PLAYER / HP 3 / 3 HITS = GAME OVER</div>
   </div>
 </section>
 
@@ -709,7 +799,7 @@ h1{
 (() => {
   'use strict';
 
-  const BUILD = '1.11.0';
+  const BUILD = '1.16.0';
   const LEVEL_SECONDS = 30;
   const SCORE_PER_SECOND = 100;
   const STORAGE_RANKING = 'laser_escape_ranking_v1';
@@ -733,6 +823,7 @@ h1{
   const hudName = $('#hudName');
   const hudLevel = $('#hudLevel');
   const hudScore = $('#hudScore');
+  const hudLives = $('#hudLives');
   const hudTime = $('#hudTime');
 
   const levelOverlay = $('#levelOverlay');
@@ -757,6 +848,9 @@ h1{
     levelElapsed:0,
     totalSurvival:0,
     score:0,
+    maxHp:3,
+    hp:3,
+    invulnerableUntil:0,
     lastTs:0,
     spawnAccumulator:0,
     raf:0,
@@ -1113,13 +1207,19 @@ h1{
     hudName.textContent = state.playerName;
     hudLevel.textContent = `LEVEL ${state.level}`;
     hudScore.textContent = formatScore(state.score);
+    hudLives.innerHTML = Array.from({length:state.maxHp},(_,i)=>
+      `<span class="lifeHeart${i<state.hp?'':' off'}"></span>`
+    ).join('');
+    hudLives.classList.toggle('danger',state.hp===1);
+    hudLives.setAttribute('aria-label',`残り体力 ${state.hp}`);
     hudTime.textContent = Math.max(0, LEVEL_SECONDS - state.levelElapsed).toFixed(1);
   }
 
   function warningDuration(){
     const progress = Math.min(1, state.levelElapsed / LEVEL_SECONDS);
     const levelCut = Math.min(260, (state.level - 1) * 22);
-    return Math.max(330, 920 - progress * 330 - levelCut);
+    // v1.12: 警告線を少し早めに表示。攻撃密度は変えず、反応猶予だけを増やす。
+    return Math.max(420, 1040 - progress * 330 - levelCut);
   }
 
   function beamDuration(){
@@ -1275,10 +1375,23 @@ h1{
     return ++state.shotGroupSeq;
   }
 
+  function edgeShotChance(){
+    // LEVEL1では控えめ。高LEVELほどわずかに増えるが、端攻撃ばかりにはしない。
+    return Math.min(.20,.14 + Math.max(0,state.level-1)*.012);
+  }
+
+  function randomShotPos(min=11,max=89,allowEdge=true){
+    if(allowEdge && Math.random() < edgeShotChance()){
+      // 角待ち対策。端そのものではなく、プレイヤーが避ける余地を残した端付近を狙う。
+      return Math.random() < .5 ? randomInt(2,6) : randomInt(94,98);
+    }
+    return randomInt(min,max);
+  }
+
   function makeShot(orientation,pos,delay=0,group=null,warningMs=null){
     createLaser(
       orientation,
-      Math.max(7,Math.min(93,pos)),
+      Math.max(2,Math.min(98,pos)),
       delay,
       group ?? nextShotGroup(),
       warningMs
@@ -1300,17 +1413,18 @@ h1{
     for(let i=0;i<count;i++){
       const orientation = Math.random() < .5 ? 'v' : 'h';
       const list = orientation==='v' ? chosenV : chosenH;
-      let pos = randomInt(8,92), tries=0;
-      while(list.some(v=>Math.abs(v-pos)<8) && tries++<12) pos=randomInt(8,92);
+      let pos = randomShotPos(8,92,true), tries=0;
+      while(list.some(v=>Math.abs(v-pos)<8) && tries++<12) pos=randomShotPos(8,92,true);
       list.push(pos);
       makeShot(orientation,pos,0,group);
     }
   }
 
   function rapidWarningMs(first=false){
-    if(first) return Math.max(460, warningDuration() * .72);
+    if(first) return Math.max(520, warningDuration() * .72);
     const progress = Math.min(1,state.levelElapsed/LEVEL_SECONDS);
-    return Math.max(190, 330 - state.level*8 - progress*55);
+    // 連続攻撃も少しだけ早めに予告する。
+    return Math.max(240, 390 - state.level*8 - progress*55);
   }
 
   function spawnBurst(){
@@ -1329,7 +1443,7 @@ h1{
         count = randomInt(2,Math.min(state.level,3));
       }
 
-      const base = randomInt(13,87);
+      const base = randomShotPos(13,87,true);
       const group = nextShotGroup();
       const warn = rapidWarningMs(w===0);
 
@@ -1353,10 +1467,10 @@ h1{
       const orientation = w%2===0 ? 'v' : 'h';
       const group = nextShotGroup();
       const warn = rapidWarningMs(w===0);
-      makeShot(orientation,randomInt(11,89),delay,group,warn);
+      makeShot(orientation,randomShotPos(11,89,true),delay,group,warn);
 
       if(state.level>=3 && Math.random()<.28){
-        const pos2=randomInt(11,89);
+        const pos2=randomShotPos(11,89,true);
         makeShot(orientation,pos2,delay,group,warn);
       }
       delay += scheduleGap;
@@ -1408,7 +1522,7 @@ h1{
     for(let w=0;w<waves;w++){
       makeShot(
         'v',
-        randomInt(13,87),
+        randomShotPos(13,87,true),
         delay,
         nextShotGroup(),
         rapidWarningMs(w===0)
@@ -1417,7 +1531,7 @@ h1{
       // LEVEL1でも縦→横の連射は行う。ただし同時照射は1本のまま。
       makeShot(
         'h',
-        randomInt(13,87),
+        randomShotPos(13,87,true),
         delay + Math.floor(scheduleGap*.55),
         nextShotGroup(),
         rapidWarningMs(false)
@@ -1431,6 +1545,7 @@ h1{
 
     const r = Math.random();
 
+    // v1.12: 一部の通常/連続攻撃は低確率で端付近にも飛ぶ。
     // 連続攻撃は全体の70%。
     // 残り30%は通常の同時斉射として、攻撃に緩急を付ける。
     if(r < .31) return spawnBurst();        // 31%
@@ -1446,6 +1561,7 @@ h1{
 
   function collisionCheck(){
     if(state.paused || state.transitioning || state.gameOver) return;
+    if(performance.now() < state.invulnerableUntil) return;
     const pr = pilot.getBoundingClientRect();
 
     for(const obj of state.lasers){
@@ -1497,36 +1613,73 @@ h1{
 
   function hitPlayer(){
     if(state.gameOver) return;
+    if(performance.now() < state.invulnerableUntil) return;
 
-    // 当たったレーザーをしばらく画面に残し、「何に当たったか」が分かるようにする。
-    state.gameOver = true;
+    state.hp = Math.max(0,state.hp-1);
     state.drag = false;
-    stopBgm();
+    updateHud();
 
     ensureAudio();
     hitSfx();
 
-    pilot.classList.add('hit');
+    pilot.classList.remove('hit','invulnerable');
     arenaFrame.classList.remove('hitShake');
+    pilot.classList.remove('hit','invulnerable');
+    hitText.textContent='LASER HIT!';
     hitFlashLayer.classList.remove('show');
     hitText.classList.remove('show');
+
+    hitText.textContent = state.hp>0 ? `DAMAGE!  HP ${state.hp}` : 'LASER HIT!';
+
     void arenaFrame.offsetWidth;
+    pilot.classList.add('hit');
     arenaFrame.classList.add('hitShake');
     hitFlashLayer.classList.add('show');
     hitText.classList.add('show');
     spawnHitParticles();
 
-    // 0.7秒は被弾したレーザーを残す。
-    setTimer(() => clearLasers(), 720);
+    if(state.hp<=0){
+      // 3回目の被弾で従来どおりGAME OVER。
+      state.gameOver = true;
+      stopBgm();
 
-    // 演出を十分見せてからGAME OVERへ。
+      // 最後に当たったレーザーを短時間残して原因を確認できるようにする。
+      setTimer(() => clearLasers(), 720);
+
+      setTimer(() => {
+        pilot.classList.remove('hit','invulnerable');
+        arenaFrame.classList.remove('hitShake');
+        hitFlashLayer.classList.remove('show');
+        hitText.classList.remove('show');
+        endGame(true);
+      }, 1350);
+      return;
+    }
+
+    // 残りHPがある場合は短時間無敵。
+    // 同じレーザーや重なったレーザーでHPが一瞬で連続減少するのを防ぐ。
+    state.invulnerableUntil = performance.now() + 1100;
+
+    // 被弾した攻撃パターンはいったん消し、次の攻撃まで立て直す猶予を作る。
+    setTimer(() => {
+      clearLasers();
+      state.spawnAccumulator = 0;
+    }, 240);
+
     setTimer(() => {
       pilot.classList.remove('hit');
       arenaFrame.classList.remove('hitShake');
       hitFlashLayer.classList.remove('show');
       hitText.classList.remove('show');
-      endGame(true);
-    }, 1350);
+      pilot.classList.add('invulnerable');
+    }, 430);
+
+    setTimer(() => {
+      pilot.classList.remove('invulnerable');
+      if(!state.gameOver){
+        hitText.textContent='LASER HIT!';
+      }
+    }, 1120);
   }
 
   function frame(ts){
@@ -1716,6 +1869,9 @@ h1{
       levelElapsed:0,
       totalSurvival:0,
       score:0,
+      maxHp:3,
+      hp:3,
+      invulnerableUntil:0,
       lastTs:0,
       spawnAccumulator:0,
       drag:false,
