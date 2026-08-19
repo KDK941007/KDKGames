@@ -70,6 +70,42 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
   line-height:1.65
 }
 
+
+.playerPortalCard{
+  display:grid;
+  grid-template-columns:42px minmax(0,1fr) auto;
+  align-items:center;
+  gap:10px;
+  min-height:66px;
+  margin:-6px 0 14px;
+  padding:10px 12px;
+  border:1px solid rgba(91,91,214,.18);
+  border-radius:16px;
+  background:
+    radial-gradient(circle at 110% -10%,rgba(56,189,248,.12),transparent 42%),
+    #fff;
+  box-shadow:0 10px 26px rgba(31,41,55,.07);
+}
+.playerPortalCard:active{transform:scale(.992)}
+.playerPortalIcon{
+  width:42px;height:42px;
+  display:grid;place-items:center;
+  border-radius:13px;
+  background:linear-gradient(135deg,#6366f1,#38bdf8);
+  color:#fff;
+  font-size:18px;
+  font-weight:1000;
+}
+.playerPortalBody{min-width:0}
+.playerPortalLabel{color:#6366f1;font-size:7px;font-weight:950;letter-spacing:.14em}
+.playerPortalName{
+  margin-top:2px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  font-size:15px;font-weight:1000;
+}
+.playerPortalMeta{margin-top:3px;color:var(--muted);font-size:8px;font-weight:850}
+.playerPortalArrow{color:#6366f1;font-size:21px;font-weight:900}
+
 .gameBrowser{display:grid;gap:10px}
 .browserTop{
   position:sticky;
@@ -620,6 +656,16 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
     <p>ジャンルを問わず、遊びたいゲームをここから選択できます。各ゲームは独立して動作します。</p>
   </header>
 
+  <a class="playerPortalCard" href="./player/" aria-label="PLAYER PROFILEを開く">
+    <div class="playerPortalIcon" aria-hidden="true">P</div>
+    <div class="playerPortalBody">
+      <div class="playerPortalLabel">PLAYER</div>
+      <div id="portalPlayerName" class="playerPortalName">PLAYER</div>
+      <div id="portalPlayerMeta" class="playerPortalMeta">PLAY 0 / GAMES 0</div>
+    </div>
+    <div class="playerPortalArrow" aria-hidden="true">›</div>
+  </a>
+
   <section class="gameBrowser" aria-label="ゲームを探す">
     <div class="browserTop">
       <label class="searchBox">
@@ -753,6 +799,47 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
 
   <footer class="footer">MINI GAME PORTAL</footer>
 </main>
+
+<script>
+(() => {
+  'use strict';
+  const SAVE_KEY='mini_game_portal_save_v1';
+  const nameEl=document.getElementById('portalPlayerName');
+  const metaEl=document.getElementById('portalPlayerMeta');
+  function newPlayerId(){
+    try{if(globalThis.crypto?.randomUUID)return globalThis.crypto.randomUUID()}catch(_){}
+    return `mg-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,10)}`;
+  }
+  function loadPortalPlayer(){
+    let data=null;
+    try{data=JSON.parse(localStorage.getItem(SAVE_KEY)||'null')}catch(_){data=null}
+    const now=new Date().toISOString();
+    if(!data||typeof data!=='object'){
+      data={schemaVersion:1,player:{playerId:newPlayerId(),displayName:'PLAYER',createdAt:now,updatedAt:now},overall:{totalPlays:0,playedGames:0,lastPlayedGameId:null,lastPlayedAt:null},games:{},backup:{lastExportedAt:null,lastImportedAt:null}};
+    }
+    data.schemaVersion=1;
+    if(!data.player||typeof data.player!=='object')data.player={};
+    if(!data.player.playerId)data.player.playerId=newPlayerId();
+    if(!String(data.player.displayName||'').trim())data.player.displayName='PLAYER';
+    if(!data.player.createdAt)data.player.createdAt=now;
+    if(!data.player.updatedAt)data.player.updatedAt=data.player.createdAt;
+    if(!data.overall||typeof data.overall!=='object')data.overall={totalPlays:0,playedGames:0,lastPlayedGameId:null,lastPlayedAt:null};
+    if(!data.games||typeof data.games!=='object'||Array.isArray(data.games))data.games={};
+    if(!data.backup||typeof data.backup!=='object')data.backup={lastExportedAt:null,lastImportedAt:null};
+    data.overall.playedGames=Object.values(data.games).filter(g=>(Number(g?.plays)||0)>0).length;
+    try{localStorage.setItem(SAVE_KEY,JSON.stringify(data))}catch(_){}
+    return data;
+  }
+  function renderPortalPlayer(){
+    const data=loadPortalPlayer();
+    if(nameEl)nameEl.textContent=data.player.displayName;
+    if(metaEl)metaEl.textContent=`PLAY ${(Number(data.overall.totalPlays)||0).toLocaleString('ja-JP')} / GAMES ${(Number(data.overall.playedGames)||0).toLocaleString('ja-JP')}`;
+  }
+  renderPortalPlayer();
+  window.addEventListener('pageshow',renderPortalPlayer);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)renderPortalPlayer()});
+})();
+</script>
 
 <script>
 (() => {
@@ -1075,9 +1162,9 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
       new URL('./index.html', location.href).href
     ]);
 
-    // ポータル上のPLAYABLEゲームを自動検出する。
+    // ポータル上のPLAYABLEゲームとPLAYER PROFILEを自動検出する。
     // ゲーム追加時にsw.jsへ個別パスを追加する必要はない。
-    document.querySelectorAll('a.gameTile.available[href]').forEach(link => {
+    document.querySelectorAll('a.gameTile.available[href], a.playerPortalCard[href]').forEach(link => {
       try{
         const url =
           new URL(link.getAttribute('href'), location.href);
