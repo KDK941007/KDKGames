@@ -124,6 +124,56 @@
     width:100%;
   }
 
+
+  .player-type-grid{
+    width:100%;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:6px;
+    margin-bottom:8px;
+  }
+  .player-type-box{
+    min-width:0;
+    padding:6px 7px;
+    border:1px solid var(--line);
+    border-radius:10px;
+    background:#10172a;
+  }
+  .player-type-box label{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:5px;
+    margin-bottom:4px;
+    color:var(--muted);
+    font-size:9px;
+    font-weight:900;
+  }
+  .player-type-box label b{font-size:12px}
+  .player-type-box.o label b{color:var(--o)}
+  .player-type-box.x label b{color:var(--x)}
+  .player-type-select{
+    width:100%;
+    height:30px;
+    min-width:0;
+    border:1px solid var(--line);
+    border-radius:8px;
+    background:#273351;
+    color:var(--text);
+    padding:0 6px;
+    font-size:10px;
+    font-weight:900;
+  }
+  .player-type-name{
+    margin-top:4px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    color:#c9d4e6;
+    font-size:8px;
+    font-weight:800;
+  }
+
   .setup-row{
     width:100%;
     min-width:0;
@@ -574,6 +624,23 @@
     .setup-row{margin-bottom:6px}
     .time-input-wrap,.unlimited-toggle,.starter-choice{height:33px}
   }
+
+/* PLAYER TYPE: compact board-game native selector */
+.player-set-row{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:7px}
+.player-slot{
+  min-width:0;height:39px;padding:3px 7px;display:grid;grid-template-columns:28px minmax(0,1fr);align-items:center;gap:5px;
+  border:1px solid var(--line);border-radius:10px;background:#10172a;color:var(--text);cursor:pointer;text-align:left;
+}
+.player-slot-symbol{font-size:23px;font-weight:1000;line-height:1;text-align:center}
+.player-slot.o .player-slot-symbol{color:var(--o)} .player-slot.x .player-slot-symbol{color:var(--x)}
+.player-slot-info{min-width:0;display:block}
+.player-slot-info small{display:block;color:var(--muted);font-size:8px;font-weight:900;line-height:1;margin-bottom:3px}
+.player-slot-info b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#cbd5e5;font-size:9px;line-height:1;font-weight:900}
+.player-slot.is-user{background:#273351;border-color:#44577f;box-shadow:inset 0 0 0 1px rgba(255,255,255,.025)}
+.player-slot.is-user .player-slot-info small{color:var(--accent)}
+.player-slot:active{transform:scale(.985)}
+@media(max-height:700px){.player-set-row{margin-bottom:5px}.player-slot{height:35px}.player-slot-symbol{font-size:21px}}
+
 </style>
 </head>
 
@@ -604,6 +671,16 @@
           </div>
 
           <div class="starter-area" id="starterArea">
+            <div class="player-set-row" aria-label="プレイヤータイプ">
+              <button id="oPlayerTypeBtn" class="player-slot o is-user" type="button" data-side="O" aria-pressed="true">
+                <span class="player-slot-symbol">○</span>
+                <span class="player-slot-info"><small id="oPlayerMode">USER</small><b id="oPlayerName">PLAYER</b></span>
+              </button>
+              <button id="xPlayerTypeBtn" class="player-slot x" type="button" data-side="X" aria-pressed="false">
+                <span class="player-slot-symbol">×</span>
+                <span class="player-slot-info"><small id="xPlayerMode">GUEST</small><b id="xPlayerName">GUEST</b></span>
+              </button>
+            </div>
             <div class="setup-row">
               <div>
                 <div class="time-setting-label">1ターンの制限時間</div>
@@ -727,6 +804,103 @@
   const cancelPortalBtn = document.getElementById('cancelPortalBtn');
   const confirmPortalBtn = document.getElementById('confirmPortalBtn');
 
+
+  const PORTAL_SAVE_KEY='mini_game_portal_save_v1';
+  function mgPortalNow(){return new Date().toISOString()}
+  function mgPortalNewId(){
+    try{if(globalThis.crypto?.randomUUID)return globalThis.crypto.randomUUID()}catch(_){}
+    return `mg-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,10)}`;
+  }
+  function mgPortalDefaultSave(){
+    const now=mgPortalNow();
+    return {
+      schemaVersion:1,
+      player:{playerId:mgPortalNewId(),displayName:'PLAYER',createdAt:now,updatedAt:now},
+      overall:{totalPlays:0,playedGames:0,lastPlayedGameId:null,lastPlayedAt:null},
+      games:{},
+      backup:{lastExportedAt:null,lastImportedAt:null}
+    };
+  }
+  function mgPortalLoad(){
+    let data=null;
+    try{data=JSON.parse(localStorage.getItem(PORTAL_SAVE_KEY)||'null')}catch(_){data=null}
+    if(!data||typeof data!=='object')data=mgPortalDefaultSave();
+    if(data.schemaVersion!==1)data.schemaVersion=1;
+    if(!data.player||typeof data.player!=='object')data.player=mgPortalDefaultSave().player;
+    if(!data.player.playerId)data.player.playerId=mgPortalNewId();
+    if(!String(data.player.displayName||'').trim())data.player.displayName='PLAYER';
+    if(!data.player.createdAt)data.player.createdAt=mgPortalNow();
+    if(!data.player.updatedAt)data.player.updatedAt=data.player.createdAt;
+    if(!data.overall||typeof data.overall!=='object')data.overall={totalPlays:0,playedGames:0,lastPlayedGameId:null,lastPlayedAt:null};
+    if(!data.games||typeof data.games!=='object'||Array.isArray(data.games))data.games={};
+    if(!data.backup||typeof data.backup!=='object')data.backup={lastExportedAt:null,lastImportedAt:null};
+    try{localStorage.setItem(PORTAL_SAVE_KEY,JSON.stringify(data))}catch(_){}
+    return data;
+  }
+  function mgPortalSave(data){
+    if(!data?.player)return;
+    data.player.updatedAt=mgPortalNow();
+    data.overall.playedGames=Object.values(data.games||{}).filter(g=>(Number(g?.plays)||0)>0).length;
+    try{localStorage.setItem(PORTAL_SAVE_KEY,JSON.stringify(data))}catch(_){}
+  }
+  function mgPortalProfile(){return mgPortalLoad().player}
+  function mgPortalRecordValue(game,key){return Number(game?.records?.[key]?.value)||0}
+  function mgPortalSetRecord(game,key,label,value,format='number'){
+    game.records ||= {};
+    game.records[key]={label,value,format};
+  }
+  function mgPortalRecordPlay(gameId,title,mutate){
+    const data=mgPortalLoad();
+    const now=mgPortalNow();
+    const game=data.games[gameId]||{gameId,title,recordVersion:1,plays:0,lastPlayedAt:null,records:{}};
+    game.title=title;
+    game.recordVersion=1;
+    game.plays=(Number(game.plays)||0)+1;
+    game.lastPlayedAt=now;
+    if(typeof mutate==='function')mutate(game,data);
+    data.games[gameId]=game;
+    data.overall.totalPlays=(Number(data.overall.totalPlays)||0)+1;
+    data.overall.lastPlayedGameId=gameId;
+    data.overall.lastPlayedAt=now;
+    mgPortalSave(data);
+    return game;
+  }
+
+
+  const oPlayerTypeBtn = document.getElementById('oPlayerTypeBtn');
+  const xPlayerTypeBtn = document.getElementById('xPlayerTypeBtn');
+  const oPlayerName = document.getElementById('oPlayerName');
+  const xPlayerName = document.getElementById('xPlayerName');
+  const oPlayerMode = document.getElementById('oPlayerMode');
+  const xPlayerMode = document.getElementById('xPlayerMode');
+  const playerTypes={O:'user',X:'guest'};
+
+  function getPlayerType(side){ return playerTypes[side]||'guest'; }
+  function refreshPlayerTypes(changed=null) {
+    if(changed && playerTypes[changed]==='user'){
+      playerTypes[changed==='O'?'X':'O']='guest';
+    }
+    if(playerTypes.O==='user' && playerTypes.X==='user') playerTypes.X='guest';
+    const profile=mgPortalProfile();
+    const apply=(side,btn,nameEl,modeEl)=>{
+      const isUser=playerTypes[side]==='user';
+      btn.classList.toggle('is-user',isUser);
+      btn.setAttribute('aria-pressed',isUser?'true':'false');
+      modeEl.textContent=isUser?'USER':'GUEST';
+      nameEl.textContent=isUser?profile.displayName:'一時プレイ';
+    };
+    apply('O',oPlayerTypeBtn,oPlayerName,oPlayerMode);
+    apply('X',xPlayerTypeBtn,xPlayerName,xPlayerMode);
+  }
+
+  [oPlayerTypeBtn,xPlayerTypeBtn].forEach(btn=>btn.addEventListener('click',()=>{
+    const side=btn.dataset.side;
+    playerTypes[side]=playerTypes[side]==='user'?'guest':'user';
+    refreshPlayerTypes(side);
+  }));
+  window.addEventListener('pageshow',()=>refreshPlayerTypes());
+  refreshPlayerTypes();
+
   const WIN_LINES = [
     [0,1,2],[3,4,5],[6,7,8],
     [0,3,6],[1,4,7],[2,5,8],
@@ -743,6 +917,7 @@
   let turnDeadline = 0;
   let timerRaf = 0;
   let audioCtx = null;
+  let portalResultRecorded = false;
 
   function getSymbol(player) {
     return player === 'X' ? '×' : '○';
@@ -811,6 +986,7 @@
     gameOver = false;
     winLine = [];
     turnDeadline = 0;
+    portalResultRecorded = false;
   }
 
   function showStarterSelection() {
@@ -998,7 +1174,25 @@
     return WIN_LINES.find(line => line.every(i => board[i] === player)) || null;
   }
 
+
+  function recordPortalMatch(winner){
+    if(portalResultRecorded)return;
+    portalResultRecorded=true;
+    const userSide=getPlayerType('O')==='user'?'O':getPlayerType('X')==='user'?'X':null;
+    if(!userSide)return;
+    const userWon=winner===userSide;
+    mgPortalRecordPlay('marubatsu','消える○×ゲーム',game=>{
+      const wins=mgPortalRecordValue(game,'wins')+(userWon?1:0);
+      const losses=mgPortalRecordValue(game,'losses')+(userWon?0:1);
+      mgPortalSetRecord(game,'wins','WIN',wins,'number');
+      mgPortalSetRecord(game,'losses','LOSE',losses,'number');
+      const decided=Math.max(1,wins+losses);
+      mgPortalSetRecord(game,'winRate','WIN RATE',wins/decided*100,'percent');
+    });
+  }
+
   function showWinner(player, reason) {
+    recordPortalMatch(player);
     const symbol = getSymbol(player);
 
     winnerSymbol.textContent = symbol;
