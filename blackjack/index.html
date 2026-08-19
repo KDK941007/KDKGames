@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
-<title>Paradise City Blackjack Trainer v14.45</title>
+<title>Paradise City Blackjack Trainer v14.46</title>
 <style>
 :root{--bg:#04110d;--felt:#07523a;--felt2:#063d2d;--panel:rgba(4,20,15,.88);--line:rgba(255,255,255,.13);--text:#fffaf0;--muted:#afc7bb;--gold:#e2c064;--red:#a63d3d;--green:#62d395;--lose:#ff7676;--win:#7df0a5}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% 0,#0e7450 0,#07523a 34%,#03110c 88%);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--text);overflow-x:hidden}.app{width:min(100%,560px);margin:auto;min-height:100vh;padding:10px 10px calc(16px + env(safe-area-inset-bottom))}
@@ -952,6 +952,27 @@ header{display:flex;align-items:center;justify-content:space-between;padding:6px
 .memoItem{padding:10px 2px;border-bottom:1px solid var(--line)}
 .memoItem b{display:block;font-size:12px;color:var(--gold);margin-bottom:3px}
 .memoItem span{font-size:11px;color:var(--muted);line-height:1.5}
+.audioVolumePanel{
+  margin-top:10px;
+  padding:10px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:rgba(255,255,255,.025);
+  display:grid;
+  gap:10px;
+}
+.audioVolumeRow{
+  display:grid;
+  grid-template-columns:72px minmax(0,1fr) 42px;
+  gap:8px;
+  align-items:center;
+  font-size:10px;
+  font-weight:900;
+}
+.audioVolumeRow label{color:var(--muted)}
+.audioVolumeRow input[type="range"]{width:100%;min-width:0;accent-color:var(--gold)}
+.audioVolumeValue{color:var(--gold);text-align:right;font-variant-numeric:tabular-nums}
+.audioVolumeNote{font-size:8px;color:var(--muted);line-height:1.45}
 .bgmSelectActions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
 .bgmSelectActions .small{min-height:42px}
 .bgmSelectActions #bgmOff{color:#d99a9a}
@@ -5334,9 +5355,22 @@ header{display:flex;align-items:center;justify-content:space-between;padding:6px
 </div>
 <div id="bgmModal" class="settingsModal hidden" role="dialog" aria-modal="true" aria-labelledby="bgmTitle">
   <div class="settingsSheet">
-    <div class="settingsHead"><b id="bgmTitle">BGM</b></div>
+    <div class="settingsHead"><b id="bgmTitle">サウンド設定</b></div>
     <div class="settingsSummary">
-      <div class="helpNote">再生するBGMを選択してください。</div>
+      <div class="helpNote">BGMと効果音の音量を個別に調整できます。</div>
+    </div>
+    <div class="audioVolumePanel">
+      <div class="audioVolumeRow">
+        <label for="bgmVolume">BGM音量</label>
+        <input id="bgmVolume" type="range" min="0" max="100" step="1" value="100">
+        <span id="bgmVolumeValue" class="audioVolumeValue">100%</span>
+      </div>
+      <div class="audioVolumeRow">
+        <label for="sfxVolume">効果音</label>
+        <input id="sfxVolume" type="range" min="0" max="100" step="1" value="100">
+        <span id="sfxVolumeValue" class="audioVolumeValue">100%</span>
+      </div>
+      <div class="audioVolumeNote">音量設定はこの端末に保存されます。BGM再生中はスライダー操作を即時反映します。</div>
     </div>
     <div class="bgmSelectActions">
       <button id="bgmJazz" type="button" class="small">CASINO LOUNGE</button>
@@ -5781,7 +5815,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:6px
 </div>
 <div id="toast" class="toast"></div>
 <script>
-const BUILD='14.45-even-money';
+const BUILD='14.46-audio-volume';
 const $=id=>document.getElementById(id), fmt=n=>'₩'+Math.round(n).toLocaleString('ko-KR'), sleep=ms=>new Promise(r=>setTimeout(r,ms));
 function chipAmountLabel(amount,prefix=''){
   const n=Math.max(0,Math.round(amount));
@@ -5801,7 +5835,19 @@ function chipAmountLabel(amount,prefix=''){
   return prefix+body;
 }
 const suits=['♠','♥','♦','♣'],ranks=['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
-let mode='krw', cfg={}, players=[], deck=[], dealer=[], activePlayer=0, activeHand=0, phase='setup', currentBet=0, reveal=false, insuranceIndex=0, insuranceMode='insurance', evenMoneyContext=null, evenMoneyResolve=null, animating=false, roundNo=0, settlingPlayer=-1, blackjackAnnouncePlayer=-1, lastActionPlayer=0, testDeal={dealer:[null,null],players:[]};let cardSeq=0,seenCards=new Set(),audioCtx=null,bgmOn=false,bgmTimer=null,bgmMode='lounge',bgmSession=0,bgmMaster=null,bgmWasPlayingBeforeHide=false,bgmResumeMode=null,audioRestoreBusy=false,cutCardRemaining=0,cutCardSeen=false,shuffleAfterRound=false,shoeNo=0,hintMode='basic',hiLoRunning=0,hiLoCountedIds=new Set(),dealtCardMap=new Map(),cpuSerial=0,cpuTurnPending=false,roundHistory=[],lastRecordedRound=0,statsMode='players';
+const AUDIO_BGM_KEY='blackjack_bgm_volume_v1';
+const AUDIO_SFX_KEY='blackjack_sfx_volume_v1';
+function clamp01(v){return Math.max(0,Math.min(1,Number(v)||0))}
+function loadAudioVolume(key){
+  try{
+    const raw=localStorage.getItem(key);
+    return raw===null?1:clamp01(Number(raw));
+  }catch(e){return 1}
+}
+function saveAudioVolume(key,value){
+  try{localStorage.setItem(key,String(clamp01(value)))}catch(e){}
+}
+let mode='krw', cfg={}, players=[], deck=[], dealer=[], activePlayer=0, activeHand=0, phase='setup', currentBet=0, reveal=false, insuranceIndex=0, insuranceMode='insurance', evenMoneyContext=null, evenMoneyResolve=null, animating=false, roundNo=0, settlingPlayer=-1, blackjackAnnouncePlayer=-1, lastActionPlayer=0, testDeal={dealer:[null,null],players:[]};let cardSeq=0,seenCards=new Set(),audioCtx=null,bgmOn=false,bgmTimer=null,bgmMode='lounge',bgmSession=0,bgmMaster=null,sfxMaster=null,bgmVolume=loadAudioVolume(AUDIO_BGM_KEY),sfxVolume=loadAudioVolume(AUDIO_SFX_KEY),bgmWasPlayingBeforeHide=false,bgmResumeMode=null,audioRestoreBusy=false,cutCardRemaining=0,cutCardSeen=false,shuffleAfterRound=false,shoeNo=0,hintMode='basic',hiLoRunning=0,hiLoCountedIds=new Set(),dealtCardMap=new Map(),cpuSerial=0,cpuTurnPending=false,roundHistory=[],lastRecordedRound=0,statsMode='players';
 let dealingDealerActive=false;
 function buildBankInputs(){
   const n=+$('playerCount').value,root=$('playerBanks');
@@ -5990,8 +6036,20 @@ function markSeen(){
   });
 }
 function toast(t){let el=$('toast');el.textContent=t;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),850)}
+function ensureSfxMaster(ac){
+  if(!sfxMaster){
+    sfxMaster=ac.createGain();
+    sfxMaster.gain.value=sfxVolume;
+    sfxMaster.connect(ac.destination);
+  }
+  return sfxMaster;
+}
 function getAudio(){
-  audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();
+  if(!audioCtx||audioCtx.state==='closed'){
+    audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+    sfxMaster=null;
+  }
+  ensureSfxMaster(audioCtx);
   if(audioCtx.state==='suspended')audioCtx.resume();
   return audioCtx;
 }
@@ -6003,7 +6061,7 @@ function sfxTone(freq=440,dur=.06,vol=.045,type='sine',endFreq=null,delay=0){
     f.type='lowpass';f.frequency.value=3500;
     g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+.008);
     g.gain.exponentialRampToValueAtTime(.0001,t+dur);
-    o.connect(f);f.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+dur+.02);
+    o.connect(f);f.connect(g);g.connect(ensureSfxMaster(ac));o.start(t);o.stop(t+dur+.02);
   }catch(e){}
 }
 function sfxNoise(dur=.055,vol=.03,highpass=1000,delay=0){
@@ -6012,7 +6070,7 @@ function sfxNoise(dur=.055,vol=.03,highpass=1000,delay=0){
     for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*(1-i/len);
     const s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain();
     s.buffer=buf;f.type='highpass';f.frequency.value=highpass;g.gain.value=vol;
-    s.connect(f);f.connect(g);g.connect(ac.destination);s.start(t);
+    s.connect(f);f.connect(g);g.connect(ensureSfxMaster(ac));s.start(t);
   }catch(e){}
 }
 function sfxCard(){sfxNoise(.05,.024,1600);sfxTone(190,.045,.018,'triangle',145,.008)}
@@ -8613,7 +8671,7 @@ function startLoungeBgm(){
  bgmOn=true;bgmMode='lounge';const session=++bgmSession;$('bgmBtn').textContent='BGM：LOUNGE';
  const master=audioCtx.createGain(),room=audioCtx.createBiquadFilter();
  bgmMaster=master;
- master.gain.value=.16;room.type='lowpass';room.frequency.value=4200;room.Q.value=.3;room.connect(master);master.connect(audioCtx.destination);
+ master.gain.value=.16*bgmVolume;room.type='lowpass';room.frequency.value=4200;room.Q.value=.3;room.connect(master);master.connect(audioCtx.destination);
  const bpm=76,beat=60/bpm,bar=beat*4;
  const chords=[
   [261.63,311.13,392.00,466.16], // Cm7
@@ -8650,7 +8708,7 @@ function startUpbeatBgm(){
   $('bgmBtn').textContent='BGM：RUSH';
    const master=audioCtx.createGain(),room=audioCtx.createBiquadFilter();
   bgmMaster=master;
-  master.gain.value=.12;
+  master.gain.value=.12*bgmVolume;
   room.type='lowpass';room.frequency.value=4800;room.Q.value=.28;
   room.connect(master);master.connect(audioCtx.destination);
 
@@ -8779,6 +8837,38 @@ function startUpbeatBgm(){
   }
   scheduleBar();
 }
+function currentBgmBaseGain(){
+  return bgmMode==='upbeat'?.12:.16;
+}
+function applyBgmVolume(){
+  if(!bgmMaster||!audioCtx)return;
+  const value=currentBgmBaseGain()*bgmVolume;
+  try{bgmMaster.gain.setValueAtTime(value,audioCtx.currentTime)}catch(e){bgmMaster.gain.value=value}
+}
+function applySfxVolume(){
+  if(!sfxMaster||!audioCtx)return;
+  try{sfxMaster.gain.setValueAtTime(sfxVolume,audioCtx.currentTime)}catch(e){sfxMaster.gain.value=sfxVolume}
+}
+function syncAudioVolumeUi(){
+  const bgmPct=Math.round(bgmVolume*100);
+  const sfxPct=Math.round(sfxVolume*100);
+  $('bgmVolume').value=String(bgmPct);
+  $('sfxVolume').value=String(sfxPct);
+  $('bgmVolumeValue').textContent=`${bgmPct}%`;
+  $('sfxVolumeValue').textContent=`${sfxPct}%`;
+}
+function setBgmVolumeFromUi(value){
+  bgmVolume=clamp01(Number(value)/100);
+  saveAudioVolume(AUDIO_BGM_KEY,bgmVolume);
+  applyBgmVolume();
+  syncAudioVolumeUi();
+}
+function setSfxVolumeFromUi(value){
+  sfxVolume=clamp01(Number(value)/100);
+  saveAudioVolume(AUDIO_SFX_KEY,sfxVolume);
+  applySfxVolume();
+  syncAudioVolumeUi();
+}
 function stopBgm(updateLabel=true){
   bgmOn=false;
   bgmSession++;
@@ -8820,7 +8910,9 @@ async function ensureAudioContextRunning(){
   try{
     if(!audioCtx||audioCtx.state==='closed'){
       audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+      sfxMaster=null;
     }
+    ensureSfxMaster(audioCtx);
     if(audioCtx.state!=='running'){
       await audioCtx.resume();
     }
@@ -8872,7 +8964,10 @@ window.addEventListener('focus',()=>restoreAudioAfterPageReturn());
 document.addEventListener('pointerdown',unlockAudioFromGesture,{capture:true,passive:true});
 document.addEventListener('touchstart',unlockAudioFromGesture,{capture:true,passive:true});
 
-$('bgmBtn').addEventListener('click',()=>{$('bgmModal').classList.remove('hidden')});
+syncAudioVolumeUi();
+$('bgmBtn').addEventListener('click',()=>{syncAudioVolumeUi();$('bgmModal').classList.remove('hidden')});
+$('bgmVolume').addEventListener('input',e=>setBgmVolumeFromUi(e.target.value));
+$('sfxVolume').addEventListener('input',e=>setSfxVolumeFromUi(e.target.value));
 $('bgmJazz').addEventListener('click',()=>{playBgm('lounge');$('bgmModal').classList.add('hidden')});
 $('bgmUpbeat').addEventListener('click',()=>{playBgm('upbeat');$('bgmModal').classList.add('hidden')});
 $('bgmOff').addEventListener('click',()=>{stopBgm();$('bgmModal').classList.add('hidden')});
