@@ -1,1 +1,253 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f5f7fb">
+<title>PLAYER PROFILE | MINI GAME PORTAL</title>
+<style>
+:root{
+  --bg:#f5f7fb;--panel:#fff;--line:#dfe4ee;--text:#1f2937;--muted:#6b7280;
+  --accent:#5b5bd6;--accent2:#38bdf8;--green:#059669;--red:#dc2626;
+  --shadow:0 12px 30px rgba(31,41,55,.08)
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Sans","Yu Gothic UI",Meiryo,sans-serif}
+body{min-height:100dvh;background:radial-gradient(circle at 10% -10%,rgba(91,91,214,.14),transparent 30%),radial-gradient(circle at 90% 0,rgba(56,189,248,.14),transparent 32%),linear-gradient(180deg,#fbfcff,#f5f7fb 48%,#eef2f8)}
+button,input{font:inherit}button{cursor:pointer}a{text-decoration:none;color:inherit}.hidden{display:none!important}
+.app{width:min(100%,620px);min-height:100dvh;margin:auto;padding:calc(14px + env(safe-area-inset-top)) 14px calc(26px + env(safe-area-inset-bottom))}
+.topbar{display:grid;grid-template-columns:42px 1fr 42px;align-items:center;margin-bottom:10px}
+.backBtn{width:38px;height:38px;display:grid;place-items:center;border:1px solid var(--line);border-radius:12px;background:#fff;color:#4f46e5;font-size:20px;font-weight:900;box-shadow:0 6px 16px rgba(31,41,55,.05)}
+.topTitle{text-align:center}.topTitle b{display:block;font-size:14px;letter-spacing:.08em}.topTitle span{display:block;margin-top:2px;color:var(--muted);font-size:8px;letter-spacing:.12em}
+.panel{border:1px solid var(--line);border-radius:17px;background:rgba(255,255,255,.94);box-shadow:var(--shadow)}
+.profileCard{padding:15px;margin-bottom:10px;background:radial-gradient(circle at 110% -10%,rgba(99,102,241,.12),transparent 42%),#fff}
+.profileKicker{color:var(--accent);font-size:8px;font-weight:950;letter-spacing:.16em}
+.profileRow{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-top:5px}.profileName{min-width:0;font-size:25px;font-weight:1000;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.editBtn{flex:0 0 auto;min-height:34px;padding:0 11px;border:1px solid rgba(91,91,214,.22);border-radius:999px;background:rgba(91,91,214,.07);color:#4f46e5;font-size:9px;font-weight:950}
+.playerIdBox{margin-top:10px;padding:9px 10px;border:1px solid #e7eaf1;border-radius:12px;background:#f8f9fc}.idLabel{color:var(--muted);font-size:7px;font-weight:900;letter-spacing:.12em}.idRow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:3px}.idShort{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;font-weight:900;color:#374151}.copyBtn{border:0;background:transparent;color:var(--accent);font-size:8px;font-weight:950}
+.section{margin-top:10px}.sectionHead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 2px 7px}.sectionHead b{font-size:10px;letter-spacing:.09em}.sectionHead span{color:var(--muted);font-size:8px}
+.overall{display:grid;grid-template-columns:1fr 1fr;gap:8px}.metric{padding:13px;border:1px solid var(--line);border-radius:15px;background:#fff;text-align:center;box-shadow:0 8px 20px rgba(31,41,55,.04)}.metric span{display:block;color:var(--muted);font-size:8px;font-weight:900;letter-spacing:.09em}.metric b{display:block;margin-top:3px;color:#4338ca;font-size:22px}
+.recordPanel{padding:11px;overflow:hidden}.gameTabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:8px}.gameTabs::-webkit-scrollbar{display:none}.gameTab{flex:0 0 auto;min-height:31px;padding:0 10px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--muted);font-size:8px;font-weight:950}.gameTab.active{border-color:rgba(91,91,214,.30);background:rgba(91,91,214,.10);color:#4338ca}
+.recordViewport{overflow:hidden;touch-action:pan-y}.recordTrack{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch}.recordTrack::-webkit-scrollbar{display:none}.recordCard{flex:0 0 100%;scroll-snap-align:start;padding:12px 2px 2px}.recordTitle{display:flex;justify-content:space-between;align-items:end;gap:8px}.recordTitle b{font-size:16px}.recordTitle span{color:var(--muted);font-size:8px}.recordGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:10px}.recordItem{min-height:64px;padding:9px;border:1px solid #e8eaf0;border-radius:12px;background:#fafbfe;display:flex;flex-direction:column;justify-content:center}.recordItem span{color:var(--muted);font-size:7px;font-weight:900;letter-spacing:.05em}.recordItem b{margin-top:3px;font-size:15px;overflow-wrap:anywhere}.recordItem.play{grid-column:1/-1;min-height:48px;flex-direction:row;align-items:center;justify-content:space-between}.recordEmpty{padding:26px 12px;text-align:center;color:var(--muted);font-size:10px;line-height:1.6}
+.dataPanel{padding:13px}.dataState{display:grid;gap:5px;padding:9px 10px;border:1px solid #e8eaf0;border-radius:12px;background:#fafbfe;font-size:9px}.dataState div{display:flex;justify-content:space-between;gap:10px}.dataState span{color:var(--muted)}.dataState b{text-align:right}.dataBtns{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}.dataBtn{min-height:44px;border-radius:12px;border:1px solid var(--line);background:#f8f9fc;color:#374151;font-size:9px;font-weight:950}.dataBtn.primary{border-color:transparent;background:linear-gradient(135deg,#6366f1,#5b5bd6);color:#fff}.dataNote{margin-top:8px;color:var(--muted);font-size:8px;line-height:1.5}
+.editPanel{margin-top:10px;padding:11px;border:1px solid rgba(91,91,214,.20);border-radius:13px;background:rgba(91,91,214,.04)}.editPanel label{display:block;color:var(--muted);font-size:8px;font-weight:900}.editInput{width:100%;height:42px;margin-top:5px;padding:0 10px;border:1px solid var(--line);border-radius:11px;background:#fff;color:var(--text);outline:0;font-size:14px;font-weight:900}.editActions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:7px}.editActions button{height:38px;border-radius:10px;font-size:9px;font-weight:950}.cancel{border:1px solid var(--line);background:#fff;color:#6b7280}.save{border:0;background:var(--accent);color:#fff}
+.toast{position:fixed;left:50%;top:max(16px,env(safe-area-inset-top));z-index:50;transform:translate(-50%,-10px);max-width:calc(100% - 32px);padding:9px 13px;border-radius:12px;background:rgba(31,41,55,.94);color:#fff;font-size:9px;font-weight:900;opacity:0;pointer-events:none;transition:.2s}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:380px){.app{padding-left:11px;padding-right:11px}.profileName{font-size:22px}.recordGrid{gap:6px}.dataBtns{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main class="app">
+  <div class="topbar">
+    <a class="backBtn" href="../" aria-label="ポータルへ戻る">‹</a>
+    <div class="topTitle"><b>PLAYER PROFILE</b><span>MINI GAME PORTAL</span></div>
+    <span></span>
+  </div>
 
+  <section class="panel profileCard">
+    <div class="profileKicker">PORTAL PLAYER</div>
+    <div class="profileRow">
+      <div id="profileName" class="profileName">PLAYER</div>
+      <button id="editNameBtn" class="editBtn" type="button">名前を変更</button>
+    </div>
+    <div id="editPanel" class="editPanel hidden">
+      <label for="editName">ユーザー名（12文字まで）</label>
+      <input id="editName" class="editInput" maxlength="12" autocomplete="nickname">
+      <div class="editActions">
+        <button id="cancelEdit" class="cancel" type="button">キャンセル</button>
+        <button id="saveEdit" class="save" type="button">保存</button>
+      </div>
+    </div>
+    <div class="playerIdBox">
+      <div class="idLabel">PLAYER ID</div>
+      <div class="idRow"><span id="playerId" class="idShort">--------</span><button id="copyId" class="copyBtn" type="button">COPY</button></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="sectionHead"><b>OVERALL</b><span>USERとして遊んだ結果のみ集計</span></div>
+    <div class="overall">
+      <div class="metric"><span>PLAY</span><b id="totalPlays">0</b></div>
+      <div class="metric"><span>GAMES</span><b id="playedGames">0</b></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="sectionHead"><b>GAME RECORD</b><span>タップ / 横スワイプ</span></div>
+    <div class="panel recordPanel">
+      <div id="gameTabs" class="gameTabs"></div>
+      <div id="recordViewport" class="recordViewport"><div id="recordTrack" class="recordTrack"></div></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="sectionHead"><b>DATA MANAGEMENT</b><span>端末データのバックアップ</span></div>
+    <div class="panel dataPanel">
+      <div class="dataState">
+        <div><span>最終書き出し</span><b id="lastExport">--</b></div>
+        <div><span>最終読み込み</span><b id="lastImport">--</b></div>
+      </div>
+      <div class="dataBtns">
+        <button id="exportBtn" class="dataBtn primary" type="button">バックアップを書き出す</button>
+        <button id="importBtn" class="dataBtn" type="button">バックアップを読み込む</button>
+      </div>
+      <input id="importFile" class="hidden" type="file" accept=".json,application/json">
+      <div class="dataNote">現在のポータル・各ゲームのlocalStorageを1つのJSONへ保存します。読み込み時は現在の端末データをバックアップ内容で完全置換します。</div>
+    </div>
+  </section>
+</main>
+<div id="toast" class="toast"></div>
+<script>
+(() => {
+  'use strict';
+  const SAVE_KEY='mini_game_portal_save_v1';
+  const BACKUP_VERSION=1;
+  const $=id=>document.getElementById(id);
+  const now=()=>new Date().toISOString();
+
+  function newId(){
+    try{if(globalThis.crypto?.randomUUID)return globalThis.crypto.randomUUID()}catch(_){ }
+    return `mg-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,10)}`;
+  }
+  function defaultSave(){
+    const t=now();
+    return {schemaVersion:1,player:{playerId:newId(),displayName:'PLAYER',createdAt:t,updatedAt:t},overall:{totalPlays:0,playedGames:0,lastPlayedGameId:null,lastPlayedAt:null},games:{},backup:{lastExportedAt:null,lastImportedAt:null}};
+  }
+  function normalizeSave(data){
+    const base=defaultSave();
+    if(!data||typeof data!=='object')data=base;
+    data.schemaVersion=1;
+    if(!data.player||typeof data.player!=='object')data.player=base.player;
+    data.player.playerId=String(data.player.playerId||newId());
+    data.player.displayName=String(data.player.displayName||'PLAYER').trim()||'PLAYER';
+    data.player.createdAt=data.player.createdAt||now();
+    data.player.updatedAt=data.player.updatedAt||data.player.createdAt;
+    if(!data.overall||typeof data.overall!=='object')data.overall=base.overall;
+    data.overall.totalPlays=Number(data.overall.totalPlays)||0;
+    if(!data.games||typeof data.games!=='object'||Array.isArray(data.games))data.games={};
+    data.overall.playedGames=Object.values(data.games).filter(g=>(Number(g?.plays)||0)>0).length;
+    if(!data.backup||typeof data.backup!=='object')data.backup=base.backup;
+    data.backup.lastExportedAt=data.backup.lastExportedAt||null;
+    data.backup.lastImportedAt=data.backup.lastImportedAt||null;
+    return data;
+  }
+  function load(){
+    let data=null;
+    try{data=JSON.parse(localStorage.getItem(SAVE_KEY)||'null')}catch(_){data=null}
+    data=normalizeSave(data);
+    try{localStorage.setItem(SAVE_KEY,JSON.stringify(data))}catch(_){ }
+    return data;
+  }
+  function save(data){
+    data=normalizeSave(data);
+    data.player.updatedAt=now();
+    localStorage.setItem(SAVE_KEY,JSON.stringify(data));
+    return data;
+  }
+  function shortId(id){
+    const clean=String(id||'').replace(/[^a-zA-Z0-9]/g,'').toUpperCase();
+    return clean.slice(0,8)||'--------';
+  }
+  function formatDate(v){
+    if(!v)return'--';
+    const d=new Date(v);if(Number.isNaN(d.getTime()))return'--';
+    return new Intl.DateTimeFormat('ja-JP',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).format(d);
+  }
+  function formatValue(rec){
+    const v=rec?.value,fmt=rec?.format||'number';
+    if(fmt==='percent')return `${Number(v||0).toFixed(1)}%`;
+    if(fmt==='krw')return `₩${Math.round(Number(v)||0).toLocaleString('ja-JP')}`;
+    if(fmt==='jpy')return `¥${Math.round(Number(v)||0).toLocaleString('ja-JP')}`;
+    if(fmt==='level')return `LEVEL ${Math.round(Number(v)||0)}`;
+    if(fmt==='time')return `${Number(v||0).toFixed(1)}s`;
+    if(fmt==='score'||fmt==='number')return Math.round(Number(v)||0).toLocaleString('ja-JP');
+    return String(v??'-');
+  }
+  function escapeHtml(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+  function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('show'),1500)}
+
+  let activeIndex=0;
+  function gameEntries(data){
+    return Object.values(data.games||{}).filter(g=>(Number(g?.plays)||0)>0).sort((a,b)=>String(a.title||a.gameId).localeCompare(String(b.title||b.gameId),'ja',{numeric:true,sensitivity:'base'}));
+  }
+  function render(){
+    const data=load();
+    $('profileName').textContent=data.player.displayName;
+    $('playerId').textContent=shortId(data.player.playerId);
+    $('playerId').title=data.player.playerId;
+    $('totalPlays').textContent=(Number(data.overall.totalPlays)||0).toLocaleString('ja-JP');
+    $('playedGames').textContent=(Number(data.overall.playedGames)||0).toLocaleString('ja-JP');
+    $('lastExport').textContent=formatDate(data.backup.lastExportedAt);
+    $('lastImport').textContent=formatDate(data.backup.lastImportedAt);
+
+    const games=gameEntries(data),tabs=$('gameTabs'),track=$('recordTrack');
+    tabs.innerHTML='';track.innerHTML='';
+    if(!games.length){
+      track.innerHTML='<div class="recordCard"><div class="recordEmpty">まだUSERとして記録されたゲーム戦績がありません。<br>ゲームで参加タイプをUSERにしてプレイすると、ここに追加されます。</div></div>';
+      activeIndex=0;return;
+    }
+    if(activeIndex>=games.length)activeIndex=games.length-1;
+    games.forEach((g,i)=>{
+      const tab=document.createElement('button');tab.type='button';tab.className='gameTab'+(i===activeIndex?' active':'');tab.textContent=g.title||g.gameId;tab.onclick=()=>goGame(i,true);tabs.appendChild(tab);
+      const card=document.createElement('article');card.className='recordCard';card.dataset.index=String(i);
+      const records=Object.values(g.records||{});
+      card.innerHTML=`<div class="recordTitle"><b>${escapeHtml(g.title||g.gameId)}</b><span>LAST ${escapeHtml(formatDate(g.lastPlayedAt))}</span></div><div class="recordGrid"><div class="recordItem play"><span>PLAY</span><b>${(Number(g.plays)||0).toLocaleString('ja-JP')}</b></div>${records.map(r=>`<div class="recordItem"><span>${escapeHtml(r.label||'RECORD')}</span><b>${escapeHtml(formatValue(r))}</b></div>`).join('')}</div>`;
+      track.appendChild(card);
+    });
+    requestAnimationFrame(()=>goGame(activeIndex,false));
+  }
+  function goGame(index,smooth){
+    const cards=[...document.querySelectorAll('.recordCard')],tabs=[...document.querySelectorAll('.gameTab')];
+    if(!cards[index])return;activeIndex=index;
+    cards[index].scrollIntoView({behavior:smooth?'smooth':'auto',block:'nearest',inline:'start'});
+    tabs.forEach((t,i)=>t.classList.toggle('active',i===index));
+    tabs[index]?.scrollIntoView({behavior:smooth?'smooth':'auto',block:'nearest',inline:'center'});
+  }
+  let scrollTimer=0;
+  $('recordTrack').addEventListener('scroll',()=>{
+    clearTimeout(scrollTimer);scrollTimer=setTimeout(()=>{
+      const el=$('recordTrack'),cards=[...el.querySelectorAll('.recordCard')];if(!cards.length)return;
+      const idx=Math.max(0,Math.min(cards.length-1,Math.round(el.scrollLeft/Math.max(1,el.clientWidth))));
+      if(idx!==activeIndex){activeIndex=idx;document.querySelectorAll('.gameTab').forEach((t,i)=>t.classList.toggle('active',i===idx));document.querySelectorAll('.gameTab')[idx]?.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});}
+    },80);
+  });
+
+  $('editNameBtn').onclick=()=>{const data=load();$('editName').value=data.player.displayName;$('editPanel').classList.remove('hidden');$('editName').focus()};
+  $('cancelEdit').onclick=()=>$('editPanel').classList.add('hidden');
+  $('saveEdit').onclick=()=>{
+    const name=$('editName').value.trim();if(!name){toast('ユーザー名を入力してください');return}
+    const data=load();data.player.displayName=name.slice(0,12);save(data);$('editPanel').classList.add('hidden');render();toast('ユーザー名を変更しました');
+  };
+  $('copyId').onclick=async()=>{
+    const id=load().player.playerId;
+    try{await navigator.clipboard.writeText(id);toast('PLAYER IDをコピーしました')}catch(_){toast('コピーできませんでした')}
+  };
+
+  function snapshotLocalStorage(){
+    const out={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k!=null)out[k]=localStorage.getItem(k)}return out;
+  }
+  $('exportBtn').onclick=()=>{
+    try{
+      const data=load();data.backup.lastExportedAt=now();save(data);
+      const payload={backupVersion:BACKUP_VERSION,exportedAt:data.backup.lastExportedAt,localStorage:snapshotLocalStorage()};
+      const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');
+      const d=new Date(),pad=n=>String(n).padStart(2,'0');a.download=`mini-game-save-${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}.json`;a.href=url;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);render();toast('バックアップを書き出しました');
+    }catch(e){toast('バックアップの作成に失敗しました')}
+  };
+  $('importBtn').onclick=()=>$('importFile').click();
+  $('importFile').addEventListener('change',async e=>{
+    const file=e.target.files?.[0];e.target.value='';if(!file)return;
+    try{
+      const payload=JSON.parse(await file.text());
+      if(payload?.backupVersion!==BACKUP_VERSION||!payload.localStorage||typeof payload.localStorage!=='object'||Array.isArray(payload.localStorage))throw new Error('invalid');
+      if(!confirm('現在のセーブデータをバックアップ内容で完全に置き換えます。よろしいですか？'))return;
+      localStorage.clear();for(const [k,v] of Object.entries(payload.localStorage)){if(typeof v==='string')localStorage.setItem(k,v)}
+      const data=load();data.backup.lastImportedAt=now();save(data);toast('バックアップを復元しました');setTimeout(()=>location.reload(),350);
+    }catch(e2){toast('対応していないバックアップファイルです')}
+  });
+
+  window.addEventListener('pageshow',render);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)render()});
+  render();
+})();
+</script>
+</body>
+</html>
