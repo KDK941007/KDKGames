@@ -86,6 +86,10 @@ h1{
   box-shadow:inset 0 0 0 2px #020813
 }
 .nameInput:focus{border-color:var(--cyan)}
+.typeSelect{width:100%;height:44px;margin-bottom:10px;border:3px solid #355272;background:#07111f;color:#fff;padding:0 10px;outline:none;font-weight:900;font-size:13px}
+.typeSelect:focus{border-color:var(--cyan)}
+.portalNameHint{min-height:17px;margin:-4px 0 7px;color:var(--cyan);font-size:8px;font-weight:900}
+.nameInput.portalUserLocked{color:var(--cyan);border-color:#2d7180;background:#06141d}
 .nameError{
   min-height:18px;padding-top:5px;color:#ff8395;font-size:9px;font-weight:900
 }
@@ -672,6 +676,26 @@ h1{
   .arenaFrame{min-height:400px}
   .scoreLabel{font-size:16px}
 }
+
+/* v1.17.1 PLAYER TYPE: compact LASER ESCAPE terminal selector */
+.playerFieldHead{height:25px;margin-bottom:5px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.playerFieldHead .fieldLabel{margin:0}
+.playerTypeMini{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.playerTypeMiniBtn{
+  min-width:58px;height:25px;padding:0 6px;border:2px solid #355272;background:#07111f;color:#6f8ba5;
+  box-shadow:2px 2px 0 #02040a;font-family:inherit;font-size:8px;font-weight:1000;letter-spacing:.06em;cursor:pointer;
+}
+.playerTypeMiniBtn.active{border-color:var(--cyan);background:#08202a;color:var(--cyan)}
+.playerTypeMiniBtn:active{transform:translate(1px,1px);box-shadow:1px 1px 0 #02040a}
+@media(max-height:720px){
+  #startScreen .wrap{padding-top:10px;padding-bottom:10px}
+  #startScreen .titleMark{height:62px;margin-top:0;margin-bottom:7px;transform:scale(.88);transform-origin:center bottom}
+  #startScreen .sub{margin-bottom:11px;line-height:1.5}
+  #startScreen .startCard{padding-top:11px;padding-bottom:11px}
+  #startScreen .rankCard{margin-top:10px}
+  #startScreen .ruleMini{margin-top:10px;padding-top:9px;padding-bottom:9px}
+}
+
 </style>
 </head>
 <body>
@@ -686,7 +710,14 @@ h1{
     <p class="sub">30秒生き残ってLEVELを突破。<br>レーザーを避け続け、どこまでスコアを伸ばせるか。</p>
 
     <div class="startCard pixelPanel">
-      <label class="fieldLabel" for="playerNameInput">PLAYER NAME</label>
+      <div class="playerFieldHead">
+        <label class="fieldLabel" for="playerNameInput">PLAYER NAME</label>
+        <div class="playerTypeMini" role="group" aria-label="プレイヤータイプ">
+          <button class="playerTypeMiniBtn active" type="button" data-player-type="user">USER</button>
+          <button class="playerTypeMiniBtn" type="button" data-player-type="guest">GUEST</button>
+          <input id="playerTypeInput" type="hidden" value="user">
+        </div>
+      </div>
       <input id="playerNameInput" class="nameInput" maxlength="12" autocomplete="nickname" placeholder="名前を入力">
       <div id="nameError" class="nameError"></div>
       <div class="topCommandPanel">
@@ -799,16 +830,77 @@ h1{
 (() => {
   'use strict';
 
-  const BUILD = '1.16.1';
+  const BUILD = '1.17.2';
   const LEVEL_SECONDS = 30;
   const SCORE_PER_SECOND = 100;
   const STORAGE_RANKING = 'laser_escape_ranking_v1';
   const STORAGE_NAME = 'laser_escape_last_name_v1';
+  const PORTAL_SAVE_KEY='mini_game_portal_save_v1';
+  function mgPortalNow(){return new Date().toISOString()}
+  function mgPortalNewId(){
+    try{if(globalThis.crypto?.randomUUID)return globalThis.crypto.randomUUID()}catch(_){ }
+    return `mg-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,10)}`;
+  }
+  function mgPortalDefaultSave(){
+    const now=mgPortalNow();
+    return {
+      schemaVersion:1,
+      player:{playerId:mgPortalNewId(),displayName:'PLAYER',createdAt:now,updatedAt:now},
+      overall:{totalPlays:0,playedGames:0,lastPlayedGameId:null,lastPlayedAt:null},
+      games:{},
+      backup:{lastExportedAt:null,lastImportedAt:null}
+    };
+  }
+  function mgPortalLoad(){
+    let data=null;
+    try{data=JSON.parse(localStorage.getItem(PORTAL_SAVE_KEY)||'null')}catch(_){data=null}
+    if(!data||typeof data!=='object')data=mgPortalDefaultSave();
+    if(data.schemaVersion!==1)data.schemaVersion=1;
+    if(!data.player||typeof data.player!=='object')data.player=mgPortalDefaultSave().player;
+    if(!data.player.playerId)data.player.playerId=mgPortalNewId();
+    if(!String(data.player.displayName||'').trim())data.player.displayName='PLAYER';
+    if(!data.player.createdAt)data.player.createdAt=mgPortalNow();
+    if(!data.player.updatedAt)data.player.updatedAt=data.player.createdAt;
+    if(!data.overall||typeof data.overall!=='object')data.overall={totalPlays:0,playedGames:0,lastPlayedGameId:null,lastPlayedAt:null};
+    if(!data.games||typeof data.games!=='object')data.games={};
+    if(!data.backup||typeof data.backup!=='object')data.backup={lastExportedAt:null,lastImportedAt:null};
+    try{localStorage.setItem(PORTAL_SAVE_KEY,JSON.stringify(data))}catch(_){ }
+    return data;
+  }
+  function mgPortalSave(data){
+    if(!data?.player)return;
+    data.player.updatedAt=mgPortalNow();
+    data.overall.playedGames=Object.values(data.games||{}).filter(g=>(Number(g?.plays)||0)>0).length;
+    try{localStorage.setItem(PORTAL_SAVE_KEY,JSON.stringify(data))}catch(_){ }
+  }
+  function mgPortalProfile(){return mgPortalLoad().player}
+  function mgPortalRecordValue(game,key){return Number(game?.records?.[key]?.value)||0}
+  function mgPortalSetRecord(game,key,label,value,format='number'){
+    game.records ||= {};
+    game.records[key]={label,value,format};
+  }
+  function mgPortalRecordPlay(gameId,title,mutate){
+    const data=mgPortalLoad();
+    const now=mgPortalNow();
+    const game=data.games[gameId]||{gameId,title,recordVersion:1,plays:0,lastPlayedAt:null,records:{}};
+    game.title=title;
+    game.recordVersion=1;
+    game.plays=(Number(game.plays)||0)+1;
+    game.lastPlayedAt=now;
+    if(typeof mutate==='function')mutate(game,data);
+    data.games[gameId]=game;
+    data.overall.totalPlays=(Number(data.overall.totalPlays)||0)+1;
+    data.overall.lastPlayedGameId=gameId;
+    data.overall.lastPlayedAt=now;
+    mgPortalSave(data);
+    return game;
+  }
 
   const $ = s => document.querySelector(s);
 
   const startScreen = $('#startScreen');
   const gameScreen = $('#gameScreen');
+  const playerTypeInput = $('#playerTypeInput');
   const nameInput = $('#playerNameInput');
   const nameError = $('#nameError');
   const rankingList = $('#rankingList');
@@ -844,6 +936,7 @@ h1{
     transitioning:false,
     gameOver:false,
     playerName:'',
+    playerType:'user',
     level:1,
     levelElapsed:0,
     totalSurvival:0,
@@ -1843,16 +1936,18 @@ h1{
   }
 
   function beginRun(){
-    const name = nameInput.value.trim();
+    const playerType = playerTypeInput.value === 'guest' ? 'guest' : 'user';
+    const profile = mgPortalProfile();
+    const name = playerType === 'user' ? profile.displayName : nameInput.value.trim();
 
     if(!name){
-      nameError.textContent = 'ユーザー名を入力してください';
+      nameError.textContent = 'ゲスト名を入力してください';
       nameInput.focus();
       return;
     }
 
     nameError.textContent = '';
-    localStorage.setItem(STORAGE_NAME, name);
+    if(playerType==='guest')localStorage.setItem(STORAGE_NAME, name);
 
     state.runToken++;
     clearTimers();
@@ -1865,6 +1960,7 @@ h1{
       transitioning:false,
       gameOver:false,
       playerName:name,
+      playerType,
       level:1,
       levelElapsed:0,
       totalSurvival:0,
@@ -1937,6 +2033,12 @@ h1{
     stopBgm();
 
     const score = Math.floor(state.score);
+    if(state.playerType==='user'){
+      mgPortalRecordPlay('laser-escape','LASER ESCAPE',game=>{
+        mgPortalSetRecord(game,'bestScore','BEST SCORE',Math.max(mgPortalRecordValue(game,'bestScore'),score),'score');
+        mgPortalSetRecord(game,'bestLevel','BEST LEVEL',Math.max(mgPortalRecordValue(game,'bestLevel'),state.level),'level');
+      });
+    }
     const rank = addRanking(state.playerName, score, state.level);
 
     finalScore.textContent = formatScore(score);
@@ -2027,7 +2129,30 @@ h1{
     }
   });
 
-  nameInput.value = localStorage.getItem(STORAGE_NAME) || '';
+  function syncPlayerTypeUi(){
+    const user=playerTypeInput.value!=='guest';
+    const profile=mgPortalProfile();
+    document.querySelectorAll('[data-player-type]').forEach(btn=>{
+      const active=(btn.dataset.playerType==='user')===user;
+      btn.classList.toggle('active',active);
+      btn.setAttribute('aria-pressed',active?'true':'false');
+    });
+    nameInput.readOnly=user;
+    nameInput.classList.toggle('portalUserLocked',user);
+    if(user){
+      nameInput.value=profile.displayName;
+    }else{
+      nameInput.value=localStorage.getItem(STORAGE_NAME)||'';
+    }
+    nameError.textContent='';
+  }
+  const playerTypeButtons=[...document.querySelectorAll('[data-player-type]')];
+  playerTypeButtons.forEach(btn=>btn.addEventListener('click',()=>{
+    playerTypeInput.value=btn.dataset.playerType==='guest'?'guest':'user';
+    syncPlayerTypeUi();
+  }));
+  window.addEventListener('pageshow', syncPlayerTypeUi);
+  syncPlayerTypeUi();
   renderRanking();
   document.documentElement.dataset.laserEscapeReady = 'true';
   document.documentElement.dataset.build = BUILD;
