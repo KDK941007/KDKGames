@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
-<title>Paradise City Blackjack Trainer v14.44</title>
+<title>Paradise City Blackjack Trainer v14.45</title>
 <style>
 :root{--bg:#04110d;--felt:#07523a;--felt2:#063d2d;--panel:rgba(4,20,15,.88);--line:rgba(255,255,255,.13);--text:#fffaf0;--muted:#afc7bb;--gold:#e2c064;--red:#a63d3d;--green:#62d395;--lose:#ff7676;--win:#7df0a5}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% 0,#0e7450 0,#07523a 34%,#03110c 88%);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--text);overflow-x:hidden}.app{width:min(100%,560px);margin:auto;min-height:100vh;padding:10px 10px calc(16px + env(safe-area-inset-bottom))}
@@ -5260,7 +5260,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:6px
 <div class="actionMessageRow"><div id="message" class="message"></div><button id="hintBtn" type="button" class="messageHintBtn">戦略ヒント</button></div>
 <div class="controlFrame">
 <div id="betArea" class="controlState"><div id="chips" class="chips"></div><div class="betRow"><span><span class="betLabelGroup">BET <b id="betAmount" class="betAmount">₩0</b></span><button id="betHintBtn" type="button" class="betHintInlineBtn">BETヒント</button></span><button id="repeatBetBtn" class="small repeatBetBtn">前回BET</button><button id="clearBet" class="small">クリア</button><button id="dealBtn" class="small">BET確定</button></div></div>
-<div id="insuranceBox" class="insuranceBox controlState"><div style="margin-bottom:8px;font-weight:900">INSURANCE?</div><div class="insuranceBtns"><button id="insuranceYes" class="action special">YES（1/2 BET）</button><button id="insuranceNo" class="action secondary">NO</button></div></div>
+<div id="insuranceBox" class="insuranceBox controlState"><div id="insuranceTitle" style="margin-bottom:8px;font-weight:900">INSURANCE?</div><div class="insuranceBtns"><button id="insuranceYes" class="action special">YES（1/2 BET）</button><button id="insuranceNo" class="action secondary">NO</button></div></div>
 <div id="playActions" class="actions twoRow controlState hidden"><button id="hitBtn" class="action">HIT</button><button id="standBtn" class="action secondary">STAND</button><button id="doubleBtn" class="action">DOUBLE</button><button id="splitBtn" class="action special">SPLIT</button><button id="surrenderBtn" class="action danger">SURRENDER</button></div>
 </div>
 </div>
@@ -5781,7 +5781,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:6px
 </div>
 <div id="toast" class="toast"></div>
 <script>
-const BUILD='14.44-blackjack-on-active-turn';
+const BUILD='14.45-even-money';
 const $=id=>document.getElementById(id), fmt=n=>'₩'+Math.round(n).toLocaleString('ko-KR'), sleep=ms=>new Promise(r=>setTimeout(r,ms));
 function chipAmountLabel(amount,prefix=''){
   const n=Math.max(0,Math.round(amount));
@@ -5801,7 +5801,7 @@ function chipAmountLabel(amount,prefix=''){
   return prefix+body;
 }
 const suits=['♠','♥','♦','♣'],ranks=['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
-let mode='krw', cfg={}, players=[], deck=[], dealer=[], activePlayer=0, activeHand=0, phase='setup', currentBet=0, reveal=false, insuranceIndex=0, animating=false, roundNo=0, settlingPlayer=-1, blackjackAnnouncePlayer=-1, lastActionPlayer=0, testDeal={dealer:[null,null],players:[]};let cardSeq=0,seenCards=new Set(),audioCtx=null,bgmOn=false,bgmTimer=null,bgmMode='lounge',bgmSession=0,bgmMaster=null,bgmWasPlayingBeforeHide=false,bgmResumeMode=null,audioRestoreBusy=false,cutCardRemaining=0,cutCardSeen=false,shuffleAfterRound=false,shoeNo=0,hintMode='basic',hiLoRunning=0,hiLoCountedIds=new Set(),dealtCardMap=new Map(),cpuSerial=0,cpuTurnPending=false,roundHistory=[],lastRecordedRound=0,statsMode='players';
+let mode='krw', cfg={}, players=[], deck=[], dealer=[], activePlayer=0, activeHand=0, phase='setup', currentBet=0, reveal=false, insuranceIndex=0, insuranceMode='insurance', evenMoneyContext=null, evenMoneyResolve=null, animating=false, roundNo=0, settlingPlayer=-1, blackjackAnnouncePlayer=-1, lastActionPlayer=0, testDeal={dealer:[null,null],players:[]};let cardSeq=0,seenCards=new Set(),audioCtx=null,bgmOn=false,bgmTimer=null,bgmMode='lounge',bgmSession=0,bgmMaster=null,bgmWasPlayingBeforeHide=false,bgmResumeMode=null,audioRestoreBusy=false,cutCardRemaining=0,cutCardSeen=false,shuffleAfterRound=false,shoeNo=0,hintMode='basic',hiLoRunning=0,hiLoCountedIds=new Set(),dealtCardMap=new Map(),cpuSerial=0,cpuTurnPending=false,roundHistory=[],lastRecordedRound=0,statsMode='players';
 let dealingDealerActive=false;
 function buildBankInputs(){
   const n=+$('playerCount').value,root=$('playerBanks');
@@ -6250,7 +6250,7 @@ function renderChips(){
     repeat.disabled=!(v>=cfg.min&&v<=cfg.max&&v<=p.bank+currentBet);
     repeat.textContent=v?`前回 ${v>=10000?(v/10000)+'万':v}`:'前回BET';
   }
-}async function flyChipToBet(btn,v){let seat=document.querySelectorAll('.seat')[activePlayer];if(!seat)return;let from=btn.getBoundingClientRect(),to=seat.getBoundingClientRect();let clone=btn.cloneNode(true);clone.classList.add('flyingChip');clone.style.left=from.left+'px';clone.style.top=from.top+'px';clone.style.width=from.width+'px';clone.style.height=from.height+'px';clone.style.margin='0';document.body.appendChild(clone);let dx=(to.left+to.width/2)-(from.left+from.width/2),dy=(to.top+44)-(from.top+from.height/2);let a=clone.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:`translate(${dx*.58}px,${dy*.48-34}px) scale(.92) rotate(7deg)`,opacity:1,offset:.55},{transform:`translate(${dx}px,${dy}px) scale(.62) rotate(-4deg)`,opacity:.2}],{duration:360,easing:'cubic-bezier(.2,.75,.2,1)',fill:'forwards'});await a.finished.catch(()=>{});clone.remove();toast(`${v>=10000?(v/10000)+'万':v}チップ BET`) }function chipStackHTML(amount){if(!amount)return '';let vals=chipValues().slice().reverse(),left=amount,out=[];for(const v of vals){while(left>=v&&out.length<8){out.push(v);left-=v}}if(left>0&&out.length<8)out.push(left);return out.length?`<div class="chipStack">${out.map(v=>`<span class="chipDisc">${v>=10000?(v/10000)+'万':v}</span>`).join('')}</div>`:''}function resultClass(r=''){if(r.includes('BLACKJACK')||r.includes('WIN'))return'win';if(r.includes('PUSH'))return'push';if(r.includes('SURRENDER'))return'surrender';if(r.includes('LOSE')||r.includes('BUST'))return'lose';return''}
+}async function flyChipToBet(btn,v){let seat=document.querySelectorAll('.seat')[activePlayer];if(!seat)return;let from=btn.getBoundingClientRect(),to=seat.getBoundingClientRect();let clone=btn.cloneNode(true);clone.classList.add('flyingChip');clone.style.left=from.left+'px';clone.style.top=from.top+'px';clone.style.width=from.width+'px';clone.style.height=from.height+'px';clone.style.margin='0';document.body.appendChild(clone);let dx=(to.left+to.width/2)-(from.left+from.width/2),dy=(to.top+44)-(from.top+from.height/2);let a=clone.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:`translate(${dx*.58}px,${dy*.48-34}px) scale(.92) rotate(7deg)`,opacity:1,offset:.55},{transform:`translate(${dx}px,${dy}px) scale(.62) rotate(-4deg)`,opacity:.2}],{duration:360,easing:'cubic-bezier(.2,.75,.2,1)',fill:'forwards'});await a.finished.catch(()=>{});clone.remove();toast(`${v>=10000?(v/10000)+'万':v}チップ BET`) }function chipStackHTML(amount){if(!amount)return '';let vals=chipValues().slice().reverse(),left=amount,out=[];for(const v of vals){while(left>=v&&out.length<8){out.push(v);left-=v}}if(left>0&&out.length<8)out.push(left);return out.length?`<div class="chipStack">${out.map(v=>`<span class="chipDisc">${v>=10000?(v/10000)+'万':v}</span>`).join('')}</div>`:''}function resultClass(r=''){if(r.includes('BLACKJACK')||r.includes('EVEN MONEY')||r.includes('WIN'))return'win';if(r.includes('PUSH'))return'push';if(r.includes('SURRENDER'))return'surrender';if(r.includes('LOSE')||r.includes('BUST'))return'lose';return''}
 
 function allUsersBankrupt(){
   const users=players.filter(p=>p.type==='user');
@@ -6453,7 +6453,7 @@ function beginBet(){
     const b=$('blackjackNotice').querySelector('.blackjackNoticeBox');if(b)b.classList.remove('play');
   }
   if(!deck.length||shuffleAfterRound)newShoe();
-  roundNo++;phase='bet';activeHand=0;currentBet=0;dealer=[];reveal=false;insuranceIndex=0;seenCards.clear();
+  roundNo++;phase='bet';activeHand=0;currentBet=0;dealer=[];reveal=false;insuranceIndex=0;insuranceMode='insurance';evenMoneyContext=null;evenMoneyResolve=null;seenCards.clear();
   $('roundBanner').className='roundBanner';$('roundBanner').textContent='';
   players.forEach(p=>{p.roundStartBank=p.bank;p.bet=0;p.hands=[];p.insurance=0;p.result=''});
   $('betArea').style.display='block';$('insuranceBox').style.display='none';$('playActions').classList.add('hidden');
@@ -6630,37 +6630,60 @@ async function announceActiveBlackjack(pi){
   // BJ確認後、すぐ次PLAYERへ飛ばず一呼吸置く。
   await sleep(360);
 }
+function setInsurancePrompt(mode='insurance'){
+  insuranceMode=mode;
+  const title=$('insuranceTitle');
+  const yes=$('insuranceYes');
+  const no=$('insuranceNo');
+
+  if(mode==='evenMoney'){
+    if(title)title.textContent='EVEN MONEY?';
+    if(yes)yes.textContent='YES（1:1確定）';
+    if(no)no.textContent='NO（BJ 3:2を狙う）';
+  }else{
+    if(title)title.textContent='INSURANCE?';
+    if(yes)yes.textContent='YES（1/2 BET）';
+    if(no)no.textContent='NO';
+  }
+}
+
 function startInsurance(){
   document.querySelector('.controls').classList.remove('betCompact');
   phase='insurance';
   insuranceIndex=0;
+  setInsurancePrompt('insurance');
   $('insuranceBox').style.display='none';
   askInsurance();
 }
+
 function askInsurance(){
   // CPUのInsuranceは完全非活性。
-  // CPUは候補から除外し、USERだけにYES/NOを表示する。
+  // Natural BJは通常Insuranceではなく、ACTION順でEven Moneyを提示する。
   while(insuranceIndex<players.length){
     const p=players[insuranceIndex];
+    const h=p.hands?.[0];
+    const isBlackjack=!!h && natural(h.cards,h.splitOrigin);
     const canUserInsure=
       p.type==='user' &&
+      !isBlackjack &&
       p.bank>=p.bet/2;
 
     if(canUserInsure)break;
 
-    // CPUは常にInsuranceなし。
     p.insurance=0;
     insuranceIndex++;
   }
 
   if(insuranceIndex>=players.length){
     $('insuranceBox').style.display='none';
+    setInsurancePrompt('insurance');
     dealerPeekThenPlay();
     return;
   }
 
   const p=players[insuranceIndex];
   lastActionPlayer=insuranceIndex;
+  setInsurancePrompt('insurance');
   $('insuranceBox').style.display='block';
   $('insuranceYes').disabled=false;
   $('insuranceNo').disabled=false;
@@ -6668,7 +6691,52 @@ function askInsurance(){
   render();
   ensurePlayerVisible(insuranceIndex);
 }
+
+function askEvenMoneyForActiveBlackjack(pi,hi){
+  const p=players[pi];
+  const h=p?.hands?.[hi];
+
+  // Dealer A + Natural BJ のUSERだけが選択対象。
+  // CPUは既存方針どおりInsurance系の判断を行わず、自動的にNO。
+  if(!p||!h||p.type!=='user'||dealer[0]?.r!=='A'||!natural(h.cards,h.splitOrigin)){
+    return Promise.resolve(false);
+  }
+
+  evenMoneyContext={pi,hi};
+  setInsurancePrompt('evenMoney');
+  $('playActions').classList.add('hidden');
+  $('insuranceBox').style.display='block';
+  $('insuranceYes').disabled=false;
+  $('insuranceNo').disabled=false;
+  $('message').textContent=`${p.name}：EVEN MONEY？　勝ち +${fmt(h.bet)} を確定`;
+  render();
+  ensurePlayerVisible(pi,'smooth');
+
+  return new Promise(resolve=>{
+    evenMoneyResolve=resolve;
+  });
+}
+
+function finishEvenMoneyChoice(take){
+  if(insuranceMode!=='evenMoney'||!evenMoneyContext)return;
+
+  const resolve=evenMoneyResolve;
+  evenMoneyResolve=null;
+  evenMoneyContext=null;
+
+  $('insuranceBox').style.display='none';
+  setInsurancePrompt('insurance');
+  $('playActions').classList.remove('hidden');
+
+  if(resolve)resolve(!!take);
+}
+
 $('insuranceYes').onclick=()=>{
+  if(insuranceMode==='evenMoney'){
+    finishEvenMoneyChoice(true);
+    return;
+  }
+
   const p=players[insuranceIndex];
   if(!p||p.type!=='user')return;
   const amt=p.bet/2;
@@ -6679,13 +6747,20 @@ $('insuranceYes').onclick=()=>{
   insuranceIndex++;
   askInsurance();
 };
+
 $('insuranceNo').onclick=()=>{
+  if(insuranceMode==='evenMoney'){
+    finishEvenMoneyChoice(false);
+    return;
+  }
+
   const p=players[insuranceIndex];
   if(!p||p.type!=='user')return;
   p.insurance=0;
   insuranceIndex++;
   askInsurance();
 };
+
 async function showDealerBlackjackCheckCue(isBlackjack){
   const notice=$('dealerCheckNotice');
   const title=$('dealerCheckTitle');
@@ -7322,6 +7397,31 @@ async function finishHandAndAdvance(signalDone,extraWait=null){
   advancePlayer();
 }
 
+async function settleEvenMoneyNow(pi,hi){
+  const p=players[pi];
+  const h=p?.hands?.[hi];
+  if(!p||!h)return;
+
+  const profit=h.bet;
+
+  h.evenMoney=true;
+  h.result=`EVEN MONEY +${fmt(profit)}`;
+  h.payoutFormula=`${fmt(h.bet)} × 1 = ${fmt(profit)}`;
+
+  $('message').textContent=`${p.name}：EVEN MONEY — +${fmt(profit)} 確定`;
+  render();
+  ensurePlayerVisible(pi,'smooth');
+  await sleep(180);
+
+  // 利益1倍をDealerから配り、元BETをBANKへ返す。
+  await flyDealerPayout(pi,profit);
+  await flyBetBackToBank(pi,h.bet,'BET RETURN');
+
+  p.bank+=h.bet+profit;
+  render();
+  await sleep(320);
+}
+
 function advancePlayer(){
   while(activePlayer<players.length){
     let p=players[activePlayer];
@@ -7344,10 +7444,26 @@ function advancePlayer(){
         const bjPlayer=activePlayer;
         const bjHand=activeHand;
 
-        announceActiveBlackjack(bjPlayer).then(()=>{
-          // 演出中に状態が変わっていないことを前提に、このNaturalを確定して次へ。
+        announceActiveBlackjack(bjPlayer).then(async()=>{
           const target=players[bjPlayer]?.hands?.[bjHand];
-          if(target)target.done=true;
+          if(!target){
+            animating=false;
+            advancePlayer();
+            return;
+          }
+
+          // Dealerの1枚目がAなら、BJプレイヤーには通常InsuranceではなくEven Money。
+          const takeEvenMoney=await askEvenMoneyForActiveBlackjack(bjPlayer,bjHand);
+
+          if(takeEvenMoney){
+            await settleEvenMoneyNow(bjPlayer,bjHand);
+          }else if(dealer[0]?.r==='A' && players[bjPlayer]?.type==='user'){
+            $('message').textContent=`${players[bjPlayer].name}：EVEN MONEYを選択しない`;
+            render();
+            await sleep(300);
+          }
+
+          target.done=true;
 
           activePlayer=bjPlayer;
           activeHand=bjHand+1;
@@ -8019,6 +8135,10 @@ async function settleDealerBlackjack(){
     let lost=0;
 
     for(const h of p.hands){
+      if(h.evenMoney){
+        // ACTION時点ですでにBET返却 + 利益1倍まで精算済み。
+        continue;
+      }
       if(natural(h.cards,h.splitOrigin)){
         h.result='PUSH';
         returned+=h.bet;
@@ -8082,7 +8202,7 @@ async function settle(){
 
     for(let hi=0;hi<p.hands.length;hi++){
       const h=p.hands[hi];
-      if(h.surrendered)continue;
+      if(h.surrendered||h.evenMoney)continue;
 
       const pv=value(h.cards);
       let profit=0;
@@ -8207,7 +8327,7 @@ function showGameOver(){
   const result=$('gameOverResultText');if(result)result.textContent='全USERの残高が ₩0 になりました';
   $('gameOverModal').classList.remove('hidden');
 }
-function showRoundBanner(){if(players.length>1){let el=$('roundBanner');el.className='roundBanner';el.textContent='';return}let rs=players.flatMap(p=>p.hands.map(h=>h.result));let w=rs.filter(r=>r.includes('WIN')||r.includes('BLACKJACK')).length,l=rs.filter(r=>r.includes('LOSE')||r.includes('BUST')).length;let el=$('roundBanner');el.className='roundBanner show '+(w>l?'win':l>w?'lose':'push');el.textContent=w>l?`PLAYER WIN × ${w}`:l>w?`PLAYER LOSE × ${l}`:`PUSH / MIXED RESULT`}
+function showRoundBanner(){if(players.length>1){let el=$('roundBanner');el.className='roundBanner';el.textContent='';return}let rs=players.flatMap(p=>p.hands.map(h=>h.result));let w=rs.filter(r=>r.includes('WIN')||r.includes('BLACKJACK')||r.includes('EVEN MONEY')).length,l=rs.filter(r=>r.includes('LOSE')||r.includes('BUST')).length;let el=$('roundBanner');el.className='roundBanner show '+(w>l?'win':l>w?'lose':'push');el.textContent=w>l?`PLAYER WIN × ${w}`:l>w?`PLAYER LOSE × ${l}`:`PUSH / MIXED RESULT`}
 
 function handOutcomeType(h){
   const r=h.result||'';
