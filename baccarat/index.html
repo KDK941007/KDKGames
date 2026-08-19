@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#07523a">
-<title>Paradise Baccarat Practice v1.15</title>
+<title>Paradise Baccarat Practice v1.16</title>
 <style>
 :root{
   --bg:#04110d;
@@ -94,6 +94,11 @@ button{touch-action:manipulation}
   padding:8px;border:1px solid rgba(255,255,255,.07);border-radius:11px;
   background:rgba(255,255,255,.018)
 }
+.participantTypeRow{display:grid;grid-template-columns:1fr auto;gap:7px;align-items:end;margin-bottom:7px}
+.participantTypeRow label{display:grid;gap:4px;font-size:9px;color:var(--muted);font-weight:900}
+.participantTypeSelect{width:100%;padding:8px;border:1px solid var(--line);border-radius:9px;background:#081913;color:var(--text);font-size:10px}
+.portalParticipantNote{min-width:82px;color:var(--gold);font-size:8px;font-weight:900;text-align:right;padding-bottom:8px}
+.userNameInput.portalUserLocked{color:var(--gold);background:rgba(226,192,100,.055);border-color:rgba(226,192,100,.28)}
 .userBankMain{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:7px}
 .userBankMain label{display:grid;gap:4px;font-size:9px;color:var(--muted);font-weight:900}
 .userBankMain input{
@@ -700,7 +705,7 @@ button{touch-action:manipulation}
     </div>
     <div class="grid">
       <div class="field">
-        <label for="userCount">USER数</label>
+        <label for="userCount">PLAYER数</label>
         <select id="userCount">
           <option value="1">1</option>
           <option value="2">2</option>
@@ -732,7 +737,7 @@ button{touch-action:manipulation}
         <div class="fieldHint">旅行当日のレートを手入力してください。換算後は₩1,000単位に切り捨てます。</div>
       </div>
       <div class="field full">
-        <label>USER別 開始チップ</label>
+        <label>PLAYER別 開始チップ</label>
         <div id="userBankList" class="userBankList"></div>
       </div>
       <div class="field">
@@ -757,7 +762,7 @@ button{touch-action:manipulation}
       <b>練習設定</b><br>
       PLAYER 1:1 / TIE 8:1 / PLAYER・BANKER PAIR 11:1。<br>
       BANKERはCommissionなら0.95:1、No Commissionなら通常1:1・BANKER 6勝利のみ0.5:1。<br>
-      8 DECK SHOE。複数USER時は全USERのBET確定後に1回の配札を行います。
+      8 DECK SHOE。複数PLAYER時は全PLAYERのBET確定後に1回の配札を行います。
     </div>
 
     <button id="startBtn" class="primary" type="button">テーブルに着く</button>
@@ -1013,7 +1018,67 @@ button{touch-action:manipulation}
 
 <script>
 "use strict";
-const BUILD='1.15-audio-volume';
+const BUILD='1.16-portal-player';
+const PORTAL_SAVE_KEY='mini_game_portal_save_v1';
+function mgPortalNow(){return new Date().toISOString()}
+function mgPortalNewId(){
+  try{if(globalThis.crypto?.randomUUID)return globalThis.crypto.randomUUID()}catch(_){ }
+  return `mg-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,10)}`;
+}
+function mgPortalDefaultSave(){
+  const now=mgPortalNow();
+  return {
+    schemaVersion:1,
+    player:{playerId:mgPortalNewId(),displayName:'PLAYER',createdAt:now,updatedAt:now},
+    overall:{totalPlays:0,playedGames:0,lastPlayedGameId:null,lastPlayedAt:null},
+    games:{},
+    backup:{lastExportedAt:null,lastImportedAt:null}
+  };
+}
+function mgPortalLoad(){
+  let data=null;
+  try{data=JSON.parse(localStorage.getItem(PORTAL_SAVE_KEY)||'null')}catch(_){data=null}
+  if(!data||typeof data!=='object')data=mgPortalDefaultSave();
+  if(data.schemaVersion!==1)data.schemaVersion=1;
+  if(!data.player||typeof data.player!=='object')data.player=mgPortalDefaultSave().player;
+  if(!data.player.playerId)data.player.playerId=mgPortalNewId();
+  if(!String(data.player.displayName||'').trim())data.player.displayName='PLAYER';
+  if(!data.player.createdAt)data.player.createdAt=mgPortalNow();
+  if(!data.player.updatedAt)data.player.updatedAt=data.player.createdAt;
+  if(!data.overall||typeof data.overall!=='object')data.overall={totalPlays:0,playedGames:0,lastPlayedGameId:null,lastPlayedAt:null};
+  if(!data.games||typeof data.games!=='object')data.games={};
+  if(!data.backup||typeof data.backup!=='object')data.backup={lastExportedAt:null,lastImportedAt:null};
+  try{localStorage.setItem(PORTAL_SAVE_KEY,JSON.stringify(data))}catch(_){ }
+  return data;
+}
+function mgPortalSave(data){
+  if(!data?.player)return;
+  data.player.updatedAt=mgPortalNow();
+  data.overall.playedGames=Object.values(data.games||{}).filter(g=>(Number(g?.plays)||0)>0).length;
+  try{localStorage.setItem(PORTAL_SAVE_KEY,JSON.stringify(data))}catch(_){ }
+}
+function mgPortalProfile(){return mgPortalLoad().player}
+function mgPortalRecordValue(game,key){return Number(game?.records?.[key]?.value)||0}
+function mgPortalSetRecord(game,key,label,value,format='number'){
+  game.records ||= {};
+  game.records[key]={label,value,format};
+}
+function mgPortalRecordPlay(gameId,title,mutate){
+  const data=mgPortalLoad();
+  const now=mgPortalNow();
+  const game=data.games[gameId]||{gameId,title,recordVersion:1,plays:0,lastPlayedAt:null,records:{}};
+  game.title=title;
+  game.recordVersion=1;
+  game.plays=(Number(game.plays)||0)+1;
+  game.lastPlayedAt=now;
+  if(typeof mutate==='function')mutate(game,data);
+  data.games[gameId]=game;
+  data.overall.totalPlays=(Number(data.overall.totalPlays)||0)+1;
+  data.overall.lastPlayedGameId=gameId;
+  data.overall.lastPlayedAt=now;
+  mgPortalSave(data);
+  return game;
+}
 const $=id=>document.getElementById(id);
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const fmt=n=>'₩'+Math.round(n).toLocaleString('ja-JP');
@@ -1239,18 +1304,30 @@ function buildUserBankInputs(){
   const root=$('userBankList');
   const old=getSetupRows().map((row,i)=>({
     name:row.querySelector('.userNameInput')?.value||`PLAYER ${i+1}`,
-    bank:row.querySelector('.userBankInput')?.value||''
+    bank:row.querySelector('.userBankInput')?.value||'',
+    type:row.querySelector('.participantTypeSelect')?.value||(i===0?'user':'guest')
   }));
+  const profile=mgPortalProfile();
   root.innerHTML='';
   for(let i=0;i<n;i++){
     const prev=old[i]||{};
     const defaultBank=mode==='krw'?300000:30000;
+    const type=prev.type||(i===0?'user':'guest');
     const row=document.createElement('div');
     row.className='userBankRow';
     row.innerHTML=`
+      <div class="participantTypeRow">
+        <label>参加タイプ
+          <select class="participantTypeSelect" data-seat="${i}">
+            <option value="user"${type==='user'?' selected':''}>USER</option>
+            <option value="guest"${type==='guest'?' selected':''}>GUEST</option>
+          </select>
+        </label>
+        <div class="portalParticipantNote">${type==='user'?'PORTAL PLAYER':'SESSION ONLY'}</div>
+      </div>
       <div class="userBankMain">
         <label>名前
-          <input class="userNameInput" type="text" maxlength="10" value="${escapeHtml(prev.name||`PLAYER ${i+1}`)}" placeholder="PLAYER ${i+1}">
+          <input class="userNameInput${type==='user'?' portalUserLocked':''}" type="text" maxlength="10" value="${escapeHtml(type==='user'?profile.displayName:(prev.name||`GUEST ${i+1}`))}" placeholder="${type==='user'?'PLAYER':`GUEST ${i+1}`}"${type==='user'?' readonly':''}>
         </label>
         <label>${mode==='krw'?'開始チップ（KRW）':'予算（JPY）'}
           <input class="userBankInput" type="number" inputmode="numeric" min="1000" step="1000" value="${prev.bank||defaultBank}">
@@ -1260,7 +1337,38 @@ function buildUserBankInputs(){
     root.appendChild(row);
   }
   getSetupRows().forEach(row=>row.querySelector('.userBankInput').addEventListener('input',updateBudgetPreview));
+  document.querySelectorAll('.participantTypeSelect').forEach(s=>s.addEventListener('change',handleParticipantTypeChange));
+  refreshParticipantRows();
   updateBudgetPreview();
+}
+function refreshParticipantRows(){
+  const profile=mgPortalProfile();
+  const selects=[...document.querySelectorAll('.participantTypeSelect')];
+  const userIndex=selects.findIndex(s=>s.value==='user');
+  selects.forEach((select,i)=>{
+    const row=select.closest('.userBankRow');
+    const user=select.value==='user';
+    const opt=select.querySelector('option[value="user"]');
+    if(opt)opt.disabled=userIndex>=0&&i!==userIndex;
+    const name=row.querySelector('.userNameInput');
+    name.readOnly=user;
+    name.classList.toggle('portalUserLocked',user);
+    if(user)name.value=profile.displayName;
+    row.querySelector('.portalParticipantNote').textContent=user?'PORTAL PLAYER':'SESSION ONLY';
+  });
+}
+function handleParticipantTypeChange(e){
+  const row=e.target.closest('.userBankRow');
+  const seat=+e.target.dataset.seat;
+  if(e.target.value==='user'){
+    document.querySelectorAll('.participantTypeSelect').forEach(s=>{
+      if(s!==e.target&&s.value==='user')s.value='guest';
+    });
+  }else{
+    const name=row.querySelector('.userNameInput');
+    if(name.readOnly||!name.value.trim())name.value=`GUEST ${seat+1}`;
+  }
+  refreshParticipantRows();
 }
 function updateBudgetPreview(){
   const rate=Number($('rate').value)||0;
@@ -1299,12 +1407,15 @@ function readSetup(){
   const rate=Math.max(.01,Number($('rate').value)||9.2);
   cfg={min,max:min*100,decks:8,rate,gameMode:$('gameMode').value,squeezeMode:$('squeezeMode').value};
   const rows=getSetupRows();
+  const profile=mgPortalProfile();
   users=rows.map((row,i)=>{
     const raw=Number(row.querySelector('.userBankInput').value)||0;
     const bank=mode==='jpy'?Math.floor(raw*rate/1000)*1000:Math.floor(raw/1000)*1000;
-    const name=(row.querySelector('.userNameInput').value||`PLAYER ${i+1}`).trim().slice(0,10)||`PLAYER ${i+1}`;
+    const type=row.querySelector('.participantTypeSelect')?.value||'guest';
+    const fallback=type==='user'?profile.displayName:`GUEST ${i+1}`;
+    const name=(type==='user'?profile.displayName:(row.querySelector('.userNameInput').value||fallback)).trim().slice(0,10)||fallback;
     return {
-      name,bank,initial:bank,roundStartBank:bank,bets:blankBets(),lastBets:blankBets(),confirmed:false,
+      name,type,playerId:type==='user'?profile.playerId:null,bank,initial:bank,roundStartBank:bank,bets:blankBets(),lastBets:blankBets(),confirmed:false,
       roundNet:0,stats:{profit:0,wagered:0,positiveRounds:0}
     };
   });
@@ -1312,8 +1423,12 @@ function readSetup(){
 function startGame(){
   readSetup();
   clearTestDeal(false);
+  if(users.filter(u=>u.type==='user').length>1){
+    toast('USERは1セッションにつき1人だけ設定できます');
+    return;
+  }
   if(users.some(u=>!u.bank||u.bank<cfg.min)){
-    toast('全USERの開始資金をテーブルMIN以上にしてください');
+    toast('全PLAYERの開始資金をテーブルMIN以上にしてください');
     return;
   }
   roundNo=1;shoeNo=1;history=[];roundHistory=[];stats={rounds:0,p:0,b:0,t:0};
@@ -1762,7 +1877,7 @@ function prepareBetRound(checkShuffle=true){
   const first=users.findIndex(u=>u.bank>=cfg.min);
   if(first<0){
     phase='gameover';
-    $('message').textContent='全USERの残高がテーブルMIN未満です';
+    $('message').textContent='全PLAYERの残高がテーブルMIN未満です';
     phaseLabel('GAME OVER');
     $('bankText').textContent='';
     $('betArea').classList.add('hidden');
@@ -1890,6 +2005,21 @@ async function settleRound(){
 
   const userResults=users.filter(u=>u.confirmed).map(u=>settleUser(u,outcome,pp,bp,p,b));
 
+  const portalUser=users.find(u=>u.type==='user'&&u.confirmed);
+  if(portalUser){
+    mgPortalRecordPlay('baccarat','BACCARAT',game=>{
+      const wins=mgPortalRecordValue(game,'wins')+(portalUser.roundNet>0?1:0);
+      const losses=mgPortalRecordValue(game,'losses')+(portalUser.roundNet<0?1:0);
+      const pushes=mgPortalRecordValue(game,'pushes')+(portalUser.roundNet===0?1:0);
+      mgPortalSetRecord(game,'wins','WIN',wins);
+      mgPortalSetRecord(game,'losses','LOSE',losses);
+      mgPortalSetRecord(game,'pushes','PUSH',pushes);
+      const decided=wins+losses;
+      mgPortalSetRecord(game,'winRate','WIN RATE',decided?wins/decided*100:0,'percent');
+      mgPortalSetRecord(game,'maxBank','MAX BANK',Math.max(mgPortalRecordValue(game,'maxBank'),portalUser.bank),'krw');
+    });
+  }
+
   stats.rounds++;
   if(outcome==='P')stats.p++;else if(outcome==='B')stats.b++;else stats.t++;
   history.push(outcome);
@@ -1904,7 +2034,7 @@ async function settleRound(){
   $('resultBanner').className=`resultBanner show ${outcome.toLowerCase()}`;
   phaseLabel(name);
   const totalNet=userResults.reduce((s,r)=>s+r.roundNet,0);
-  $('message').textContent=`${name} / USER合計 ${signedFmt(totalNet)}`;
+  $('message').textContent=`${name} / PLAYER合計 ${signedFmt(totalNet)}`;
   if(userResults.some(r=>r.roundNet>0)){
     sfxPayout();
     setTimeout(sfxWin,110);
@@ -2087,7 +2217,7 @@ function renderStatsModal(){
 
   const userRows=users.map(u=>`
     <div class="userResultBlock">
-      <div class="userResultHead"><span>${escapeHtml(u.name)}</span><b class="${u.stats.profit>=0?'resultDelta win':'resultDelta lose'}">${signedFmt(u.stats.profit)}</b></div>
+      <div class="userResultHead"><span>${escapeHtml(u.name)} <small style="color:var(--gold)">${u.type==='user'?'USER':'GUEST'}</small></span><b class="${u.stats.profit>=0?'resultDelta win':'resultDelta lose'}">${signedFmt(u.stats.profit)}</b></div>
       <div class="userResultMeta">BANK ${fmt(u.bank)} / BET ${fmt(u.stats.wagered)} / ＋ROUND ${u.stats.positiveRounds}</div>
     </div>`).join('');
 
@@ -2107,7 +2237,7 @@ function renderStatsModal(){
       <div class="statBox"><b>${stats.p}</b><span>PLAYER</span></div>
       <div class="statBox"><b>${stats.b}</b><span>BANKER</span></div>
       <div class="statBox"><b>${stats.t}</b><span>TIE</span></div>
-      <div class="statBox"><b>${signedFmt(totalProfit)}</b><span>USER損益</span></div>
+      <div class="statBox"><b>${signedFmt(totalProfit)}</b><span>PLAYER損益</span></div>
       <div class="statBox"><b>${roi.toFixed(1)}%</b><span>BET ROI</span></div>
     </div>
     <div class="resultContent" style="margin-top:8px">${userRows}</div>`;
@@ -2135,7 +2265,7 @@ $('statsHistoryTab').onclick=()=>{statsMode='history';renderStatsModal()};
 $('settingsBtn').onclick=()=>{
   syncTestControlsFromState();
   $('settingsContent').innerHTML=`
-    <div class="resultRow"><span>USER数</span><b>${users.length}</b></div>
+    <div class="resultRow"><span>PLAYER構成</span><b>${users.filter(u=>u.type==='user').length} USER / ${users.filter(u=>u.type==='guest').length} GUEST</b></div>
     <div class="resultRow"><span>TABLE LIMIT</span><b>${fmt(cfg.min)} / ${fmt(cfg.max)}</b></div>
     <div class="resultRow"><span>ゲーム方式</span><b>${cfg.gameMode==='commission'?'COMMISSION':'NO COMMISSION'}</b></div>
     <div class="resultRow"><span>カード確認</span><b>${cfg.squeezeMode==='all'?'ALL CARD SQUEEZE':'NO SQUEEZE'}</b></div>
