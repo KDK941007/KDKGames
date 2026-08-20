@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "blackjack",
+  "name": "BLACKJACK",
+  "category": "casino",
+  "categoryLabel": "CASINO",
+  "description": "実戦を想定したブラックジャック練習ゲーム。",
+  "searchTerms": [
+    "blackjack",
+    "ブラックジャック",
+    "casino",
+    "カジノ",
+    "実戦",
+    "練習"
+  ],
+  "icon": "./icon.svg",
+  "entry": "./index.html",
+  "available": true
+}

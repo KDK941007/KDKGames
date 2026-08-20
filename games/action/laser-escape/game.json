@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "laser-escape",
+  "name": "LASER ESCAPE",
+  "category": "action",
+  "categoryLabel": "ACTION",
+  "description": "迫りくるレーザーを避け続けるドット絵サバイバル。",
+  "searchTerms": [
+    "laser escape",
+    "レーザーエスケープ",
+    "レーザー",
+    "回避",
+    "サバイバル",
+    "ドットゲーム",
+    "アクション",
+    "action",
+    "survival"
+  ],
+  "icon": "./icon.svg",
+  "entry": "./index.html",
+  "available": true
+}

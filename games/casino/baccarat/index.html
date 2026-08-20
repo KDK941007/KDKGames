@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#07523a">
+<title>Paradise Baccarat Practice v1.16</title>
+<link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+<div class="app">
+
+<section id="setupScreen" class="setupScreen">
+  <div class="setupBrand">
+    <div class="brandTitle">BACCARAT<small>PARADISE PRACTICE</small></div>
+    <a class="portalBack" href="../">← ポータルへ戻る</a>
+  </div>
+
+  <section class="panel">
+    <div class="setupHead">
+      <h2>テーブル設定</h2>
+      <span class="ruleBadge">COMMISSION</span>
+    </div>
+    <div class="grid">
+      <div class="field">
+        <label for="userCount">PLAYER数</label>
+        <select id="userCount">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="tableMin">テーブルMIN（₩）</label>
+        <select id="tableMin">
+          <option value="10000">₩10,000</option>
+          <option value="30000" selected>₩30,000</option>
+          <option value="50000">₩50,000</option>
+          <option value="100000">₩100,000</option>
+        </select>
+      </div>
+      <div class="field full">
+        <label>開始資金の入力方法</label>
+        <div class="toggle">
+          <button id="modeKrw" class="active" type="button">KRWで入力</button>
+          <button id="modeJpy" type="button">円から換算</button>
+        </div>
+      </div>
+      <div id="rateField" class="field full hidden">
+        <label for="rate">換算レート：1円 = 何ウォン</label>
+        <input id="rate" type="number" inputmode="decimal" value="9.2" min="0.01" step="0.01">
+        <div class="fieldHint">旅行当日のレートを手入力してください。換算後は₩1,000単位に切り捨てます。</div>
+      </div>
+      <div class="field full">
+        <label>PLAYER別 開始チップ</label>
+        <div id="userBankList" class="userBankList"></div>
+      </div>
+      <div class="field">
+        <label for="gameMode">ゲーム方式</label>
+        <select id="gameMode">
+          <option value="commission" selected>Commission</option>
+          <option value="nocommission">No Commission</option>
+        </select>
+        <div class="fieldHint">No CommissionではBANKERが6で勝った場合のみBANKER配当が0.5:1になります。</div>
+      </div>
+      <div class="field">
+        <label for="squeezeMode">カード確認</label>
+        <select id="squeezeMode">
+          <option value="all" selected>All Card Squeeze</option>
+          <option value="none">No Squeeze</option>
+        </select>
+        <div class="fieldHint">All Card Squeezeでは配られるカードをスワイプして確認します。</div>
+      </div>
+    </div>
+
+    <div class="settingSummary">
+      <b>練習設定</b><br>
+      PLAYER 1:1 / TIE 8:1 / PLAYER・BANKER PAIR 11:1。<br>
+      BANKERはCommissionなら0.95:1、No Commissionなら通常1:1・BANKER 6勝利のみ0.5:1。<br>
+      8 DECK SHOE。複数PLAYER時は全PLAYERのBET確定後に1回の配札を行います。
+    </div>
+
+    <button id="startBtn" class="primary" type="button">テーブルに着く</button>
+  </section>
+</section>
+
+<section id="gameScreen" class="gameScreen">
+  <header class="gameHeader">
+    <div class="gameBrand">BACCARAT<small>PARADISE PRACTICE</small></div>
+    <div class="shoeInfo"><b>8 DECK SHOE</b><br><span id="shoeText">SHOE 1 ・ 416 cards</span></div>
+  </header>
+
+  <div class="roadPanel">
+    <div class="roadTitle"><b>RESULT ROAD</b><span id="roadStats">P 0 / B 0 / T 0</span></div>
+    <div id="road" class="road"><span class="roadEmpty">NO RESULTS</span></div>
+  </div>
+
+  <section id="tableStage" class="tableStage">
+    <div class="tableMeta">
+      <div id="roundPill" class="roundPill">ROUND 1</div>
+      <div id="phaseText" class="phaseText">PLACE YOUR BETS</div>
+    </div>
+
+    <div class="hands">
+      <div class="side playerSide">
+        <div class="sideHead"><span class="sideName">PLAYER</span><span id="playerPoint" class="point">–</span></div>
+        <div id="playerCards" class="cardRow"></div>
+        <div id="playerState" class="sideState"></div>
+      </div>
+      <div class="side bankerSide">
+        <div class="sideHead"><span class="sideName">BANKER</span><span id="bankerPoint" class="point">–</span></div>
+        <div id="bankerCards" class="cardRow"></div>
+        <div id="bankerState" class="sideState"></div>
+      </div>
+    </div>
+
+
+    <div id="squeezeOverlay" class="squeezeOverlay hidden">
+      <div id="squeezeTitle" class="squeezeTitle">PLAYER CARD</div>
+      <div id="squeezeOwner" class="squeezeOwner">SQUEEZE</div>
+      <div id="squeezeCard" class="squeezeCard" aria-label="上下左右にスワイプしてカードをめくる">
+        <div id="squeezeFace" class="squeezeFace"></div>
+        <div id="squeezeCover" class="squeezeCover"></div>
+      </div>
+      <div id="squeezeGuide" class="squeezeGuide">上下左右、好きな方向へスワイプして確認<br>または OPEN をタップ</div>
+      <div id="squeezeDirection" class="squeezeDirection">DIRECTION —</div>
+      <div class="squeezeProgress"><span id="squeezeProgressBar"></span></div>
+      <div class="squeezeActionRow">
+        <button id="squeezeOpenBtn" class="squeezeOpenBtn" type="button">OPEN</button>
+        <button id="squeezeTableBtn" class="squeezeTableBtn" type="button">場を見る</button>
+      </div>
+    </div>
+
+    <div id="resultBanner" class="resultBanner"></div>
+    <div id="outcomeOverlay" class="outcomeOverlay hidden" aria-hidden="true">
+      <div class="outcomeCard">
+        <div class="outcomeKicker">ROUND RESULT</div>
+        <div id="outcomeMain" class="outcomeMain"></div>
+        <div id="outcomeScore" class="outcomeScore"></div>
+      </div>
+    </div>
+    <div class="shoeVisual"></div>
+  </section>
+
+  <section id="betPanel" class="betPanel">
+    <div id="squeezeBetCover" class="squeezeBetCover hidden">
+      <button id="squeezeReturnBtn" class="squeezeReturnBtn" type="button">SQUEEZEへ戻る</button>
+    </div>
+    <div class="betStatus">
+      <div id="message" class="message">ベット先を選択してください</div>
+      <div id="bankText" class="bankText">BANK ₩300,000</div>
+    </div>
+    <div id="limitBar" class="limitBar">
+      <span>MIN <b id="gameMinText">₩30,000</b></span>
+      <span>MAX <b id="gameMaxText">₩3,000,000</b></span>
+    </div>
+    <div id="userStrip" class="userStrip"></div>
+
+    <div id="betArea">
+      <div class="betSpots">
+        <button class="betSpot player active" data-bet="player" type="button">
+          <span class="spotName">PLAYER</span><span class="spotPay">1 : 1</span><span id="amtPlayer" class="spotAmt">₩0</span>
+        </button>
+        <button class="betSpot tie" data-bet="tie" type="button">
+          <span class="spotName">TIE</span><span class="spotPay">8 : 1</span><span id="amtTie" class="spotAmt">₩0</span>
+        </button>
+        <button class="betSpot banker" data-bet="banker" type="button">
+          <span class="spotName">BANKER</span><span id="bankerPayText" class="spotPay">0.95 : 1</span><span id="amtBanker" class="spotAmt">₩0</span>
+        </button>
+      </div>
+
+      <div class="sideBetRow">
+        <button class="betSpot" data-bet="playerPair" type="button">
+          <span class="spotName">PLAYER PAIR</span><span class="spotPay">11 : 1</span><span id="amtPlayerPair" class="spotAmt">₩0</span>
+        </button>
+        <button class="betSpot" data-bet="bankerPair" type="button">
+          <span class="spotName">BANKER PAIR</span><span class="spotPay">11 : 1</span><span id="amtBankerPair" class="spotAmt">₩0</span>
+        </button>
+      </div>
+
+      <div id="chipRow" class="chipRow"></div>
+      <div class="betActions">
+        <button id="repeatBtn" type="button">前回BET</button>
+        <button id="customBtn" type="button">指定BET</button>
+        <button id="clearBtn" type="button">CLEAR</button>
+        <button id="dealBtn" class="dealBtn" type="button">DEAL</button>
+      </div>
+    </div>
+
+    <button id="nextRoundBtn" class="nextRoundBtn hidden" type="button">結果を見る</button>
+  </section>
+
+  <footer class="gameFooter">
+    <button id="settingsBtn" class="footerBtn" type="button">設定</button>
+    <button id="helpBtn" class="footerBtn" type="button">ヘルプ</button>
+    <button id="statsBtn" class="footerBtn" type="button">戦績</button>
+    <button id="bgmBtn" class="footerBtn" type="button">BGM</button>
+    <button id="topBtn" class="footerBtn" type="button">トップへ戻る</button>
+  </footer>
+</section>
+</div>
+
+<div id="helpModal" class="modal hidden">
+  <div class="sheet">
+    <div class="sheetHead">
+      <div><div class="sheetTitle">バカラ ヘルプ</div><div class="sheetSub">パラダイスシティの公式案内を基準にした練習用まとめ</div></div>
+      <button class="closeBtn" data-close="helpModal" type="button">×</button>
+    </div>
+    <div class="tabs">
+      <button class="tab active" data-help="basic" type="button">基本</button>
+      <button class="tab" data-help="draw" type="button">ドロー</button>
+      <button class="tab" data-help="payout" type="button">配当</button>
+      <button class="tab" data-help="pair" type="button">PAIR</button>
+      <button class="tab" data-help="detail" type="button">詳細</button>
+    </div>
+    <div id="helpContent" class="sheetContent"></div>
+  </div>
+</div>
+
+<div id="resultModal" class="modal hidden">
+  <div class="sheet resultSheet">
+    <div class="sheetHead">
+      <div><div class="sheetTitle">ROUND RESULT</div><div id="resultSub" class="sheetSub"></div></div>
+      <button class="closeBtn" data-close="resultModal" type="button">×</button>
+    </div>
+    <div id="resultContent" class="roundResultContent"></div>
+    <button id="modalNextRound" class="resultNextBtn" type="button">次のラウンド</button>
+  </div>
+</div>
+
+<div id="statsModal" class="modal hidden">
+  <div class="sheet statsSheet">
+    <div class="sheetHead">
+      <div><div class="sheetTitle">SESSION STATS</div><div class="sheetSub">プレイヤー戦績 / ゲーム履歴</div></div>
+      <button class="closeBtn" data-close="statsModal" type="button">×</button>
+    </div>
+    <div class="statsTabs">
+      <button id="statsPlayerTab" class="statsTab active" type="button">PLAYER STATS</button>
+      <button id="statsHistoryTab" class="statsTab" type="button">GAME HISTORY</button>
+    </div>
+    <div id="statsContent" class="statsBody"></div>
+  </div>
+</div>
+
+<div id="settingsModal" class="modal hidden">
+  <div class="sheet smallSheet settingsGameSheet">
+    <div class="sheetHead">
+      <div><div class="sheetTitle">ゲーム設定</div><div class="sheetSub">現在の条件 / テスト配札</div></div>
+      <button class="closeBtn" data-close="settingsModal" type="button">×</button>
+    </div>
+    <div class="settingsGameBody">
+      <div id="settingsContent" class="resultContent"></div>
+
+      <div class="testBox settingsTestBox">
+        <button id="testToggle" class="smallBtn settingsTestToggle" type="button">テスト配札を設定</button>
+        <div id="testPanel" class="testPanel hidden">
+          <div class="testTitle">テスト配札（次回DEALに適用）</div>
+          <div class="testGrid">
+            <label>PLAYER 1枚目<select id="tp1"></select></label>
+            <label>PLAYER 2枚目<select id="tp2"></select></label>
+            <label>PLAYER 3枚目<select id="tp3"></select></label>
+            <label>BANKER 1枚目<select id="tb1"></select></label>
+            <label>BANKER 2枚目<select id="tb2"></select></label>
+            <label>BANKER 3枚目<select id="tb3"></select></label>
+          </div>
+          <div class="fieldHint" style="margin-top:7px">
+            未指定は通常抽選。3枚目はドロールール上必要な場合だけ使用します。
+          </div>
+          <div id="testDealStatus" class="testDealStatus">テスト配札：未設定</div>
+          <button id="testClearBtn" class="smallBtn testClearBtn" type="button">テスト配札をクリア</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="customModal" class="modal hidden">
+  <div class="sheet smallSheet">
+    <div class="sheetHead">
+      <div><div class="sheetTitle">指定BET</div><div id="customSub" class="sheetSub"></div></div>
+      <button class="closeBtn" data-close="customModal" type="button">×</button>
+    </div>
+    <div class="customForm">
+      <input id="customAmount" type="number" inputmode="numeric" min="1" placeholder="金額を入力">
+      <button id="customApply" class="customApply" type="button">追加する</button>
+    </div>
+  </div>
+</div>
+
+<div id="confirmModal" class="modal hidden">
+  <div class="sheet smallSheet">
+    <div class="sheetHead">
+      <div class="sheetTitle">トップへ戻りますか？</div>
+      <button class="closeBtn" data-close="confirmModal" type="button">×</button>
+    </div>
+    <div class="confirmText">現在のセッション戦績と資金状態はリセットされます。</div>
+    <div class="confirmBtns">
+      <button class="cancelBtn" data-close="confirmModal" type="button">キャンセル</button>
+      <button id="confirmTop" class="dangerBtn" type="button">トップへ戻る</button>
+    </div>
+  </div>
+</div>
+
+
+<div id="bgmModal" class="modal hidden">
+  <div class="sheet smallSheet">
+    <div class="sheetHead">
+      <div><div class="sheetTitle">サウンド設定</div><div class="sheetSub">BGMと効果音を個別に調整できます</div></div>
+      <button id="closeBgm" class="closeBtn" type="button">×</button>
+    </div>
+    <div class="audioVolumePanel">
+      <div class="audioVolumeRow">
+        <label for="bgmVolume">BGM音量</label>
+        <input id="bgmVolume" type="range" min="0" max="100" step="1" value="100">
+        <span id="bgmVolumeValue" class="audioVolumeValue">100%</span>
+      </div>
+      <div class="audioVolumeRow">
+        <label for="sfxVolume">効果音</label>
+        <input id="sfxVolume" type="range" min="0" max="100" step="1" value="100">
+        <span id="sfxVolumeValue" class="audioVolumeValue">100%</span>
+      </div>
+      <div class="audioVolumeNote">音量設定はこの端末に保存されます。BGM再生中はスライダー操作を即時反映します。</div>
+    </div>
+    <div class="bgmSelectActions">
+      <button id="bgmJazz" class="smallBtn" type="button">CASINO LOUNGE</button>
+      <button id="bgmUpbeat" class="smallBtn" type="button">CASINO RUSH</button>
+      <button id="bgmOff" class="smallBtn bgmWide" type="button">BGM OFF</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="./js/game.js"></script>
+</body>
+</html>

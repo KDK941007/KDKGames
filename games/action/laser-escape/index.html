@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#07101f">
+<title>LASER ESCAPE</title>
+<link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+
+<section id="startScreen" class="screen active">
+  <div class="wrap">
+    <div class="titleMark" aria-hidden="true">
+      <i class="beamA"></i><i class="core"></i><i class="beamB"></i>
+    </div>
+    <div class="kicker">PIXEL SURVIVAL</div>
+    <h1>LASER ESCAPE</h1>
+    <p class="sub">30秒生き残ってLEVELを突破。<br>レーザーを避け続け、どこまでスコアを伸ばせるか。</p>
+
+    <div class="startCard pixelPanel">
+      <div class="playerFieldHead">
+        <label class="fieldLabel" for="playerNameInput">PLAYER NAME</label>
+        <div class="playerTypeMini" role="group" aria-label="プレイヤータイプ">
+          <button class="playerTypeMiniBtn active" type="button" data-player-type="user">USER</button>
+          <button class="playerTypeMiniBtn" type="button" data-player-type="guest">GUEST</button>
+          <input id="playerTypeInput" type="hidden" value="user">
+        </div>
+      </div>
+      <input id="playerNameInput" class="nameInput" maxlength="12" autocomplete="nickname" placeholder="名前を入力">
+      <div id="nameError" class="nameError"></div>
+      <div class="topCommandPanel">
+        <button id="startBtn" class="topCommandBtn startCommand" type="button">
+          <span class="cmdIcon" aria-hidden="true">▶</span>
+          <span class="cmdText">
+            <span class="cmdMain">START MISSION</span>
+            <span class="cmdSub">ENTER LASER ZONE</span>
+          </span>
+          <span class="cmdArrow" aria-hidden="true">›</span>
+        </button>
+
+        <a class="topCommandBtn portalCommand" href="../">
+          <span class="cmdIcon" aria-hidden="true">↩</span>
+          <span class="cmdText">
+            <span class="cmdMain">PORTALへ戻る</span>
+            <span class="cmdSub">BACK TO GAME PORTAL</span>
+          </span>
+          <span class="cmdArrow" aria-hidden="true">›</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="rankCard pixelPanel">
+      <div class="rankHead"><span>TOP 3 RANKING</span><span>LOCAL</span></div>
+      <div id="rankingList"></div>
+    </div>
+
+    <div class="ruleMini pixelPanel">
+      <b>RULE</b><br>
+      プレイヤーを指でドラッグして移動。体力は3。3回被弾するとGAME OVER。<br>
+      1 LEVEL = 30秒。LEVELが高いほどスコア倍率とレーザー密度が上昇します。
+    </div>
+  </div>
+</section>
+
+<section id="gameScreen" class="screen">
+  <div class="gameWrap">
+    <div class="hud">
+      <div class="hudMain">
+        <div class="hudTop">
+          <span id="hudName" class="playerName">PLAYER</span>
+          <span id="hudLevel" class="levelLabel">LEVEL 1</span>
+        </div>
+        <div class="hudBottom">
+          <span id="hudScore" class="scoreLabel">000000</span>
+          <span id="hudLives" class="lifeLabel" aria-label="残り体力"><span class="lifeHeart"></span><span class="lifeHeart"></span><span class="lifeHeart"></span></span>
+          <span id="hudTime" class="timeLabel">30.0</span>
+        </div>
+      </div>
+      <button id="pauseBtn" class="pauseBtn" type="button" aria-label="一時停止">Ⅱ</button>
+    </div>
+
+    <div id="arenaFrame" class="arenaFrame">
+      <div class="edgeRail left"></div><div class="edgeRail right"></div>
+      <div class="edgeRail top"></div><div class="edgeRail bottom"></div>
+
+      <div id="arena" class="arena">
+        <div id="attackLabel" class="attackLabel">LASER BURST</div>
+        <div id="pilot" class="pilot">
+          <div class="pilotBody"></div>
+          <div class="pilotCore"></div>
+        </div>
+      </div>
+
+      <div id="hitFlashLayer" class="hitFlashLayer"></div>
+      <div id="hitText" class="hitText">LASER HIT!</div>
+
+      <div id="levelOverlay" class="levelOverlay">
+        <div id="clearRing" class="clearRing"></div>
+        <div class="levelMessage">
+          <div id="levelBig" class="big">LEVEL 1 START!</div>
+          <div id="levelSmall" class="small">READY</div>
+        </div>
+      </div>
+
+      <div id="pauseOverlay" class="pauseOverlay">
+        <div class="modalCard">
+          <div class="modalTitle">PAUSE</div>
+          <div class="modalBtns">
+            <button id="resumeBtn" class="primaryBtn" type="button">再開</button>
+            <button id="quitBtn" class="dangerBtn" type="button">トップ画面に戻る</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="gameOverOverlay" class="gameOverOverlay">
+        <div class="modalCard">
+          <div class="modalTitle">GAME OVER</div>
+          <div class="gameOverStats">
+            <div class="statBox"><span>SCORE</span><b id="finalScore">0</b></div>
+            <div class="statBox"><span>LEVEL</span><b id="finalLevel">1</b></div>
+            <div class="statBox"><span>SURVIVAL</span><b id="finalTime">0.0s</b></div>
+            <div class="statBox"><span>PLAYER</span><b id="finalName">-</b></div>
+          </div>
+          <div id="newRank" class="newRank">RANK IN!</div>
+          <div class="modalBtns">
+            <button id="retryBtn" class="primaryBtn" type="button">RETRY</button>
+            <button id="topBtn" class="secondaryBtn" type="button">トップ画面に戻る</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="gameHint">DRAG PLAYER / HP 3 / 3 HITS = GAME OVER</div>
+  </div>
+</section>
+
+<script src="./js/game.js"></script>
+</body>
+</html>

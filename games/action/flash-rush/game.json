@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "flash-rush",
+  "name": "FLASH RUSH",
+  "category": "action",
+  "categoryLabel": "ACTION",
+  "description": "100種類の瞬間ミニゲームをハイテンポで連続攻略。",
+  "searchTerms": [
+    "flash rush",
+    "フラッシュラッシュ",
+    "瞬間ゲーム",
+    "ミニゲーム",
+    "アクション",
+    "action",
+    "micro game"
+  ],
+  "icon": "./icon.svg",
+  "entry": "./index.html",
+  "available": true
+}

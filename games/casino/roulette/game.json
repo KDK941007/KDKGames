@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "roulette",
+  "name": "ROULETTE",
+  "category": "casino",
+  "categoryLabel": "CASINO",
+  "description": "今後追加予定。",
+  "searchTerms": [
+    "roulette",
+    "ルーレット",
+    "casino",
+    "カジノ"
+  ],
+  "icon": "./icon.svg",
+  "entry": "./index.html",
+  "available": false
+}

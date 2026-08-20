@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "rpg",
+  "name": "MYSTERY RPG",
+  "category": "rpg",
+  "categoryLabel": "RPG",
+  "description": "内容を知らずに始める、短編RPG。",
+  "searchTerms": [
+    "mystery rpg",
+    "ミステリー",
+    "rpg",
+    "role playing",
+    "ロールプレイング"
+  ],
+  "icon": "./icon.svg",
+  "entry": "./index.html",
+  "available": true
+}
