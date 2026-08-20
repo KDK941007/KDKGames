@@ -1,7 +1,7 @@
 (()=>{
 'use strict';
 const SAVE_KEY='yukyo_yakata_save_v1';
-const BUILD='collision-interaction-v3';
+const BUILD='image-calibrated-zones-v4';
 const W=640,H=640,WORLD=640;
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const canvas=$('#game'),ctx=canvas.getContext('2d');
@@ -38,69 +38,128 @@ function initAudio(){if(audio||!state.sound)return;try{const ac=new (window.Audi
 function sfx(kind){if(!audio||!state.sound)return;const ac=audio.ac,t=ac.currentTime;const o=ac.createOscillator(),g=ac.createGain();o.connect(g).connect(audio.master);if(kind==='ok'){o.type='sine';o.frequency.setValueAtTime(420,t);o.frequency.exponentialRampToValueAtTime(760,t+.18);g.gain.setValueAtTime(.9,t);g.gain.exponentialRampToValueAtTime(.01,t+.25)}else if(kind==='scare'){o.type='sawtooth';o.frequency.setValueAtTime(120,t);o.frequency.exponentialRampToValueAtTime(38,t+.45);g.gain.setValueAtTime(1,t);g.gain.exponentialRampToValueAtTime(.01,t+.5)}else{o.type='square';o.frequency.value=180;g.gain.setValueAtTime(.3,t);g.gain.exponentialRampToValueAtTime(.01,t+.08)}o.start(t);o.stop(t+.55)}
 const rooms={
  bedroom:{name:'目覚めの寝室',img:'bedroom',
-  walk:[[170,285,432,630],[170,450,435,630]],
-  colliders:[[0,0,178,485],[185,230,250,322],[245,190,412,318],[405,190,640,355],[430,360,640,640]],
+  walk:[[12,286,628,628]],
+  colliders:[
+   [0,105,176,410],
+   [176,188,248,286],
+   [248,176,404,307],
+   [402,166,638,309],
+   [424,345,640,590]
+  ],
   spawn:{x:320,y:575},targets:[
-   {id:'bed',box:[55,110,178,475],text:'乱れたベッド。枕の下に紙が挟まっている。',act:()=>{if(addNote('letter'))say('差出人のない手紙を見つけた。\n「まだ、鏡の中にいる。」',2600);else say('シーツは冷たい。誰かがさっきまで寝ていたような跡がある。')}},
-   {id:'dresser',box:[245,175,412,318],text:'古い鏡台。引き出しが少し開いている。',act:()=>{if(!hasItem('smallKey')){addItem('smallKey');state.flags.bedKey=true;say('引き出しから「小さな鍵」を手に入れた。');save()}else say('引き出しは空だ。鏡には、こちらを見ていない自分が映っている。')}},
-   {id:'exit',box:[265,595,375,640],text:'廊下へ出る。',act:()=>goRoom('corridor',320,575,'up')}
+   {id:'bed',zones:[
+      {box:[176,145,226,405],facing:'left'},
+      {box:[35,410,174,455],facing:'up'}
+    ],text:'乱れたベッド。枕の下に紙が挟まっている。',act:()=>{if(addNote('letter'))say('差出人のない手紙を見つけた。\n「まだ、鏡の中にいる。」',2600);else say('シーツは冷たい。誰かがさっきまで寝ていたような跡がある。')}},
+   {id:'dresser',zones:[{box:[250,307,405,350],facing:'up'}],text:'古い鏡台。引き出しが少し開いている。',act:()=>{if(!hasItem('smallKey')){addItem('smallKey');state.flags.bedKey=true;say('引き出しから「小さな鍵」を手に入れた。');save()}else say('引き出しは空だ。鏡には、こちらを見ていない自分が映っている。')}},
+   {id:'exit',zones:[{box:[270,585,380,632],facing:'down'}],text:'廊下へ出る。',act:()=>goRoom('corridor',320,590,'up')}
   ]},
 
  corridor:{name:'暗い廊下',img:'corridor',
-  walk:[[210,135,430,285],[150,270,495,435],[95,420,545,635]],
+  walk:[
+   [190,165,460,640],
+   [120,238,530,500],
+   [118,420,525,640]
+  ],
   colliders:[],
-  spawn:{x:320,y:575},targets:[
-   {id:'bedroom',box:[255,595,385,640],text:'寝室へ戻る。',act:()=>goRoom('bedroom',320,550,'up')},
-   {id:'studyDoor',box:[120,245,190,370],text:'左手の重い扉。',act:()=>{if(!state.flags.studyOpen){if(hasItem('smallKey')){removeItem('smallKey');state.flags.studyOpen=true;say('小さな鍵が合った。書斎の扉が開いた。');save()}else return say('鍵がかかっている。')}setTimeout(()=>goRoom('study',320,575,'up'),350)}},
-   {id:'bathDoor',box:[445,245,520,370],text:'右手の浴室へ。',act:()=>goRoom('bath',320,575,'up')},
-   {id:'parlorDoor',box:[105,385,190,510],text:'応接室へ。',act:()=>goRoom('parlor',350,575,'up')},
-   {id:'basementDoor',box:[445,385,535,510],text:'地下へ続く扉。',act:()=>{if(!state.flags.basementOpen){if(hasItem('basementKey')){removeItem('basementKey');state.flags.basementOpen=true;say('地下室の鍵を使った。');save()}else return say('大きな鍵穴がある。')}setTimeout(()=>goRoom('basement',320,575,'up'),350)}},
-   {id:'mirrorDoor',box:[245,90,395,165],text:'廊下の奥の黒い扉。',act:()=>{if(!(hasItem('shard1')&&hasItem('shard2')&&hasItem('shard3')&&hasItem('silverRing')))return say('扉の中央に、三角形のくぼみと銀色の溝がある。');state.flags.finalOpen=true;goRoom('mirror',320,575,'up')}}
+  spawn:{x:320,y:590},targets:[
+   {id:'bedroom',zones:[{box:[270,585,375,640],facing:'down'}],text:'寝室へ戻る。',act:()=>goRoom('bedroom',320,575,'up')},
+   {id:'studyDoor',zones:[{box:[175,220,218,315],facing:'left'}],text:'左手の重い扉。',act:()=>{if(!state.flags.studyOpen){if(hasItem('smallKey')){removeItem('smallKey');state.flags.studyOpen=true;say('小さな鍵が合った。書斎の扉が開いた。');save()}else return say('鍵がかかっている。')}setTimeout(()=>goRoom('study',320,575,'up'),350)}},
+   {id:'bathDoor',zones:[{box:[500,220,530,320],facing:'right'}],text:'右手の浴室へ。',act:()=>goRoom('bath',320,575,'up')},
+   {id:'parlorDoor',zones:[{box:[125,338,170,445],facing:'left'}],text:'応接室へ。',act:()=>goRoom('parlor',335,585,'up')},
+   {id:'basementDoor',zones:[{box:[500,345,530,455],facing:'right'}],text:'地下へ続く扉。',act:()=>{if(!state.flags.basementOpen){if(hasItem('basementKey')){removeItem('basementKey');state.flags.basementOpen=true;say('地下室の鍵を使った。');save()}else return say('大きな鍵穴がある。')}setTimeout(()=>goRoom('basement',320,575,'up'),350)}},
+   {id:'mirrorDoor',zones:[{box:[305,285,415,330],facing:'up'}],text:'廊下の奥の黒い扉。',act:()=>{if(!(hasItem('shard1')&&hasItem('shard2')&&hasItem('shard3')&&hasItem('silverRing')))return say('扉の中央に、三角形のくぼみと銀色の溝がある。');state.flags.finalOpen=true;goRoom('mirror',320,575,'up')}}
   ]},
 
  study:{name:'書斎',img:'study',
-  walk:[[238,345,470,630],[245,300,455,410]],
-  colliders:[[295,300,425,390],[0,390,250,640],[465,390,640,640]],
+  walk:[
+   [230,350,475,630],
+   [18,505,622,630]
+  ],
+  colliders:[
+   [0,98,248,395],
+   [292,242,432,395],
+   [448,98,640,395],
+   [0,395,252,510],
+   [448,395,640,510]
+  ],
   spawn:{x:320,y:575},targets:[
-   {id:'books',box:[45,90,245,385],text:'左の本棚。背表紙の一冊だけ新しい。',act:()=>{if(addNote('studyClue'))say('本の間から走り書きを見つけた。\n「眼・灯・鴉」');else say('本の並びは不自然だ。数字を示す言葉が気になる。')}},
-   {id:'desk',box:[465,390,640,575],text:'右の机。古い日記が開かれている。',act:()=>{if(addNote('diary1'))say('「管理人の日記 I」を記録した。');else say('配電盤についての記述がある。')}},
-   {id:'safe',box:[305,100,405,305],text:'肖像画の裏に小さな金庫がある。',act:()=>{if(state.flags.studySolved)return say('金庫は空だ。');openSafe()}},
-   {id:'exit',box:[270,595,380,640],text:'廊下へ戻る。',act:()=>goRoom('corridor',245,330,'right')}
+   {id:'books',zones:[
+      {box:[252,345,290,390],facing:'left'}
+    ],text:'左の本棚。背表紙の一冊だけ新しい。',act:()=>{if(addNote('studyClue'))say('本の間から走り書きを見つけた。\n「眼・灯・鴉」');else say('本の並びは不自然だ。数字を示す言葉が気になる。')}},
+   {id:'desk',zones:[{box:[410,410,448,505],facing:'right'}],text:'右の机。古い日記が開かれている。',act:()=>{if(addNote('diary1'))say('「管理人の日記 I」を記録した。');else say('配電盤についての記述がある。')}},
+   {id:'safe',zones:[{box:[300,395,425,438],facing:'up'}],text:'中央の机。肖像画の裏から外された小金庫が置かれている。',act:()=>{if(state.flags.studySolved)return say('金庫は空だ。');openSafe()}},
+   {id:'exit',zones:[{box:[270,585,382,632],facing:'down'}],text:'廊下へ戻る。',act:()=>goRoom('corridor',220,275,'right')}
   ]},
 
  bath:{name:'浴室',img:'bath',
-  walk:[[180,330,510,630],[205,285,500,500]],
-  colliders:[[0,220,180,475],[0,455,205,640],[275,280,430,410],[505,245,640,485],[455,455,550,555]],
+  walk:[
+   [145,325,515,630],
+   [205,285,505,455]
+  ],
+  colliders:[
+   [0,245,160,455],
+   [0,455,195,605],
+   [274,267,431,395],
+   [505,245,640,455],
+   [455,445,555,575]
+  ],
   spawn:{x:320,y:575},targets:[
-   {id:'mirror',box:[285,35,420,270],text:'曇った大鏡。',act:()=>bathMirror()},
-   {id:'sink',box:[500,245,640,450],text:'洗面台。排水口に何か光っている。',act:()=>{if(!state.flags.bathGhost)return say('鏡の方から視線を感じて、手を伸ばせない。');if(!state.flags.bathShard){state.flags.bathShard=true;addItem('shard2');addNote('diary2');say('排水口から「鏡片・弐」を拾った。\n濡れた紙片には、美緒の文字が残っている。',2800);save()}else say('錆びた水が一滴ずつ落ちている。')}},
-   {id:'exit',box:[270,595,385,640],text:'廊下へ戻る。',act:()=>goRoom('corridor',440,320,'left')}
+   {id:'mirror',zones:[{box:[300,395,410,438],facing:'up'}],text:'曇った大鏡。',act:()=>bathMirror()},
+   {id:'sink',zones:[{box:[455,305,504,438],facing:'right'}],text:'右手の洗面台。排水口に何か光っている。',act:()=>{if(!state.flags.bathGhost)return say('鏡の方から視線を感じて、手を伸ばせない。');if(!state.flags.bathShard){state.flags.bathShard=true;addItem('shard2');addNote('diary2');say('排水口から「鏡片・弐」を拾った。\n濡れた紙片には、美緒の文字が残っている。',2800);save()}else say('錆びた水が一滴ずつ落ちている。')}},
+   {id:'exit',zones:[{box:[270,585,385,632],facing:'down'}],text:'廊下へ戻る。',act:()=>goRoom('corridor',500,275,'left')}
   ]},
 
  parlor:{name:'応接室',img:'parlor',
-  walk:[[105,190,575,540],[70,255,585,540],[245,520,395,640]],
-  colliders:[[0,45,115,230],[295,145,465,275],[465,150,555,275],[555,95,640,305],[0,285,115,455],[0,425,100,545],[570,345,640,545]],
-  spawn:{x:335,y:575},targets:[
-   {id:'photo',box:[465,145,555,260],text:'棚の上の古い集合写真。',act:()=>parlorPhoto()},
-   {id:'sofa',box:[0,285,115,455],text:'色褪せたソファ。',act:()=>{say('座面が、あなたの隣だけゆっくり沈んだ。');if(!state.flags.photoSeen){peekGhost(470,350)}}},
-   {id:'exit',box:[265,535,385,640],text:'廊下へ戻る。',act:()=>goRoom('corridor',205,445,'right')}
+  walk:[
+   [90,195,600,550],
+   [245,535,395,632]
+  ],
+  colliders:[
+   [0,50,116,235],
+   [296,142,456,267],
+   [464,145,556,258],
+   [555,80,640,295],
+   [0,292,116,437],
+   [0,430,102,552],
+   [568,342,640,553]
+  ],
+  spawn:{x:335,y:585},targets:[
+   {id:'photo',zones:[{box:[465,258,557,302],facing:'up'}],text:'棚の上の古い集合写真。',act:()=>parlorPhoto()},
+   {id:'sofa',zones:[{box:[116,300,162,430],facing:'left'}],text:'色褪せたソファ。',act:()=>{say('座面が、あなたの隣だけゆっくり沈んだ。');if(!state.flags.photoSeen){peekGhost(470,350)}}},
+   {id:'exit',zones:[{box:[265,535,385,632],facing:'down'}],text:'廊下へ戻る。',act:()=>goRoom('corridor',175,395,'right')}
   ]},
 
  basement:{name:'地下室',img:'basement',
-  walk:[[75,300,525,630],[190,250,470,630]],
-  colliders:[[65,70,280,310],[300,20,485,350],[465,210,640,640],[0,455,205,640]],
+  walk:[
+   [245,248,475,630],
+   [185,300,525,630]
+  ],
+  colliders:[
+   [48,72,280,300],
+   [300,20,470,320],
+   [468,205,640,640],
+   [0,452,205,640]
+  ],
   spawn:{x:320,y:575},targets:[
-   {id:'breaker',box:[65,75,285,315],text:'古い配電盤。四つのスイッチがある。',act:()=>{if(state.flags.breakerSolved)return say('配電盤は低い唸りを上げている。');openBreaker()}},
-   {id:'crate',box:[0,450,210,640],text:'木箱の隙間に銀色のものが見える。',act:()=>{if(!state.flags.breakerSolved)return say('暗すぎて奥まで手を入れられない。');if(!state.flags.basementShard){state.flags.basementShard=true;addItem('shard3');say('「鏡片・参」を手に入れた。\n背後で、裸足が床を擦った。',2000);startChase();save()}else say('箱の中は空だ。')}},
-   {id:'exit',box:[265,595,385,640],text:'廊下へ戻る。',act:()=>{if(state.flags.chase){state.flags.chase=false;state.flags.chaseEscaped=true;ghost.active=false;ui.stateLabel.textContent='探索';say('扉を閉めた。\n向こう側から、爪で木を引っ掻く音が続いている。',2400);save()}goRoom('corridor',430,445,'left')}}
+   {id:'breaker',zones:[{box:[285,322,335,385],facing:'left'}],text:'古い配電盤。四つのスイッチがある。',act:()=>{if(state.flags.breakerSolved)return say('配電盤は低い唸りを上げている。');openBreaker()}},
+   {id:'crate',zones:[{box:[205,455,250,598],facing:'left'}],text:'木箱の隙間に銀色のものが見える。',act:()=>{if(!state.flags.breakerSolved)return say('暗すぎて奥まで手を入れられない。');if(!state.flags.basementShard){state.flags.basementShard=true;addItem('shard3');say('「鏡片・参」を手に入れた。\n背後で、裸足が床を擦った。',2000);startChase();save()}else say('箱の中は空だ。')}},
+   {id:'exit',zones:[{box:[270,585,385,632],facing:'down'}],text:'廊下へ戻る。',act:()=>{if(state.flags.chase){state.flags.chase=false;state.flags.chaseEscaped=true;ghost.active=false;ui.stateLabel.textContent='探索';say('扉を閉めた。\n向こう側から、爪で木を引っ掻く音が続いている。',2400);save()}goRoom('corridor',515,395,'left')}}
   ]},
 
  mirror:{name:'鏡の間',img:'mirror',
-  walk:[[105,380,545,630],[160,315,550,630]],
-  colliders:[[265,25,505,430],[0,0,100,640],[555,0,640,640]],
+  walk:[
+   [160,420,552,630],
+   [215,350,552,475]
+  ],
+  colliders:[
+   [265,20,510,425],
+   [0,0,105,640],
+   [555,0,640,640]
+  ],
   spawn:{x:320,y:575},targets:[
-   {id:'mirror',box:[270,25,505,405],text:'館のすべての鏡が、この一枚へ繋がっている。',act:()=>{if(!state.flags.finalSolved)openFinalPuzzle();else openFinalChoice()}},
-   {id:'exit',box:[270,600,380,640],text:'廊下へ戻る。',act:()=>goRoom('corridor',320,190,'down')}
+   {id:'mirror',zones:[{box:[300,425,505,475],facing:'up'}],text:'館のすべての鏡が、この一枚へ繋がっている。',act:()=>{if(!state.flags.finalSolved)openFinalPuzzle();else openFinalChoice()}},
+   {id:'exit',zones:[{box:[270,585,382,632],facing:'down'}],text:'廊下へ戻る。',act:()=>goRoom('corridor',360,305,'down')}
   ]}
 };
 function currentRoom(){return rooms[state.room]}
@@ -126,7 +185,7 @@ function overlap(a,b){
   return a[2]>b[0]&&a[0]<b[2]&&a[3]>b[1]&&a[1]<b[3];
 }
 function hits(x,y){
-  // 判定は主人公全身ではなく足元だけ。見た目上の空間を狭めない。
+  // 足元だけで当たり判定する。
   const foot=[x-7,y-5,x+7,y+2];
   for(const [px,py] of [[foot[0],foot[1]],[foot[2],foot[1]],[foot[0],foot[3]],[foot[2],foot[3]]]){
     if(!pointInWalk(px,py))return true;
@@ -134,7 +193,6 @@ function hits(x,y){
   return currentRoom().colliders.some(c=>overlap(foot,c));
 }
 function moveCollision(dx,dy){
-  // 走行時でも家具をすり抜けないよう細かく分割。
   const dist=Math.hypot(dx,dy);
   const steps=Math.max(1,Math.ceil(dist/1.25));
   const sx=dx/steps,sy=dy/steps;
@@ -145,47 +203,21 @@ function moveCollision(dx,dy){
     if(!hits(state.x,ny))state.y=ny;
   }
 }
-function targetScore(t){
-  const [x0,y0,x1,y1]=t.box;
-  // 主人公から対象矩形の「一番近い場所」を使う。
-  const nx=Math.max(x0,Math.min(state.x,x1));
-  const ny=Math.max(y0,Math.min(state.y,y1));
-  let vx=nx-state.x,vy=ny-state.y;
-  let dist=Math.hypot(vx,vy);
-
-  // 近距離専用。以前のように少し離れた方が反応する状態をなくす。
-  const reach=56;
-  if(dist>reach)return Infinity;
-
-  // 対象矩形の端にごく僅かに入った場合も、中心方向で向きを判定する。
-  if(dist<0.5){
-    vx=(x0+x1)/2-state.x;
-    vy=(y0+y1)/2-state.y;
-    dist=Math.hypot(vx,vy);
-    if(dist<0.5)return 0;
-  }
-
-  const facing={
-    up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]
-  }[state.dir];
-  const dot=(vx*facing[0]+vy*facing[1])/(dist||1);
-
-  // 正面約±69度以内。横や背後の物は拾わない。
-  if(dot<0.35)return Infinity;
-
-  // 距離を最優先し、同距離ならより正面の対象を選ぶ。
-  return dist+(1-dot)*24;
+function zoneMatches(zone){
+  const [x0,y0,x1,y1]=zone.box;
+  // 接近ゾーンそのものに主人公の足元が入っている時だけ調べられる。
+  if(state.x<x0||state.x>x1||state.y<y0||state.y>y1)return false;
+  if(!zone.facing)return true;
+  const allowed=Array.isArray(zone.facing)?zone.facing:[zone.facing];
+  return allowed.includes(state.dir);
 }
 function nearest(){
-  let best=null,bestScore=Infinity;
+  // ゾーンを重ねない設計なので、距離推測はしない。
+  // これにより別の家具を誤って拾うことを防ぐ。
   for(const t of currentRoom().targets){
-    const score=targetScore(t);
-    if(score<bestScore){
-      best=t;
-      bestScore=score;
-    }
+    if((t.zones||[]).some(zoneMatches))return t;
   }
-  return best;
+  return null;
 }
 function interact(){if(paused)return;const t=nearest();if(!t)return say('特に気になるものはない。',900);t.act?t.act():say(t.text)}
 function bathMirror(){if(state.flags.bathGhost)return say('鏡にはもう何も映っていない。\nただ、自分の背後だけが暗い。');state.flags.bathGhost=true;flicker();say('曇りを拭った瞬間、鏡の奥に白い女が立っていた。',2200);ghost.active=true;ghost.mode='peek';ghost.x=320;ghost.y=285;ghost.alpha=.05;setTimeout(()=>{flicker();ghost.alpha=.48;setTimeout(()=>{ghost.active=false;say('鏡の表面に、指で「みお」と書かれている。',2100);save()},1100)},800)}
@@ -204,12 +236,12 @@ function openMenu(tab='items'){paused=true;ui.menu.classList.remove('hidden');re
 function closeMenu(){ui.menu.classList.add('hidden');paused=false}
 function renderMenu(tab){$$('.menuTabs button').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));if(tab==='items'){ui.menuBody.innerHTML=`<div class="menuList">${state.inventory.length?state.inventory.map(k=>`<div class="menuEntry"><b>${itemDefs[k].icon} ${itemDefs[k].name}</b><p>${itemDefs[k].desc}</p></div>`).join(''):'<div class="hintBox">持ち物はない。</div>'}</div>`}else if(tab==='notes'){ui.menuBody.innerHTML=`<div class="menuList">${state.notes.length?state.notes.map(k=>`<div class="menuEntry"><b>${noteDefs[k].name}</b><p>${noteDefs[k].text}</p></div>`).join(''):'<div class="hintBox">まだメモを見つけていない。</div>'}</div>`}else if(tab==='hint'){ui.menuBody.innerHTML=`<div class="hintBox"><b>現在の目的</b><br><br>${hintText()}</div>`}else{ui.menuBody.innerHTML=`<div class="saveRow"><div class="saveInfo">場所：${currentRoom().name}<br>プレイ時間：${fmtTime(state.playSeconds)}<br>ゲームオーバー：${state.deaths}回<br><br>部屋を移動した時と重要アイテム取得時には自動保存されます。</div><button id="manualSave" class="modalBtn primary">現在の進行を保存</button><button id="backTitle" class="modalBtn">タイトルへ戻る</button></div>`;$('#manualSave').onclick=()=>{save();say('セーブしました。',900);closeMenu()};$('#backTitle').onclick=()=>{save();location.reload()}}}
 function hintText(){const f=state.flags;if(!state.notes.includes('letter'))return '寝室のベッドを調べて、届いた手紙を確認しよう。';if(!f.bedKey)return '寝室の鏡台。少し開いた引き出しがある。';if(!f.studyOpen)return '廊下左手の書斎。寝室で見つけた小さな鍵を使える。';if(!f.studySolved)return '書斎の本棚と机を調べよう。「眼・灯・鴉」の順が金庫の番号になる。';if(!f.bathShard)return '浴室の大鏡を調べた後、洗面台の排水口を確認しよう。';if(!f.breakerSolved)return '地下室の配電盤。管理人の日記 I に「二・四・一・三」とある。';if(!f.basementShard)return '地下室の照明が点いた。右側の木箱を調べよう。';if(f.chase)return '迷わず出口へ。走るボタンを押しながら廊下へ戻ろう。';if(!f.chaseEscaped)return '地下室の出口へ戻ろう。';if(!f.ring)return '応接室の集合写真をもう一度調べる。写真立ての裏に何かある。';if(!f.finalSolved)return '三枚の鏡片と銀の輪を持って廊下奥へ。管理人の日記 II の「上・右・左・下」が最後の手順。';return '美緒の名前を覚えているなら、鏡に向かって呼んでみよう。'}
-function startGame(saved=null){state=saved||fresh();ui.title.classList.add('hidden');ui.app.classList.remove('hidden');renderInventory();updateHUD();initAudio();paused=false;running=true;if(!saved&&!state.flags.intro){paused=true;$('#introOverlay').classList.remove('hidden')}else say(currentRoom().name,800)}
+function startGame(saved=null){state=saved||fresh();if(!rooms[state.room])state=fresh();if(hits(state.x,state.y)){const sp=currentRoom().spawn;state.x=sp.x;state.y=sp.y;state.dir='up'}ui.title.classList.add('hidden');ui.app.classList.remove('hidden');renderInventory();updateHUD();initAudio();paused=false;running=true;if(!saved&&!state.flags.intro){paused=true;$('#introOverlay').classList.remove('hidden')}else say(currentRoom().name,800)}
 function updateCamera(){camera.x=0;camera.y=0}
 function updatePlayer(dt){let dx=stick.active?stick.x:(keys.right?1:0)-(keys.left?1:0),dy=stick.active?stick.y:(keys.down?1:0)-(keys.up?1:0);if(!(Math.abs(dx)>.05||Math.abs(dy)>.05)){player.frame=1;return}const len=Math.hypot(dx,dy);dx/=len;dy/=len;if(Math.abs(dx)>Math.abs(dy))state.dir=dx<0?'left':'right';else state.dir=dy<0?'up':'down';const mag=stick.active?Math.min(1,len):1,sp=player.speed*(player.dash?1.55:1)*Math.max(.42,mag);moveCollision(dx*sp*dt,dy*sp*dt);player.t+=dt*(player.dash?7:5.3);player.frame=Math.floor(player.t)%3}
 function updateGhost(dt){if(!ghost.active)return;ghost.pulse+=dt;ghost.t+=dt*(ghost.mode==='chase'?4.8:2.2);ghost.frame=Math.floor(ghost.t)%3;if(ghost.mode==='peek'){ghost.alpha=Math.min(.5,ghost.alpha+dt*.5);return}if(ghost.mode==='chase'){if(ghost.delay>0){ghost.delay-=dt;return}const dx=state.x-ghost.x,dy=state.y-ghost.y,len=Math.hypot(dx,dy)||1;if(Math.abs(dx)>Math.abs(dy))ghost.dir=dx<0?'left':'right';else ghost.dir=dy<0?'up':'down';ghost.x+=dx/len*ghost.speed*dt+Math.sin(ghost.pulse*6)*2*dt;ghost.y+=dy/len*ghost.speed*dt;ghost.alpha=.42+.08*Math.sin(ghost.pulse*7);if(Math.hypot(dx,dy)<30)caught()}}
 function drawSprite(img,x,y,h,alpha=1,ghostFx=false){if(!img.complete||!img.naturalWidth)return;const w=img.naturalWidth*h/img.naturalHeight;ctx.save();ctx.globalAlpha=alpha;if(ghostFx){ctx.shadowColor='rgba(160,175,190,.12)';ctx.shadowBlur=4}ctx.drawImage(img,Math.round(x-camera.x-w/2),Math.round(y-camera.y-h),Math.round(w),h);ctx.restore()}
-function drawExitMarkers(){for(const t of currentRoom().targets.filter(t=>/Door|exit|bedroom/.test(t.id))){const [x0,y0,x1,y1]=t.box;const cx=(x0+x1)/2-camera.x,cy=(y0+y1)/2-camera.y;if(cx>-20&&cx<W+20&&cy>-20&&cy<H+20){ctx.save();ctx.globalAlpha=.26;ctx.fillStyle='#d6c49a';ctx.beginPath();ctx.arc(cx,cy,3,0,Math.PI*2);ctx.fill();ctx.restore()}}}
+function drawExitMarkers(){for(const t of currentRoom().targets.filter(t=>/Door|exit|bedroom/.test(t.id))){const z=t.zones?.[0];if(!z)continue;const [x0,y0,x1,y1]=z.box;const cx=(x0+x1)/2-camera.x,cy=(y0+y1)/2-camera.y;if(cx>-20&&cx<W+20&&cy>-20&&cy<H+20){ctx.save();ctx.globalAlpha=.26;ctx.fillStyle='#d6c49a';ctx.beginPath();ctx.arc(cx,cy,3,0,Math.PI*2);ctx.fill();ctx.restore()}}}
 function draw(){ctx.clearRect(0,0,W,H);const bg=images.rooms[currentRoom().img];if(bg.complete)ctx.drawImage(bg,0,0,WORLD,WORLD);drawExitMarkers();ctx.fillStyle='rgba(0,0,0,.3)';ctx.beginPath();ctx.ellipse(state.x,state.y+3,18,7,0,0,Math.PI*2);ctx.fill();drawSprite(images.hero[state.dir][player.frame],state.x,state.y,150,1,false);if(ghost.active){drawSprite(images.ghost[ghost.dir][ghost.frame],ghost.x+Math.sin(ghost.pulse*13)*1.2,ghost.y,ghost.mode==='chase'?190:174,ghost.alpha,true)}}
 function updateNear(){const t=nearest();ui.near.textContent=t?'調べる：'+(t.id.includes('exit')||t.id.includes('Door')?'扉':t.text.split('。')[0]):'';ui.near.classList.toggle('show',!!t)}
 function loop(now){const dt=Math.min(.033,(now-last)/1000||.016);last=now;if(running&&!paused){state.playSeconds+=dt;updatePlayer(dt);updateGhost(dt);updateCamera(dt);updateNear();autosaveTimer+=dt;if(autosaveTimer>45){autosaveTimer=0;save()}if(messageTimer>0){messageTimer-=dt;if(messageTimer<=0)ui.message.classList.remove('show')}}draw();requestAnimationFrame(loop)}
@@ -224,6 +256,6 @@ $('#interact').onclick=interact;$('#menuBtn').onclick=()=>openMenu();$('#menuClo
 $('#newGameBtn').onclick=()=>startGame();const saved=load();$('#continueBtn').disabled=!saved;$('#continueBtn').onclick=()=>startGame(load());$('#introClose').onclick=()=>{state.flags.intro=true;$('#introOverlay').classList.add('hidden');paused=false;initAudio();say('まず、この寝室を調べよう。',1500);save()};$('#endingTitleBtn').onclick=()=>location.reload();
 window.addEventListener('keydown',e=>{const m={ArrowUp:'up',KeyW:'up',ArrowDown:'down',KeyS:'down',ArrowLeft:'left',KeyA:'left',ArrowRight:'right',KeyD:'right'};if(m[e.code]){e.preventDefault();keys[m[e.code]]=true}if(e.code==='Space'||e.code==='Enter'){e.preventDefault();interact()}if(e.code==='ShiftLeft'||e.code==='ShiftRight')player.dash=true;if(e.code==='Escape'){if(!ui.menu.classList.contains('hidden'))closeMenu();else if(!ui.puzzle.classList.contains('hidden'))closePuzzle();else openMenu()}});window.addEventListener('keyup',e=>{const m={ArrowUp:'up',KeyW:'up',ArrowDown:'down',KeyS:'down',ArrowLeft:'left',KeyA:'left',ArrowRight:'right',KeyD:'right'};if(m[e.code])keys[m[e.code]]=false;if(e.code==='ShiftLeft'||e.code==='ShiftRight')player.dash=false});
 // Small test hook used by the local automated QA script. It is inert during normal play.
-window.__YUKYO_TEST={getState:()=>JSON.parse(JSON.stringify(state)),teleport:(room,x,y,dir='up')=>{state.room=room;state.x=x;state.y=y;state.dir=dir;updateHUD()},interact:()=>interact(),setPaused:v=>paused=v,addItem,addNote,setFlag:(k,v=true)=>state.flags[k]=v,openSafe,openBreaker,openFinalPuzzle,hintText};
+window.__YUKYO_TEST={getState:()=>JSON.parse(JSON.stringify(state)),teleport:(room,x,y,dir='up')=>{state.room=room;state.x=x;state.y=y;state.dir=dir;updateHUD()},interact:()=>interact(),nearest:()=>nearest()?.id||null,hits:(x,y)=>hits(x,y),setPaused:v=>paused=v,addItem,addNote,setFlag:(k,v=true)=>state.flags[k]=v,openSafe,openBreaker,openFinalPuzzle,hintText};
 Promise.all(Object.values(images.rooms).concat(...dirs.map(d=>images.hero[d]),...dirs.map(d=>images.ghost[d])).map(im=>new Promise(r=>{if(im.complete)r();else{im.onload=r;im.onerror=r}}))).then(()=>requestAnimationFrame(loop));
 })();
