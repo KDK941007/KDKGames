@@ -4,34 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#050608">
-<title>ホラーゲーム素材統合サンプル</title>
+<title>MYSTERY RPG</title>
 <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
-<div class="app">
- <div class="header"><span><b>ASSET-BASED HORROR</b> / ROOM SAMPLE</span><span id="stateLabel">探索</span></div>
- <div class="gameWrap" id="gameWrap">
-  <canvas id="game" width="724" height="543"></canvas>
-  <div class="scan"></div><div class="vignette"></div>
-  <div id="status" class="status">鏡を調べてみる</div>
-  <div id="message" class="message"></div>
-  <div id="flash" class="flash"></div>
- </div>
- <div class="controls">
-  <div class="dpad">
-   <button class="dir up" data-dir="up" aria-label="上">▲</button>
-   <button class="dir left" data-dir="left" aria-label="左">◀</button>
-   <button class="dir down" data-dir="down" aria-label="下">▼</button>
-   <button class="dir right" data-dir="right" aria-label="右">▶</button>
-  </div>
-  <div class="info">十字キーは長押し対応<br>鏡を調べると怪異演出を確認できます</div>
-  <div class="actions">
-   <button id="interact" class="action">調べる</button>
-   <button id="dash" class="action">走る</button>
-  </div>
- </div>
-</div>
+<main class="rpgShell">
+  <button class="portalBackBtn" type="button">← ポータルへ戻る</button>
+  <iframe id="rpgGameFrame" class="rpgGameFrame" src="./assets/game-source.html" title="MYSTERY RPG"></iframe>
+</main>
 <script src="../../../shared/js/player-store.js"></script>
 <script src="./js/game.js"></script>
 <script src="../../../shared/js/portal-navigation.js" data-portal-root="../../../index.html"></script>
-</body></html>
+</body>
+</html>
