@@ -6,13 +6,25 @@ globalThis.MINI_GAME_PORTAL_GAMES = [
     "category": "casino",
     "categoryLabel": "CASINO",
     "description": "パラダイス実戦を想定したバカラ練習ゲーム。",
-    "searchTerms": ["baccarat", "バカラ", "casino", "カジノ", "パラダイス", "練習"],
+    "searchTerms": [
+      "baccarat",
+      "バカラ",
+      "casino",
+      "カジノ",
+      "パラダイス",
+      "練習"
+    ],
     "icon": "./games/casino/baccarat/icon.svg",
     "entry": "./index.html",
     "available": true,
     "path": "./games/casino/baccarat/",
     "localEntry": "./games/casino/baccarat/index.html",
-    "assets": ["./games/casino/baccarat/css/style.css", "./games/casino/baccarat/icon.svg", "./games/casino/baccarat/index.html", "./games/casino/baccarat/js/game.js"]
+    "assets": [
+      "./games/casino/baccarat/css/style.css",
+      "./games/casino/baccarat/icon.svg",
+      "./games/casino/baccarat/index.html",
+      "./games/casino/baccarat/js/game.js"
+    ]
   },
   {
     "schemaVersion": 1,
@@ -21,13 +33,25 @@ globalThis.MINI_GAME_PORTAL_GAMES = [
     "category": "casino",
     "categoryLabel": "CASINO",
     "description": "実戦を想定したブラックジャック練習ゲーム。",
-    "searchTerms": ["blackjack", "ブラックジャック", "casino", "カジノ", "実戦", "練習"],
+    "searchTerms": [
+      "blackjack",
+      "ブラックジャック",
+      "casino",
+      "カジノ",
+      "実戦",
+      "練習"
+    ],
     "icon": "./games/casino/blackjack/icon.svg",
     "entry": "./index.html",
     "available": true,
     "path": "./games/casino/blackjack/",
     "localEntry": "./games/casino/blackjack/index.html",
-    "assets": ["./games/casino/blackjack/css/style.css", "./games/casino/blackjack/icon.svg", "./games/casino/blackjack/index.html", "./games/casino/blackjack/js/game.js"]
+    "assets": [
+      "./games/casino/blackjack/css/style.css",
+      "./games/casino/blackjack/icon.svg",
+      "./games/casino/blackjack/index.html",
+      "./games/casino/blackjack/js/game.js"
+    ]
   },
   {
     "schemaVersion": 1,
@@ -36,13 +60,26 @@ globalThis.MINI_GAME_PORTAL_GAMES = [
     "category": "action",
     "categoryLabel": "ACTION",
     "description": "100種類の瞬間ミニゲームをハイテンポで連続攻略。",
-    "searchTerms": ["flash rush", "フラッシュラッシュ", "瞬間ゲーム", "ミニゲーム", "アクション", "action", "micro game"],
+    "searchTerms": [
+      "flash rush",
+      "フラッシュラッシュ",
+      "瞬間ゲーム",
+      "ミニゲーム",
+      "アクション",
+      "action",
+      "micro game"
+    ],
     "icon": "./games/action/flash-rush/icon.svg",
     "entry": "./index.html",
     "available": true,
     "path": "./games/action/flash-rush/",
     "localEntry": "./games/action/flash-rush/index.html",
-    "assets": ["./games/action/flash-rush/css/style.css", "./games/action/flash-rush/icon.svg", "./games/action/flash-rush/index.html", "./games/action/flash-rush/js/game.js"]
+    "assets": [
+      "./games/action/flash-rush/css/style.css",
+      "./games/action/flash-rush/icon.svg",
+      "./games/action/flash-rush/index.html",
+      "./games/action/flash-rush/js/game.js"
+    ]
   },
   {
     "schemaVersion": 1,
@@ -51,13 +88,28 @@ globalThis.MINI_GAME_PORTAL_GAMES = [
     "category": "action",
     "categoryLabel": "ACTION",
     "description": "迫りくるレーザーを避け続けるドット絵サバイバル。",
-    "searchTerms": ["laser escape", "レーザーエスケープ", "レーザー", "回避", "サバイバル", "ドットゲーム", "アクション", "action", "survival"],
+    "searchTerms": [
+      "laser escape",
+      "レーザーエスケープ",
+      "レーザー",
+      "回避",
+      "サバイバル",
+      "ドットゲーム",
+      "アクション",
+      "action",
+      "survival"
+    ],
     "icon": "./games/action/laser-escape/icon.svg",
     "entry": "./index.html",
     "available": true,
     "path": "./games/action/laser-escape/",
     "localEntry": "./games/action/laser-escape/index.html",
-    "assets": ["./games/action/laser-escape/css/style.css", "./games/action/laser-escape/icon.svg", "./games/action/laser-escape/index.html", "./games/action/laser-escape/js/game.js"]
+    "assets": [
+      "./games/action/laser-escape/css/style.css",
+      "./games/action/laser-escape/icon.svg",
+      "./games/action/laser-escape/index.html",
+      "./games/action/laser-escape/js/game.js"
+    ]
   },
   {
     "schemaVersion": 1,
@@ -66,13 +118,24 @@ globalThis.MINI_GAME_PORTAL_GAMES = [
     "category": "rpg",
     "categoryLabel": "RPG",
     "description": "内容を知らずに始める、短編RPG。",
-    "searchTerms": ["mystery rpg", "ミステリー", "rpg", "role playing", "ロールプレイング"],
+    "searchTerms": [
+      "mystery rpg",
+      "ミステリー",
+      "rpg",
+      "role playing",
+      "ロールプレイング"
+    ],
     "icon": "./games/rpg/rpg/icon.svg",
     "entry": "./index.html",
     "available": true,
     "path": "./games/rpg/rpg/",
     "localEntry": "./games/rpg/rpg/index.html",
-    "assets": ["./games/rpg/rpg/assets/game-source.html", "./games/rpg/rpg/css/style.css", "./games/rpg/rpg/icon.svg", "./games/rpg/rpg/index.html", "./games/rpg/rpg/js/game.js"]
+    "assets": [
+      "./games/rpg/rpg/css/style.css",
+      "./games/rpg/rpg/icon.svg",
+      "./games/rpg/rpg/index.html",
+      "./games/rpg/rpg/js/game.js"
+    ]
   },
   {
     "schemaVersion": 1,
@@ -81,13 +144,20 @@ globalThis.MINI_GAME_PORTAL_GAMES = [
     "category": "casino",
     "categoryLabel": "CASINO",
     "description": "今後追加予定。",
-    "searchTerms": ["roulette", "ルーレット", "casino", "カジノ"],
+    "searchTerms": [
+      "roulette",
+      "ルーレット",
+      "casino",
+      "カジノ"
+    ],
     "icon": "./games/casino/roulette/icon.svg",
     "entry": "./index.html",
     "available": false,
     "path": "./games/casino/roulette/",
     "localEntry": "./games/casino/roulette/index.html",
-    "assets": ["./games/casino/roulette/icon.svg"]
+    "assets": [
+      "./games/casino/roulette/icon.svg"
+    ]
   },
   {
     "schemaVersion": 1,
@@ -96,12 +166,26 @@ globalThis.MINI_GAME_PORTAL_GAMES = [
     "category": "board",
     "categoryLabel": "ボードゲーム",
     "description": "4個目を置くと一番古いコマが消える三目並べ。",
-    "searchTerms": ["消える○×ゲーム", "まるばつ", "マルバツ", "○×", "tic tac toe", "三目並べ", "board", "ボードゲーム"],
+    "searchTerms": [
+      "消える○×ゲーム",
+      "まるばつ",
+      "マルバツ",
+      "○×",
+      "tic tac toe",
+      "三目並べ",
+      "board",
+      "ボードゲーム"
+    ],
     "icon": "./games/board/marubatsu/icon.svg",
     "entry": "./index.html",
     "available": true,
     "path": "./games/board/marubatsu/",
     "localEntry": "./games/board/marubatsu/index.html",
-    "assets": ["./games/board/marubatsu/css/style.css", "./games/board/marubatsu/icon.svg", "./games/board/marubatsu/index.html", "./games/board/marubatsu/js/game.js"]
+    "assets": [
+      "./games/board/marubatsu/css/style.css",
+      "./games/board/marubatsu/icon.svg",
+      "./games/board/marubatsu/index.html",
+      "./games/board/marubatsu/js/game.js"
+    ]
   }
 ];

@@ -4,16 +4,34 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#050608">
-<title>MYSTERY RPG</title>
+<title>ホラーゲーム素材統合サンプル</title>
 <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
-<main class="rpgShell">
-  <button class="portalBackBtn" type="button">← ポータルへ戻る</button>
-  <iframe id="rpgGameFrame" class="rpgGameFrame" src="./assets/game-source.html" title="MYSTERY RPG"></iframe>
-</main>
-<script src="../../../shared/js/player-store.js"></script>
-<script src="./js/game.js"></script>
-<script src="../../../shared/js/portal-navigation.js" data-portal-root="../../../index.html"></script>
-</body>
-</html>
+<div class="app">
+ <div class="header"><span><b>ASSET-BASED HORROR</b> / ROOM SAMPLE</span><span id="stateLabel">探索</span></div>
+ <div class="gameWrap" id="gameWrap">
+  <canvas id="game" width="724" height="543"></canvas>
+  <div class="scan"></div><div class="vignette"></div>
+  <div id="status" class="status">鏡を調べてみる</div>
+  <div id="message" class="message"></div>
+  <div id="flash" class="flash"></div>
+ </div>
+ <div class="controls">
+  <div class="dpad">
+   <button class="dir up" data-dir="up" aria-label="上">▲</button>
+   <button class="dir left" data-dir="left" aria-label="左">◀</button>
+   <button class="dir down" data-dir="down" aria-label="下">▼</button>
+   <button class="dir right" data-dir="right" aria-label="右">▶</button>
+  </div>
+  <div class="info">十字キーは長押し対応<br>鏡を調べると怪異演出を確認できます</div>
+  <div class="actions">
+   <button id="interact" class="action">調べる</button>
+   <button id="dash" class="action">走る</button>
+  </div>
+ </div>
+</div>
+<script>
+(()=>{
+'use strict';
+const ROOM="data:image/png;base64,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<script src="./js/game.js"></script>
