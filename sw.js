@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mini-game-portal-v3';
+const CACHE_NAME = 'mini-game-portal-v4';
 
 const CORE_PATHS = [
   './',
@@ -7,7 +7,9 @@ const CORE_PATHS = [
   './portal/js/portal.js',
   './portal/js/player-summary.js',
   './portal/games.json',
+  './portal/games.js',
   './shared/js/player-store.js',
+  './shared/js/portal-navigation.js',
   './player/',
   './player/index.html'
 ];
