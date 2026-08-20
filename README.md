@@ -11,14 +11,15 @@
 │  ├─ css/portal.css
 │  ├─ js/portal.js
 │  ├─ js/player-summary.js
-│  └─ games.json               # game.json から自動生成
+│  ├─ games.json               # game.json から自動生成（Web / Service Worker用）
+│  └─ games.js                 # game.json から自動生成（file:// ローカル起動用）
 ├─ shared/
-│  └─ js/player-store.js       # 共通プレイヤープロフィール／戦績保存
+│  ├─ js/player-store.js       # 共通プレイヤープロフィール／戦績保存
+│  └─ js/portal-navigation.js  # 各ゲーム・PLAYER PROFILEからポータルへ戻る共通処理
 ├─ games/
 │  ├─ casino/
 │  ├─ board/
 │  ├─ action/
-│  ├─ rpg/
 │  └─ other/
 ├─ player/                     # PLAYER PROFILE
 ├─ tools/
@@ -81,7 +82,12 @@ games/{category}/{game-id}/
 
 `.github/workflows/portal-manifest.yml` が `games/**` の変更を検知し、`tools/build_game_manifest.py` を実行します。
 
-各ゲームの `game.json` と実ファイルを走査して `portal/games.json` を生成し、ポータルはこのファイルから以下を自動生成します。
+各ゲームの `game.json` と実ファイルを走査して、次の2ファイルを同時生成します。
+
+- `portal/games.json`：GitHub Pages / Service Worker用
+- `portal/games.js`：PC・スマホで `index.html` を直接開く `file://` 動作確認用
+
+ポータルはこれらから以下を自動生成します。
 
 - ゲーム一覧
 - カテゴリ
@@ -92,13 +98,21 @@ games/{category}/{game-id}/
 - ゲームフォルダへのリンク
 - オフラインキャッシュ対象ファイル
 
-カテゴリの基本表示順は `CASINO → ボードゲーム → ACTION → RPG → OTHER` とし、新しいカテゴリはその後ろへ追加されます。
+カテゴリの基本表示順は `CASINO → ボードゲーム → ACTION → RPG → OTHER` とします。現在ゲームが存在しないカテゴリはポータルに表示されません。
+
+## ローカル動作確認
+
+PCやスマホでルートの `index.html` を直接開く `file://` 起動にも対応します。
+
+- ゲーム一覧は `portal/games.js` を使用するため、ローカルJSONへの `fetch()` は行いません。
+- ゲームタイルのHTMLは規約どおりゲームフォルダへの相対パスを保持し、`file://` 起動時だけ `index.html` へ補正して遷移します。
+- 各ゲームと `player/` からポータルへ戻る際は `shared/js/portal-navigation.js` でルート `index.html` へ直接戻ります。
 
 ## Service Worker
 
 `sw.js` へゲームパスを個別追加しません。
 
-ポータルが `portal/games.json` を読み込み、`available: true` のゲームだけをService Workerへ通知します。Service Workerは通知されたゲームフォルダと、そのゲーム配下のHTML / CSS / JavaScript / 画像などをキャッシュします。
+ポータルが `available: true` のゲームだけをService Workerへ通知し、Service Workerは通知されたゲームフォルダと、そのゲーム配下のHTML / CSS / JavaScript / 画像などをキャッシュします。
 
 このため、新しいゲームを追加するときに `sw.js` の修正は不要です。
 
@@ -112,6 +126,7 @@ games/{category}/{game-id}/
 - 登録ユーザー名の取得
 - ゲーム別プレイ回数・戦績レコードの保存
 - ポータル側のPLAYERサマリー表示で使用する保存処理
+- 各ゲーム・PLAYER PROFILEからポータルへ戻る処理
 
 ゲーム固有のルール、レイアウト、フォント、演出は無理に共通化しません。
 
@@ -124,7 +139,10 @@ games/{category}/{game-id}/
 - プレイ可能ゲームの `index.html` 存在確認
 - ゲームHTMLにインラインCSS / JavaScriptが残っていないこと
 - HTMLから参照するCSS / JavaScriptの存在確認
-- `portal/games.json` と `game.json` の整合
+- `portal/games.json` と `portal/games.js` の一致
+- `game.json` と自動生成マニフェストの整合
+- ローカル起動用 `localEntry` の整合
+- ポータル戻り先の整合
 - `sw.js` にゲームパスがハードコードされていないこと
 - JavaScript構文エラー
 
