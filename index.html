@@ -20,6 +20,7 @@
   --shadow:0 12px 30px rgba(31,41,55,.08);
 }
 *{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 html,body{
   margin:0;
   min-height:100%;
@@ -29,6 +30,7 @@ html,body{
 }
 body{
   min-height:100dvh;
+  overflow-x:hidden;
   background:
     radial-gradient(circle at 10% -10%,rgba(91,91,214,.14),transparent 30%),
     radial-gradient(circle at 90% 0%,rgba(56,189,248,.14),transparent 32%),
@@ -176,21 +178,29 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
   display:flex;
   justify-content:space-between;
   gap:10px;
+  min-width:0;
   padding:7px 2px 0;
   color:#8b95a5;
   font-size:8px;
   font-weight:800;
 }
+.browserMeta span{min-width:0}
+.browserMeta span:last-child{text-align:right}
 .categoryViewport{
   position:relative;
+  width:100%;
+  max-width:100%;
+  min-width:0;
   overflow:hidden;
-  margin:0 -4px;
-  padding:0 4px;
+  margin:0;
+  padding:0;
   touch-action:pan-y;
 }
 .categoryTrack{
   position:relative;
-  will-change:transform;
+  width:100%;
+  max-width:100%;
+  min-width:0;
   transform:translate3d(0,0,0);
 }
 .categoryTrack.dragging{transition:none!important}
@@ -199,12 +209,17 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
 }
 
 .gameGrid{
+  width:100%;
+  max-width:100%;
+  min-width:0;
   display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-columns:calc((100% - 9px)/2) calc((100% - 9px)/2);
   gap:9px;
 }
 .gameTile{
   position:relative;
+  width:100%;
+  max-width:100%;
   min-width:0;
   min-height:182px;
   display:flex;
