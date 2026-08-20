@@ -62,6 +62,8 @@ def validate_game(game_json_path: Path) -> None:
             fail(f"{index_path}: referenced file escapes repository: {value}")
         if not target.is_file():
             fail(f"{index_path}: referenced file does not exist: {value}")
+        if target.suffix.lower() == ".js" and target.stat().st_size == 0:
+            fail(f"{index_path}: referenced JavaScript is empty: {value}")
 
 
 def load_games_js() -> list[dict]:
