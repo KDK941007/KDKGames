@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#050608">
+<title>幽鏡の館</title>
+<link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+<div id="titleScreen" class="titleScreen">
+  <div class="titleArt"></div>
+  <div class="titleShade"></div>
+  <div class="titleContent">
+    <div class="titleEyebrow">ORIGINAL HORROR ADVENTURE</div>
+    <h1>幽鏡の館</h1>
+    <p class="titleRuby">ゆうきょうのやかた</p>
+    <p class="titleTag">鏡の向こうから、名前を呼ぶ声がする。</p>
+    <div class="titleButtons">
+      <button id="newGameBtn" class="titleBtn primary">はじめから</button>
+      <button id="continueBtn" class="titleBtn">つづきから</button>
+    </div>
+    <div class="titleFoot">想定プレイ時間 20〜35分 / オートセーブ対応</div>
+  </div>
+</div>
+
+<div id="gameApp" class="app hidden">
+  <header class="header">
+    <div><b id="roomName">寝室</b><span id="stateLabel">探索</span></div>
+    <button id="menuBtn" class="menuBtn">MENU</button>
+  </header>
+
+  <main class="gameWrap" id="gameWrap">
+    <canvas id="game" width="400" height="500"></canvas>
+    <div class="scan"></div><div class="vignette"></div>
+    <div class="fog fog1"></div><div class="fog fog2"></div>
+    <div id="status" class="status"></div>
+    <div id="nearPrompt" class="nearPrompt"></div>
+    <div id="message" class="message"></div>
+    <div id="flash" class="flash"></div>
+    <div id="jumpscare" class="jumpscare"><img src="./assets/ghost/closeup.webp" alt=""></div>
+  </main>
+
+  <section class="inventoryBar" aria-label="持ち物">
+    <div class="inventoryTitle"><span>ITEM</span><small>持ち物</small></div>
+    <div class="inventorySlots" id="inventorySlots">
+      <button class="itemSlot empty" data-slot="0"><span class="itemIcon">＋</span><span class="itemName">EMPTY</span></button>
+      <button class="itemSlot empty" data-slot="1"><span class="itemIcon">＋</span><span class="itemName">EMPTY</span></button>
+      <button class="itemSlot empty" data-slot="2"><span class="itemIcon">＋</span><span class="itemName">EMPTY</span></button>
+      <button class="itemSlot empty" data-slot="3"><span class="itemIcon">＋</span><span class="itemName">EMPTY</span></button>
+      <button class="itemSlot empty" data-slot="4"><span class="itemIcon">＋</span><span class="itemName">EMPTY</span></button>
+      <button class="itemSlot empty" data-slot="5"><span class="itemIcon">＋</span><span class="itemName">EMPTY</span></button>
+    </div>
+  </section>
+
+  <section class="controls">
+    <div class="stickArea" id="stickArea" aria-label="移動スティック"><div class="stickRing"></div><div class="stickKnob" id="stickKnob"></div></div>
+    <div class="centerHud"><span class="pulseDot"></span><span id="objectiveMini">EXPLORE</span></div>
+    <div class="actions">
+      <button id="interact" class="action inspect"><span class="actionMain">調べる</span><small>CHECK</small></button>
+      <button id="dash" class="action dash"><span class="actionMain">走る</span><small>RUN</small></button>
+    </div>
+  </section>
+</div>
+
+<div id="introOverlay" class="overlay hidden"><div class="storyCard"><div class="storyLine">八年前、同級生の<strong>美緒</strong>がこの館で消えた。</div><div class="storyLine">今夜、差出人のない手紙が届いた。</div><blockquote>「まだ、鏡の中にいる。」</blockquote><button id="introClose" class="modalBtn primary">館へ入る</button></div></div>
+
+<div id="menuOverlay" class="overlay hidden">
+  <div class="menuPanel">
+    <div class="menuHead"><b>MENU</b><button id="menuClose">×</button></div>
+    <div class="menuTabs"><button data-tab="items" class="active">持ち物</button><button data-tab="notes">メモ</button><button data-tab="hint">ヒント</button><button data-tab="save">セーブ</button></div>
+    <div id="menuBody" class="menuBody"></div>
+  </div>
+</div>
+
+<div id="puzzleOverlay" class="overlay hidden"><div class="puzzlePanel"><div class="puzzleHead"><b id="puzzleTitle">仕掛け</b><button id="puzzleClose">×</button></div><div id="puzzleBody"></div></div></div>
+
+<div id="endingOverlay" class="overlay hidden"><div class="endingCard"><div id="endingKind" class="endingKind"></div><h2 id="endingTitle"></h2><div id="endingText" class="endingText"></div><div id="endingStats" class="endingStats"></div><button id="endingTitleBtn" class="modalBtn primary">タイトルへ戻る</button></div></div>
+
+<script src="./js/game.js"></script>
+</body>
+</html>
