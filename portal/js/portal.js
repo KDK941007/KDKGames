@@ -7,6 +7,7 @@
   const count = document.getElementById('resultCount');
   const empty = document.getElementById('emptyState');
   const viewport = document.getElementById('categoryViewport');
+  const track = document.getElementById('categoryTrack');
   const isLocalFile = location.protocol === 'file:';
 
   let games = Array.isArray(globalThis.MINI_GAME_PORTAL_GAMES)
@@ -14,9 +15,19 @@
     : [];
   let categories = [{id:'all', label:'ALL'}];
   let categoryIndex = 0;
-  let pointerStart = null;
+
+  let pointerDown = false;
+  let dragging = false;
+  let startX = 0;
+  let startY = 0;
+  let deltaX = 0;
+  let width = 1;
+  let animationLock = false;
+  let suppressClickUntil = 0;
 
   const CATEGORY_ORDER = ['casino','board','action','rpg','other'];
+  const SWIPE_MIN = 48;
+  const SWIPE_RATIO = 0.18;
   const esc = value => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 
   function renderFilters(){
@@ -65,23 +76,86 @@
     [...filters.querySelectorAll('.filterChip')].forEach((button, index) => button.classList.toggle('active', index === categoryIndex));
   }
 
-  function selectCategory(index){
-    const next = Math.max(0, Math.min(categories.length - 1, index));
-    if(next === categoryIndex) return;
-    categoryIndex = next;
+  function keepActiveFilterVisible(){
+    const button = filters.querySelector(`[data-index="${categoryIndex}"]`);
+    if(!button) return;
+    const rowRect = filters.getBoundingClientRect();
+    const buttonRect = button.getBoundingClientRect();
+    let nextLeft = filters.scrollLeft;
+    if(buttonRect.left < rowRect.left){
+      nextLeft -= rowRect.left - buttonRect.left + 8;
+    }else if(buttonRect.right > rowRect.right){
+      nextLeft += buttonRect.right - rowRect.right + 8;
+    }
+    if(nextLeft !== filters.scrollLeft){
+      filters.scrollTo({left:Math.max(0, nextLeft), behavior:'smooth'});
+    }
+  }
+
+  function setTrackX(x, animate){
+    track.classList.toggle('animating', !!animate);
+    if(!animate) track.classList.remove('animating');
+    track.style.transform = `translate3d(${x}px,0,0)`;
+  }
+
+  function finishAnimation(callback){
+    let finished = false;
+    const done = () => {
+      if(finished) return;
+      finished = true;
+      track.removeEventListener('transitionend', done);
+      callback();
+    };
+    track.addEventListener('transitionend', done, {once:true});
+    setTimeout(done, 320);
+  }
+
+  function completeCategoryChange(nextIndex, direction){
+    categoryIndex = nextIndex;
     applyFilter();
-    filters.querySelector(`[data-index="${categoryIndex}"]`)?.scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
+    keepActiveFilterVisible();
+
+    track.classList.remove('animating');
+    track.style.transition = 'none';
+    track.style.transform = `translate3d(${direction > 0 ? -width : width}px,0,0)`;
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        track.style.transition = '';
+        setTrackX(0, true);
+        finishAnimation(() => {
+          setTrackX(0, false);
+          animationLock = false;
+        });
+      });
+    });
+  }
+
+  function moveToIndex(index){
+    const next = Math.max(0, Math.min(categories.length - 1, index));
+    if(next === categoryIndex || animationLock) return;
+
+    width = Math.max(1, viewport.clientWidth);
+    const direction = next > categoryIndex ? 1 : -1;
+    animationLock = true;
+    setTrackX(direction > 0 ? -width : width, true);
+    finishAnimation(() => completeCategoryChange(next, direction));
   }
 
   filters.addEventListener('click', event => {
     const button = event.target.closest('.filterChip');
     if(!button) return;
-    selectCategory(Number(button.dataset.index));
+    moveToIndex(Number(button.dataset.index));
   });
   search.addEventListener('input', applyFilter);
   clear.addEventListener('click', () => { search.value = ''; search.focus(); applyFilter(); });
 
   grid.addEventListener('click', event => {
+    if(Date.now() < suppressClickUntil){
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
     if(!isLocalFile) return;
     const link = event.target.closest('a.gameTile.available');
     if(!link) return;
@@ -90,17 +164,81 @@
   });
 
   viewport.addEventListener('pointerdown', event => {
-    pointerStart = {x:event.clientX, y:event.clientY};
+    if(animationLock) return;
+    pointerDown = true;
+    dragging = false;
+    startX = event.clientX;
+    startY = event.clientY;
+    deltaX = 0;
+    width = Math.max(1, viewport.clientWidth);
+    track.classList.add('dragging');
+    track.classList.remove('animating');
   });
-  viewport.addEventListener('pointerup', event => {
-    if(!pointerStart) return;
-    const dx = event.clientX - pointerStart.x;
-    const dy = event.clientY - pointerStart.y;
-    pointerStart = null;
-    if(Math.abs(dx) < 45 || Math.abs(dx) <= Math.abs(dy) * 1.15) return;
-    selectCategory(categoryIndex + (dx < 0 ? 1 : -1));
+
+  viewport.addEventListener('pointermove', event => {
+    if(!pointerDown || animationLock) return;
+
+    const dx = event.clientX - startX;
+    const dy = event.clientY - startY;
+
+    if(!dragging){
+      if(Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+      if(Math.abs(dy) > Math.abs(dx)){
+        pointerDown = false;
+        track.classList.remove('dragging');
+        setTrackX(0, false);
+        return;
+      }
+      dragging = true;
+      try{ viewport.setPointerCapture(event.pointerId); }catch(_){}
+    }
+
+    deltaX = dx;
+    if((categoryIndex === 0 && deltaX > 0) || (categoryIndex === categories.length - 1 && deltaX < 0)){
+      deltaX *= 0.28;
+    }
+    setTrackX(deltaX, false);
   });
-  viewport.addEventListener('pointercancel', () => { pointerStart = null; });
+
+  function endPointer(event){
+    if(!pointerDown && !dragging) return;
+
+    pointerDown = false;
+    track.classList.remove('dragging');
+    try{ viewport.releasePointerCapture(event.pointerId); }catch(_){}
+
+    if(!dragging){
+      setTrackX(0, false);
+      deltaX = 0;
+      return;
+    }
+
+    dragging = false;
+    suppressClickUntil = Date.now() + 300;
+    width = Math.max(1, viewport.clientWidth);
+    const threshold = Math.max(SWIPE_MIN, width * SWIPE_RATIO);
+    const canGoNext = categoryIndex < categories.length - 1;
+    const canGoPrev = categoryIndex > 0;
+
+    if(deltaX <= -threshold && canGoNext){
+      animationLock = true;
+      setTrackX(-width, true);
+      finishAnimation(() => completeCategoryChange(categoryIndex + 1, 1));
+    }else if(deltaX >= threshold && canGoPrev){
+      animationLock = true;
+      setTrackX(width, true);
+      finishAnimation(() => completeCategoryChange(categoryIndex - 1, -1));
+    }else{
+      setTrackX(0, true);
+      finishAnimation(() => setTrackX(0, false));
+    }
+
+    deltaX = 0;
+  }
+
+  viewport.addEventListener('pointerup', endPointer);
+  viewport.addEventListener('pointercancel', endPointer);
+  viewport.addEventListener('dragstart', event => event.preventDefault());
 
   async function cachePlayableGames(){
     if(isLocalFile || !('serviceWorker' in navigator)) return;

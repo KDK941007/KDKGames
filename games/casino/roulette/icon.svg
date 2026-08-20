@@ -1,5 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="R">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Roulette wheel">
   <rect x="2" y="2" width="60" height="60" rx="16" fill="#eef2ff" stroke="#6366f1" stroke-opacity=".24" stroke-width="2"/>
-  <circle cx="32" cy="32" r="22" fill="#6366f1" fill-opacity=".10"/>
-  <text x="32" y="37" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="20" font-weight="800" fill="#6366f1">R</text>
+  <g transform="translate(32 32)">
+    <circle r="22" fill="#475569"/>
+    <circle r="18" fill="#f8fafc"/>
+    <g>
+      <path d="M0-18A18 18 0 0 1 12.73-12.73L8.49-8.49A12 12 0 0 0 0-12Z" fill="#dc2626"/>
+      <path d="M12.73-12.73A18 18 0 0 1 18 0H12A12 12 0 0 0 8.49-8.49Z" fill="#111827"/>
+      <path d="M18 0A18 18 0 0 1 12.73 12.73L8.49 8.49A12 12 0 0 0 12 0Z" fill="#dc2626"/>
+      <path d="M12.73 12.73A18 18 0 0 1 0 18V12A12 12 0 0 0 8.49 8.49Z" fill="#111827"/>
+      <path d="M0 18A18 18 0 0 1-12.73 12.73L-8.49 8.49A12 12 0 0 0 0 12Z" fill="#dc2626"/>
+      <path d="M-12.73 12.73A18 18 0 0 1-18 0H-12A12 12 0 0 0-8.49 8.49Z" fill="#111827"/>
+      <path d="M-18 0A18 18 0 0 1-12.73-12.73L-8.49-8.49A12 12 0 0 0-12 0Z" fill="#dc2626"/>
+      <path d="M-12.73-12.73A18 18 0 0 1 0-18V-12A12 12 0 0 0-8.49-8.49Z" fill="#111827"/>
+    </g>
+    <circle r="7" fill="#16a34a" stroke="#fff" stroke-width="2"/>
+    <circle cx="16" cy="-10" r="3.2" fill="#fff" stroke="#334155" stroke-width="1"/>
+  </g>
 </svg>
