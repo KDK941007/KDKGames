@@ -20,66 +20,17 @@ function chipAmountLabel(amount,prefix=''){
 const suits=['♠','♥','♦','♣'],ranks=['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
 const AUDIO_BGM_KEY='blackjack_bgm_volume_v1';
 const AUDIO_SFX_KEY='blackjack_sfx_volume_v1';
-const PORTAL_SAVE_KEY='mini_game_portal_save_v1';
-function mgPortalNow(){return new Date().toISOString()}
-function mgPortalNewId(){
-  try{if(globalThis.crypto?.randomUUID)return globalThis.crypto.randomUUID()}catch(_){ }
-  return `mg-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,10)}`;
-}
-function mgPortalDefaultSave(){
-  const now=mgPortalNow();
-  return {
-    schemaVersion:1,
-    player:{playerId:mgPortalNewId(),displayName:'PLAYER',createdAt:now,updatedAt:now},
-    overall:{totalPlays:0,playedGames:0,lastPlayedGameId:null,lastPlayedAt:null},
-    games:{},
-    backup:{lastExportedAt:null,lastImportedAt:null}
-  };
-}
-function mgPortalLoad(){
-  let data=null;
-  try{data=JSON.parse(localStorage.getItem(PORTAL_SAVE_KEY)||'null')}catch(_){data=null}
-  if(!data||typeof data!=='object')data=mgPortalDefaultSave();
-  if(data.schemaVersion!==1)data.schemaVersion=1;
-  if(!data.player||typeof data.player!=='object')data.player=mgPortalDefaultSave().player;
-  if(!data.player.playerId)data.player.playerId=mgPortalNewId();
-  if(!String(data.player.displayName||'').trim())data.player.displayName='PLAYER';
-  if(!data.player.createdAt)data.player.createdAt=mgPortalNow();
-  if(!data.player.updatedAt)data.player.updatedAt=data.player.createdAt;
-  if(!data.overall||typeof data.overall!=='object')data.overall={totalPlays:0,playedGames:0,lastPlayedGameId:null,lastPlayedAt:null};
-  if(!data.games||typeof data.games!=='object')data.games={};
-  if(!data.backup||typeof data.backup!=='object')data.backup={lastExportedAt:null,lastImportedAt:null};
-  try{localStorage.setItem(PORTAL_SAVE_KEY,JSON.stringify(data))}catch(_){ }
-  return data;
-}
-function mgPortalSave(data){
-  if(!data?.player)return;
-  data.player.updatedAt=mgPortalNow();
-  data.overall.playedGames=Object.values(data.games||{}).filter(g=>(Number(g?.plays)||0)>0).length;
-  try{localStorage.setItem(PORTAL_SAVE_KEY,JSON.stringify(data))}catch(_){ }
-}
-function mgPortalProfile(){return mgPortalLoad().player}
-function mgPortalRecordValue(game,key){return Number(game?.records?.[key]?.value)||0}
-function mgPortalSetRecord(game,key,label,value,format='number'){
-  game.records ||= {};
-  game.records[key]={label,value,format};
-}
-function mgPortalRecordPlay(gameId,title,mutate){
-  const data=mgPortalLoad();
-  const now=mgPortalNow();
-  const game=data.games[gameId]||{gameId,title,recordVersion:1,plays:0,lastPlayedAt:null,records:{}};
-  game.title=title;
-  game.recordVersion=1;
-  game.plays=(Number(game.plays)||0)+1;
-  game.lastPlayedAt=now;
-  if(typeof mutate==='function')mutate(game,data);
-  data.games[gameId]=game;
-  data.overall.totalPlays=(Number(data.overall.totalPlays)||0)+1;
-  data.overall.lastPlayedGameId=gameId;
-  data.overall.lastPlayedAt=now;
-  mgPortalSave(data);
-  return game;
-}
+const {
+  now: mgPortalNow,
+  newPlayerId: mgPortalNewId,
+  defaultSave: mgPortalDefaultSave,
+  load: mgPortalLoad,
+  save: mgPortalSave,
+  profile: mgPortalProfile,
+  recordValue: mgPortalRecordValue,
+  setRecord: mgPortalSetRecord,
+  recordPlay: mgPortalRecordPlay
+} = globalThis.MiniGamePortalPlayerStore;
 function clamp01(v){return Math.max(0,Math.min(1,Number(v)||0))}
 function loadAudioVolume(key){
   try{
