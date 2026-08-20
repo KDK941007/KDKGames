@@ -7,13 +7,16 @@
   const count = document.getElementById('resultCount');
   const empty = document.getElementById('emptyState');
   const viewport = document.getElementById('categoryViewport');
-  const CATEGORY_ORDER = ['casino', 'board', 'action', 'rpg', 'other'];
+  const isLocalFile = location.protocol === 'file:';
 
-  let games = [];
+  let games = Array.isArray(globalThis.MINI_GAME_PORTAL_GAMES)
+    ? [...globalThis.MINI_GAME_PORTAL_GAMES]
+    : [];
   let categories = [{id:'all', label:'ALL'}];
   let categoryIndex = 0;
   let pointerStart = null;
 
+  const CATEGORY_ORDER = ['casino','board','action','rpg','other'];
   const esc = value => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 
   function renderFilters(){
@@ -36,7 +39,7 @@
       <div class="tileAction${game.available ? '' : ' muted'}">${game.available ? 'PLAY <span>›</span>' : 'COMING SOON'}</div>`;
 
     if(game.available){
-      return `<a class="gameTile available" href="${esc(game.path)}" data-category="${esc(game.category)}" data-search="${esc(haystack)}">${inner}</a>`;
+      return `<a class="gameTile available" href="${esc(game.path)}" data-local-entry="${esc(game.localEntry || `${game.path}index.html`)}" data-category="${esc(game.category)}" data-search="${esc(haystack)}">${inner}</a>`;
     }
     return `<div class="gameTile disabled" data-category="${esc(game.category)}" data-search="${esc(haystack)}">${inner}</div>`;
   }
@@ -78,6 +81,14 @@
   search.addEventListener('input', applyFilter);
   clear.addEventListener('click', () => { search.value = ''; search.focus(); applyFilter(); });
 
+  grid.addEventListener('click', event => {
+    if(!isLocalFile) return;
+    const link = event.target.closest('a.gameTile.available');
+    if(!link) return;
+    event.preventDefault();
+    location.href = link.dataset.localEntry || `${link.getAttribute('href')}index.html`;
+  });
+
   viewport.addEventListener('pointerdown', event => {
     pointerStart = {x:event.clientX, y:event.clientY};
   });
@@ -92,11 +103,11 @@
   viewport.addEventListener('pointercancel', () => { pointerStart = null; });
 
   async function cachePlayableGames(){
-    if(!('serviceWorker' in navigator)) return;
+    if(isLocalFile || !('serviceWorker' in navigator)) return;
     try{
       const registration = await navigator.serviceWorker.register('./sw.js');
       await navigator.serviceWorker.ready;
-      const urls = ['./portal/games.json'];
+      const urls = ['./portal/games.json', './portal/games.js'];
       games.filter(game => game.available).forEach(game => {
         urls.push(game.path, ...(game.assets || []));
       });
@@ -106,33 +117,31 @@
     }
   }
 
-  async function init(){
-    try{
-      const response = await fetch('./portal/games.json', {cache:'no-store'});
-      if(!response.ok) throw new Error(`games.json: ${response.status}`);
-      games = await response.json();
-      games.sort((a,b) => String(a.name).localeCompare(String(b.name), 'ja', {numeric:true, sensitivity:'base'}));
-      const categoryMap = new Map();
-      games.forEach(game => { if(!categoryMap.has(game.category)) categoryMap.set(game.category, game.categoryLabel || game.category); });
-      const discovered = [...categoryMap].map(([id,label]) => ({id,label}));
-      discovered.sort((a,b) => {
-        const ai = CATEGORY_ORDER.indexOf(a.id);
-        const bi = CATEGORY_ORDER.indexOf(b.id);
-        const ar = ai === -1 ? Number.MAX_SAFE_INTEGER : ai;
-        const br = bi === -1 ? Number.MAX_SAFE_INTEGER : bi;
-        return ar - br || String(a.label).localeCompare(String(b.label), 'ja');
-      });
-      categories = [{id:'all', label:'ALL'}, ...discovered];
-      renderFilters();
-      renderGames();
-      cachePlayableGames();
-    }catch(error){
-      console.error(error);
+  function init(){
+    if(!games.length){
       count.textContent = '0 GAMES';
       empty.classList.remove('hidden');
       empty.querySelector('b').textContent = 'ゲーム一覧を読み込めませんでした';
-      empty.querySelector('span').textContent = '通信状態を確認して再読み込みしてください。';
+      empty.querySelector('span').textContent = 'portal/games.js を確認してください。';
+      return;
     }
+
+    games.sort((a,b) => String(a.name).localeCompare(String(b.name), 'ja', {numeric:true, sensitivity:'base'}));
+    const categoryMap = new Map();
+    games.forEach(game => {
+      if(!categoryMap.has(game.category)) categoryMap.set(game.category, game.categoryLabel || game.category);
+    });
+    const ordered = [...categoryMap.entries()].sort((a,b) => {
+      const ai = CATEGORY_ORDER.indexOf(a[0]);
+      const bi = CATEGORY_ORDER.indexOf(b[0]);
+      const av = ai === -1 ? Number.MAX_SAFE_INTEGER : ai;
+      const bv = bi === -1 ? Number.MAX_SAFE_INTEGER : bi;
+      return av - bv || String(a[1]).localeCompare(String(b[1]), 'ja');
+    });
+    categories = [{id:'all', label:'ALL'}, ...ordered.map(([id,label]) => ({id,label}))];
+    renderFilters();
+    renderGames();
+    cachePlayableGames();
   }
 
   init();
