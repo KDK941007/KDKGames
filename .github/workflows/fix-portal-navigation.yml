@@ -1,0 +1,36 @@
+name: Fix Portal Navigation
+
+on:
+  push:
+    branches:
+      - feature/portal-structure-v2
+    paths:
+      - 'tools/fix_portal_navigation.py'
+      - '.github/workflows/fix-portal-navigation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/portal-structure-v2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python tools/fix_portal_navigation.py
+      - shell: bash
+        run: |
+          if git diff --quiet; then
+            echo 'No navigation changes.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- games player
+          git commit -m 'fix: route game and player portal buttons to root index'
+          git push origin HEAD:feature/portal-structure-v2
