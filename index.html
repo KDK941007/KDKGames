@@ -298,6 +298,7 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
 .gameTile[data-category="casino"]{--tileAccent:#6366f1;--tileSoft:#eef2ff}
 .gameTile[data-category="board"]{--tileAccent:#0f9f8f;--tileSoft:#ecfdf5}
 .gameTile[data-category="action"]{--tileAccent:#f97316;--tileSoft:#fff7ed}
+.gameTile[data-category="rpg"]{--tileAccent:#7c3aed;--tileSoft:#f5f3ff}
 .gameTile[data-category="other"]{--tileAccent:#ec4899;--tileSoft:#fdf2f8}
 
 .gameTile[data-category="casino"] .tileIcon{
@@ -312,6 +313,10 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
   background:linear-gradient(145deg,#fffaf5,var(--tileSoft));
   color:var(--tileAccent)
 }
+.gameTile[data-category="rpg"] .tileIcon{
+  background:linear-gradient(145deg,#faf7ff,var(--tileSoft));
+  color:var(--tileAccent)
+}
 .gameTile[data-category="other"] .tileIcon{
   background:linear-gradient(145deg,#fff7fb,var(--tileSoft));
   color:var(--tileAccent)
@@ -321,6 +326,8 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
 .gameTile[data-category="board"]{border-color:rgba(15,159,143,.18)}
 .gameTile[data-category="action"] .tileCategory{color:#ea580c}
 .gameTile[data-category="action"]{border-color:rgba(249,115,22,.18)}
+.gameTile[data-category="rpg"] .tileCategory{color:#7c3aed}
+.gameTile[data-category="rpg"]{border-color:rgba(124,58,237,.18)}
 .gameTile[data-category="other"] .tileCategory{color:#db2777}
 .gameTile[data-category="other"]{border-color:rgba(236,72,153,.15)}
 
@@ -676,6 +683,7 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
         <button type="button" class="filterChip" data-filter="casino">CASINO</button>
         <button type="button" class="filterChip" data-filter="board">ボードゲーム</button>
         <button type="button" class="filterChip" data-filter="action">ACTION</button>
+        <button type="button" class="filterChip" data-filter="rpg">RPG</button>
         <button type="button" class="filterChip" data-filter="other">OTHER</button>
       </div>
 
@@ -779,12 +787,12 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
             <div class="tileAction">PLAY <span>›</span></div>
           </a>
 
-          <a class="gameTile available" href="./rpg/" data-category="other" data-search="mystery rpg ミステリー rpg role playing ロールプレイング other">
+          <a class="gameTile available" href="./rpg/" data-category="rpg" data-search="mystery rpg ミステリー rpg role playing ロールプレイング RPG">
             <div class="tileTop">
               <div class="tileIcon gameIcon" aria-hidden="true">RPG</div>
               <span class="miniStatus playable">PLAYABLE</span>
             </div>
-            <div class="tileCategory">OTHER</div>
+            <div class="tileCategory">RPG</div>
             <h3>MYSTERY RPG</h3>
             <p>内容を知らずに始める、短編RPG。</p>
             <div class="tileAction">PLAY <span>›</span></div>
