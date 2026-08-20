@@ -7,6 +7,7 @@
   const count = document.getElementById('resultCount');
   const empty = document.getElementById('emptyState');
   const viewport = document.getElementById('categoryViewport');
+  const CATEGORY_ORDER = ['casino', 'board', 'action', 'rpg', 'other'];
 
   let games = [];
   let categories = [{id:'all', label:'ALL'}];
@@ -113,7 +114,15 @@
       games.sort((a,b) => String(a.name).localeCompare(String(b.name), 'ja', {numeric:true, sensitivity:'base'}));
       const categoryMap = new Map();
       games.forEach(game => { if(!categoryMap.has(game.category)) categoryMap.set(game.category, game.categoryLabel || game.category); });
-      categories = [{id:'all', label:'ALL'}, ...[...categoryMap].map(([id,label]) => ({id,label}))];
+      const discovered = [...categoryMap].map(([id,label]) => ({id,label}));
+      discovered.sort((a,b) => {
+        const ai = CATEGORY_ORDER.indexOf(a.id);
+        const bi = CATEGORY_ORDER.indexOf(b.id);
+        const ar = ai === -1 ? Number.MAX_SAFE_INTEGER : ai;
+        const br = bi === -1 ? Number.MAX_SAFE_INTEGER : bi;
+        return ar - br || String(a.label).localeCompare(String(b.label), 'ja');
+      });
+      categories = [{id:'all', label:'ALL'}, ...discovered];
       renderFilters();
       renderGames();
       cachePlayableGames();
