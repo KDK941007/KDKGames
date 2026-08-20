@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "marubatsu",
+  "name": "消える○×ゲーム",
+  "category": "board",
+  "categoryLabel": "ボードゲーム",
+  "description": "4個目を置くと一番古いコマが消える三目並べ。",
+  "searchTerms": [
+    "消える○×ゲーム",
+    "まるばつ",
+    "マルバツ",
+    "○×",
+    "tic tac toe",
+    "三目並べ",
+    "board",
+    "ボードゲーム"
+  ],
+  "icon": "./icon.svg",
+  "entry": "./index.html",
+  "available": true
+}

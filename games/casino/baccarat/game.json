@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "baccarat",
+  "name": "BACCARAT",
+  "category": "casino",
+  "categoryLabel": "CASINO",
+  "description": "パラダイス実戦を想定したバカラ練習ゲーム。",
+  "searchTerms": [
+    "baccarat",
+    "バカラ",
+    "casino",
+    "カジノ",
+    "パラダイス",
+    "練習"
+  ],
+  "icon": "./icon.svg",
+  "entry": "./index.html",
+  "available": true
+}

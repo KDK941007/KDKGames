@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#0b1020">
+<title>FLASH RUSH - 3秒チャレンジ</title>
+<link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+<div class="app">
+  <div class="shell">
+    <section id="startScreen" class="screen active" aria-label="スタート画面">
+      <div class="pixelMascot" aria-hidden="true">P<span>!</span></div>
+      <div class="kicker">PIXEL CITY / MICRO ACTION</div>
+      <h1>FLASH RUSH</h1>
+      <div class="titleJa">ピコシティ・3秒パニック</div>
+      <p class="lead">寝坊したピコの1日が大暴走。家・街・仕事場・夜のピコシティを、見た目違いを別ゲームとして数えない、100種類のミニゲームで駆け抜けろ。</p>
+      <div class="featureRow">
+        <div class="feature"><b>4</b><span>LIFE</span></div>
+        <div class="feature"><b>100+5</b><span>GAMES / BOSSES</span></div>
+        <div class="feature"><b>4</b><span>LEVELS</span></div>
+      </div>
+      <div class="bestBox">BEST SCORE <strong id="bestStart">0</strong></div>
+      <div class="playerModeStrip" aria-label="プレイヤータイプ">
+        <div class="playerModeIdentity">
+          <span class="playerModeLabel">NAME</span>
+          <strong id="playerModeName" class="playerModeName">PLAYER</strong>
+          <input id="playerModeGuestName" class="playerModeGuestName" type="text" maxlength="12" autocomplete="off" placeholder="GUEST NAME" value="GUEST" hidden>
+        </div>
+        <div class="playerModeChoices" role="group" aria-label="USER または GUEST">
+          <button class="playerModeBtn active" type="button" data-player-mode="user">USER</button>
+          <button class="playerModeBtn" type="button" data-player-mode="guest">GUEST</button>
+        </div>
+      </div>
+      <button id="startBtn" class="primaryBtn" type="button">START RUSH</button>
+      <div class="startFooter">
+        <button id="soundBtnStart" class="miniBtn" type="button">🔊 SOUND ON</button>
+        <button id="portalBtnStart" class="miniBtn" type="button">← PORTAL</button>
+      </div>
+    </section>
+
+    <section id="gameScreen" class="screen" aria-label="ゲーム画面">
+      <header class="hud">
+        <div class="hudCell">
+          <span class="hudLabel">SCORE</span>
+          <span id="scoreValue" class="hudValue">0</span>
+        </div>
+        <div class="hudCell center">
+          <span class="hudLabel">GAME</span>
+          <span id="roundValue" class="hudValue">1</span>
+          <span id="levelValue" class="hudValue small">LEVEL 1</span>
+          <span id="speedValue" class="hudSubValue">SPEED 1</span>
+          <span id="zoneValue" class="zoneValue">HOME MAYHEM</span>
+        </div>
+        <div class="hudCell right">
+          <span class="hudLabel">LIFE</span>
+          <div id="lives" class="lives" aria-label="残りライフ"></div>
+        </div>
+        <button id="pauseBtn" class="pauseBtn" type="button" aria-label="一時停止">Ⅱ</button>
+        <div class="progressWrap"><div id="progressBar" class="progressBar"></div></div>
+      </header>
+      <div id="gameArea" class="gameArea">
+        <div id="microStage" class="microStage"></div>
+      </div>
+      <div id="pauseOverlay" class="pauseOverlay" aria-hidden="true">
+        <div class="pauseCard">
+          <div class="pauseKicker">PAUSED</div>
+          <h2>一時停止</h2>
+          <p>ゲームの進行と残り時間は停止しています。</p>
+          <button id="resumeBtn" class="primaryBtn" type="button">再開</button>
+          <button id="abortBtn" class="dangerBtn" type="button">ゲーム中断</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="endScreen" class="screen" aria-label="結果画面">
+      <div class="endBadge">🏁</div>
+      <h2>RUSH OVER</h2>
+      <div id="endSub" class="endSub">ピコシティ救出、おつかれさま。</div>
+      <div class="finalScore">SCORE <strong id="finalScore">0</strong></div>
+      <div id="newBest" class="newBest"></div>
+      <div class="stats">
+        <div class="stat"><b id="statGames">0</b><span>GAMES</span></div>
+        <div class="stat"><b id="statClear">0</b><span>CLEAR</span></div>
+        <div class="stat"><b id="statSpeed">1</b><span>MAX SPEED</span></div>
+      </div>
+      <div class="endButtons">
+        <button id="retryBtn" class="primaryBtn" type="button">RETRY</button>
+        <a id="portalBtnEnd" class="secondaryBtn portalLink" href="../">ポータルへ戻る</a>
+      </div>
+    </section>
+  </div>
+</div>
+<script src="../../../shared/js/player-store.js"></script>
+<script src="./js/game.js"></script>
+<script src="../../../shared/js/portal-navigation.js" data-portal-root="../../../index.html"></script>
+</body>
+</html>

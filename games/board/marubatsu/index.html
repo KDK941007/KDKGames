@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<title>消える○×ゲーム</title>
+
+<link rel="stylesheet" href="./css/style.css">
+</head>
+
+<body>
+<main class="app">
+  <section class="card">
+    <header>
+      <h1>消える○×ゲーム</h1>
+      <div class="sub">4個目を置くと、自分の一番古いコマが消える三目並べ</div>
+    </header>
+
+    <div class="status-wrap">
+      <div class="status">
+        <div class="status-left">
+
+          <div class="turn-view hidden" id="turnView">
+            <div>
+              <div class="turn-label" id="statusLabel">現在のターン</div>
+              <div class="turn-main" id="statusText">○ の番</div>
+            </div>
+
+            <div class="turn-timer" id="turnTimerBox">
+              <div class="timer-label">残りタイム</div>
+              <div class="timer-value" id="turnTimer">∞</div>
+            </div>
+
+            <div class="turn-symbol o" id="turnSymbol">○</div>
+          </div>
+
+          <div class="starter-area" id="starterArea">
+            <div class="player-set-row" aria-label="プレイヤータイプ">
+              <button id="oPlayerTypeBtn" class="player-slot o is-user" type="button" data-side="O" aria-pressed="true">
+                <span class="player-slot-symbol">○</span>
+                <span class="player-slot-info"><small id="oPlayerMode">USER</small><b id="oPlayerName">PLAYER</b></span>
+              </button>
+              <button id="xPlayerTypeBtn" class="player-slot x" type="button" data-side="X" aria-pressed="false">
+                <span class="player-slot-symbol">×</span>
+                <span class="player-slot-info"><small id="xPlayerMode">GUEST</small><b id="xPlayerName">GUEST</b></span>
+              </button>
+            </div>
+            <div class="setup-row">
+              <div>
+                <div class="time-setting-label">1ターンの制限時間</div>
+                <div class="time-input-wrap">
+                  <input
+                    class="time-input"
+                    id="turnTimeInput"
+                    type="number"
+                    min="1"
+                    step="1"
+                    inputmode="numeric"
+                    placeholder="例：10"
+                    disabled
+                    aria-label="1ターンの制限時間（秒）"
+                  >
+                  <span class="time-unit">秒</span>
+                </div>
+              </div>
+
+              <label class="unlimited-toggle">
+                <input id="unlimitedToggle" type="checkbox" checked>
+                無制限
+              </label>
+            </div>
+
+            <div class="time-error" id="timeError">制限時間は1秒以上で入力してください。</div>
+
+            <div class="starter-label">先攻を選択</div>
+            <div class="starter-inline show" id="starterInline" aria-label="先攻を選択">
+              <button class="starter-choice random" type="button" data-start="random">ランダム</button>
+              <button class="starter-choice o" type="button" data-start="O">○から</button>
+              <button class="starter-choice x" type="button" data-start="X">×から</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="board-wrap">
+      <div class="board" id="board" aria-label="○×ゲーム盤"></div>
+    </div>
+
+    <div class="actions">
+      <button class="action-btn restart" id="restartBtn">最初から</button>
+      <button class="action-btn rules" id="rulesBtn">ルール</button>
+      <button class="action-btn portal" id="portalBtn" type="button">ポータルへ戻る</button>
+    </div>
+  </section>
+</main>
+
+<div class="overlay" id="rulesOverlay">
+  <div class="modal">
+    <h2>遊び方</h2>
+    <ol>
+      <li>× と ○ が交互に空いているマスへ置きます。</li>
+      <li>縦・横・斜めのどれかに3つ並べると勝ちです。</li>
+      <li>各プレイヤーが盤面に残せるコマは最大3個です。</li>
+      <li>4個目を置くと、そのプレイヤーの一番古いコマが消えます。</li>
+      <li>ゲーム中は、黄色い「次に消える」表示で消える予定のコマを確認できます。</li>
+      <li>制限時間を設定した場合、各ターンごとにカウントダウンします。</li>
+      <li>残りタイムが0になるまでに置けなかったプレイヤーは時間切れで負けです。</li>
+      <li>「無制限」を選んだ場合は時間切れになりません。</li>
+    </ol>
+    <button class="close" id="closeRules">閉じる</button>
+  </div>
+</div>
+
+<div class="overlay" id="winnerOverlay">
+  <div class="modal winner-panel">
+    <div class="winner-big" id="winnerSymbol">×</div>
+    <div class="winner-text" id="winnerText">× の勝ち！</div>
+    <div class="winner-sub" id="winnerSub">3つ並びました</div>
+    <button class="close" id="playAgainBtn">閉じる</button>
+  </div>
+</div>
+
+<div class="overlay" id="portalConfirmOverlay">
+  <div class="modal">
+    <h2>ポータルへ戻る</h2>
+    <p>ポータルへ戻りますか？<br>現在のゲーム内容は失われます。</p>
+    <div class="confirm-actions">
+      <button class="confirm-btn confirm-cancel" id="cancelPortalBtn" type="button">キャンセル</button>
+      <button class="confirm-btn confirm-go" id="confirmPortalBtn" type="button">戻る</button>
+    </div>
+  </div>
+</div>
+
+<script src="../../../shared/js/player-store.js"></script>
+<script src="./js/game.js"></script>
+<script src="../../../shared/js/portal-navigation.js" data-portal-root="../../../index.html"></script>
+</body>
+</html>
