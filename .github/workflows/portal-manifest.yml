@@ -25,18 +25,18 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Generate manifest
+      - name: Generate manifests
         run: python tools/build_game_manifest.py
 
-      - name: Commit manifest when changed
+      - name: Commit manifests when changed
         shell: bash
         run: |
-          if git diff --quiet -- portal/games.json; then
-            echo 'portal/games.json is already up to date.'
+          if git diff --quiet -- portal/games.json portal/games.js; then
+            echo 'Portal manifests are already up to date.'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -- portal/games.json
-          git commit -m 'chore: update portal game manifest'
+          git add -- portal/games.json portal/games.js
+          git commit -m 'chore: update portal game manifests'
           git push
