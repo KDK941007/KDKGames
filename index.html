@@ -70,7 +70,6 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
   line-height:1.65
 }
 
-
 .playerPortalCard{
   display:grid;
   grid-template-columns:42px minmax(0,1fr) auto;
@@ -324,7 +323,6 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
 .gameTile[data-category="action"]{border-color:rgba(249,115,22,.18)}
 .gameTile[data-category="other"] .tileCategory{color:#db2777}
 .gameTile[data-category="other"]{border-color:rgba(236,72,153,.15)}
-
 
 /* GAME-SPECIFIC TILE ICONS */
 .gameIcon{
@@ -595,7 +593,6 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
   box-shadow:0 0 5px rgba(251,59,103,.7);
 }
 
-
 .emptyState{
   min-height:160px;
   display:grid;
@@ -683,7 +680,7 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
       </div>
 
       <div class="browserMeta">
-        <span id="resultCount">6 GAMES</span>
+        <span id="resultCount">7 GAMES</span>
         <span>カテゴリで絞り込みできます</span>
       </div>
     </div>
@@ -779,6 +776,17 @@ h1{margin:0;font-size:25px;line-height:1.15;letter-spacing:.04em}
             <div class="tileCategory">ACTION</div>
             <h3>LASER ESCAPE</h3>
             <p>迫りくるレーザーを避け続けるドット絵サバイバル。</p>
+            <div class="tileAction">PLAY <span>›</span></div>
+          </a>
+
+          <a class="gameTile available" href="./rpg/" data-category="other" data-search="mystery rpg ミステリー rpg role playing ロールプレイング other">
+            <div class="tileTop">
+              <div class="tileIcon gameIcon" aria-hidden="true">RPG</div>
+              <span class="miniStatus playable">PLAYABLE</span>
+            </div>
+            <div class="tileCategory">OTHER</div>
+            <h3>MYSTERY RPG</h3>
+            <p>内容を知らずに始める、短編RPG。</p>
             <div class="tileAction">PLAY <span>›</span></div>
           </a>
 
