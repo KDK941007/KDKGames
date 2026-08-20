@@ -1,1 +1,369 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#0d1020">
+<title>MYSTERY RPG</title>
+<style>
+:root{
+  --bg:#090b14;--panel:#121625;--panel2:#171d30;--line:#303956;
+  --text:#f2f0e8;--muted:#a7aec2;--gold:#e7c56a;--blue:#77b7ff;
+  --red:#ef6b6b;--green:#78d69f;--violet:#b18cff;--shadow:#05060b;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Sans","Yu Gothic UI",Meiryo,sans-serif}
+body{min-height:100dvh;overflow-x:hidden;background:
+  radial-gradient(circle at 50% -10%,rgba(84,95,160,.24),transparent 38%),
+  linear-gradient(180deg,#0d1020 0%,#090b14 60%,#07080e 100%)}
+button{font:inherit;color:inherit;touch-action:manipulation}
+button:disabled{opacity:.42;filter:saturate(.5)}
+.hidden{display:none!important}
+.screen{display:none;min-height:100dvh}.screen.active{display:block}
+.wrap{width:min(100%,560px);min-height:100dvh;margin:0 auto;padding:calc(16px + env(safe-area-inset-top)) 12px calc(16px + env(safe-area-inset-bottom))}
+.panel{border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,rgba(23,29,48,.98),rgba(14,18,31,.98));box-shadow:0 16px 35px rgba(0,0,0,.28)}
 
+/* TITLE */
+.titleWrap{display:grid;align-content:center;gap:14px;min-height:100dvh;padding-top:calc(20px + env(safe-area-inset-top));padding-bottom:calc(20px + env(safe-area-inset-bottom))}
+.titleSigil{position:relative;width:112px;height:112px;margin:0 auto 4px;border:1px solid #414b70;border-radius:50%;box-shadow:0 0 0 8px rgba(93,106,163,.06),0 0 48px rgba(119,183,255,.12)}
+.titleSigil:before,.titleSigil:after{content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
+.titleSigil:before{width:60px;height:76px;border:2px solid var(--gold);clip-path:polygon(50% 0,92% 25%,82% 78%,50% 100%,18% 78%,8% 25%)}
+.titleSigil:after{width:12px;height:12px;border-radius:50%;background:#dbe7ff;box-shadow:0 0 18px #8fc7ff,0 0 42px rgba(143,199,255,.7)}
+.titleKicker{text-align:center;color:#8b96b7;font-size:10px;font-weight:900;letter-spacing:.3em}
+.titleMain{margin:0;text-align:center;font-family:Georgia,"Times New Roman",serif;font-size:31px;line-height:1.1;letter-spacing:.08em;text-shadow:0 4px 18px #000}
+.titleSub{margin:0 auto;text-align:center;max-width:390px;color:var(--muted);font-size:11px;line-height:1.75}
+.titleCard{padding:14px;display:grid;gap:9px}
+.bigBtn,.subBtn{width:100%;min-height:51px;border-radius:13px;border:1px solid #47516f;background:#202943;font-weight:900;letter-spacing:.04em;box-shadow:0 7px 16px rgba(0,0,0,.2)}
+.bigBtn{background:linear-gradient(180deg,#dbc16d,#b99842);border-color:#f2da8c;color:#17130b;font-size:14px}
+.bigBtn:active,.subBtn:active,.actionBtn:active,.battleBtn:active{transform:translateY(1px) scale(.995)}
+.subBtn{font-size:12px}.subBtn.danger{color:#ff9d9d;border-color:#644044;background:#281a21}
+.buildLabel{text-align:center;color:#5f6884;font-size:8px;letter-spacing:.12em}
+
+/* GAME HUD */
+.gameWrap{width:min(100%,560px);min-height:100dvh;margin:0 auto;padding:calc(8px + env(safe-area-inset-top)) 8px calc(10px + env(safe-area-inset-bottom))}
+.topbar{position:sticky;top:0;z-index:20;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px;margin-bottom:7px}
+.statusPanel{padding:8px 10px;border:1px solid var(--line);border-radius:14px;background:rgba(15,19,33,.94);backdrop-filter:blur(10px)}
+.statusTop{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
+.areaName{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#dce5ff;font-size:11px;font-weight:950;letter-spacing:.05em}
+.lv{flex:0 0 auto;color:var(--gold);font-size:10px;font-weight:950}
+.meters{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.72fr);gap:8px}
+.meter{min-width:0}.meterHead{display:flex;justify-content:space-between;gap:5px;margin-bottom:3px;font-size:8px;font-weight:900;color:var(--muted)}
+.bar{height:7px;border-radius:99px;background:#070911;border:1px solid #2a3148;overflow:hidden}.bar>span{display:block;height:100%;width:50%;transition:width .25s ease}.hpFill{background:linear-gradient(90deg,#d85d63,#f28b72)}.focusFill{background:linear-gradient(90deg,#6b82ee,#8fc7ff)}
+.menuBtn{width:46px;border:1px solid var(--line);border-radius:14px;background:#171d30;font-size:19px;font-weight:900}
+
+.scene{position:relative;height:clamp(220px,36dvh,320px);overflow:hidden;border:1px solid #333c59;border-radius:18px;background:#101526;box-shadow:inset 0 -55px 60px rgba(3,5,10,.55)}
+.scene:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 28%,rgba(164,187,255,.16),transparent 36%),linear-gradient(180deg,rgba(9,12,25,.05),rgba(6,8,14,.62));pointer-events:none;z-index:3}
+.sceneBackdrop{position:absolute;inset:0;transition:background .35s ease}
+.scene[data-scene="chamber"] .sceneBackdrop{background:linear-gradient(180deg,#27304a 0 48%,#151829 48%),repeating-linear-gradient(90deg,transparent 0 42px,rgba(255,255,255,.04) 42px 44px)}
+.scene[data-scene="gate"] .sceneBackdrop{background:radial-gradient(circle at 50% 42%,#59627b 0 5%,transparent 6%),linear-gradient(180deg,#27324c 0 58%,#121621 59%)}
+.scene[data-scene="forest"] .sceneBackdrop{background:radial-gradient(circle at 78% 16%,rgba(210,225,202,.17) 0 7%,transparent 8%),repeating-linear-gradient(100deg,#1c2b2e 0 16px,#162326 16px 38px,#0e171c 38px 60px)}
+.scene[data-scene="chapel"] .sceneBackdrop{background:linear-gradient(180deg,#29283d 0 62%,#161522 62%),linear-gradient(90deg,transparent 46%,rgba(231,197,106,.22) 47% 53%,transparent 54%)}
+.scene[data-scene="ruins"] .sceneBackdrop{background:linear-gradient(160deg,#252b3c 0 33%,#111521 34% 68%,#252b3c 69%),radial-gradient(circle at 30% 20%,rgba(137,165,209,.18),transparent 24%)}
+.scene[data-scene="spire"] .sceneBackdrop{background:radial-gradient(circle at 50% 24%,rgba(126,166,240,.22),transparent 20%),linear-gradient(180deg,#1d2744,#101522 66%,#080a11 67%)}
+.scene[data-scene="core"] .sceneBackdrop{background:radial-gradient(circle at 50% 48%,rgba(225,205,145,.36) 0 3%,rgba(118,158,236,.18) 4% 18%,transparent 19%),conic-gradient(from 0deg at 50% 50%,#18213a,#0c1020,#26213b,#0c1020,#18213a)}
+.scene[data-scene="ending"] .sceneBackdrop{background:linear-gradient(180deg,#5e6d91 0 42%,#d2bd8b 43% 47%,#2a3348 48% 100%)}
+.sceneFloor{position:absolute;left:-10%;right:-10%;bottom:-15%;height:44%;background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.55));transform:perspective(240px) rotateX(58deg);z-index:1}
+.sceneFigure{position:absolute;left:50%;bottom:18%;width:42px;height:82px;transform:translateX(-50%);z-index:2;filter:drop-shadow(0 8px 12px #000)}
+.sceneFigure:before{content:"";position:absolute;left:12px;top:0;width:18px;height:18px;border-radius:50%;background:#171a25}.sceneFigure:after{content:"";position:absolute;left:7px;top:16px;width:28px;height:55px;background:linear-gradient(180deg,#313a58,#171c2b);clip-path:polygon(24% 0,76% 0,100% 100%,0 100%)}
+.sceneCompanion{position:absolute;left:66%;bottom:18%;width:34px;height:70px;z-index:2;filter:drop-shadow(0 8px 12px #000)}
+.sceneCompanion:before{content:"";position:absolute;left:9px;top:0;width:16px;height:16px;border-radius:50%;background:#2b2430}.sceneCompanion:after{content:"";position:absolute;left:4px;top:14px;width:26px;height:49px;background:linear-gradient(180deg,#66506d,#2b273c);clip-path:polygon(24% 0,76% 0,100% 100%,0 100%)}
+.sceneCompanion.hidden{display:none}
+.sceneTag{position:absolute;left:10px;bottom:9px;z-index:5;padding:5px 8px;border:1px solid rgba(255,255,255,.15);border-radius:999px;background:rgba(6,8,15,.63);color:#cbd3e8;font-size:8px;font-weight:900;letter-spacing:.08em}
+
+.contentPanel{margin-top:7px;min-height:177px;padding:11px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,#171d30,#111625)}
+.nodeText{margin:0 1px 10px;color:#c1c8d8;font-size:10px;line-height:1.7}.nodeText b{color:#eef2ff}
+.actions{display:grid;gap:8px}.actionBtn{position:relative;width:100%;min-height:48px;padding:9px 39px 9px 12px;text-align:left;border:1px solid #3a4565;border-radius:13px;background:#1c243b;font-size:12px;font-weight:850;line-height:1.4}.actionBtn:after{content:"›";position:absolute;right:14px;top:50%;transform:translateY(-50%);color:#93a7d7;font-size:22px}.actionBtn.optional{border-color:#4f4a6c;background:#211e34}.actionBtn.safe{border-color:#375b4e;background:#182a28}
+.footerInfo{display:flex;justify-content:space-between;gap:8px;margin-top:7px;padding:0 4px;color:#707a99;font-size:8px}.footerInfo span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* DIALOGUE */
+.dialogueOverlay{position:absolute;inset:0;z-index:30;display:flex;align-items:flex-end;padding:8px;background:linear-gradient(180deg,transparent 38%,rgba(3,4,9,.36) 58%,rgba(3,4,9,.72))}
+.dialogueBox{width:100%;min-height:106px;padding:10px 11px 11px;border:1px solid #53617f;border-radius:14px;background:rgba(13,17,29,.96);box-shadow:0 12px 28px rgba(0,0,0,.45)}
+.speaker{min-height:17px;margin-bottom:5px;color:var(--gold);font-size:10px;font-weight:950;letter-spacing:.08em}.dialogueText{min-height:48px;color:#eef0f7;font-size:12px;line-height:1.75;font-weight:650}.dialogueNext{text-align:right;color:#7f91bd;font-size:9px;font-weight:900;animation:pulse 1.2s infinite}@keyframes pulse{50%{opacity:.35}}
+
+/* BATTLE */
+.battleLayer{position:absolute;inset:0;z-index:8;display:none}.battleLayer.active{display:block}.enemySprite{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);width:108px;height:108px;filter:drop-shadow(0 12px 16px #000)}
+.enemySprite:before{content:"";position:absolute;inset:15px;border-radius:42% 48% 46% 40%;background:linear-gradient(145deg,#52617c,#181d2d);box-shadow:inset 0 -15px 18px rgba(0,0,0,.48)}
+.enemySprite:after{content:"";position:absolute;left:34px;top:40px;width:8px;height:8px;border-radius:50%;background:#f5d277;box-shadow:31px 0 0 #f5d277,0 0 12px rgba(245,210,119,.8),31px 0 12px rgba(245,210,119,.8)}
+.enemySprite.boss:before{inset:4px 16px 8px;background:linear-gradient(145deg,#7c5874,#21172d);clip-path:polygon(50% 0,67% 20%,90% 16%,82% 42%,100% 66%,71% 70%,64% 100%,37% 100%,29% 70%,0 66%,18% 42%,10% 16%,33% 20%)}
+.enemySprite.broken{animation:shake .2s steps(2,end) 3;filter:grayscale(.7) drop-shadow(0 12px 16px #000)}@keyframes shake{50%{transform:translate(-54%,-50%)}}
+.enemyHud{position:absolute;left:10px;right:10px;top:10px;z-index:10;padding:8px 9px;border:1px solid #47516f;border-radius:12px;background:rgba(9,12,22,.9)}
+.enemyNameRow{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:5px}.enemyName{font-size:11px;font-weight:950}.intent{padding:3px 6px;border-radius:999px;border:1px solid #64526b;background:#2b1f32;color:#e9b8e1;font-size:8px;font-weight:950;white-space:nowrap}.enemyBars{display:grid;gap:4px}.enemyHpFill{background:linear-gradient(90deg,#9d3e4f,#eb6b6b)}.breakFill{background:linear-gradient(90deg,#d49d45,#f0d27d)}
+.battlePanel{margin-top:7px;padding:10px;border:1px solid var(--line);border-radius:18px;background:#151a2a}.battleLog{min-height:44px;margin-bottom:8px;padding:7px 8px;border-radius:10px;background:#0b0e18;color:#c8cfdf;font-size:10px;line-height:1.55}.battleButtons{display:grid;grid-template-columns:1fr 1fr;gap:7px}.battleBtn{min-height:46px;border:1px solid #435071;border-radius:12px;background:#202943;font-size:11px;font-weight:900}.battleBtn.skill{border-color:#5b58a0;background:#282650}.battleBtn.guard{border-color:#47645a;background:#1d342f}.battleBtn.item{border-color:#685938;background:#342b1e}.battleBtn.full{grid-column:1/-1}.battleBtn small{display:block;margin-top:2px;color:#9fa9bf;font-size:8px;font-weight:700}.skillMenu{display:grid;gap:7px}.skillBack{margin-top:2px}
+
+/* MODALS */
+.modalShade{position:fixed;inset:0;z-index:90;display:grid;place-items:center;padding:14px;background:rgba(3,4,9,.76);backdrop-filter:blur(5px)}.modalCard{width:min(100%,430px);max-height:82dvh;overflow:auto;padding:15px;border:1px solid #46516f;border-radius:18px;background:#151a2b;box-shadow:0 22px 55px rgba(0,0,0,.55)}.modalTitle{margin:0 0 12px;font-size:16px;letter-spacing:.04em}.menuGrid{display:grid;gap:8px}.infoRows{display:grid;gap:6px;margin:10px 0 13px}.infoRow{display:flex;justify-content:space-between;gap:12px;padding:8px;border-radius:10px;background:#0d101b;color:#b9c1d4;font-size:10px}.infoRow b{color:#fff}.modalText{color:#c1c8d8;font-size:10px;line-height:1.7}.closeX{float:right;width:34px;height:34px;border:1px solid #3f4966;border-radius:10px;background:#20273a}
+.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));z-index:120;transform:translateX(-50%) translateY(15px);max-width:calc(100% - 26px);padding:8px 12px;border:1px solid #4d5a7a;border-radius:999px;background:#151b2c;color:#e9edf7;font-size:10px;font-weight:900;opacity:0;pointer-events:none;transition:.22s}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ENDING */
+.endingCard{margin-top:7px;padding:16px;text-align:center}.endingTitle{margin:2px 0 8px;font-family:Georgia,"Times New Roman",serif;font-size:24px;letter-spacing:.07em}.endingText{margin:0 auto 14px;max-width:420px;color:#c8cedd;font-size:11px;line-height:1.85}.credits{margin:12px 0;color:#7f89a7;font-size:9px;line-height:1.8}
+
+@media(max-width:390px){.gameWrap{padding-left:6px;padding-right:6px}.scene{height:clamp(205px,34dvh,275px)}.contentPanel{min-height:165px}.dialogueText{font-size:11px}.battleBtn{min-height:44px}}
+@media(max-height:670px){.scene{height:215px}.contentPanel{min-height:155px}.nodeText{margin-bottom:7px}.actionBtn{min-height:44px}.battleLog{min-height:38px}}
+</style>
+</head>
+<body>
+<section id="titleScreen" class="screen active">
+  <div class="wrap titleWrap">
+    <div>
+      <div class="titleSigil" aria-hidden="true"></div>
+      <div class="titleKicker">A SHORT RPG</div>
+      <h1 class="titleMain">MYSTERY RPG</h1>
+      <p class="titleSub">物語、世界、戦い。そのすべてを知らないまま始めるための短編RPG。</p>
+    </div>
+    <div class="panel titleCard">
+      <button id="newGameBtn" class="bigBtn" type="button">NEW GAME</button>
+      <button id="continueBtn" class="subBtn" type="button">CONTINUE</button>
+      <button id="eraseBtn" class="subBtn danger" type="button">SAVE DATA RESET</button>
+      <button id="portalBtn" class="subBtn" type="button">PORTALへ戻る</button>
+    </div>
+    <div class="buildLabel">OFFLINE / SINGLE HTML / BUILD 1.0.0</div>
+  </div>
+</section>
+
+<section id="gameScreen" class="screen">
+  <div class="gameWrap">
+    <div class="topbar">
+      <div class="statusPanel">
+        <div class="statusTop"><div id="areaName" class="areaName">---</div><div id="levelLabel" class="lv">LV 1</div></div>
+        <div class="meters">
+          <div class="meter"><div class="meterHead"><span>HP</span><span id="hpText">0 / 0</span></div><div class="bar"><span id="hpBar" class="hpFill"></span></div></div>
+          <div class="meter"><div class="meterHead"><span>FOCUS</span><span id="focusText">0 / 3</span></div><div class="bar"><span id="focusBar" class="focusFill"></span></div></div>
+        </div>
+      </div>
+      <button id="menuBtn" class="menuBtn" type="button" aria-label="メニュー">☰</button>
+    </div>
+
+    <div id="scene" class="scene" data-scene="chamber">
+      <div class="sceneBackdrop"></div><div class="sceneFloor"></div>
+      <div id="heroFigure" class="sceneFigure"></div><div id="companionFigure" class="sceneCompanion hidden"></div>
+      <div id="sceneTag" class="sceneTag">---</div>
+      <div id="battleLayer" class="battleLayer">
+        <div id="enemyHud" class="enemyHud">
+          <div class="enemyNameRow"><div id="enemyName" class="enemyName">---</div><div id="intentLabel" class="intent">---</div></div>
+          <div class="enemyBars">
+            <div class="bar"><span id="enemyHpBar" class="enemyHpFill"></span></div>
+            <div class="bar"><span id="breakBar" class="breakFill"></span></div>
+          </div>
+        </div>
+        <div id="enemySprite" class="enemySprite"></div>
+      </div>
+      <div id="dialogueOverlay" class="dialogueOverlay hidden" role="button" aria-label="会話を進める" tabindex="0">
+        <div class="dialogueBox"><div id="speaker" class="speaker"></div><div id="dialogueText" class="dialogueText"></div><div class="dialogueNext">TAP ›</div></div>
+      </div>
+    </div>
+
+    <div id="explorePanel" class="contentPanel">
+      <p id="nodeText" class="nodeText"></p>
+      <div id="actions" class="actions"></div>
+    </div>
+
+    <div id="battlePanel" class="battlePanel hidden">
+      <div id="battleLog" class="battleLog">---</div>
+      <div id="battleControls"></div>
+    </div>
+
+    <div id="endingPanel" class="panel endingCard hidden"></div>
+    <div class="footerInfo"><span id="inventoryMini">POTION ×0</span><span id="saveMini">AUTO SAVE</span></div>
+  </div>
+</section>
+
+<div id="menuModal" class="modalShade hidden">
+  <div class="modalCard">
+    <button id="menuClose" class="closeX" type="button" aria-label="閉じる">×</button>
+    <h2 class="modalTitle">MENU</h2>
+    <div id="menuInfo" class="infoRows"></div>
+    <div class="menuGrid">
+      <button id="manualSave" class="subBtn" type="button">セーブする</button>
+      <button id="soundToggle" class="subBtn" type="button">SOUND : ON</button>
+      <button id="helpBtn" class="subBtn" type="button">バトルの遊び方</button>
+      <button id="titleBtn" class="subBtn" type="button">タイトルへ戻る</button>
+      <button id="menuPortalBtn" class="subBtn" type="button">PORTALへ戻る</button>
+    </div>
+  </div>
+</div>
+
+<div id="helpModal" class="modalShade hidden">
+  <div class="modalCard">
+    <button id="helpClose" class="closeX" type="button" aria-label="閉じる">×</button>
+    <h2 class="modalTitle">BATTLE GUIDE</h2>
+    <p class="modalText"><b>ATTACK</b>でFOCUSをため、<b>SKILL</b>で大きなダメージを狙います。攻撃で敵のBREAKゲージを削り切ると、敵の行動を1回止められます。</p>
+    <p class="modalText">敵の次の行動は画面上部に表示されます。強攻撃が見えたらGUARDが有効です。負けても直前の戦闘から再挑戦できます。</p>
+  </div>
+</div>
+
+<div id="gameOverModal" class="modalShade hidden">
+  <div class="modalCard">
+    <h2 class="modalTitle">YOU FALL...</h2>
+    <p class="modalText">物語はここでは終わらない。直前の戦闘からやり直せます。</p>
+    <div class="menuGrid"><button id="retryBtn" class="bigBtn" type="button">RETRY</button><button id="gameOverTitleBtn" class="subBtn" type="button">タイトルへ</button></div>
+  </div>
+</div>
+<div id="toast" class="toast"></div>
+
+<script>
+(() => {
+'use strict';
+const BUILD='1.0.0';
+const SAVE_KEY='mystery_rpg_save_v1';
+const PORTAL_SAVE_KEY='mini_game_portal_save_v1';
+const GAME_ID='mystery-rpg';
+const GAME_TITLE='MYSTERY RPG';
+
+const $=id=>document.getElementById(id);
+const titleScreen=$('titleScreen'),gameScreen=$('gameScreen'),continueBtn=$('continueBtn');
+const areaName=$('areaName'),levelLabel=$('levelLabel'),hpText=$('hpText'),hpBar=$('hpBar'),focusText=$('focusText'),focusBar=$('focusBar');
+const scene=$('scene'),sceneTag=$('sceneTag'),companionFigure=$('companionFigure');
+const explorePanel=$('explorePanel'),nodeText=$('nodeText'),actionsEl=$('actions');
+const battlePanel=$('battlePanel'),battleLayer=$('battleLayer'),battleLog=$('battleLog'),battleControls=$('battleControls');
+const enemyNameEl=$('enemyName'),intentLabel=$('intentLabel'),enemyHpBar=$('enemyHpBar'),breakBar=$('breakBar'),enemySprite=$('enemySprite');
+const dialogueOverlay=$('dialogueOverlay'),speakerEl=$('speaker'),dialogueText=$('dialogueText');
+const inventoryMini=$('inventoryMini'),saveMini=$('saveMini'),endingPanel=$('endingPanel');
+const menuModal=$('menuModal'),helpModal=$('helpModal'),gameOverModal=$('gameOverModal'),toast=$('toast');
+
+const ENEMIES={
+  shadehound:{name:'煤けた獣',maxHp:44,breakMax:5,atk:8,exp:22,gold:7,intents:['strike','strike','heavy'],scene:'chamber',intro:'暗がりから、獣の息遣いが近づく。'},
+  briar:{name:'茨の狩人',maxHp:62,breakMax:6,atk:10,exp:30,gold:10,intents:['strike','guard','heavy','strike'],scene:'forest',intro:'枝の間から、人の形をした何かが弓を引く。'},
+  warden:{name:'鐘守の騎士',maxHp:94,breakMax:8,atk:12,exp:48,gold:16,intents:['guard','strike','heavy','strike','drain'],scene:'chapel',boss:true,intro:'沈黙していた甲冑が、古い鐘の音とともに立ち上がる。'},
+  crow:{name:'虚ろ喰い',maxHp:82,breakMax:7,atk:13,exp:40,gold:14,intents:['drain','strike','heavy','strike'],scene:'ruins',intro:'崩れた回廊の天井から、黒い羽が降る。'},
+  last:{name:'名を失った影',maxHp:138,breakMax:10,atk:15,exp:0,gold:0,intents:['strike','heavy','drain','guard','heavy'],scene:'core',boss:true,intro:'光の中心で、あなたと同じ輪郭をした影が剣を抜く。'}
+};
+const INTENT_LABEL={strike:'攻撃',heavy:'強攻撃',guard:'防御',drain:'FOCUS侵食'};
+
+const NODES={
+  wake:{name:'閉ざされた部屋',scene:'chamber',desc:'冷たい石床。遠くで、かすかな鐘の音が一度だけ響いた。',intro:[
+    ['???','……起きて。'],['主人公','……ここは？'],['???','時間がない。扉の向こうへ。灯が消える前に。']
+  ],actions:[{label:'扉を開ける',battle:'shadehound',next:'gate'}]},
+  gate:{name:'灰の門',scene:'gate',desc:'街の入口には人影がない。空には朝とも夜ともつかない白い光が残っている。',intro:[
+    ['少女','やっと会えた。私はミラ。あなたを探していた。'],['主人公','俺を？'],['ミラ','三つの鐘を起こさないと、この街から「名前」が消える。詳しい話は歩きながら。']
+  ],join:true,actions:[
+    {label:'崩れた露店を調べる',id:'gateSearch',optional:true,once:'gateSearch'},
+    {label:'灰森へ向かう',go:'forest'}
+  ]},
+  forest:{name:'灰森',scene:'forest',desc:'木々は風もないのにざわめいている。獣道の先に、青白い灯が揺れる。',intro:[['ミラ','一つ目の鐘は森の礼拝堂。……ここから先は、気を抜かないで。']],actions:[
+    {label:'森を進む',battle:'briar',next:'forestAfter'}
+  ]},
+  forestAfter:{name:'灰森・深部',scene:'forest',desc:'敵の気配は消えた。苔に埋もれた石碑と、礼拝堂へ続く細い道が見える。',actions:[
+    {label:'苔むした石碑を読む',id:'forestMemory',optional:true,once:'forestMemory'},
+    {label:'礼拝堂へ向かう',go:'chapel'}
+  ]},
+  chapel:{name:'沈鐘の礼拝堂',scene:'chapel',desc:'天井まで届く古い鐘。その下で、誰かを待ち続けていたような甲冑が膝をついている。',intro:[
+    ['ミラ','鐘を鳴らせば道が開く。'],['主人公','……あの甲冑が素直に通してくれるとは思えないな。']
+  ],actions:[
+    {label:'祭壇で傷を休める',id:'chapelRest',safe:true,once:'chapelRest'},
+    {label:'鐘へ近づく',battle:'warden',next:'ruins',flag:'bellOne'}
+  ]},
+  ruins:{name:'沈んだ回廊',scene:'ruins',desc:'鐘の音で地下への道が現れた。壁には、二人の剣士を描いた古い壁画が続いている。',intro:[
+    ['ミラ','……この絵、見覚えは？'],['主人公','ない。だが、胸が痛む。'],['ミラ','そう。なら、まだ思い出さなくていい。']
+  ],actions:[
+    {label:'壁画を詳しく見る',id:'ruinsMemory',optional:true,once:'ruinsMemory'},
+    {label:'回廊を抜ける',battle:'crow',next:'spire'}
+  ]},
+  spire:{name:'灯塔への階段',scene:'spire',desc:'街の中央を貫く塔。その最上部から、今にも消えそうな光が落ちている。',intro:[
+    ['ミラ','ここを上れば最後。'],['主人公','三つの鐘と言っていたな。まだ一つしか鳴らしていない。'],['ミラ','……鐘は場所じゃない。思い出そのもの。あなたが拾ったものが、残りの鐘になる。']
+  ],actions:[
+    {label:'足元の古い剣を拾う',id:'spireMemory',optional:true,once:'spireMemory'},
+    {label:'塔の最上部へ',go:'core'}
+  ]},
+  core:{name:'灯の核',scene:'core',desc:'巨大な光球の前に、一つの影が立っている。影はあなたと同じ剣を持っている。',intro:[
+    ['影','また来たのか。何度消えても、同じ道を歩く。'],['主人公','お前は誰だ。'],['影','お前が最後まで思い出さなかった名前だ。']
+  ],actions:[{label:'影と向き合う',battle:'last',next:'afterFinal'}]},
+  afterFinal:{name:'灯の核',scene:'core',desc:'影は崩れ、光だけが残った。ミラは泣きそうな顔で、こちらを見ている。',intro:[
+    ['ミラ','あなたは「カイ」本人じゃない。'],['ミラ','あの日、私を逃がして灯塔に残ったカイの記憶。街が作り続けた、最後の残響。'],['主人公','……だから、俺には過去がなかった。'],['ミラ','でも、ここまで選んだことは全部、あなたのものだよ。']
+  ],actions:[
+    {label:'この記憶を灯として残す',id:'endingFlame'},
+    {label:'すべてを受け入れ、灯を解放する',id:'endingDawn',requiresMemories:2,optional:true}
+  ]}
+};
+
+let state=null,battle=null,dialogueQueue=[],dialogueDone=null,battleCheckpoint=null,soundOn=true,toastTimer=null;
+
+function freshState(){return {
+  version:1,build:BUILD,node:'wake',visited:{},flags:{},memories:0,clearCount:0,
+  hero:{level:1,exp:0,maxHp:62,hp:62,focus:0,gold:0},items:{potion:2},joined:false,ending:null,savedAt:null
+}}
+function clone(v){return JSON.parse(JSON.stringify(v))}
+function now(){return new Date().toISOString()}
+function clamp(v,min,max){return Math.max(min,Math.min(max,v))}
+function rand(min,max){return Math.floor(Math.random()*(max-min+1))+min}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+function mgNewId(){try{if(globalThis.crypto?.randomUUID)return globalThis.crypto.randomUUID()}catch(_){ }return `mg-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,10)}`}
+function mgLoad(){let d=null;try{d=JSON.parse(localStorage.getItem(PORTAL_SAVE_KEY)||'null')}catch(_){ }const t=now();if(!d||typeof d!=='object')d={schemaVersion:1,player:{playerId:mgNewId(),displayName:'PLAYER',createdAt:t,updatedAt:t},overall:{totalPlays:0,playedGames:0,lastPlayedGameId:null,lastPlayedAt:null},games:{},backup:{lastExportedAt:null,lastImportedAt:null}};d.schemaVersion=1;d.player||={};d.player.playerId||=mgNewId();d.player.displayName=String(d.player.displayName||'PLAYER').trim()||'PLAYER';d.player.createdAt||=t;d.player.updatedAt||=d.player.createdAt;d.overall||={totalPlays:0,playedGames:0,lastPlayedGameId:null,lastPlayedAt:null};d.games=(d.games&&typeof d.games==='object')?d.games:{};d.backup||={lastExportedAt:null,lastImportedAt:null};return d}
+function mgSave(d){d.player.updatedAt=now();d.overall.playedGames=Object.values(d.games||{}).filter(g=>(Number(g?.plays)||0)>0).length;try{localStorage.setItem(PORTAL_SAVE_KEY,JSON.stringify(d))}catch(_){ }}
+function mgRecordPlay(){const d=mgLoad(),t=now(),g=d.games[GAME_ID]||{gameId:GAME_ID,title:GAME_TITLE,recordVersion:1,plays:0,lastPlayedAt:null,records:{}};g.title=GAME_TITLE;g.plays=(Number(g.plays)||0)+1;g.lastPlayedAt=t;d.games[GAME_ID]=g;d.overall.totalPlays=(Number(d.overall.totalPlays)||0)+1;d.overall.lastPlayedGameId=GAME_ID;d.overall.lastPlayedAt=t;mgSave(d)}
+function mgRecordClear(ending){const d=mgLoad(),g=d.games[GAME_ID]||{gameId:GAME_ID,title:GAME_TITLE,recordVersion:1,plays:0,lastPlayedAt:now(),records:{}};g.records||={};const old=Number(g.records.clearCount?.value)||0;g.records.clearCount={key:'clearCount',label:'CLEAR',value:old+1,format:'number',updatedAt:now()};g.records.level={key:'level',label:'BEST LV',value:Math.max(Number(g.records.level?.value)||0,state.hero.level),format:'number',updatedAt:now()};g.records.lastEnding={key:'lastEnding',label:'ENDING',value:ending==='dawn'?'DAWN':'FLAME',format:'text',updatedAt:now()};d.games[GAME_ID]=g;mgSave(d)}
+
+function hasSave(){try{return !!localStorage.getItem(SAVE_KEY)}catch(_){return false}}
+function saveGame(manual=false){if(!state||state.ending)return;state.savedAt=now();try{localStorage.setItem(SAVE_KEY,JSON.stringify(state));saveMini.textContent=manual?'SAVED':'AUTO SAVE';if(manual)showToast('セーブしました')}catch(_){showToast('セーブできませんでした')}}
+function loadGame(){try{const d=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');if(!d||!d.hero||!NODES[d.node])return null;d.visited||={};d.flags||={};d.items||={potion:0};d.hero.focus=clamp(Number(d.hero.focus)||0,0,3);d.hero.hp=clamp(Number(d.hero.hp)||1,1,Number(d.hero.maxHp)||62);return d}catch(_){return null}}
+function eraseSave(){try{localStorage.removeItem(SAVE_KEY)}catch(_){ }continueBtn.disabled=true;showToast('セーブデータを削除しました')}
+
+function showScreen(which){titleScreen.classList.toggle('active',which==='title');gameScreen.classList.toggle('active',which==='game')}
+function showToast(text){toast.textContent=text;toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('show'),1800)}
+function tone(freq=440,dur=.06,type='sine',gain=.035){if(!soundOn)return;try{const C=window.AudioContext||window.webkitAudioContext;const ctx=tone.ctx||(tone.ctx=new C());const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.value=freq;g.gain.value=gain;o.connect(g);g.connect(ctx.destination);o.start();g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+dur);o.stop(ctx.currentTime+dur)}catch(_){ }}
+
+function updateHud(){if(!state)return;levelLabel.textContent=`LV ${state.hero.level}`;hpText.textContent=`${Math.max(0,Math.ceil(state.hero.hp))} / ${state.hero.maxHp}`;hpBar.style.width=`${clamp(state.hero.hp/state.hero.maxHp*100,0,100)}%`;focusText.textContent=`${state.hero.focus} / 3`;focusBar.style.width=`${state.hero.focus/3*100}%`;inventoryMini.textContent=`POTION ×${state.items.potion||0} / ${state.hero.gold} G`;companionFigure.classList.toggle('hidden',!state.joined)}
+function setScene(node){scene.dataset.scene=node.scene;areaName.textContent=node.name;sceneTag.textContent=node.name}
+
+function runDialogue(lines,onDone){dialogueQueue=[...lines];dialogueDone=onDone||null;dialogueOverlay.classList.remove('hidden');advanceDialogue()}
+function advanceDialogue(){if(dialogueQueue.length===0){dialogueOverlay.classList.add('hidden');const done=dialogueDone;dialogueDone=null;done?.();return}const [speaker,text]=dialogueQueue.shift();speakerEl.textContent=speaker||'';dialogueText.textContent=text;tone(520,.025,'sine',.018)}
+dialogueOverlay.addEventListener('click',advanceDialogue);dialogueOverlay.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();advanceDialogue()}});
+
+function renderNode(){battle=null;battleLayer.classList.remove('active');battlePanel.classList.add('hidden');explorePanel.classList.remove('hidden');endingPanel.classList.add('hidden');const node=NODES[state.node];setScene(node);updateHud();nodeText.innerHTML=esc(node.desc);actionsEl.innerHTML='';if(node.join)state.joined=true;
+  const showActions=()=>{renderActions(node);saveGame(false)};
+  if(node.intro&&!state.visited[state.node]){state.visited[state.node]=true;runDialogue(node.intro,showActions)}else showActions();
+}
+function renderActions(node){actionsEl.innerHTML='';node.actions.forEach(a=>{if(a.once&&state.flags[a.once])return;if(a.requiresMemories&&state.memories<a.requiresMemories)return;const b=document.createElement('button');b.type='button';b.className='actionBtn'+(a.optional?' optional':'')+(a.safe?' safe':'');b.textContent=a.label;b.addEventListener('click',()=>handleAction(a));actionsEl.appendChild(b)});if(!actionsEl.children.length){const p=document.createElement('p');p.className='nodeText';p.textContent='ここでできることはもうない。';actionsEl.appendChild(p)}}
+function handleAction(a){tone(360,.05,'triangle',.025);if(a.go){state.node=a.go;renderNode();return}if(a.battle){startBattle(a.battle,a.next,a.flag);return}if(a.id==='gateSearch'){state.flags.gateSearch=true;state.items.potion=(state.items.potion||0)+1;state.hero.gold+=4;runDialogue([['ミラ','回復薬が残ってる。持っていこう。']],()=>{updateHud();renderActions(NODES[state.node]);saveGame(false)});return}
+  if(a.id==='forestMemory'){state.flags.forestMemory=true;state.memories++;runDialogue([['主人公','「約束は、灯が消えても残る」……誰の字だ？'],['ミラ','……さあね。'] ],()=>{showToast('MEMORYを見つけた');renderActions(NODES[state.node]);saveGame(false)});return}
+  if(a.id==='chapelRest'){state.flags.chapelRest=true;state.hero.hp=state.hero.maxHp;state.items.potion=(state.items.potion||0)+1;runDialogue([['ミラ','少しだけ休もう。先は長い。']],()=>{updateHud();renderActions(NODES[state.node]);saveGame(false)});return}
+  if(a.id==='ruinsMemory'){state.flags.ruinsMemory=true;state.memories++;runDialogue([['主人公','壁画の剣士……片方は俺に似ている。'],['ミラ','もう片方は？'],['主人公','……君だ。'] ],()=>{showToast('MEMORYを見つけた');renderActions(NODES[state.node]);saveGame(false)});return}
+  if(a.id==='spireMemory'){state.flags.spireMemory=true;state.memories++;state.hero.maxHp+=8;state.hero.hp+=8;runDialogue([['主人公','この剣、握り方を知ってる。'],['ミラ','それは、あなたが最後に残したもの。'] ],()=>{showToast('MEMORYを見つけた / MAX HP +8');updateHud();renderActions(NODES[state.node]);saveGame(false)});return}
+  if(a.id==='endingFlame'){finishGame('flame');return}if(a.id==='endingDawn'){finishGame('dawn');return}}
+
+function startBattle(enemyId,nextNode,winFlag){const def=ENEMIES[enemyId];battleCheckpoint=clone(state);battle={id:enemyId,def,hp:def.maxHp,break:def.breakMax,turn:0,armor:0,broken:false,nextNode,winFlag,busy:false,log:def.intro};scene.dataset.scene=def.scene;sceneTag.textContent='BATTLE';explorePanel.classList.add('hidden');battlePanel.classList.remove('hidden');battleLayer.classList.add('active');enemySprite.className='enemySprite'+(def.boss?' boss':'');enemyNameEl.textContent=def.name;renderBattle();tone(120,.18,'sawtooth',.035)}
+function currentIntent(){return battle.def.intents[battle.turn % battle.def.intents.length]}
+function renderBattle(){updateHud();enemyHpBar.style.width=`${clamp(battle.hp/battle.def.maxHp*100,0,100)}%`;breakBar.style.width=`${clamp(battle.break/battle.def.breakMax*100,0,100)}%`;intentLabel.textContent=INTENT_LABEL[currentIntent()]||'---';battleLog.textContent=battle.log;if(!battle.busy)renderMainControls()}
+function renderMainControls(){battleControls.innerHTML=`<div class="battleButtons"><button class="battleBtn" data-cmd="attack">ATTACK<small>FOCUS +1 / BREAK</small></button><button class="battleBtn skill" data-cmd="skill">SKILL<small>FOCUSを消費</small></button><button class="battleBtn guard" data-cmd="guard">GUARD<small>被ダメージ軽減</small></button><button class="battleBtn item" data-cmd="item">ITEM<small>POTION ×${state.items.potion||0}</small></button></div>`;battleControls.querySelectorAll('[data-cmd]').forEach(b=>b.addEventListener('click',()=>battleCommand(b.dataset.cmd)))}
+function battleCommand(cmd){if(!battle||battle.busy)return;if(cmd==='skill'){renderSkills();return}if(cmd==='item'){usePotion();return}battle.busy=true;if(cmd==='attack'){const dmg=9+state.hero.level*2+rand(0,3);state.hero.focus=clamp(state.hero.focus+1,0,3);damageEnemy(dmg,1);battle.log=`${dmg}ダメージ。FOCUSがたまった。`;tone(220,.06,'square',.035);afterHeroAction()}else if(cmd==='guard'){state.flags.tempGuard=true;state.hero.focus=clamp(state.hero.focus+1,0,3);battle.log='身構えた。次の被ダメージを大きく減らす。';tone(310,.07,'triangle',.03);afterHeroAction()}}
+function renderSkills(){const skills=[{id:'edge',name:'裂光',cost:1,desc:'中ダメージ / BREAK大'},{id:'flare',name:'残火',cost:2,desc:'大ダメージ',locked:state.hero.level<2},{id:'mend',name:'灯脈',cost:2,desc:'HPを回復',locked:state.hero.level<3}];battleControls.innerHTML='<div class="skillMenu"></div>';const box=battleControls.firstElementChild;skills.forEach(s=>{const b=document.createElement('button');b.type='button';b.className='battleBtn full skill';b.disabled=s.locked||state.hero.focus<s.cost;b.innerHTML=`${esc(s.name)} <small>FOCUS ${s.cost} / ${esc(s.locked?'LV不足':s.desc)}</small>`;b.addEventListener('click',()=>useSkill(s.id,s.cost));box.appendChild(b)});const back=document.createElement('button');back.className='battleBtn full skillBack';back.type='button';back.textContent='戻る';back.addEventListener('click',renderMainControls);box.appendChild(back)}
+function useSkill(id,cost){if(battle.busy||state.hero.focus<cost)return;battle.busy=true;state.hero.focus-=cost;if(id==='edge'){const dmg=14+state.hero.level*3+rand(0,4);damageEnemy(dmg,3);battle.log=`裂光！ ${dmg}ダメージ。BREAKを大きく削った。`;tone(520,.08,'sawtooth',.04)}else if(id==='flare'){const dmg=23+state.hero.level*4+rand(0,5);damageEnemy(dmg,1);battle.log=`残火！ ${dmg}ダメージ。`;tone(680,.09,'square',.04)}else{const heal=24+state.hero.level*4;const before=state.hero.hp;state.hero.hp=clamp(state.hero.hp+heal,0,state.hero.maxHp);battle.log=`灯脈。HPを${Math.ceil(state.hero.hp-before)}回復した。`;tone(760,.12,'sine',.03)}afterHeroAction()}
+function usePotion(){if(!battle||battle.busy)return;if((state.items.potion||0)<=0){battle.log='回復薬を持っていない。';renderBattle();return}battle.busy=true;state.items.potion--;const before=state.hero.hp;state.hero.hp=clamp(state.hero.hp+34,0,state.hero.maxHp);battle.log=`回復薬を使った。HPを${Math.ceil(state.hero.hp-before)}回復した。`;tone(720,.1,'sine',.03);afterHeroAction()}
+function damageEnemy(amount,breakDmg){const actual=Math.max(1,amount-(battle.armor||0));battle.armor=0;battle.hp=Math.max(0,battle.hp-actual);battle.break=Math.max(0,battle.break-breakDmg);if(battle.break<=0&&battle.hp>0)battle.broken=true}
+function afterHeroAction(){renderBattle();if(battle.hp<=0){setTimeout(winBattle,480);return}setTimeout(enemyTurn,520)}
+function enemyTurn(){if(!battle)return;if(battle.broken){battle.broken=false;enemySprite.classList.add('broken');battle.log=`${battle.def.name}は体勢を崩した！ 行動できない。`;battle.break=battle.def.breakMax;state.hero.focus=clamp(state.hero.focus+1,0,3);battle.turn++;renderBattle();setTimeout(()=>{enemySprite.classList.remove('broken');battle.busy=false;renderBattle()},650);return}
+  const intent=currentIntent();let text='';if(intent==='guard'){battle.armor=7+state.hero.level;battle.log=`${battle.def.name}は身を固めた。次に受けるダメージを軽減する。`;tone(180,.07,'triangle',.025)}else{let dmg=0;if(intent==='strike'){dmg=battle.def.atk+rand(-1,2);text='攻撃'}if(intent==='heavy'){dmg=Math.round(battle.def.atk*1.65)+rand(0,2);text='強烈な一撃'}if(intent==='drain'){dmg=Math.round(battle.def.atk*.75)+rand(0,2);state.hero.focus=Math.max(0,state.hero.focus-1);text='光を削る攻撃'}const guarded=!!state.flags.tempGuard;if(guarded)dmg=Math.ceil(dmg*.36);state.flags.tempGuard=false;state.hero.hp=Math.max(0,state.hero.hp-dmg);battle.log=`${battle.def.name}の${text}。${dmg}ダメージ${guarded?'（GUARD）':''}。`;tone(95,.09,'sawtooth',.035)}
+  battle.turn++;if(state.joined&&battle.turn%2===0&&state.hero.hp>0){if(state.hero.hp/state.hero.maxHp<.42){const heal=8+state.hero.level*2;state.hero.hp=clamp(state.hero.hp+heal,0,state.hero.maxHp);battle.log+=` ミラがHPを${heal}回復した。`}else{const assist=5+state.hero.level*2;battle.hp=Math.max(0,battle.hp-assist);battle.log+=` ミラの援護。${assist}ダメージ。`}}
+  updateHud();renderBattle();if(state.hero.hp<=0){setTimeout(showGameOver,480);return}if(battle.hp<=0){setTimeout(winBattle,420);return}battle.busy=false;setTimeout(renderBattle,260)}
+function expNeeded(level){return level===1?25:level===2?68:level===3?125:9999}
+function gainExp(exp){let leveled=false;state.hero.exp+=exp;while(state.hero.level<4&&state.hero.exp>=expNeeded(state.hero.level)){state.hero.level++;state.hero.maxHp+=12;state.hero.hp=state.hero.maxHp;leveled=true}return leveled}
+function winBattle(){if(!battle)return;const b=battle,leveled=gainExp(b.def.exp);state.hero.gold+=b.def.gold;state.hero.focus=clamp(state.hero.focus+1,0,3);if(b.winFlag)state.flags[b.winFlag]=true;const lines=[['主人公',`${b.def.name}を退けた。`]];if(leveled)lines.push(['ミラ',`力が戻ってる。これなら、まだ進める。`]);if(b.id==='warden')lines.push(['ミラ','……一つ目の鐘が鳴った。']);battle=null;battleLayer.classList.remove('active');battlePanel.classList.add('hidden');explorePanel.classList.remove('hidden');state.node=b.nextNode;state.hero.hp=Math.max(1,state.hero.hp);tone(820,.16,'triangle',.04);updateHud();runDialogue(lines,renderNode)}
+function showGameOver(){battle.busy=true;gameOverModal.classList.remove('hidden')}
+function retryBattle(){gameOverModal.classList.add('hidden');const old=battle;if(!battleCheckpoint||!old)return;state=clone(battleCheckpoint);state.hero.hp=state.hero.maxHp;state.hero.focus=1;startBattle(old.id,old.nextNode,old.winFlag)}
+
+function finishGame(ending){state.ending=ending;state.clearCount=(state.clearCount||0)+1;try{localStorage.removeItem(SAVE_KEY)}catch(_){ }mgRecordClear(ending);explorePanel.classList.add('hidden');battlePanel.classList.add('hidden');endingPanel.classList.remove('hidden');scene.dataset.scene='ending';sceneTag.textContent='EPILOGUE';areaName.textContent='EPILOGUE';const dawn=ending==='dawn';const text=dawn?
+  '光は塔から解き放たれ、街に本当の朝が戻る。残響として生まれたあなたは消えていく。けれど最後にミラが呼んだ「カイ」という名は、記憶ではなく約束として残った。':
+  'あなたは自分の記憶を新しい灯へ変える。街は再び名前を取り戻し、ミラは塔を降りる。あなたはそこに残る。誰かが帰る場所を照らす、静かな光として。';
+  endingPanel.innerHTML=`<div class="endingTitle">${dawn?'DAWN END':'FLAME END'}</div><p class="endingText">${esc(text)}</p><div class="credits">MYSTERY RPG<br>SHORT STORY COMPLETE<br>BUILD ${BUILD}</div><button id="endingTitleBtn" class="bigBtn" type="button">TITLE</button>`;endingPanel.querySelector('#endingTitleBtn').addEventListener('click',()=>{showScreen('title');continueBtn.disabled=!hasSave()});tone(dawn?880:660,.5,'sine',.045)}
+
+function openMenu(){if(!state)return;$('menuInfo').innerHTML=`<div class="infoRow"><span>LEVEL</span><b>${state.hero.level}</b></div><div class="infoRow"><span>EXP</span><b>${state.hero.exp}</b></div><div class="infoRow"><span>GOLD</span><b>${state.hero.gold}</b></div><div class="infoRow"><span>MEMORY</span><b>${state.memories}</b></div>`;$('soundToggle').textContent=`SOUND : ${soundOn?'ON':'OFF'}`;menuModal.classList.remove('hidden')}
+function goPortal(){location.href='../'}
+
+$('newGameBtn').addEventListener('click',()=>{if(hasSave()&&!confirm('現在のセーブデータを上書きして最初から始めますか？'))return;state=freshState();mgRecordPlay();showScreen('game');renderNode();saveGame(false)});
+continueBtn.addEventListener('click',()=>{const d=loadGame();if(!d){showToast('有効なセーブデータがありません');continueBtn.disabled=true;return}state=d;showScreen('game');renderNode()});
+$('eraseBtn').addEventListener('click',()=>{if(!hasSave()){showToast('セーブデータはありません');return}if(confirm('セーブデータを削除しますか？'))eraseSave()});
+$('portalBtn').addEventListener('click',goPortal);$('menuPortalBtn').addEventListener('click',goPortal);
+$('menuBtn').addEventListener('click',openMenu);$('menuClose').addEventListener('click',()=>menuModal.classList.add('hidden'));
+$('manualSave').addEventListener('click',()=>{saveGame(true);menuModal.classList.add('hidden')});
+$('soundToggle').addEventListener('click',()=>{soundOn=!soundOn;$('soundToggle').textContent=`SOUND : ${soundOn?'ON':'OFF'}`;if(soundOn)tone(520,.05,'sine',.03)});
+$('helpBtn').addEventListener('click',()=>{menuModal.classList.add('hidden');helpModal.classList.remove('hidden')});$('helpClose').addEventListener('click',()=>helpModal.classList.add('hidden'));
+$('titleBtn').addEventListener('click',()=>{menuModal.classList.add('hidden');showScreen('title');continueBtn.disabled=!hasSave()});
+$('retryBtn').addEventListener('click',retryBattle);$('gameOverTitleBtn').addEventListener('click',()=>{gameOverModal.classList.add('hidden');showScreen('title');continueBtn.disabled=!hasSave()});
+menuModal.addEventListener('click',e=>{if(e.target===menuModal)menuModal.classList.add('hidden')});helpModal.addEventListener('click',e=>{if(e.target===helpModal)helpModal.classList.add('hidden')});
+window.addEventListener('pagehide',()=>{if(state&&!battle&&!state.ending)saveGame(false)});
+
+continueBtn.disabled=!hasSave();
+})();
+</script>
+</body>
+</html>
