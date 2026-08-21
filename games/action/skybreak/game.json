@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "skybreak",
+  "name": "SKYBREAK",
+  "category": "action",
+  "categoryLabel": "ACTION",
+  "description": "高速プラットフォームバトル。別リポジトリで本体を開発・配信します。",
+  "searchTerms": ["skybreak", "platform fighter", "action", "対戦", "格闘", "アクション"],
+  "icon": "./icon.svg",
+  "entry": "./index.html",
+  "available": true
+}
