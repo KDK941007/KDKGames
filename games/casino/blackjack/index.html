@@ -17,16 +17,24 @@
 <div class="field"><label>プレイヤー数</label><select id="playerCount"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></div>
 <div class="field"><label>テーブル MIN</label><select id="tableMin"><option value="10000">₩10,000</option><option value="30000" selected>₩30,000</option><option value="50000">₩50,000</option><option value="100000">₩100,000</option></select></div>
 <div class="field"><label>テーブル MAX</label><input id="tableMax" type="number" inputmode="numeric" value="3000000" readonly><div class="hint">公式の具体額は非公開のため、練習用として MIN × 100 を自動設定します。</div></div>
+<div class="field full"><label for="inputCurrency">開始資金の入力通貨</label>
+  <select id="inputCurrency">
+    <option value="JPY" selected>日本円（JPY）</option>
+    <option value="USD">米ドル（USD）</option>
+    <option value="SGD">シンガポールドル（SGD）</option>
+  </select>
+  <div class="hint">各プレイヤーの開始資金は、ここで選んだ通貨で入力します。</div>
+</div>
 <div class="field full"><label for="targetCurrency">開始資金の換算先</label>
   <select id="targetCurrency">
     <option value="JPY" selected>日本円（JPY）</option>
     <option value="USD">米ドル（USD）</option>
     <option value="SGD">シンガポールドル（SGD）</option>
   </select>
-  <div class="hint">開始資金は常に日本円で入力します。選択した通貨への換算額を確認できます。</div>
+  <div class="hint">入力した開始資金を、選択した通貨へ換算して確認できます。</div>
 </div>
-<div class="field full" id="rateField"><label id="rateLabel">ゲーム用換算レート：1 JPY = 何 KRW</label><input id="rate" type="number" inputmode="decimal" value="9.2" min="0.01" step="0.01"><div class="hint" id="rateHint">日本円の開始資金をゲーム内KRWチップへ換算するレートです。</div></div>
-<div class="field full hidden" id="targetRateField"><label id="targetRateLabel">表示用換算レート</label><input id="targetRate" type="number" inputmode="decimal" min="0.000001" step="0.000001"><div class="hint">1 JPYあたりの選択通貨レートを入力してください。</div></div>
+<div class="field full" id="rateField"><label id="rateLabel">ゲーム用換算レート：1 JPY = 何 KRW</label><input id="rate" type="number" inputmode="decimal" value="9.2" min="0.000001" step="0.000001"><div class="hint" id="rateHint">入力通貨をゲーム内KRWチップへ換算するレートです。</div></div>
+<div class="field full hidden" id="targetRateField"><label id="targetRateLabel">表示用換算レート</label><input id="targetRate" type="number" inputmode="decimal" min="0.000001" step="0.000001"><div class="hint" id="targetRateHint">入力通貨から換算先通貨へのレートを入力してください。</div></div>
 <div class="field full"><label>プレイヤー別 参加タイプ / 開始チップ</label><div id="playerBanks" class="playerBanks"></div></div>
 <div class="field full" id="cpuBustModeField">
   <label>CPUの残高がテーブルMIN未満になった場合</label>
