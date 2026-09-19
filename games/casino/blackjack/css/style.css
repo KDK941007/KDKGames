@@ -5328,3 +5328,234 @@ header{display:flex;align-items:center;justify-content:space-between;padding:6px
   .ruleGuideGrid{grid-template-columns:1fr}
   .helpTabs{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
+
+
+/* =========================================================
+   v14.49 — currency pair / beginner help / signal label fix
+   ========================================================= */
+.currencyPairFields{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:10px;
+  align-items:start;
+}
+.currencyPairFields .field{min-width:0}
+.currencyPairFields select{
+  min-width:0;
+  padding-left:10px!important;
+  padding-right:8px!important;
+}
+
+.helpTabs{
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:4px!important;
+  margin-bottom:10px!important;
+}
+.helpTab{
+  min-width:0!important;
+  min-height:38px!important;
+  padding:4px 1px!important;
+  font-size:clamp(7px,2.25vw,9px)!important;
+  line-height:1.15!important;
+  overflow-wrap:anywhere;
+}
+
+.ruleBeginnerIntro{
+  display:grid;
+  gap:6px;
+  padding:12px;
+  margin-bottom:10px;
+  border:1px solid rgba(226,192,100,.32);
+  border-radius:12px;
+  background:rgba(226,192,100,.07);
+}
+.ruleBeginnerIntro b{
+  color:var(--gold);
+  font-size:14px;
+}
+.ruleBeginnerIntro span{
+  font-size:12px;
+  line-height:1.65;
+}
+
+.ruleBasics{
+  display:grid;
+  gap:8px;
+  margin-bottom:14px;
+}
+.ruleBasicCard{
+  display:grid;
+  grid-template-columns:30px 1fr;
+  gap:9px;
+  align-items:start;
+  padding:10px;
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:11px;
+  background:rgba(255,255,255,.035);
+}
+.ruleBasicNo{
+  width:28px;
+  height:28px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+  background:var(--gold);
+  color:#211a08;
+  font-weight:1000;
+  font-size:13px;
+}
+.ruleBasicCard b{font-size:12px}
+.ruleBasicCard p{
+  margin:4px 0 0;
+  font-size:11px;
+  line-height:1.6;
+  color:var(--muted);
+}
+
+.ruleSectionTitle{
+  margin:14px 0 7px;
+  padding-left:8px;
+  border-left:3px solid var(--gold);
+  color:var(--gold);
+  font-size:13px;
+  font-weight:950;
+}
+.ruleFlow{
+  display:grid;
+  gap:4px;
+}
+.ruleFlowStep{
+  padding:9px 10px;
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:10px;
+  background:rgba(255,255,255,.035);
+}
+.ruleFlowStep>span{
+  display:block;
+  margin-bottom:2px;
+  color:var(--gold);
+  font-size:9px;
+  font-weight:950;
+  letter-spacing:.08em;
+}
+.ruleFlowStep>b{font-size:12px}
+.ruleFlowStep>p{
+  margin:3px 0 0;
+  font-size:11px;
+  line-height:1.55;
+  color:var(--muted);
+}
+.ruleFlowArrow{
+  text-align:center;
+  color:var(--gold);
+  font-size:14px;
+  line-height:1;
+}
+
+.ruleActionGrid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:7px;
+}
+.ruleActionCard{
+  display:grid;
+  gap:3px;
+  padding:9px;
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:10px;
+  background:rgba(255,255,255,.035);
+}
+.ruleActionCard>b{
+  color:var(--gold);
+  font-size:12px;
+}
+.ruleActionCard>strong{
+  font-size:11px;
+}
+.ruleActionCard>span{
+  font-size:10px;
+  line-height:1.5;
+  color:var(--muted);
+}
+
+.ruleResultList,
+.ruleExtraList{
+  display:grid;
+  gap:6px;
+}
+.ruleResultList>div,
+.ruleExtraList>div{
+  display:grid;
+  grid-template-columns:minmax(78px,.34fr) 1fr;
+  gap:8px;
+  padding:8px 9px;
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:9px;
+  background:rgba(255,255,255,.03);
+}
+.ruleResultList b,
+.ruleExtraList b{
+  color:var(--gold);
+  font-size:11px;
+}
+.ruleResultList span,
+.ruleExtraList span{
+  font-size:10px;
+  line-height:1.55;
+  color:var(--muted);
+}
+
+/* Action text belongs to the bottom strip of the hand-signal frame. */
+.handSignalVisual{
+  position:fixed!important;
+  display:block!important;
+  width:118px!important;
+  height:154px!important;
+  box-sizing:border-box!important;
+  overflow:visible!important;
+}
+.handSignalVisual > .signalApprovedArt{
+  position:absolute!important;
+  left:0!important;
+  right:0!important;
+  top:0!important;
+  bottom:30px!important;
+  z-index:1!important;
+}
+.handSignalVisual > #signalLabel{
+  position:absolute!important;
+  left:0!important;
+  right:auto!important;
+  top:124px!important;
+  bottom:auto!important;
+  width:118px!important;
+  height:24px!important;
+  min-height:24px!important;
+  margin:0!important;
+  padding:0 4px!important;
+  box-sizing:border-box!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+  color:var(--gold)!important;
+  font-size:10px!important;
+  font-weight:950!important;
+  line-height:24px!important;
+  letter-spacing:.10em!important;
+  text-shadow:0 2px 4px rgba(0,0,0,.55)!important;
+  z-index:20!important;
+  pointer-events:none!important;
+}
+
+@media(max-width:560px){
+  .currencyPairFields{gap:6px}
+  .currencyPairFields select{font-size:12px!important;padding:10px 5px!important}
+  .helpTabs{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+  .ruleActionGrid{grid-template-columns:1fr}
+  .ruleResultList>div,
+  .ruleExtraList>div{grid-template-columns:72px 1fr}
+}
