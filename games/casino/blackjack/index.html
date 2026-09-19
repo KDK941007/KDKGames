@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="./css/style.css">
 </head>
 <body><div class="app">
-<header><div class="brand">BLACKJACK <small>PARADISE PRACTICE</small></div><div class="shoe"><b>8 DECK SHOE</b><br><span id="shoeCount">416 cards</span></div></header>
+<header><div class="brand">BLACKJACK <small>PARADISE PRACTICE</small></div><div class="shoe"><b>6 DECK SHOE</b><br><span id="shoeCount">312 cards</span></div></header>
 <section id="setup" class="panel">
 <div class="setupHead">
   <h2>テーブル設定</h2>
@@ -17,16 +17,23 @@
 <div class="field"><label>プレイヤー数</label><select id="playerCount"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></div>
 <div class="field"><label>テーブル MIN</label><select id="tableMin"><option value="10000">₩10,000</option><option value="30000" selected>₩30,000</option><option value="50000">₩50,000</option><option value="100000">₩100,000</option></select></div>
 <div class="field"><label>テーブル MAX</label><input id="tableMax" type="number" inputmode="numeric" value="3000000" readonly><div class="hint">公式の具体額は非公開のため、練習用として MIN × 100 を自動設定します。</div></div>
-<div class="field full"><label>開始資金の入力方法</label><div class="toggle"><button id="modeKrw" class="active">KRWで入力</button><button id="modeJpy">円から換算</button></div></div>
-<div class="field full hidden" id="rateField"><label>換算レート：1円 = 何ウォン</label><input id="rate" type="number" inputmode="decimal" value="9.2" min="0.01" step="0.01"><div class="hint">旅行当日のレートを手入力してください。</div></div>
+<div class="field full"><label for="inputCurrency">開始資金の入力通貨</label>
+  <select id="inputCurrency">
+    <option value="JPY" selected>日本円（JPY）</option>
+    <option value="USD">米ドル（USD）</option>
+    <option value="SGD">シンガポールドル（SGD）</option>
+  </select>
+  <div class="hint">入力した予算をKRWチップへ換算します。デフォルトは日本円です。</div>
+</div>
+<div class="field full" id="rateField"><label id="rateLabel">換算レート：1 JPY = 何 KRW</label><input id="rate" type="number" inputmode="decimal" value="9.2" min="0.01" step="0.01"><div class="hint" id="rateHint">旅行当日のレートを手入力してください。</div></div>
 <div class="field full"><label>プレイヤー別 参加タイプ / 開始チップ</label><div id="playerBanks" class="playerBanks"></div></div>
 <div class="field full" id="cpuBustModeField">
-  <label>CPUの残高が0になった場合</label>
+  <label>CPUの残高がテーブルMIN未満になった場合</label>
   <select id="cpuBustMode">
     <option value="retire">そのCPUは退場</option>
     <option value="replace">新しいCPUが同じ席に参戦</option>
   </select>
-  <div class="hint">「新しいCPUが参戦」では、次ラウンド開始時に同じCPUレベル・同じ開始資金で新しいCPUへ交代します。</div>
+  <div class="hint">「新しいCPUが参戦」では、次ラウンド開始時に残高がテーブルMIN未満のCPUを、同じCPUレベル・同じ開始資金の新しいCPUへ交代します。</div>
 </div>
 </div>
 
@@ -185,14 +192,47 @@
     </div>
 
     <div class="helpTabs">
-      <button class="helpTab active" data-help-tab="strategy">基本戦略</button>
-      <button class="helpTab" data-help-tab="advanced">応用戦略</button>
-      <button class="helpTab" data-help-tab="expert">上級戦略</button>
+      <button class="helpTab active" data-help-tab="rules">ルール</button>
+      <button class="helpTab" data-help-tab="strategy">戦略</button>
       <button class="helpTab" data-help-tab="signal">ハンドシグナル</button>
       <button class="helpTab" data-help-tab="memo">覚えておくこと</button>
     </div>
 
-    <div id="helpStrategy" class="helpPanel">
+    <div id="helpRules" class="helpPanel">
+      <div class="advancedIntro">
+        <b>このトレーナーのブラックジャックルール</b>
+        <span>Paradise City公式ルールをベースに、現在のゲーム実装に合わせて整理しています。</span>
+      </div>
+      <div class="ruleGuideGrid">
+        <div class="ruleGuideItem"><b>目的</b><span>21を超えずにディーラーより高い合計を作ります。21を超えるとBustで負けです。</span></div>
+        <div class="ruleGuideItem"><b>カードの価値</b><span>Aは1または11、J/Q/Kは10、それ以外は表示どおりです。</span></div>
+        <div class="ruleGuideItem"><b>BLACKJACK</b><span>最初の2枚がA＋10/J/Q/KならBLACKJACK。通常勝ちは1:1、BLACKJACKは3:2です。</span></div>
+        <div class="ruleGuideItem"><b>Dealer</b><span>Dealerは17以上になるまで引きます。このゲームはSoft 17でもStand（S17）です。</span></div>
+        <div class="ruleGuideItem"><b>No Hole Card</b><span>Dealerは開始時に表向き1枚。PLAYER ACTION後に2枚目を引いてBLACKJACK判定を行う実装です。</span></div>
+        <div class="ruleGuideItem"><b>Hit / Stand</b><span>Hitはカードを1枚追加。Standは追加せず、そのHANDを確定します。</span></div>
+        <div class="ruleGuideItem"><b>Double</b><span>最初の2枚でBETを同額追加し、カードを1枚だけ引いてHANDを確定します。</span></div>
+        <div class="ruleGuideItem"><b>Split</b><span>最初の2枚が同じ価値なら2HANDへ分割できます。このゲームでは最大3HANDです。Split後のDoubleも可能です。</span></div>
+        <div class="ruleGuideItem"><b>Surrender</b><span>Split前の最初の2枚で選択でき、BETの半額を失ってそのHANDを終了します。</span></div>
+        <div class="ruleGuideItem"><b>Insurance / Even Money</b><span>Dealerの表向きがAのときに選択できます。Insuranceは元BETの半額までです。</span></div>
+        <div class="ruleGuideItem"><b>Push</b><span>Dealerと同点なら引き分けで、元BETを返却します。</span></div>
+        <div class="ruleGuideItem"><b>6 DECK SHOE</b><span>このトレーナーは6デッキ（312枚）でプレイします。</span></div>
+      </div>
+      <div class="helpNote">実際のカジノではテーブルごとにMIN/MAXや細かな運用が異なる場合があるため、現地のテーブル表示・ディーラー案内を優先してください。</div>
+    </div>
+
+    <div id="strategyLevelNav" class="strategyLevelNav hidden">
+      <div class="strategyLevelHead">
+        <b>戦略レベル</b>
+        <span id="strategyLevelDescription">基本戦略：初級。まず覚えるための簡易早見表です。主要判断を素早く確認し、Pair・Soft Handなどの細部は応用戦略で確認します。</span>
+      </div>
+      <div class="strategyLevelTabs">
+        <button class="strategyLevelTab active" data-strategy-level="basic">基本戦略</button>
+        <button class="strategyLevelTab" data-strategy-level="advanced">応用戦略</button>
+        <button class="strategyLevelTab" data-strategy-level="expert">上級戦略</button>
+      </div>
+    </div>
+
+    <div id="helpStrategy" class="helpPanel hidden">
       <div class="strategyCard"><h3>ディーラーが 2 の場合</h3><div><b>Stand</b>：13以上</div><div><b>Double</b>：10・11</div><div><b>Split</b>：AA・22・33・66・77・88・99</div><div><b>それ以外</b>：Hit</div></div>
       <div class="strategyCard"><h3>ディーラーが 3 の場合</h3><div><b>Stand</b>：13以上</div><div><b>Double</b>：9・10・11</div><div><b>Split</b>：AA・22・33・66・77・88・99</div><div><b>それ以外</b>：Hit</div></div>
       <div class="strategyCard"><h3>ディーラーが 4 の場合</h3><div><b>Stand</b>：12以上</div><div><b>Double</b>：9・10・11</div><div><b>Split</b>：AA・22・33・44・66・77・88・99</div><div><b>それ以外</b>：Hit</div></div>
@@ -201,8 +241,8 @@
       <div class="strategyCard"><h3>ディーラーが 7 の場合</h3><div><b>Stand</b>：17以上</div><div><b>Double</b>：10・11</div><div><b>Split</b>：AA・22・33・77・88</div><div><b>それ以外</b>：Hit</div></div>
       <div class="strategyCard"><h3>ディーラーが 8 の場合</h3><div><b>Stand</b>：17以上</div><div><b>Double</b>：10・11</div><div><b>Split</b>：AA・88・99</div><div><b>それ以外</b>：Hit</div></div>
       <div class="strategyCard"><h3>ディーラーが 9 の場合</h3><div><b>Stand</b>：17以上</div><div><b>Double</b>：10・11</div><div><b>Split</b>：AA・88</div><div><b>Surrender</b>：16</div><div><b>それ以外</b>：Hit</div></div>
-      <div class="strategyCard"><h3>ディーラーが 10 の場合</h3><div><b>Stand</b>：17以上</div><div><b>Double</b>：11</div><div><b>Split</b>：AA・88</div><div><b>Surrender</b>：15・16</div><div><b>Insurance</b>：基本は選ばない（CPUは使用しない）</div><div><b>それ以外</b>：Hit</div></div>
-      <div class="strategyCard"><h3>ディーラーが A の場合</h3><div><b>Stand</b>：17以上</div><div><b>Double</b>：なし</div><div><b>Split</b>：AA・88</div><div><b>Surrender</b>：16</div><div><b>Insurance</b>：基本は選ばない（CPUは使用しない）</div><div><b>それ以外</b>：Hit</div></div>
+      <div class="strategyCard"><h3>ディーラーが 10 の場合</h3><div><b>Stand</b>：17以上</div><div><b>Double</b>：なし（No Hole Card補正）</div><div><b>Split</b>：AA</div><div><b>Surrender</b>：15・16（8,8を含む）</div><div><b>Insurance</b>：基本は選ばない（CPUは使用しない）</div><div><b>それ以外</b>：Hit</div></div>
+      <div class="strategyCard"><h3>ディーラーが A の場合</h3><div><b>Stand</b>：17以上</div><div><b>Double</b>：なし</div><div><b>Split</b>：なし（No Hole Card補正）</div><div><b>Surrender</b>：16（8,8を含む）</div><div><b>Insurance</b>：基本は選ばない（CPUは使用しない）</div><div><b>それ以外</b>：Hit</div></div>
     </div>
 
 
@@ -213,7 +253,7 @@
       </div>
 
       <div class="helpNote advancedRuleNote">
-        この表は現在のゲーム実装（8 DECK / Dealer S17 / Double After Splitあり / Late Surrenderあり）に合わせた練習用です。
+        この表は現在のゲーム実装（6 DECK / Dealer S17 / Double After Splitあり / No Hole Card / 初期2枚Surrenderあり）に合わせた練習用です。
         実際のカジノではテーブルごとのルール表示を優先してください。
       </div>
 
@@ -252,10 +292,10 @@
               <tr><th>5,5</th><td class="d">D</td><td class="d">D</td><td class="d">D</td><td class="d">D</td><td class="d">D</td><td class="d">D</td><td class="d">D</td><td class="d">D</td><td class="h">H</td><td class="h">H</td></tr>
               <tr><th>6,6</th><td class="p">P</td><td class="p">P</td><td class="p">P</td><td class="p">P</td><td class="p">P</td><td class="h">H</td><td class="h">H</td><td class="h">H</td><td class="h">H</td><td class="h">H</td></tr>
               <tr><th>7,7</th><td class="p">P</td><td class="p">P</td><td class="p">P</td><td class="p">P</td><td class="p">P</td><td class="p">P</td><td class="h">H</td><td class="h">H</td><td class="h">H</td><td class="h">H</td></tr>
-              <tr><th>8,8</th><td class="p">P</td><td class="p">P</td><td class="p">P</td><td class="p">P</td><td class="p">P</td><td class="p">P</td><td class="p">P</td><td class="p">P</td><td class="p">P</td><td class="p">P</td></tr>
+              <tr><th>8,8</th><td class="p">P</td><td class="p">P</td><td class="p">P</td><td class="p">P</td><td class="p">P</td><td class="p">P</td><td class="p">P</td><td class="p">P</td><td class="r">R</td><td class="r">R</td></tr>
               <tr><th>9,9</th><td class="p">P</td><td class="p">P</td><td class="p">P</td><td class="p">P</td><td class="p">P</td><td class="s">S</td><td class="p">P</td><td class="p">P</td><td class="s">S</td><td class="s">S</td></tr>
               <tr><th>10,10</th><td class="s">S</td><td class="s">S</td><td class="s">S</td><td class="s">S</td><td class="s">S</td><td class="s">S</td><td class="s">S</td><td class="s">S</td><td class="s">S</td><td class="s">S</td></tr>
-              <tr><th>A,A</th><td class="p">P</td><td class="p">P</td><td class="p">P</td><td class="p">P</td><td class="p">P</td><td class="p">P</td><td class="p">P</td><td class="p">P</td><td class="p">P</td><td class="p">P</td></tr>
+              <tr><th>A,A</th><td class="p">P</td><td class="p">P</td><td class="p">P</td><td class="p">P</td><td class="p">P</td><td class="p">P</td><td class="p">P</td><td class="p">P</td><td class="p">P</td><td class="h">H</td></tr>
             </tbody>
           </table>
         </div>
@@ -311,7 +351,7 @@
               <tr><th>8以下</th><td class="h">H</td><td class="h">H</td><td class="h">H</td><td class="h">H</td><td class="h">H</td><td class="h">H</td><td class="h">H</td><td class="h">H</td><td class="h">H</td><td class="h">H</td></tr>
               <tr><th>9</th><td class="h">H</td><td class="d">D</td><td class="d">D</td><td class="d">D</td><td class="d">D</td><td class="h">H</td><td class="h">H</td><td class="h">H</td><td class="h">H</td><td class="h">H</td></tr>
               <tr><th>10</th><td class="d">D</td><td class="d">D</td><td class="d">D</td><td class="d">D</td><td class="d">D</td><td class="d">D</td><td class="d">D</td><td class="d">D</td><td class="h">H</td><td class="h">H</td></tr>
-              <tr><th>11</th><td class="d">D</td><td class="d">D</td><td class="d">D</td><td class="d">D</td><td class="d">D</td><td class="d">D</td><td class="d">D</td><td class="d">D</td><td class="d">D</td><td class="h">H</td></tr>
+              <tr><th>11</th><td class="d">D</td><td class="d">D</td><td class="d">D</td><td class="d">D</td><td class="d">D</td><td class="d">D</td><td class="d">D</td><td class="d">D</td><td class="h">H</td><td class="h">H</td></tr>
               <tr><th>12</th><td class="h">H</td><td class="h">H</td><td class="s">S</td><td class="s">S</td><td class="s">S</td><td class="h">H</td><td class="h">H</td><td class="h">H</td><td class="h">H</td><td class="h">H</td></tr>
               <tr><th>13-14</th><td class="s">S</td><td class="s">S</td><td class="s">S</td><td class="s">S</td><td class="s">S</td><td class="h">H</td><td class="h">H</td><td class="h">H</td><td class="h">H</td><td class="h">H</td></tr>
               <tr><th>15</th><td class="s">S</td><td class="s">S</td><td class="s">S</td><td class="s">S</td><td class="s">S</td><td class="h">H</td><td class="h">H</td><td class="h">H</td><td class="r">R</td><td class="h">H</td></tr>
@@ -377,9 +417,9 @@
 
       <section class="expertSection">
         <h3>3. Deviation（戦略変更）</h3>
-        <p>通常は基本戦略を使います。下記の特定HANDだけ、True CountがIndex以上ならアクションを変更します。</p>
+        <p>通常は応用戦略を土台にします。下記はHi-Loの代表的なIllustrious 18です。ただしNo Hole CardではDealer 10/Aに対するDouble・Split等のIndexをそのまま適用できないため、このトレーナーの自動ヒントでは10/AのDeviationを適用せず、No Hole Card補正後の応用戦略を優先します。</p>
         <div class="helpNote expertWarning">
-          Surrender可能なテーブルでは、まずSurrender条件を優先してください。Illustrious 18の「16 vs 10」「15 vs 10」は、Surrenderできない場合のHit/Stand判断として見ると混乱しにくくなります。
+          この一覧には標準Hi-Loの参考値も含みます。Dealer 10/Aの行はHole Card有りゲームとNo Hole Cardで意味が変わるため、このゲームでは参考表示のみです。Insurance +3は別途Insurance判断として扱います。
         </div>
 
         <div class="expertSubTitle">重要度順：Illustrious 18</div>
@@ -435,7 +475,7 @@
           <div><b>重要</b><span>「負けたから増やす」のではなく、シューの構成を根拠に判断する</span></div>
         </div>
         <div class="helpNote">
-          BET額の具体的な増減幅は、資金量・テーブルMIN/MAX・許容リスクで変わるため、このゲームでは固定のBETスプレッドを上級戦略として指定していません。
+          BET額の具体的な増減幅は、資金量・テーブルMIN/MAX・許容リスクで変わります。このゲームのBETヒントでは練習用として1〜8 Unitのスプレッド例を使いますが、普遍的な最適値という意味ではありません。
         </div>
       </section>
 
@@ -482,7 +522,7 @@
       <b id="gameOverTitle">GAME OVER</b>
     </div>
     <div class="settingsSummary">
-      <div class="settingsRow"><span>結果</span><b id="gameOverResultText">全PLAYERの残高が ₩0 になりました</b></div>
+      <div class="settingsRow"><span>結果</span><b id="gameOverResultText">USER / GUESTの残高がテーブルMIN未満になりました</b></div>
     </div>
     <button id="gameOverTopBtn" class="primary">トップへ戻る</button>
   </div>
