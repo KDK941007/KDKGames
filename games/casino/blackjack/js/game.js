@@ -41,7 +41,7 @@ function loadAudioVolume(key){
 function saveAudioVolume(key,value){
   try{localStorage.setItem(key,String(clamp01(value)))}catch(e){}
 }
-let targetCurrency='JPY', targetRates={JPY:'1',USD:'',SGD:''}, cfg={}, players=[], deck=[], dealer=[], activePlayer=0, activeHand=0, phase='setup', currentBet=0, reveal=false, insuranceIndex=0, insuranceMode='insurance', evenMoneyContext=null, evenMoneyResolve=null, animating=false, roundNo=0, settlingPlayer=-1, blackjackAnnouncePlayer=-1, lastActionPlayer=0, testDeal={dealer:[null,null],players:[]};let cardSeq=0,seenCards=new Set(),audioCtx=null,bgmOn=false,bgmTimer=null,bgmMode='lounge',bgmSession=0,bgmMaster=null,sfxMaster=null,bgmVolume=loadAudioVolume(AUDIO_BGM_KEY),sfxVolume=loadAudioVolume(AUDIO_SFX_KEY),bgmWasPlayingBeforeHide=false,bgmResumeMode=null,audioRestoreBusy=false,cutCardRemaining=0,cutCardSeen=false,shuffleAfterRound=false,shoeNo=0,hintMode='basic',hiLoRunning=0,hiLoCountedIds=new Set(),dealtCardMap=new Map(),cpuSerial=0,cpuTurnPending=false,roundHistory=[],lastRecordedRound=0,statsMode='players';
+let inputCurrency='JPY', targetCurrency='JPY', krwRates={JPY:'9.2',USD:'',SGD:''}, targetRates={}, cfg={}, players=[], deck=[], dealer=[], activePlayer=0, activeHand=0, phase='setup', currentBet=0, reveal=false, insuranceIndex=0, insuranceMode='insurance', evenMoneyContext=null, evenMoneyResolve=null, animating=false, roundNo=0, settlingPlayer=-1, blackjackAnnouncePlayer=-1, lastActionPlayer=0, testDeal={dealer:[null,null],players:[]};let cardSeq=0,seenCards=new Set(),audioCtx=null,bgmOn=false,bgmTimer=null,bgmMode='lounge',bgmSession=0,bgmMaster=null,sfxMaster=null,bgmVolume=loadAudioVolume(AUDIO_BGM_KEY),sfxVolume=loadAudioVolume(AUDIO_SFX_KEY),bgmWasPlayingBeforeHide=false,bgmResumeMode=null,audioRestoreBusy=false,cutCardRemaining=0,cutCardSeen=false,shuffleAfterRound=false,shoeNo=0,hintMode='basic',hiLoRunning=0,hiLoCountedIds=new Set(),dealtCardMap=new Map(),cpuSerial=0,cpuTurnPending=false,roundHistory=[],lastRecordedRound=0,statsMode='players';
 let dealingDealerActive=false;
 function buildBankInputs(){
   const n=+$('playerCount').value,root=$('playerBanks');
@@ -81,7 +81,7 @@ function buildBankInputs(){
       </div>
       <div class="playerBankMain">
         <div class="nameWrap"><label>名前</label><input class="playerNameInput${type==='user'?' portalUserLocked':''}" type="text" maxlength="10" value="${type==='user'?profile.displayName:(prev.name||`${type==='cpu'?'CPU':'GUEST'} ${i+1}`)}" placeholder="${type==='guest'?'GUEST':type==='cpu'?'CPU':'PLAYER'} ${i+1}"${type==='user'?' readonly':''}></div>
-        <div class="bankWrap"><label>開始資金（JPY）</label><input class="bankInput" type="number" inputmode="numeric" min="1" step="1" value="${prev.bank||30000}"><div class="bankCalc"></div></div>
+        <div class="bankWrap"><label>開始資金（${inputCurrency}）</label><input class="bankInput" type="number" inputmode="decimal" min="0.01" step="0.01" value="${prev.bank||30000}"><div class="bankCalc"></div></div>
       </div>
       <div class="portalUserNote ${type==='user'?'':'hidden'}">PORTAL PLAYER：${profile.displayName}</div>
       <div class="cpuModeHelp ${type==='cpu'?'':'hidden'}">${cpuLevelDescription(prev.level||'advanced')}</div>`;
@@ -151,28 +151,30 @@ function formatTargetAmount(value,currency){
   const digits=currency==='JPY'?0:2;
   return `${currencySymbols[currency]||''}${Number(value||0).toLocaleString('ja-JP',{minimumFractionDigits:digits,maximumFractionDigits:digits})}`;
 }
+function currencyPairKey(from,to){return `${from}_${to}`}
 function updateBankLabels(){
   document.querySelectorAll('.playerBankRow').forEach(row=>{
     const label=row.querySelector('.bankWrap label');
     const input=row.querySelector('.bankInput');
-    if(label)label.textContent='開始資金（JPY）';
-    if(input)input.placeholder='例：30000';
+    if(label)label.textContent=`開始資金（${inputCurrency}）`;
+    if(input)input.placeholder='金額を入力';
   });
   updateBudgetPreview();
 }
 function updateBudgetPreview(){
   const krwRate=+$('rate').value||0;
-  const selectedRate=targetCurrency==='JPY'?1:(+$('targetRate').value||0);
+  const sameCurrency=inputCurrency===targetCurrency;
+  const selectedRate=sameCurrency?1:(+$('targetRate').value||0);
   document.querySelectorAll('.playerBankRow').forEach(row=>{
-    const input=row.querySelector('.bankInput'),calc=row.querySelector('.bankCalc'),jpy=+input.value||0;
-    if(!(krwRate>0&&jpy>0)){
+    const input=row.querySelector('.bankInput'),calc=row.querySelector('.bankCalc'),sourceAmount=+input.value||0;
+    if(!(krwRate>0&&sourceAmount>0)){
       calc.textContent='ゲーム用換算レートと開始資金を入力してください';
       return;
     }
-    const krw=Math.floor(jpy*krwRate/1000)*1000;
-    const targetText=targetCurrency==='JPY'
-      ?formatTargetAmount(jpy,'JPY')
-      :(selectedRate>0?formatTargetAmount(jpy*selectedRate,targetCurrency):'換算レート未入力');
+    const krw=Math.floor(sourceAmount*krwRate/1000)*1000;
+    const targetText=sameCurrency
+      ?formatTargetAmount(sourceAmount,targetCurrency)
+      :(selectedRate>0?formatTargetAmount(sourceAmount*selectedRate,targetCurrency):'換算レート未入力');
     calc.textContent=`→ ${currencyNames[targetCurrency]}換算 ${targetText} / ゲームBANK 約 ${fmt(krw)}`;
   });
 }
@@ -227,28 +229,58 @@ $('tableMin').addEventListener('input',syncTableMax);
 $('tableMin').addEventListener('change',syncTableMax);
 syncTableMax();
 
-function setTargetCurrency(next){
-  if(!currencyNames[next])next='JPY';
-  if(targetCurrency!=='JPY'&&$('targetRate'))targetRates[targetCurrency]=$('targetRate').value;
-  targetCurrency=next;
+function saveCurrentCurrencyRates(){
+  krwRates[inputCurrency]=$('rate').value;
+  if(inputCurrency!==targetCurrency){
+    targetRates[currencyPairKey(inputCurrency,targetCurrency)]=$('targetRate').value;
+  }
+}
+function refreshCurrencyRateUi(){
+  $('inputCurrency').value=inputCurrency;
   $('targetCurrency').value=targetCurrency;
-  const needsRate=targetCurrency!=='JPY';
-  $('targetRateField').classList.toggle('hidden',!needsRate);
-  if(needsRate){
-    $('targetRate').value=targetRates[targetCurrency]??'';
-    $('targetRateLabel').textContent=`表示用換算レート：1 JPY = 何 ${targetCurrency}`;
+  $('rate').value=krwRates[inputCurrency]??'';
+  $('rateLabel').textContent=`ゲーム用換算レート：1 ${inputCurrency} = 何 KRW`;
+  $('rateHint').textContent=`${currencyNames[inputCurrency]}の開始資金をゲーム内KRWチップへ換算するレートです。`;
+  const needsTargetRate=inputCurrency!==targetCurrency;
+  $('targetRateField').classList.toggle('hidden',!needsTargetRate);
+  if(needsTargetRate){
+    const key=currencyPairKey(inputCurrency,targetCurrency);
+    $('targetRate').value=targetRates[key]??'';
+    $('targetRateLabel').textContent=`表示用換算レート：1 ${inputCurrency} = 何 ${targetCurrency}`;
+    $('targetRateHint').textContent=`${currencyNames[inputCurrency]}から${currencyNames[targetCurrency]}への換算レートを入力してください。`;
   }else{
     $('targetRate').value='1';
+    $('targetRateLabel').textContent=`表示用換算レート：1 ${inputCurrency} = 1 ${targetCurrency}`;
   }
+}
+function setInputCurrency(next){
+  if(!currencyNames[next])next='JPY';
+  saveCurrentCurrencyRates();
+  inputCurrency=next;
+  refreshCurrencyRateUi();
   updateBankLabels();
 }
+function setTargetCurrency(next){
+  if(!currencyNames[next])next='JPY';
+  saveCurrentCurrencyRates();
+  targetCurrency=next;
+  refreshCurrencyRateUi();
+  updateBankLabels();
+}
+$('inputCurrency').addEventListener('change',e=>setInputCurrency(e.target.value));
 $('targetCurrency').addEventListener('change',e=>setTargetCurrency(e.target.value));
 $('targetRate').addEventListener('input',()=>{
-  if(targetCurrency!=='JPY')targetRates[targetCurrency]=$('targetRate').value;
+  if(inputCurrency!==targetCurrency){
+    targetRates[currencyPairKey(inputCurrency,targetCurrency)]=$('targetRate').value;
+  }
   updateBudgetPreview();
 });
-$('rate').addEventListener('input',updateBudgetPreview);
-setTargetCurrency($('targetCurrency').value||'JPY');
+$('rate').addEventListener('input',()=>{
+  krwRates[inputCurrency]=$('rate').value;
+  updateBudgetPreview();
+});
+refreshCurrencyRateUi();
+updateBankLabels();
 function makeDeck(){let d=[];for(let k=0;k<6;k++)for(const s of suits)for(const r of ranks)d.push({s,r});for(let i=d.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[d[i],d[j]]=[d[j],d[i]]}return d}
 function newShoe(){
   deck=makeDeck();
@@ -494,9 +526,9 @@ $('startBtn').onclick=()=>{
   let min=+$('tableMin').value,max=min*100;
   syncTableMax();
   let rate=+$('rate').value;
-  if(!rate||rate<=0){alert('JPY→KRWのゲーム用換算レートを入力してください。');return}
-  const selectedTargetRate=targetCurrency==='JPY'?1:(+$('targetRate').value||0);
-  if(targetCurrency!=='JPY'&&selectedTargetRate<=0){alert(`JPY→${targetCurrency}の表示用換算レートを入力してください。`);return}
+  if(!rate||rate<=0){alert(`${inputCurrency}→KRWのゲーム用換算レートを入力してください。`);return}
+  const selectedTargetRate=inputCurrency===targetCurrency?1:(+$('targetRate').value||0);
+  if(inputCurrency!==targetCurrency&&selectedTargetRate<=0){alert(`${inputCurrency}→${targetCurrency}の表示用換算レートを入力してください。`);return}
   const rows=[...document.querySelectorAll('.playerBankRow')];
   const raw=rows.map(r=>+r.querySelector('.bankInput').value);
   const types=rows.map(r=>r.querySelector('.playerTypeSelect').value);
@@ -512,7 +544,7 @@ $('startBtn').onclick=()=>{
   if(!max||max<min){alert('テーブルMAXはMIN以上に設定してください。');return}
   const banks=raw.map(v=>Math.floor(v*rate/1000)*1000);
   if(banks.some(v=>!v||v<min)){alert('換算後の全プレイヤー開始資金をテーブルMIN以上にしてください。');return}
-  cfg={min,max,rate,targetCurrency,targetRate:selectedTargetRate,banks:[...banks],count:banks.length,cpuBustMode:$('cpuBustMode').value};
+  cfg={min,max,rate,inputCurrency,targetCurrency,targetRate:selectedTargetRate,banks:[...banks],count:banks.length,cpuBustMode:$('cpuBustMode').value};
   cpuSerial=types.filter(t=>t==='cpu').length;
   players=banks.map((b,i)=>({
     name:names[i],type:types[i],playerId:types[i]==='user'?profile.playerId:null,cpuLevel:levels[i]||'advanced',
@@ -3383,10 +3415,12 @@ function showSettings(){buildTestDealInputs();
     ['プレイヤー数', `${cfg.count||players.length}人`],
     ['テーブル MIN', fmt(cfg.min||0)],
     ['テーブル MAX', fmt(cfg.max||0)],
-    ['開始資金入力', '日本円（JPY）固定'],
+    ['開始資金入力', `${currencyNames[cfg.inputCurrency||inputCurrency]}（${cfg.inputCurrency||inputCurrency}）`],
     ['換算先', `${currencyNames[cfg.targetCurrency||targetCurrency]}（${cfg.targetCurrency||targetCurrency}）`],
-    ['ゲーム用換算レート', `1 JPY = ${cfg.rate||$('rate').value} KRW`],
-    ['表示用換算レート', (cfg.targetCurrency||targetCurrency)==='JPY'?'1 JPY = 1 JPY':`1 JPY = ${cfg.targetRate||$('targetRate').value} ${cfg.targetCurrency||targetCurrency}`],
+    ['ゲーム用換算レート', `1 ${cfg.inputCurrency||inputCurrency} = ${cfg.rate||$('rate').value} KRW`],
+    ['表示用換算レート', (cfg.inputCurrency||inputCurrency)===(cfg.targetCurrency||targetCurrency)
+      ?`1 ${cfg.inputCurrency||inputCurrency} = 1 ${cfg.targetCurrency||targetCurrency}`
+      :`1 ${cfg.inputCurrency||inputCurrency} = ${cfg.targetRate||$('targetRate').value} ${cfg.targetCurrency||targetCurrency}`],
     ['シュー', `SHOE ${shoeNo} / 残り ${deck.length}枚`],
     ['PLAYER TYPE', `${players.filter(p=>p.type==='user').length} USER / ${players.filter(p=>p.type==='guest').length} GUEST / ${players.filter(p=>p.type==='cpu').length} CPU`],
     ['CPU残高MIN未満時', cfg.cpuBustMode==='replace'?'新しいCPUが参戦':'そのCPUは退場'],
