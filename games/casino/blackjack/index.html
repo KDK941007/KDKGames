@@ -23,6 +23,7 @@
       <option value="JPY" selected>日本円（JPY）</option>
       <option value="USD">米ドル（USD）</option>
       <option value="SGD">シンガポールドル（SGD）</option>
+      <option value="KRW">韓国ウォン（KRW）</option>
     </select>
   </div>
   <div class="field"><label for="targetCurrency">換算先</label>
@@ -30,6 +31,7 @@
       <option value="JPY" selected>日本円（JPY）</option>
       <option value="USD">米ドル（USD）</option>
       <option value="SGD">シンガポールドル（SGD）</option>
+      <option value="KRW">韓国ウォン（KRW）</option>
     </select>
   </div>
 </div>
@@ -258,10 +260,6 @@
     </div>
 
     <div id="strategyLevelNav" class="strategyLevelNav hidden">
-      <div class="strategyLevelHead">
-        <b>戦略レベル</b>
-        <span id="strategyLevelDescription">基本戦略：初級。まず覚えるための簡易早見表です。主要判断を素早く確認し、Pair・Soft Handなどの細部は応用戦略で確認します。</span>
-      </div>
       <div class="strategyLevelTabs">
         <button class="strategyLevelTab active" data-strategy-level="basic">基本戦略</button>
         <button class="strategyLevelTab" data-strategy-level="advanced">応用戦略</button>
@@ -270,6 +268,7 @@
     </div>
 
     <div id="helpStrategy" class="helpPanel hidden">
+      <div class="strategyDetailIntro"><b>基本戦略｜初級</b><span>まず覚えるための簡易早見表です。主要判断を素早く確認し、Pair・Soft Handなどの細部は応用戦略で確認します。</span></div>
       <div class="strategyCard"><h3>ディーラーが 2 の場合</h3><div><b>Stand</b>：13以上</div><div><b>Double</b>：10・11</div><div><b>Split</b>：AA・22・33・66・77・88・99</div><div><b>それ以外</b>：Hit</div></div>
       <div class="strategyCard"><h3>ディーラーが 3 の場合</h3><div><b>Stand</b>：13以上</div><div><b>Double</b>：9・10・11</div><div><b>Split</b>：AA・22・33・66・77・88・99</div><div><b>それ以外</b>：Hit</div></div>
       <div class="strategyCard"><h3>ディーラーが 4 の場合</h3><div><b>Stand</b>：12以上</div><div><b>Double</b>：9・10・11</div><div><b>Split</b>：AA・22・33・44・66・77・88・99</div><div><b>それ以外</b>：Hit</div></div>
@@ -284,6 +283,10 @@
 
 
     <div id="helpAdvanced" class="helpPanel hidden">
+      <div class="advancedIntro">
+        <b>応用戦略｜中級</b>
+        <span>6デッキ・S17・DAS・No Hole Cardを前提に、Pair → Surrender → Soft / Hardの順でHANDを細かく判定します。</span>
+      </div>
       <div class="advancedIntro">
         <b>合計値だけでなく、HANDの種類まで見て判断する詳細版</b>
         <span>同じTOTALでも、Aを含むSoft HandやPairでは最適アクションが変わります。</span>
@@ -406,6 +409,10 @@
 
 
     <div id="helpExpert" class="helpPanel hidden">
+      <div class="advancedIntro">
+        <b>上級戦略｜上級</b>
+        <span>Hi-LoでRunning Count / True Countを計算し、応用戦略を土台にDeviationを使います。No Hole CardではDealer 10/Aの標準Indexをそのまま適用しません。</span>
+      </div>
       <div class="advancedIntro">
         <b>Hi-Loカードカウントで、残っているカードの偏りまで判断する</b>
         <span>基本戦略・応用戦略を覚えた後に使う上級者向けです。まず通常の最適アクションを判断し、必要な場面だけTrue Countで補正します。</span>
@@ -643,7 +650,7 @@
         </div>
       </div>
     </div>
-    <div id="signalLabel" class="signalLabel"></div>
+    <div class="signalLabelRow"><div id="signalLabel" class="signalLabel"></div></div>
   </div>
 </div>
 <div id="dealerCheckNotice" class="dealerCheckNotice hidden">
