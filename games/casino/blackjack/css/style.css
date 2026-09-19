@@ -5559,3 +5559,107 @@ header{display:flex;align-items:center;justify-content:space-between;padding:6px
   .ruleResultList>div,
   .ruleExtraList>div{grid-template-columns:72px 1fr}
 }
+
+
+/* =========================================================
+   v14.50 — strategy detail copy / hand-signal two-row layout
+   ========================================================= */
+.strategyLevelNav{
+  margin:6px 0 8px!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+}
+.strategyLevelTabs{
+  gap:5px!important;
+}
+.strategyLevelTab{
+  min-height:34px!important;
+}
+.strategyDetailIntro{
+  display:grid;
+  gap:4px;
+  padding:9px 10px;
+  margin:0 0 8px;
+  border:1px solid rgba(226,192,100,.22);
+  border-radius:10px;
+  background:rgba(226,192,100,.055);
+}
+.strategyDetailIntro>b{
+  color:var(--gold);
+  font-size:12px;
+}
+.strategyDetailIntro>span{
+  color:var(--muted);
+  font-size:10px;
+  line-height:1.55;
+}
+
+/* Keep label physically inside the hand-signal box using normal grid flow. */
+.handSignalVisual{
+  display:grid!important;
+  grid-template-rows:124px 30px!important;
+  grid-template-columns:118px!important;
+  align-items:stretch!important;
+  justify-items:stretch!important;
+  width:118px!important;
+  height:154px!important;
+  padding:0!important;
+  gap:0!important;
+  overflow:visible!important;
+  box-sizing:border-box!important;
+}
+.handSignalVisual > .signalApprovedArt{
+  position:relative!important;
+  inset:auto!important;
+  left:auto!important;
+  right:auto!important;
+  top:auto!important;
+  bottom:auto!important;
+  grid-row:1!important;
+  grid-column:1!important;
+  width:118px!important;
+  height:124px!important;
+  min-height:124px!important;
+  z-index:1!important;
+}
+.handSignalVisual > .signalLabelRow{
+  position:relative!important;
+  grid-row:2!important;
+  grid-column:1!important;
+  width:118px!important;
+  height:30px!important;
+  min-height:30px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  margin:0!important;
+  padding:0 4px!important;
+  box-sizing:border-box!important;
+  z-index:20!important;
+  overflow:hidden!important;
+}
+.handSignalVisual > .signalLabelRow > #signalLabel{
+  position:static!important;
+  inset:auto!important;
+  left:auto!important;
+  right:auto!important;
+  top:auto!important;
+  bottom:auto!important;
+  width:auto!important;
+  height:auto!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:0!important;
+  display:block!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+  color:var(--gold)!important;
+  font-size:10px!important;
+  font-weight:950!important;
+  line-height:18px!important;
+  letter-spacing:.10em!important;
+  text-shadow:0 2px 4px rgba(0,0,0,.55)!important;
+  pointer-events:none!important;
+}
