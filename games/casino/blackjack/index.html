@@ -15,26 +15,25 @@
 </div>
 <div class="grid">
 <div class="field"><label>プレイヤー数</label><select id="playerCount"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></div>
-<div class="field"><label>テーブル MIN</label><select id="tableMin"><option value="10000">₩10,000</option><option value="30000" selected>₩30,000</option><option value="50000">₩50,000</option><option value="100000">₩100,000</option></select></div>
-<div class="field"><label>テーブル MAX</label><input id="tableMax" type="number" inputmode="numeric" value="3000000" readonly><div class="hint">公式の具体額は非公開のため、練習用として MIN × 100 を自動設定します。</div></div>
-<div class="field full"><label for="inputCurrency">開始資金の入力通貨</label>
-  <select id="inputCurrency">
-    <option value="JPY" selected>日本円（JPY）</option>
-    <option value="USD">米ドル（USD）</option>
-    <option value="SGD">シンガポールドル（SGD）</option>
-  </select>
-  <div class="hint">各プレイヤーの開始資金は、ここで選んだ通貨で入力します。</div>
+<div class="field"><label>テーブル MIN</label><select id="tableMin"><option value="10000">¥10,000</option><option value="30000" selected>¥30,000</option><option value="50000">¥50,000</option><option value="100000">¥100,000</option></select></div>
+<div class="field"><label>テーブル MAX</label><input id="tableMax" type="text" value="¥3,000,000" readonly><div class="hint">練習用として MIN × 100 を自動設定します。</div></div>
+<div class="currencyPairFields full">
+  <div class="field"><label for="inputCurrency">入力通貨</label>
+    <select id="inputCurrency">
+      <option value="JPY" selected>日本円（JPY）</option>
+      <option value="USD">米ドル（USD）</option>
+      <option value="SGD">シンガポールドル（SGD）</option>
+    </select>
+  </div>
+  <div class="field"><label for="targetCurrency">換算先</label>
+    <select id="targetCurrency">
+      <option value="JPY" selected>日本円（JPY）</option>
+      <option value="USD">米ドル（USD）</option>
+      <option value="SGD">シンガポールドル（SGD）</option>
+    </select>
+  </div>
 </div>
-<div class="field full"><label for="targetCurrency">開始資金の換算先</label>
-  <select id="targetCurrency">
-    <option value="JPY" selected>日本円（JPY）</option>
-    <option value="USD">米ドル（USD）</option>
-    <option value="SGD">シンガポールドル（SGD）</option>
-  </select>
-  <div class="hint">入力した開始資金を、選択した通貨へ換算して確認できます。</div>
-</div>
-<div class="field full" id="rateField"><label id="rateLabel">ゲーム用換算レート：1 JPY = 何 KRW</label><input id="rate" type="number" inputmode="decimal" value="9.2" min="0.000001" step="0.000001"><div class="hint" id="rateHint">入力通貨をゲーム内KRWチップへ換算するレートです。</div></div>
-<div class="field full hidden" id="targetRateField"><label id="targetRateLabel">表示用換算レート</label><input id="targetRate" type="number" inputmode="decimal" min="0.000001" step="0.000001"><div class="hint" id="targetRateHint">入力通貨から換算先通貨へのレートを入力してください。</div></div>
+<div class="field full hidden" id="rateField"><label id="rateLabel">換算レート</label><input id="rate" type="number" inputmode="decimal" min="0.000001" step="0.000001"><div class="hint" id="rateHint">入力通貨から換算先通貨へのレートを入力してください。</div></div>
 <div class="field full"><label>プレイヤー別 参加タイプ / 開始チップ</label><div id="playerBanks" class="playerBanks"></div></div>
 <div class="field full" id="cpuBustModeField">
   <label>CPUの残高がテーブルMIN未満になった場合</label>
@@ -195,7 +194,7 @@
     <div class="helpHead">
       <div>
         <b id="helpTitle">BLACKJACK ヘルプ</b>
-        <div class="helpSub">ディーラーの表向きカードに合わせた基本アクション</div>
+        <div class="helpSub">初めてでも流れと操作がわかるブラックジャックガイド</div>
       </div>
       <button id="closeHelp" class="small">閉じる</button>
     </div>
@@ -208,25 +207,54 @@
     </div>
 
     <div id="helpRules" class="helpPanel">
-      <div class="advancedIntro">
-        <b>このトレーナーのブラックジャックルール</b>
-        <span>Paradise City公式ルールをベースに、現在のゲーム実装に合わせて整理しています。</span>
+      <div class="ruleBeginnerIntro">
+        <b>まずはここだけ覚えれば遊べます</b>
+        <span>自分のカード合計を「21」に近づけ、21を超えずにディーラーより大きい数字を作れば勝ちです。</span>
       </div>
-      <div class="ruleGuideGrid">
-        <div class="ruleGuideItem"><b>目的</b><span>21を超えずにディーラーより高い合計を作ります。21を超えるとBustで負けです。</span></div>
-        <div class="ruleGuideItem"><b>カードの価値</b><span>Aは1または11、J/Q/Kは10、それ以外は表示どおりです。</span></div>
-        <div class="ruleGuideItem"><b>BLACKJACK</b><span>最初の2枚がA＋10/J/Q/KならBLACKJACK。通常勝ちは1:1、BLACKJACKは3:2です。</span></div>
-        <div class="ruleGuideItem"><b>Dealer</b><span>Dealerは17以上になるまで引きます。このゲームはSoft 17でもStand（S17）です。</span></div>
-        <div class="ruleGuideItem"><b>No Hole Card</b><span>Dealerは開始時に表向き1枚。PLAYER ACTION後に2枚目を引いてBLACKJACK判定を行う実装です。</span></div>
-        <div class="ruleGuideItem"><b>Hit / Stand</b><span>Hitはカードを1枚追加。Standは追加せず、そのHANDを確定します。</span></div>
-        <div class="ruleGuideItem"><b>Double</b><span>最初の2枚でBETを同額追加し、カードを1枚だけ引いてHANDを確定します。</span></div>
-        <div class="ruleGuideItem"><b>Split</b><span>最初の2枚が同じ価値なら2HANDへ分割できます。このゲームでは最大3HANDです。Split後のDoubleも可能です。</span></div>
-        <div class="ruleGuideItem"><b>Surrender</b><span>Split前の最初の2枚で選択でき、BETの半額を失ってそのHANDを終了します。</span></div>
-        <div class="ruleGuideItem"><b>Insurance / Even Money</b><span>Dealerの表向きがAのときに選択できます。Insuranceは元BETの半額までです。</span></div>
-        <div class="ruleGuideItem"><b>Push</b><span>Dealerと同点なら引き分けで、元BETを返却します。</span></div>
-        <div class="ruleGuideItem"><b>6 DECK SHOE</b><span>このトレーナーは6デッキ（312枚）でプレイします。</span></div>
+
+      <div class="ruleBasics">
+        <div class="ruleBasicCard"><span class="ruleBasicNo">1</span><div><b>カードの数字を足す</b><p>2〜10はそのまま、J・Q・Kは10。Aは1または11として、都合のよい方で数えます。</p></div></div>
+        <div class="ruleBasicCard"><span class="ruleBasicNo">2</span><div><b>21を超えない</b><p>合計が22以上になると「BUST（バースト）」で、その時点で負けです。</p></div></div>
+        <div class="ruleBasicCard"><span class="ruleBasicNo">3</span><div><b>ディーラーより高ければ勝ち</b><p>お互い21以下なら数字が大きい方が勝ち。同じ数字ならPUSH（引き分け）です。</p></div></div>
       </div>
-      <div class="helpNote">実際のカジノではテーブルごとにMIN/MAXや細かな運用が異なる場合があるため、現地のテーブル表示・ディーラー案内を優先してください。</div>
+
+      <div class="ruleSectionTitle">1ラウンドの流れ</div>
+      <div class="ruleFlow">
+        <div class="ruleFlowStep"><span>STEP 1</span><b>BETする</b><p>賭ける金額を決めて「BET確定」を押します。</p></div>
+        <div class="ruleFlowArrow">↓</div>
+        <div class="ruleFlowStep"><span>STEP 2</span><b>最初の2枚を確認</b><p>自分のカード2枚と、ディーラーの表向きカード1枚を見ます。</p></div>
+        <div class="ruleFlowArrow">↓</div>
+        <div class="ruleFlowStep"><span>STEP 3</span><b>アクションを選ぶ</b><p>HIT / STANDなどを使って自分のHANDを完成させます。</p></div>
+        <div class="ruleFlowArrow">↓</div>
+        <div class="ruleFlowStep"><span>STEP 4</span><b>ディーラーと勝負</b><p>プレイヤーの操作後、ディーラーがカードを引き、勝敗と払い戻しが決まります。</p></div>
+      </div>
+
+      <div class="ruleSectionTitle">ボタンの意味</div>
+      <div class="ruleActionGrid">
+        <div class="ruleActionCard"><b>HIT</b><strong>もう1枚引く</strong><span>合計をもっと21へ近づけたいとき。</span></div>
+        <div class="ruleActionCard"><b>STAND</b><strong>ここで止める</strong><span>これ以上カードを引かず、そのHANDを確定します。</span></div>
+        <div class="ruleActionCard"><b>DOUBLE</b><strong>BETを2倍にして1枚だけ引く</strong><span>最初の2枚で選択。追加で同額を賭け、1枚引いたら自動で終了します。</span></div>
+        <div class="ruleActionCard"><b>SPLIT</b><strong>同じ価値の2枚を2HANDに分ける</strong><span>それぞれ別のHANDとしてプレイします。このゲームでは最大3HANDです。</span></div>
+        <div class="ruleActionCard"><b>SURRENDER</b><strong>半額を失って降りる</strong><span>Split前の最初の2枚で選択できます。BETの半額が戻り、そのHANDを終了します。</span></div>
+      </div>
+
+      <div class="ruleSectionTitle">勝敗と配当</div>
+      <div class="ruleResultList">
+        <div><b>通常勝ち</b><span>BETと同額の利益（1:1）</span></div>
+        <div><b>BLACKJACK</b><span>最初の2枚が A ＋ 10/J/Q/K。利益はBETの1.5倍（3:2）</span></div>
+        <div><b>PUSH</b><span>同点。元のBETがそのまま戻ります。</span></div>
+        <div><b>BUST</b><span>21を超えた時点で負けです。</span></div>
+      </div>
+
+      <div class="ruleSectionTitle">このトレーナーで覚えておくルール</div>
+      <div class="ruleExtraList">
+        <div><b>Dealer</b><span>17以上になるまでカードを引きます。Soft 17でもSTAND（S17）です。</span></div>
+        <div><b>No Hole Card</b><span>ディーラーは最初に表向きカード1枚だけ。プレイヤーの操作後に2枚目を引いてBLACKJACKを判定します。</span></div>
+        <div><b>Insurance</b><span>ディーラーの表向きがAのときに選べる保険です。元BETの半額まで賭けられます。</span></div>
+        <div><b>Even Money</b><span>自分がBLACKJACKでディーラーがAのときに選べる確定払い戻しです。</span></div>
+        <div><b>6 DECK</b><span>このトレーナーは6デッキ（312枚）を使用します。</span></div>
+      </div>
+      <div class="helpNote">実際のカジノではテーブルごとにMIN/MAXや細かな運用が異なる場合があります。現地ではテーブル表示とディーラーの案内を優先してください。</div>
     </div>
 
     <div id="strategyLevelNav" class="strategyLevelNav hidden">
