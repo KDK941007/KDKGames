@@ -41,7 +41,7 @@ function loadAudioVolume(key){
 function saveAudioVolume(key,value){
   try{localStorage.setItem(key,String(clamp01(value)))}catch(e){}
 }
-let mode='krw', cfg={}, players=[], deck=[], dealer=[], activePlayer=0, activeHand=0, phase='setup', currentBet=0, reveal=false, insuranceIndex=0, insuranceMode='insurance', evenMoneyContext=null, evenMoneyResolve=null, animating=false, roundNo=0, settlingPlayer=-1, blackjackAnnouncePlayer=-1, lastActionPlayer=0, testDeal={dealer:[null,null],players:[]};let cardSeq=0,seenCards=new Set(),audioCtx=null,bgmOn=false,bgmTimer=null,bgmMode='lounge',bgmSession=0,bgmMaster=null,sfxMaster=null,bgmVolume=loadAudioVolume(AUDIO_BGM_KEY),sfxVolume=loadAudioVolume(AUDIO_SFX_KEY),bgmWasPlayingBeforeHide=false,bgmResumeMode=null,audioRestoreBusy=false,cutCardRemaining=0,cutCardSeen=false,shuffleAfterRound=false,shoeNo=0,hintMode='basic',hiLoRunning=0,hiLoCountedIds=new Set(),dealtCardMap=new Map(),cpuSerial=0,cpuTurnPending=false,roundHistory=[],lastRecordedRound=0,statsMode='players';
+let inputCurrency='JPY', currencyRates={JPY:'9.2',USD:'',SGD:''}, cfg={}, players=[], deck=[], dealer=[], activePlayer=0, activeHand=0, phase='setup', currentBet=0, reveal=false, insuranceIndex=0, insuranceMode='insurance', evenMoneyContext=null, evenMoneyResolve=null, animating=false, roundNo=0, settlingPlayer=-1, blackjackAnnouncePlayer=-1, lastActionPlayer=0, testDeal={dealer:[null,null],players:[]};let cardSeq=0,seenCards=new Set(),audioCtx=null,bgmOn=false,bgmTimer=null,bgmMode='lounge',bgmSession=0,bgmMaster=null,sfxMaster=null,bgmVolume=loadAudioVolume(AUDIO_BGM_KEY),sfxVolume=loadAudioVolume(AUDIO_SFX_KEY),bgmWasPlayingBeforeHide=false,bgmResumeMode=null,audioRestoreBusy=false,cutCardRemaining=0,cutCardSeen=false,shuffleAfterRound=false,shoeNo=0,hintMode='basic',hiLoRunning=0,hiLoCountedIds=new Set(),dealtCardMap=new Map(),cpuSerial=0,cpuTurnPending=false,roundHistory=[],lastRecordedRound=0,statsMode='players';
 let dealingDealerActive=false;
 function buildBankInputs(){
   const n=+$('playerCount').value,root=$('playerBanks');
@@ -81,7 +81,7 @@ function buildBankInputs(){
       </div>
       <div class="playerBankMain">
         <div class="nameWrap"><label>名前</label><input class="playerNameInput${type==='user'?' portalUserLocked':''}" type="text" maxlength="10" value="${type==='user'?profile.displayName:(prev.name||`${type==='cpu'?'CPU':'GUEST'} ${i+1}`)}" placeholder="${type==='guest'?'GUEST':type==='cpu'?'CPU':'PLAYER'} ${i+1}"${type==='user'?' readonly':''}></div>
-        <div class="bankWrap"><label>${mode==='krw'?'開始チップ（KRW）':'予算（JPY）'}</label><input class="bankInput" type="number" inputmode="numeric" min="1000" step="1000" value="${prev.bank||300000}"><div class="bankCalc"></div></div>
+        <div class="bankWrap"><label>開始予算（${inputCurrency}）</label><input class="bankInput" type="number" inputmode="decimal" min="1" step="1" value="${prev.bank||30000}"><div class="bankCalc"></div></div>
       </div>
       <div class="portalUserNote ${type==='user'?'':'hidden'}">PORTAL PLAYER：${profile.displayName}</div>
       <div class="cpuModeHelp ${type==='cpu'?'':'hidden'}">${cpuLevelDescription(prev.level||'advanced')}</div>`;
@@ -145,7 +145,25 @@ function updateCpuBustModeVisibility(){
   const hasCpu=[...document.querySelectorAll('.playerTypeSelect')].some(s=>s.value==='cpu');
   $('cpuBustModeField').classList.toggle('hidden',!hasCpu);
 }
-function updateBankLabels(){document.querySelectorAll('.bankInput').forEach(i=>{i.placeholder=mode==='krw'?'例：300000':'例：30000'});updateBudgetPreview()}function updateBudgetPreview(){let rate=+$('rate').value||0;document.querySelectorAll('.playerBankRow').forEach(row=>{let i=row.querySelector('.bankInput'),c=row.querySelector('.bankCalc'),v=+i.value||0;c.textContent=mode==='jpy'?`→ 約 ${fmt(Math.floor(v*rate/1000)*1000)} 分のチップ`:`開始チップ ${fmt(v)}`})}
+const currencyNames={JPY:'日本円',USD:'米ドル',SGD:'シンガポールドル'};
+function updateBankLabels(){
+  document.querySelectorAll('.playerBankRow').forEach(row=>{
+    const label=row.querySelector('.bankWrap label');
+    const input=row.querySelector('.bankInput');
+    if(label)label.textContent=`開始予算（${inputCurrency}）`;
+    if(input)input.placeholder='金額を入力';
+  });
+  updateBudgetPreview();
+}
+function updateBudgetPreview(){
+  const rate=+$('rate').value||0;
+  document.querySelectorAll('.playerBankRow').forEach(row=>{
+    const input=row.querySelector('.bankInput'),calc=row.querySelector('.bankCalc'),value=+input.value||0;
+    calc.textContent=rate>0&&value>0
+      ?`→ 約 ${fmt(Math.floor(value*rate/1000)*1000)} 分のKRWチップ`
+      :'換算レートと開始予算を入力してください';
+  });
+}
 $('playerCount').onchange=()=>{buildBankInputs()};buildBankInputs();
 
 const testRanks=['','A','2','3','4','5','6','7','8','9','10','J','Q','K'];
@@ -197,9 +215,21 @@ $('tableMin').addEventListener('input',syncTableMax);
 $('tableMin').addEventListener('change',syncTableMax);
 syncTableMax();
 
-$('modeKrw').onclick=()=>setMode('krw');$('modeJpy').onclick=()=>setMode('jpy');
-function setMode(m){mode=m;$('modeKrw').classList.toggle('active',m==='krw');$('modeJpy').classList.toggle('active',m==='jpy');$('rateField').classList.toggle('hidden',m!=='jpy');updateBankLabels()}$('rate').addEventListener('input',updateBudgetPreview);
-function makeDeck(){let d=[];for(let k=0;k<8;k++)for(const s of suits)for(const r of ranks)d.push({s,r});for(let i=d.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[d[i],d[j]]=[d[j],d[i]]}return d}
+function setInputCurrency(next){
+  if(!currencyNames[next])next='JPY';
+  currencyRates[inputCurrency]=$('rate').value;
+  inputCurrency=next;
+  $('rate').value=currencyRates[inputCurrency]??'';
+  $('rateLabel').textContent=`換算レート：1 ${inputCurrency} = 何 KRW`;
+  updateBankLabels();
+}
+$('inputCurrency').addEventListener('change',e=>setInputCurrency(e.target.value));
+$('rate').addEventListener('input',()=>{
+  currencyRates[inputCurrency]=$('rate').value;
+  updateBudgetPreview();
+});
+setInputCurrency($('inputCurrency').value||'JPY');
+function makeDeck(){let d=[];for(let k=0;k<6;k++)for(const s of suits)for(const r of ranks)d.push({s,r});for(let i=d.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[d[i],d[j]]=[d[j],d[i]]}return d}
 function newShoe(){
   deck=makeDeck();
   shoeNo++;
@@ -371,7 +401,7 @@ function positionHandSignal(){
   const viewportBottom=viewportTop+viewportHeight;
 
   const w=118;
-  const h=126;
+  const h=154;
 
   // #playActions の幾何学的中心へ配置。
   const centerX=Math.min(
@@ -444,6 +474,7 @@ $('startBtn').onclick=()=>{
   let min=+$('tableMin').value,max=min*100;
   syncTableMax();
   let rate=+$('rate').value;
+  if(!rate||rate<=0){alert(`${inputCurrency}→KRWの換算レートを入力してください。`);return}
   const rows=[...document.querySelectorAll('.playerBankRow')];
   const raw=rows.map(r=>+r.querySelector('.bankInput').value);
   const types=rows.map(r=>r.querySelector('.playerTypeSelect').value);
@@ -457,9 +488,9 @@ $('startBtn').onclick=()=>{
   if(types.filter(t=>t==='user').length>1){alert('USERは1セッションにつき1人だけ設定できます。');return}
   if(!types.some(t=>t!=='cpu')){alert('CPUだけでは開始できません。USERまたはGUESTを最低1人設定してください。');return}
   if(!max||max<min){alert('テーブルMAXはMIN以上に設定してください。');return}
-  const banks=raw.map(v=>mode==='jpy'?Math.floor(v*rate/1000)*1000:v);
-  if(banks.some(v=>!v||v<min)){alert('全プレイヤーの開始資金をテーブルMIN以上にしてください。');return}
-  cfg={min,max,rate,banks:[...banks],count:banks.length,cpuBustMode:$('cpuBustMode').value};
+  const banks=raw.map(v=>Math.floor(v*rate/1000)*1000);
+  if(banks.some(v=>!v||v<min)){alert('換算後の全プレイヤー開始資金をテーブルMIN以上にしてください。');return}
+  cfg={min,max,rate,inputCurrency,banks:[...banks],count:banks.length,cpuBustMode:$('cpuBustMode').value};
   cpuSerial=types.filter(t=>t==='cpu').length;
   players=banks.map((b,i)=>({
     name:names[i],type:types[i],playerId:types[i]==='user'?profile.playerId:null,cpuLevel:levels[i]||'advanced',
@@ -540,35 +571,42 @@ function renderChips(){
 
 function allUsersBankrupt(){
   const humans=players.filter(p=>p.type!=='cpu');
-  return humans.length>0&&humans.every(p=>p.bank<=0);
+  return humans.length>0&&humans.every(p=>p.bank<(cfg.min||0));
 }
-function prepareCpuSeatsForNextRound(){
-  let changed=false;
-  if(cfg.cpuBustMode==='replace'){
-    players=players.map(p=>{
-      if(p.type!=='cpu'||p.bank>0)return p;
-      changed=true;
-      const id=++cpuSerial;
-      return {
-        name:`CPU ${id}`,type:'cpu',cpuLevel:p.cpuLevel||'advanced',
-        bank:p.initial,initial:p.initial,roundStartBank:p.initial,
-        bet:0,lastBet:0,hands:[],insurance:0,result:''
-      };
-    });
-  }else{
-    const before=players.length;
-    players=players.filter(p=>!(p.type==='cpu'&&p.bank<=0));
-    changed=players.length!==before;
+function prepareSeatsForNextRound(){
+  const min=cfg.min||0;
+  let cpuChanged=false,humanRetired=false;
+  const next=[];
+  for(const p of players){
+    if(p.bank>=min){
+      next.push(p);
+      continue;
+    }
+    if(p.type==='cpu'){
+      cpuChanged=true;
+      if(cfg.cpuBustMode==='replace'){
+        const id=++cpuSerial;
+        next.push({
+          name:`CPU ${id}`,type:'cpu',cpuLevel:p.cpuLevel||'advanced',
+          bank:p.initial,initial:p.initial,roundStartBank:p.initial,
+          bet:0,lastBet:0,hands:[],insurance:0,result:''
+        });
+      }
+    }else{
+      humanRetired=true;
+    }
   }
-  if(changed){
+  players=next;
+  if(cpuChanged||humanRetired){
     cfg.count=players.length;
     testDeal.players=[];
-    setTimeout(()=>toast(cfg.cpuBustMode==='replace'?'NEW CPU JOIN':'CPU LEAVE'),120);
+    const message=humanRetired?'PLAYER RETIRE':(cfg.cpuBustMode==='replace'?'NEW CPU JOIN':'CPU LEAVE');
+    setTimeout(()=>toast(message),120);
   }
 }
 function nextBetPlayerIndex(from){
   let i=from;
-  while(i<players.length&&players[i].bank<=0)i++;
+  while(i<players.length&&players[i].bank<(cfg.min||0))i++;
   return i<players.length?i:-1;
 }
 function cpuBetAmount(p){
@@ -712,7 +750,7 @@ function scheduleCpuAction(){
 }
 function beginBet(){
   if(allUsersBankrupt()){showGameOver();return}
-  prepareCpuSeatsForNextRound();
+  prepareSeatsForNextRound();
   const controls=document.querySelector('.controls');
   controls.classList.remove('resultMode','singleResult','resultCompact','dealerHidden','playCompact');
   controls.classList.add('betCompact');
@@ -1330,16 +1368,16 @@ function basicStrategyHint(h,d){
     7:['A',2,3,7,8],
     8:['A',8,9],
     9:['A',8],
-    10:['A',8],
-    11:['A',8]
+    10:['A'],
+    11:[]
   };
   if(pair!==null&&(splitMap[d]||[]).includes(pair)){
     return {action:'P',title:'Splitを優先',reason:`基本戦略では、ディーラー ${d===11?'A':d} に対して ${pair},${pair} はSplit対象です。合計値として処理する前にPair判断を優先します。`};
   }
-  if((d===9&&total===16)||(d===10&&(total===15||total===16))||(d===11&&total===16)){
+  if(h.cards.length===2&&!h.splitOrigin&&!info.soft&&((d===9&&total===16)||(d===10&&(total===15||total===16))||(d===11&&total===16))){
     return {action:'R',title:'損失を半分に抑える',reason:`基本戦略では、ディーラー ${d===11?'A':d} に対するTOTAL ${total}はSurrender対象です。強いアップカードに対して不利なHANDを最後まで戦わない判断です。`};
   }
-  const doubles=(d===2?[10,11]:d===3?[9,10,11]:[4,5,6].includes(d)?[9,10,11]:[7,8,9].includes(d)?[10,11]:d===10?[11]:[]);
+  const doubles=(d===2?[10,11]:d===3?[9,10,11]:[4,5,6].includes(d)?[9,10,11]:[7,8,9].includes(d)?[10,11]:[]);
   if(h.cards.length===2&&doubles.includes(total)){
     return {action:'D',title:'有利な局面でBETを増やす',reason:`基本戦略では、ディーラー ${d===11?'A':d} に対するTOTAL ${total}はDouble対象です。1枚だけ引く代わりにBETを倍にする価値が高い局面です。`};
   }
@@ -1353,7 +1391,8 @@ function advancedStrategyHint(h,d,ignorePair=false){
   const info=handSoftInfo(h.cards),total=info.total,pair=pairStrategyValue(h.cards);
   if(!ignorePair&&pair!==null){
     let action='H',reason='';
-    if(pair==='A'||pair===8)action='P';
+    if(pair==='A')action=(d===11?'H':'P');
+    else if(pair===8)action=([10,11].includes(d)?(h.splitOrigin?'H':'R'):'P');
     else if(pair===10)action='S';
     else if(pair===9)action=([2,3,4,5,6,8,9].includes(d)?'P':'S');
     else if(pair===7)action=([2,3,4,5,6,7].includes(d)?'P':'H');
@@ -1383,7 +1422,7 @@ function advancedStrategyHint(h,d,ignorePair=false){
   if(total>=17)a='S';
   else if(total>=13&&total<=16)a=([2,3,4,5,6].includes(d)?'S':'H');
   else if(total===12)a=([4,5,6].includes(d)?'S':'H');
-  else if(total===11)a=(d===11?'H':'D');
+  else if(total===11)a=([10,11].includes(d)?'H':'D');
   else if(total===10)a=([2,3,4,5,6,7,8,9].includes(d)?'D':'H');
   else if(total===9)a=([3,4,5,6].includes(d)?'D':'H');
   return {action:a,title:`Hard ${total}として判断`,reason:`Aを11として使えないHard Handです。ディーラー ${d===11?'A':d} に対する詳細戦略は ${actionLabel(a)} です。`,kind:'hard'};
@@ -1399,6 +1438,12 @@ function trueCountSnapshot(){
 function expertDeviationHint(h,d,base,count){
   const info=handSoftInfo(h.cards),total=info.total,pair=pairStrategyValue(h.cards),tc=count.indexTc;
   const surrenderEligible=h.cards.length===2&&!h.splitOrigin;
+
+  // No Hole CardではDealer 10/Aに対する標準I18/Fab4をそのまま適用しない。
+  // このトレーナーでは、該当アップカードはNo Hole Card補正後の応用戦略を優先する。
+  if(d===10||d===11){
+    return {action:base.action,applied:false,label:'No Hole Card補正優先',index:null,detail:`Dealer ${d===11?'A':d} はNo Hole Cardで追加BETのリスクが変わるため、標準I18/Fab4のDeviationを自動適用せず、応用戦略の ${actionLabel(base.action)} を使います。`};
+  }
 
   // Fab 4 first: these are Late Surrender deviations.
   if(surrenderEligible&&!info.soft&&pair===null){
@@ -2626,8 +2671,8 @@ function recordRoundHistory(){
 function allPlayersBankrupt(){return allUsersBankrupt()}
 function showGameOver(){
   phase='gameover';
-  $('message').textContent='GAME OVER — 全PLAYERの残高が ₩0 になりました';
-  const result=$('gameOverResultText');if(result)result.textContent='全PLAYERの残高が ₩0 になりました';
+  $('message').textContent='GAME OVER — USER / GUESTの残高がテーブルMIN未満になりました';
+  const result=$('gameOverResultText');if(result)result.textContent='USER / GUESTの残高がテーブルMIN未満になりました';
   $('gameOverModal').classList.remove('hidden');
 }
 function showRoundBanner(){if(players.length>1){let el=$('roundBanner');el.className='roundBanner';el.textContent='';return}let rs=players.flatMap(p=>p.hands.map(h=>h.result));let w=rs.filter(r=>r.includes('WIN')||r.includes('BLACKJACK')||r.includes('EVEN MONEY')).length,l=rs.filter(r=>r.includes('LOSE')||r.includes('BUST')).length;let el=$('roundBanner');el.className='roundBanner show '+(w>l?'win':l>w?'lose':'push');el.textContent=w>l?`PLAYER WIN × ${w}`:l>w?`PLAYER LOSE × ${l}`:`PUSH / MIXED RESULT`}
@@ -3273,14 +3318,34 @@ function hideHelp(){
 $('helpBtn').addEventListener('click',showHelp);
 $('closeHelp').addEventListener('click',hideHelp);
 $('helpModal').addEventListener('click',e=>{if(e.target===$('helpModal'))hideHelp()});
+let helpStrategyLevel='basic';
+const strategyLevelDescriptions={
+  basic:'基本戦略：初級。まず覚えるための簡易早見表です。主要判断を素早く確認し、Pair・Soft Handなどの細部は応用戦略で確認します。',
+  advanced:'応用戦略：中級。6デッキ・S17・DAS・No Hole Cardを前提に、Pair → Surrender → Soft / Hardの順でHANDを細かく判定します。',
+  expert:'上級戦略：Hi-LoでRunning Count / True Countを計算し、応用戦略を土台にDeviationを使います。No Hole CardではDealer 10/Aの標準Indexをそのまま適用しません。'
+};
+function renderHelpStrategyLevel(){
+  const inStrategy=!$('strategyLevelNav').classList.contains('hidden');
+  $('helpStrategy').classList.toggle('hidden',!inStrategy||helpStrategyLevel!=='basic');
+  $('helpAdvanced').classList.toggle('hidden',!inStrategy||helpStrategyLevel!=='advanced');
+  $('helpExpert').classList.toggle('hidden',!inStrategy||helpStrategyLevel!=='expert');
+  document.querySelectorAll('.strategyLevelTab').forEach(b=>b.classList.toggle('active',b.dataset.strategyLevel===helpStrategyLevel));
+  $('strategyLevelDescription').textContent=strategyLevelDescriptions[helpStrategyLevel];
+}
+document.querySelectorAll('.strategyLevelTab').forEach(btn=>btn.addEventListener('click',()=>{
+  helpStrategyLevel=btn.dataset.strategyLevel;
+  renderHelpStrategyLevel();
+  const panel={basic:$('helpStrategy'),advanced:$('helpAdvanced'),expert:$('helpExpert')}[helpStrategyLevel];
+  if(panel)panel.scrollTop=0;
+}));
 document.querySelectorAll('.helpTab').forEach(btn=>btn.addEventListener('click',()=>{
   document.querySelectorAll('.helpTab').forEach(b=>b.classList.toggle('active',b===btn));
   const tab=btn.dataset.helpTab;
-  $('helpStrategy').classList.toggle('hidden',tab!=='strategy');
-  $('helpAdvanced').classList.toggle('hidden',tab!=='advanced');
-  $('helpExpert').classList.toggle('hidden',tab!=='expert');
+  $('helpRules').classList.toggle('hidden',tab!=='rules');
+  $('strategyLevelNav').classList.toggle('hidden',tab!=='strategy');
   $('helpSignal').classList.toggle('hidden',tab!=='signal');
   $('helpMemo').classList.toggle('hidden',tab!=='memo');
+  renderHelpStrategyLevel();
 }));
 
 $('settingsModal').addEventListener('change',e=>{
@@ -3296,11 +3361,11 @@ function showSettings(){buildTestDealInputs();
     ['プレイヤー数', `${cfg.count||players.length}人`],
     ['テーブル MIN', fmt(cfg.min||0)],
     ['テーブル MAX', fmt(cfg.max||0)],
-    ['開始資金入力', mode==='jpy'?'日本円から換算':'KRWで入力'],
-    ['換算レート', mode==='jpy'?`1円 = ${cfg.rate||$('rate').value} KRW`:'—'],
+    ['開始資金入力', `${currencyNames[cfg.inputCurrency||inputCurrency]}（${cfg.inputCurrency||inputCurrency}）→ KRW`],
+    ['換算レート', `1 ${cfg.inputCurrency||inputCurrency} = ${cfg.rate||$('rate').value} KRW`],
     ['シュー', `SHOE ${shoeNo} / 残り ${deck.length}枚`],
     ['PLAYER TYPE', `${players.filter(p=>p.type==='user').length} USER / ${players.filter(p=>p.type==='guest').length} GUEST / ${players.filter(p=>p.type==='cpu').length} CPU`],
-    ['CPU残高0時', cfg.cpuBustMode==='replace'?'新しいCPUが参戦':'そのCPUは退場'],
+    ['CPU残高MIN未満時', cfg.cpuBustMode==='replace'?'新しいCPUが参戦':'そのCPUは退場'],
     ['テスト配札', (testDeal.dealer.some(Boolean)||testDeal.players.some(a=>a&&a.some(Boolean)))?'指定あり':'通常（ランダム）']
   ];
   $('settingsSummary').innerHTML=rows.map(r=>`<div class="settingsRow"><span>${r[0]}</span><b>${r[1]}</b></div>`).join('');
