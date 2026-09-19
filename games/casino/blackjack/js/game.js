@@ -45,7 +45,21 @@ function loadAudioVolume(key){
 function saveAudioVolume(key,value){
   try{localStorage.setItem(key,String(clamp01(value)))}catch(e){}
 }
-let inputCurrency='JPY', targetCurrency='JPY', exchangeRates={}, cfg={}, players=[], deck=[], dealer=[], activePlayer=0, activeHand=0, phase='setup', currentBet=0, reveal=false, insuranceIndex=0, insuranceMode='insurance', evenMoneyContext=null, evenMoneyResolve=null, animating=false, roundNo=0, settlingPlayer=-1, blackjackAnnouncePlayer=-1, lastActionPlayer=0, testDeal={dealer:[null,null],players:[]};let cardSeq=0,seenCards=new Set(),audioCtx=null,bgmOn=false,bgmTimer=null,bgmMode='lounge',bgmSession=0,bgmMaster=null,sfxMaster=null,bgmVolume=loadAudioVolume(AUDIO_BGM_KEY),sfxVolume=loadAudioVolume(AUDIO_SFX_KEY),bgmWasPlayingBeforeHide=false,bgmResumeMode=null,audioRestoreBusy=false,cutCardRemaining=0,cutCardSeen=false,shuffleAfterRound=false,shoeNo=0,hintMode='basic',hiLoRunning=0,hiLoCountedIds=new Set(),dealtCardMap=new Map(),cpuSerial=0,cpuTurnPending=false,roundHistory=[],lastRecordedRound=0,statsMode='players';
+const START_RATE_STORAGE_KEY='blackjack_start_exchange_rate_v1';
+let inputCurrency='JPY', targetCurrency='JPY', exchangeRates={
+  JPY_USD:'0.006373974',
+  JPY_SGD:'0.008132936',
+  JPY_KRW:'8.838534496',
+  USD_JPY:'156.888',
+  USD_SGD:'1.27596',
+  USD_KRW:'1386.66',
+  SGD_JPY:'122.956832503',
+  SGD_USD:'0.783723628',
+  SGD_KRW:'1086.758205586',
+  KRW_JPY:'0.113140929',
+  KRW_USD:'0.000721157',
+  KRW_SGD:'0.000920168'
+}, cfg={}, players=[], deck=[], dealer=[], activePlayer=0, activeHand=0, phase='setup', currentBet=0, reveal=false, insuranceIndex=0, insuranceMode='insurance', evenMoneyContext=null, evenMoneyResolve=null, animating=false, roundNo=0, settlingPlayer=-1, blackjackAnnouncePlayer=-1, lastActionPlayer=0, testDeal={dealer:[null,null],players:[]};let cardSeq=0,seenCards=new Set(),audioCtx=null,bgmOn=false,bgmTimer=null,bgmMode='lounge',bgmSession=0,bgmMaster=null,sfxMaster=null,bgmVolume=loadAudioVolume(AUDIO_BGM_KEY),sfxVolume=loadAudioVolume(AUDIO_SFX_KEY),bgmWasPlayingBeforeHide=false,bgmResumeMode=null,audioRestoreBusy=false,cutCardRemaining=0,cutCardSeen=false,shuffleAfterRound=false,shoeNo=0,hintMode='basic',hiLoRunning=0,hiLoCountedIds=new Set(),dealtCardMap=new Map(),cpuSerial=0,cpuTurnPending=false,roundHistory=[],lastRecordedRound=0,statsMode='players';
 let dealingDealerActive=false;
 function buildBankInputs(){
   const n=+$('playerCount').value,root=$('playerBanks');
@@ -149,13 +163,23 @@ function updateCpuBustModeVisibility(){
   const hasCpu=[...document.querySelectorAll('.playerTypeSelect')].some(s=>s.value==='cpu');
   $('cpuBustModeField').classList.toggle('hidden',!hasCpu);
 }
-const currencyNames={JPY:'日本円',USD:'米ドル',SGD:'シンガポールドル'};
-const currencySymbols={JPY:'¥',USD:'$',SGD:'S$'};
+const currencyNames={JPY:'日本円',USD:'米ドル',SGD:'シンガポールドル',KRW:'韓国ウォン'};
+const currencySymbols={JPY:'¥',USD:'$',SGD:'S$',KRW:'₩'};
 function formatTargetAmount(value,currency){
-  const digits=currency==='JPY'?0:2;
+  const digits=(currency==='JPY'||currency==='KRW')?0:2;
   return `${currencySymbols[currency]||''}${Number(value||0).toLocaleString('ja-JP',{minimumFractionDigits:digits,maximumFractionDigits:digits})}`;
 }
 function currencyPairKey(from,to){return `${from}_${to}`}
+function saveStartExchangeRateSnapshot(rate){
+  const snapshot={
+    startedAt:new Date().toISOString(),
+    inputCurrency,
+    targetCurrency,
+    rate:Number(rate)
+  };
+  try{localStorage.setItem(START_RATE_STORAGE_KEY,JSON.stringify(snapshot))}catch(e){}
+  return snapshot;
+}
 function updateBankLabels(){
   document.querySelectorAll('.playerBankRow').forEach(row=>{
     const label=row.querySelector('.bankWrap label');
@@ -547,7 +571,8 @@ $('startBtn').onclick=()=>{
   if(!max||max<min){alert('テーブルMAXはMIN以上に設定してください。');return}
   const banks=raw.map(v=>Math.floor(v*rate));
   if(banks.some(v=>!v||v<min)){alert('換算後の全プレイヤー開始資金をテーブルMIN以上にしてください。');return}
-  cfg={min,max,rate,inputCurrency,targetCurrency,banks:[...banks],count:banks.length,cpuBustMode:$('cpuBustMode').value};
+  const startRateSnapshot=saveStartExchangeRateSnapshot(rate);
+  cfg={min,max,rate,inputCurrency,targetCurrency,startRateSnapshot,banks:[...banks],count:banks.length,cpuBustMode:$('cpuBustMode').value};
   cpuSerial=types.filter(t=>t==='cpu').length;
   players=banks.map((b,i)=>({
     name:names[i],type:types[i],playerId:types[i]==='user'?profile.playerId:null,cpuLevel:levels[i]||'advanced',
@@ -3376,18 +3401,12 @@ $('helpBtn').addEventListener('click',showHelp);
 $('closeHelp').addEventListener('click',hideHelp);
 $('helpModal').addEventListener('click',e=>{if(e.target===$('helpModal'))hideHelp()});
 let helpStrategyLevel='basic';
-const strategyLevelDescriptions={
-  basic:'基本戦略：初級。まず覚えるための簡易早見表です。主要判断を素早く確認し、Pair・Soft Handなどの細部は応用戦略で確認します。',
-  advanced:'応用戦略：中級。6デッキ・S17・DAS・No Hole Cardを前提に、Pair → Surrender → Soft / Hardの順でHANDを細かく判定します。',
-  expert:'上級戦略：Hi-LoでRunning Count / True Countを計算し、応用戦略を土台にDeviationを使います。No Hole CardではDealer 10/Aの標準Indexをそのまま適用しません。'
-};
 function renderHelpStrategyLevel(){
   const inStrategy=!$('strategyLevelNav').classList.contains('hidden');
   $('helpStrategy').classList.toggle('hidden',!inStrategy||helpStrategyLevel!=='basic');
   $('helpAdvanced').classList.toggle('hidden',!inStrategy||helpStrategyLevel!=='advanced');
   $('helpExpert').classList.toggle('hidden',!inStrategy||helpStrategyLevel!=='expert');
   document.querySelectorAll('.strategyLevelTab').forEach(b=>b.classList.toggle('active',b.dataset.strategyLevel===helpStrategyLevel));
-  $('strategyLevelDescription').textContent=strategyLevelDescriptions[helpStrategyLevel];
 }
 document.querySelectorAll('.strategyLevelTab').forEach(btn=>btn.addEventListener('click',()=>{
   helpStrategyLevel=btn.dataset.strategyLevel;
@@ -3420,7 +3439,7 @@ function showSettings(){buildTestDealInputs();
     ['テーブル MAX', fmt(cfg.max||0)],
     ['入力通貨', `${currencyNames[cfg.inputCurrency||inputCurrency]}（${cfg.inputCurrency||inputCurrency}）`],
     ['換算先', `${currencyNames[cfg.targetCurrency||targetCurrency]}（${cfg.targetCurrency||targetCurrency}）`],
-    ['換算レート', (cfg.inputCurrency||inputCurrency)===(cfg.targetCurrency||targetCurrency)
+    ['開始時レート', (cfg.inputCurrency||inputCurrency)===(cfg.targetCurrency||targetCurrency)
       ?'換算なし（1:1）'
       :`1 ${cfg.inputCurrency||inputCurrency} = ${cfg.rate||$('rate').value} ${cfg.targetCurrency||targetCurrency}`],
     ['シュー', `SHOE ${shoeNo} / 残り ${deck.length}枚`],
