@@ -5685,3 +5685,48 @@ body.blackjackGameActive .app{
   min-height:100dvh;
   overflow:hidden;
 }
+
+
+/* =========================================================
+   v14.52 — option bet table settings
+   ========================================================= */
+.optionBetField{
+  gap:7px!important;
+}
+.optionBetChoices{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:6px;
+}
+.optionBetChoice{
+  min-width:0;
+  min-height:42px;
+  display:flex!important;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  padding:8px 5px;
+  border:1px solid rgba(255,255,255,.11);
+  border-radius:10px;
+  background:rgba(255,255,255,.035);
+  color:var(--text)!important;
+  font-size:10px!important;
+  font-weight:900!important;
+  line-height:1.15;
+  text-align:center;
+}
+.optionBetChoice input{
+  flex:0 0 auto;
+  width:16px!important;
+  height:16px!important;
+  margin:0!important;
+  accent-color:var(--gold);
+}
+.optionBetChoice span{
+  min-width:0;
+  overflow-wrap:anywhere;
+}
+@media(max-width:390px){
+  .optionBetChoices{gap:4px}
+  .optionBetChoice{padding:7px 3px;font-size:9px!important}
+}
