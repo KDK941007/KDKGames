@@ -660,8 +660,20 @@ function renderChips(){
   const repeat=$('repeatBetBtn'),p=players[activePlayer];
   if(repeat){
     const v=p?.lastBet||0;
-    repeat.disabled=!(v>=cfg.min&&v<=cfg.max&&v<=p.bank+currentBet);
-    repeat.textContent=v?`前回 ${v>=10000?(v/10000)+'万':v}`:'前回BET';
+    const normalized=normalizedSideBetDraft(p?.lastSideBetDraft||emptySideBetDraft(),activePlayer);
+    const side=normalized.ok?normalized.draft:emptySideBetDraft();
+    const sideTotal=normalized.ok?normalized.total:0;
+    const bbOnly=v===0
+      &&side.betBehindAmount>=optionBetMinimum()
+      &&side.twentyOnePlusThree===0
+      &&side.perfectPairs===0;
+    const mainRepeat=v>=cfg.min&&v<=cfg.max;
+    repeat.disabled=!(normalized.ok&&(mainRepeat||bbOnly)&&(v+sideTotal)<=p.bank+currentBet);
+    repeat.textContent=mainRepeat
+      ?`前回 ${v>=10000?(v/10000)+'万':v}`
+      :bbOnly
+        ?`前回 BB ${chipAmountLabel(side.betBehindAmount)}`
+        :'前回BET';
   }
 }async function flyChipToBet(btn,v){let seat=document.querySelectorAll('.seat')[activePlayer];if(!seat)return;let from=btn.getBoundingClientRect(),to=seat.getBoundingClientRect();let clone=btn.cloneNode(true);clone.classList.add('flyingChip');clone.style.left=from.left+'px';clone.style.top=from.top+'px';clone.style.width=from.width+'px';clone.style.height=from.height+'px';clone.style.margin='0';document.body.appendChild(clone);let dx=(to.left+to.width/2)-(from.left+from.width/2),dy=(to.top+44)-(from.top+from.height/2);let a=clone.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:`translate(${dx*.58}px,${dy*.48-34}px) scale(.92) rotate(7deg)`,opacity:1,offset:.55},{transform:`translate(${dx}px,${dy}px) scale(.62) rotate(-4deg)`,opacity:.2}],{duration:360,easing:'cubic-bezier(.2,.75,.2,1)',fill:'forwards'});await a.finished.catch(()=>{});clone.remove();toast(`${v>=10000?(v/10000)+'万':v}チップ BET`) }function chipStackHTML(amount){if(!amount)return '';let vals=chipValues().slice().reverse(),left=amount,out=[];for(const v of vals){while(left>=v&&out.length<8){out.push(v);left-=v}}if(left>0&&out.length<8)out.push(left);return out.length?`<div class="chipStack">${out.map(v=>`<span class="chipDisc">${v>=10000?(v/10000)+'万':v}</span>`).join('')}</div>`:''}function resultClass(r=''){if(r.includes('BLACKJACK')||r.includes('EVEN MONEY')||r.includes('WIN'))return'win';if(r.includes('PUSH'))return'push';if(r.includes('SURRENDER'))return'surrender';if(r.includes('LOSE')||r.includes('BUST'))return'lose';return''}
 
