@@ -5803,3 +5803,39 @@ body.blackjackGameActive .app{
     grid-column:auto;
   }
 }
+
+
+/* =========================================================
+   v14.54 — option bet target selectors / rule explanations
+   ========================================================= */
+.optionSideBetGrid{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:8px;
+  align-items:start;
+}
+.optionBetRule{
+  display:grid;
+  gap:4px;
+  margin-top:7px;
+  padding:8px 9px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:9px;
+  background:rgba(255,255,255,.025);
+}
+.optionBetRule>b{
+  color:var(--gold);
+  font-size:10px;
+  letter-spacing:.03em;
+}
+.optionBetRule>span{
+  color:var(--muted);
+  font-size:9px;
+  line-height:1.45;
+}
+@media(max-width:390px){
+  .optionSideBetGrid{
+    grid-template-columns:1fr;
+    gap:6px;
+  }
+}
