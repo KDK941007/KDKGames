@@ -5842,3 +5842,312 @@ body.blackjackGameActive .app{
     gap:6px;
   }
 }
+
+
+/* =========================================================
+   v14.55 — casino-style compact OPTION BET modal
+   ========================================================= */
+#optionBetModal{
+  align-items:center;
+  padding-top:max(10px,env(safe-area-inset-top));
+  padding-bottom:max(10px,env(safe-area-inset-bottom));
+  overflow:hidden;
+}
+#optionBetModal .optionBetSheet{
+  width:min(100%,520px);
+  max-height:calc(100dvh - 20px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  display:flex;
+  flex-direction:column;
+  gap:9px;
+  padding:12px;
+  overflow:hidden;
+  border-radius:20px;
+  background:linear-gradient(180deg,#09231a 0%,#061912 100%);
+}
+.optionBetHead{
+  flex:0 0 auto;
+  margin:0!important;
+  padding-bottom:8px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.optionBetHead #optionBetTitle{
+  font-size:17px;
+  letter-spacing:.08em;
+}
+.optionBetOverview{
+  flex:0 0 auto;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+}
+.optionBetOverview>div{
+  min-width:0;
+  padding:7px 9px;
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:10px;
+  background:rgba(255,255,255,.035);
+}
+.optionBetOverview span{
+  display:block;
+  margin-bottom:2px;
+  color:var(--muted);
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:.06em;
+}
+.optionBetOverview b{
+  display:block;
+  color:#fff;
+  font-size:14px;
+  line-height:1.15;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.optionBetOverview>div:last-child b{
+  color:var(--gold);
+}
+.optionBetTabs{
+  flex:0 0 auto;
+  display:flex;
+  gap:5px;
+}
+.optionBetTab{
+  min-width:0;
+  flex:1 1 0;
+  min-height:54px;
+  padding:6px 3px;
+  border:1px solid rgba(255,255,255,.11);
+  border-radius:11px;
+  background:rgba(255,255,255,.035);
+  color:var(--muted);
+  text-align:center;
+}
+.optionBetTab>span{
+  display:block;
+  min-height:23px;
+  font-size:9px;
+  line-height:1.12;
+  font-weight:950;
+  letter-spacing:.02em;
+}
+.optionBetTab>small{
+  display:block;
+  margin-top:4px;
+  font-size:8px;
+  line-height:1;
+  font-weight:900;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.optionBetTab.active{
+  border-color:rgba(226,192,100,.62);
+  background:rgba(226,192,100,.12);
+  color:#fff4ca;
+  box-shadow:inset 0 0 0 1px rgba(226,192,100,.14);
+}
+.optionBetTab.active>small{
+  color:var(--gold);
+}
+.optionBetPanels{
+  flex:1 1 auto;
+  min-height:0;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  padding:1px 1px 4px;
+}
+.optionBetPanel,
+#optionBetBehindRow.optionBetPanel{
+  display:block;
+  min-height:0;
+  padding:11px;
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:14px;
+  background:rgba(0,0,0,.13);
+}
+.optionBetPanel.hidden,
+#optionBetBehindRow.optionBetPanel.hidden{
+  display:none!important;
+}
+.optionBetPanelHead{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:10px;
+}
+.optionBetPanelHead>div{
+  min-width:0;
+}
+.optionBetPanelHead b{
+  display:block;
+  color:#fff;
+  font-size:15px;
+  line-height:1.1;
+}
+.optionBetPanelHead span{
+  display:block;
+  margin-top:3px;
+  color:var(--muted);
+  font-size:9px;
+  line-height:1.25;
+}
+.optionBetPanelHead strong{
+  flex:0 0 auto;
+  padding:5px 7px;
+  border:1px solid rgba(226,192,100,.32);
+  border-radius:999px;
+  background:rgba(226,192,100,.08);
+  color:var(--gold);
+  font-size:9px;
+  line-height:1;
+  white-space:nowrap;
+}
+.optionBetActionGrid{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,.82fr);
+  gap:7px;
+}
+.optionBetControl{
+  min-width:0;
+  display:grid;
+  gap:4px;
+}
+.optionBetControl>span{
+  color:var(--muted);
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:.04em;
+}
+.optionBetControl select,
+.optionBetControl input{
+  width:100%;
+  min-width:0;
+  height:38px;
+  padding:0 9px;
+  border:1px solid rgba(255,255,255,.13);
+  border-radius:10px;
+  outline:0;
+  background:#081913;
+  color:#fff;
+  font:inherit;
+  font-size:12px;
+  font-weight:850;
+}
+.optionBetControl input{
+  text-align:right;
+}
+.optionBetQuick{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:5px;
+  margin-top:8px;
+}
+.optionBetQuickBtn{
+  min-width:0;
+  height:31px;
+  padding:0 4px;
+  border:1px solid rgba(226,192,100,.24);
+  border-radius:999px;
+  background:rgba(226,192,100,.065);
+  color:#f4e3ad;
+  font-size:9px;
+  font-weight:950;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.optionBetQuickBtn:active{
+  background:rgba(226,192,100,.18);
+}
+.optionBetQuickBtn.clear{
+  border-color:rgba(255,255,255,.12);
+  background:rgba(255,255,255,.04);
+  color:var(--muted);
+}
+.optionBetDetails{
+  margin-top:9px;
+  border-top:1px solid rgba(255,255,255,.07);
+}
+.optionBetDetails>summary{
+  padding:9px 2px 2px;
+  color:#c8d7d0;
+  font-size:9px;
+  font-weight:900;
+  cursor:pointer;
+  list-style-position:inside;
+}
+.optionBetDetails .optionBetRule{
+  margin:7px 0 0!important;
+  padding:8px!important;
+  border-radius:9px!important;
+  background:rgba(255,255,255,.025)!important;
+}
+#optionBetBehindRow>.optionBetRule{
+  grid-column:auto;
+}
+.optionBetBottom{
+  flex:0 0 auto;
+  display:grid;
+  grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);
+  gap:7px;
+  align-items:stretch;
+  padding-top:8px;
+  border-top:1px solid rgba(255,255,255,.08);
+}
+.optionBetBottom .optionBetBalanceHint{
+  min-width:0;
+  margin:0;
+  padding:8px 9px;
+  display:flex;
+  align-items:center;
+  border-radius:10px;
+  font-size:9px;
+  line-height:1.25;
+}
+.optionBetBottom .optionBetBalanceHint.over{
+  border-color:rgba(255,118,118,.35);
+  background:rgba(166,61,61,.13);
+  color:#ffd0d0;
+}
+.optionBetBottom .primary{
+  width:100%;
+  min-height:42px;
+  margin:0;
+  padding:8px 10px;
+  border-radius:11px;
+  font-size:11px;
+}
+
+@media(max-width:390px){
+  #optionBetModal .optionBetSheet{
+    padding:10px;
+    gap:7px;
+  }
+  .optionBetTab{
+    min-height:50px;
+  }
+  .optionBetPanel{
+    padding:9px;
+  }
+  .optionBetActionGrid{
+    grid-template-columns:minmax(0,1fr) minmax(0,.76fr);
+    gap:5px;
+  }
+  .optionBetControl select,
+  .optionBetControl input{
+    height:36px;
+    padding:0 6px;
+    font-size:11px;
+  }
+  .optionBetQuick{
+    gap:4px;
+  }
+  .optionBetQuickBtn{
+    font-size:8px;
+  }
+  .optionBetBottom{
+    grid-template-columns:1fr;
+  }
+}
