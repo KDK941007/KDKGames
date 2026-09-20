@@ -5823,6 +5823,9 @@ body.blackjackGameActive .app{
   border-radius:9px;
   background:rgba(255,255,255,.025);
 }
+#optionBetBehindRow>.optionBetRule{
+  grid-column:1/-1;
+}
 .optionBetRule>b{
   color:var(--gold);
   font-size:10px;
