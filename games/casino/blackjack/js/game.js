@@ -861,6 +861,24 @@ function optionBetStatusHTML(p){
   if(!p.sideBetResults?.length)return '';
   return `<div class="sideBetResults">${p.sideBetResults.map(r=>`<div class="sideBetResult ${r.kind||''}">${r.text}</div>`).join('')}</div>`;
 }
+function sideBetDraftDisplayTotal(draft){
+  const d=draft||emptySideBetDraft();
+  const o=cfg.optionBets||{};
+  return (o.twentyOnePlusThree?normalizeSideBetAmount(d.twentyOnePlusThree):0)
+    +(o.perfectPairs?normalizeSideBetAmount(d.perfectPairs):0)
+    +(o.betBehind?normalizeSideBetAmount(d.betBehindAmount):0);
+}
+function refreshOptionBetButton(){
+  const btn=$('optionBetBtn');
+  const p=players[activePlayer];
+  if(!btn)return;
+  const visible=phase==='bet'&&anyOptionBetEnabled()&&p&&p.type!=='cpu';
+  btn.classList.toggle('hidden',!visible);
+  if(visible){
+    const total=sideBetDraftDisplayTotal(p.sideBetDraft);
+    btn.textContent=total>0?`OPTION ${fmt(total)}`:'OPTION BET';
+  }
+}
 
 function allUsersBankrupt(){
   const humans=players.filter(p=>p.type!=='cpu');
@@ -926,6 +944,7 @@ function showBetTurn(){
   const p=players[activePlayer];
   currentBet=0;$('betAmount').textContent=fmt(0);
   const controls=document.querySelector('.controls');
+  refreshOptionBetButton();
   if(p.type==='cpu'){
     // CPUもUSERと同じBETチップUIを表示するが、ユーザー誤操作防止のため全BET操作を非活性化。
     renderChips();
@@ -1087,9 +1106,13 @@ $('repeatBetBtn').onclick=async()=>{
   if(v<=0){toast('前回BETがありません');return}
   if(v<cfg.min){toast(`前回BETがテーブルMIN ${fmt(cfg.min)} 未満です`);return}
   if(v>cfg.max){toast(`前回BETがテーブルMAX ${fmt(cfg.max)} を超えています`);return}
-  if(v>p.bank){toast('残高が前回BETに足りません');return}
+  const available=p.bank+currentBet;
+  const repeatDraft=p.lastSideBetDraft||emptySideBetDraft();
+  const normalizedRepeat=normalizedSideBetDraft(repeatDraft,activePlayer);
+  if(!normalizedRepeat.ok){toast(normalizedRepeat.message);return}
+  if(v+normalizedRepeat.total>available){toast('前回のMAIN + OPTION BETを繰り返すには残高が不足しています');return}
 
-  // Clear any amount currently being selected, then place the previous bet.
+  // Clear any amount currently being selected, then place the previous MAIN + OPTION BET.
   p.bank+=currentBet;
   currentBet=0;
   animating=true;
@@ -1107,6 +1130,11 @@ $('repeatBetBtn').onclick=async()=>{
   // A short pause so the player can recognize what was placed before advancing.
   await sleep(650);
 
+  p.sideBetDraft={...normalizedRepeat.draft};
+  if(!commitOptionBetsForPlayer(p,activePlayer,p.sideBetDraft)){
+    animating=false;
+    return;
+  }
   p.bet=currentBet;
   p.lastBet=p.bet;
   currentBet=0;
@@ -1124,6 +1152,7 @@ $('dealBtn').onclick=async()=>{
   if(p.type==='cpu')return;
   if(currentBet<cfg.min){$('message').textContent=`最低 ${fmt(cfg.min)} 必要です`;return}
   if(currentBet>cfg.max){$('message').textContent=`MAX ${fmt(cfg.max)} までです`;toast(`テーブルMAX ${fmt(cfg.max)} を超えています`);return}
+  if(!commitOptionBetsForPlayer(p,activePlayer))return;
   p.bet=currentBet;p.lastBet=p.bet;currentBet=0;$('betAmount').textContent=fmt(0);
   const next=nextBetPlayerIndex(activePlayer+1);
   if(next>=0){activePlayer=next;showBetTurn()}
@@ -1193,6 +1222,8 @@ async function dealInitial(){
   }
 
   dealingDealerActive=false;
+  settleInitialOptionBets();
+  render();
   const insuranceRequired=dealer[0]?.r==='A';
 
   // Dealerはまだ1枚しか持っていないため、この時点ではBLACKJACK判定しない。
@@ -2218,6 +2249,7 @@ $('doubleBtn').onclick=async()=>{
   updateButtons();
   const signalDone=showHandSignal('double','');
 
+  followBetBehindDouble(activePlayer,activeHand);
   p.bank-=h.bet;
   h.bet*=2;
   h.cards.push(draw());
@@ -2254,6 +2286,7 @@ $('splitBtn').onclick=async()=>{
   updateButtons();
   const signalDone=showHandSignal('split','');
 
+  followBetBehindSplit(activePlayer,activeHand);
   p.bank-=h.bet;
   const splitRank=h.cards[0].r;
   const c2=h.cards.pop();
@@ -2802,6 +2835,8 @@ async function settleDealerBlackjack(){
     await sleep(120);
   }
 
+  settleBetBehindAll(true);
+  render();
   recordRoundHistory();
   phase='result';
   $('message').textContent='Dealer BLACKJACK';
@@ -2880,6 +2915,8 @@ async function settle(){
     await settlePlayerCue(pi);
   }
 
+  settleBetBehindAll(false);
+  render();
   recordRoundHistory();
   phase='result';
   $('message').textContent=`ROUND END — Dealer ${dv}${dv>21?' BUST':''}`;
@@ -3246,7 +3283,7 @@ function currentFocusPlayer(){
   if(phase==='settling')return settlingPlayer;
   return -1;
 }
-function render(){ const table=$('table');if(table){table.dataset.dealSeats=String(players.length);table.classList.toggle('dealerDealActive',phase==='dealing'&&dealingDealerActive)} $('roundCounter').textContent=`ROUND ${Math.max(roundNo,1)}`;$('shoeCount').textContent=`SHOE ${shoeNo} ・ ${deck.length} cards${cutCardSeen?' ・ LAST GAME':''}`;$('dealerCards').innerHTML=dealer.map((c,i)=>cardHTML(c,!reveal&&i===1)).join('');$('dealerScore').textContent=dealer.length?(dealer.length===1?`(${value(dealer)})`:(reveal?`(${value(dealer)})`:`(${dealer[0]?value([dealer[0]]):''} + ?)`)):'';$('players').innerHTML=players.map((p,pi)=>{let tempBet=phase==='bet'&&pi===activePlayer?currentBet:p.bet;return `<div class="seat ${(((phase==='bet'||phase==='play'||(phase==='dealing'&&!dealingDealerActive))&&pi===activePlayer)||(phase==='insurance'&&pi===insuranceIndex)||(phase==='settling'&&pi===settlingPlayer))?'active':''} ${pi===blackjackAnnouncePlayer?'blackjackFlash':''}" data-player-index="${pi}"><div class="seatHead"><span>${p.name}${p.type==='cpu'?`<em class="cpuBadge">CPU ${String(p.cpuLevel||'advanced').toUpperCase()}</em>`:p.type==='guest'?`<em class="cpuBadge">GUEST</em>`:`<em class="cpuBadge cpuBadgeSpacer" aria-hidden="true">CPU ADVANCED</em>`}</span><span>BANK ${fmt(p.bank)}</span></div><div class="overviewChipSlot">${chipStackHTML(tempBet)}</div>${p.hands.length?`<div class="handsRow ${p.hands.length>1?'splitHands':''} ${p.hands.length===3?'threeHands':''}">${p.hands.map((h,hi)=>`<div class="handBlock ${phase==='play'&&pi===activePlayer&&hi===activeHand?'activeHand':''} ${phase==='play'&&pi===activePlayer&&p.hands.length>1&&hi!==activeHand?'dimmedHand':''}"><div class="handTitle">${p.hands.length>1?`HAND ${hi+1} ・ `:''}BET ${fmt(h.bet)}</div><div class="cards">${h.cards.map(c=>cardHTML(c)).join('')}</div><div class="handTotal">${h.cards.length?`TOTAL ${value(h.cards)}`:'&nbsp;'}</div><div class="handResult result ${resultClass(h.result)}">${h.result||''}</div></div>`).join('')}</div>`:`<div class="handsRow"><div class="handBlock handPlaceholder"><div class="handTitle">BET ${fmt(tempBet)}</div><div class="cards"></div><div class="handTotal"></div><div class="handResult"></div></div></div>`}${p.insurance?`<div class="result">Insurance ${fmt(p.insurance)}</div>`:''}</div>`}).join('');markSeen();ensurePlayerVisible(currentFocusPlayer())}
+function render(){ const table=$('table');if(table){table.dataset.dealSeats=String(players.length);table.classList.toggle('dealerDealActive',phase==='dealing'&&dealingDealerActive)} $('roundCounter').textContent=`ROUND ${Math.max(roundNo,1)}`;$('shoeCount').textContent=`SHOE ${shoeNo} ・ ${deck.length} cards${cutCardSeen?' ・ LAST GAME':''}`;$('dealerCards').innerHTML=dealer.map((c,i)=>cardHTML(c,!reveal&&i===1)).join('');$('dealerScore').textContent=dealer.length?(dealer.length===1?`(${value(dealer)})`:(reveal?`(${value(dealer)})`:`(${dealer[0]?value([dealer[0]]):''} + ?)`)):'';$('players').innerHTML=players.map((p,pi)=>{let tempBet=phase==='bet'&&pi===activePlayer?currentBet:p.bet;return `<div class="seat ${(((phase==='bet'||phase==='play'||(phase==='dealing'&&!dealingDealerActive))&&pi===activePlayer)||(phase==='insurance'&&pi===insuranceIndex)||(phase==='settling'&&pi===settlingPlayer))?'active':''} ${pi===blackjackAnnouncePlayer?'blackjackFlash':''}" data-player-index="${pi}"><div class="seatHead"><span>${p.name}${p.type==='cpu'?`<em class="cpuBadge">CPU ${String(p.cpuLevel||'advanced').toUpperCase()}</em>`:p.type==='guest'?`<em class="cpuBadge">GUEST</em>`:`<em class="cpuBadge cpuBadgeSpacer" aria-hidden="true">CPU ADVANCED</em>`}</span><span>BANK ${fmt(p.bank)}</span></div><div class="overviewChipSlot">${chipStackHTML(tempBet)}</div>${p.hands.length?`<div class="handsRow ${p.hands.length>1?'splitHands':''} ${p.hands.length===3?'threeHands':''}">${p.hands.map((h,hi)=>`<div class="handBlock ${phase==='play'&&pi===activePlayer&&hi===activeHand?'activeHand':''} ${phase==='play'&&pi===activePlayer&&p.hands.length>1&&hi!==activeHand?'dimmedHand':''}"><div class="handTitle">${p.hands.length>1?`HAND ${hi+1} ・ `:''}BET ${fmt(h.bet)}</div><div class="cards">${h.cards.map(c=>cardHTML(c)).join('')}</div><div class="handTotal">${h.cards.length?`TOTAL ${value(h.cards)}`:'&nbsp;'}</div><div class="handResult result ${resultClass(h.result)}">${h.result||''}</div></div>`).join('')}</div>`:`<div class="handsRow"><div class="handBlock handPlaceholder"><div class="handTitle">BET ${fmt(tempBet)}</div><div class="cards"></div><div class="handTotal"></div><div class="handResult"></div></div></div>`}${optionBetStatusHTML(p)}${p.insurance?`<div class="result">Insurance ${fmt(p.insurance)}</div>`:''}</div>`}).join('');markSeen();ensurePlayerVisible(currentFocusPlayer())}
 function startLoungeBgm(){
  if(bgmOn)return;
  audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();
@@ -3556,6 +3593,56 @@ $('bgmUpbeat').addEventListener('click',()=>{playBgm('upbeat');$('bgmModal').cla
 $('bgmOff').addEventListener('click',()=>{stopBgm();$('bgmModal').classList.add('hidden')});
 $('closeBgm').addEventListener('click',()=>{$('bgmModal').classList.add('hidden')});
 $('bgmModal').addEventListener('click',e=>{if(e.target===$('bgmModal'))$('bgmModal').classList.add('hidden')});
+
+function buildBetBehindTargetOptions(playerIndex,selected=-1){
+  const select=$('optionBetBehindTarget');
+  if(!select)return;
+  const options=players.map((p,i)=>i===playerIndex?null:`<option value="${i}">${p.name}</option>`).filter(Boolean);
+  select.innerHTML=options.join('');
+  if(options.length){
+    const valid=selected>=0&&selected<players.length&&selected!==playerIndex;
+    select.value=String(valid?selected:+select.options[0].value);
+    select.disabled=false;
+  }else{
+    select.innerHTML='<option value="-1">対象なし</option>';
+    select.disabled=true;
+  }
+}
+function openOptionBet(){
+  const p=players[activePlayer];
+  if(!p||p.type==='cpu'||!anyOptionBetEnabled())return;
+  const o=cfg.optionBets||{};
+  const d=p.sideBetDraft||emptySideBetDraft();
+  $('option21Plus3Row').classList.toggle('hidden',!o.twentyOnePlusThree);
+  $('optionPerfectPairsRow').classList.toggle('hidden',!o.perfectPairs);
+  $('optionBetBehindRow').classList.toggle('hidden',!o.betBehind);
+  $('option21Plus3Amount').value=String(normalizeSideBetAmount(d.twentyOnePlusThree));
+  $('optionPerfectPairsAmount').value=String(normalizeSideBetAmount(d.perfectPairs));
+  $('optionBetBehindAmount').value=String(normalizeSideBetAmount(d.betBehindAmount));
+  buildBetBehindTargetOptions(activePlayer,+d.betBehindTarget);
+  $('optionBetBalanceHint').textContent=`OPTION BETに使用できる残高：${fmt(p.bank)}（現在選択中のMAIN BETは差引済み）`;
+  $('optionBetModal').classList.remove('hidden');
+}
+function closeOptionBet(){$('optionBetModal').classList.add('hidden')}
+$('optionBetBtn').addEventListener('click',openOptionBet);
+$('closeOptionBet').addEventListener('click',closeOptionBet);
+$('optionBetModal').addEventListener('click',e=>{if(e.target===$('optionBetModal'))closeOptionBet()});
+$('applyOptionBet').addEventListener('click',()=>{
+  const p=players[activePlayer];
+  if(!p||p.type==='cpu')return;
+  const draft={
+    twentyOnePlusThree:normalizeSideBetAmount($('option21Plus3Amount').value),
+    perfectPairs:normalizeSideBetAmount($('optionPerfectPairsAmount').value),
+    betBehindAmount:normalizeSideBetAmount($('optionBetBehindAmount').value),
+    betBehindTarget:+$('optionBetBehindTarget').value
+  };
+  const normalized=normalizedSideBetDraft(draft,activePlayer);
+  if(!normalized.ok){toast(normalized.message);return}
+  if(normalized.total>p.bank){toast('OPTION BETを含めると残高が不足します');return}
+  p.sideBetDraft={...normalized.draft};
+  refreshOptionBetButton();
+  closeOptionBet();
+});
 
 function openCustomBet(){
   const p=players[activePlayer];
