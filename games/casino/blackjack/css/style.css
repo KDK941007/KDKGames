@@ -6151,3 +6151,36 @@ body.blackjackGameActive .app{
     grid-template-columns:1fr;
   }
 }
+
+
+/* =========================================================
+   v14.56 — keep OPTION BET results inside the active seat
+   ========================================================= */
+.table:not(.betOverview):not(.dealingOverview):not(.payoutOverview) .seat.hasSideBetResults{
+  display:flex;
+  flex-direction:column;
+  padding-bottom:8px;
+}
+.table:not(.betOverview):not(.dealingOverview):not(.payoutOverview) .seat.hasSideBetResults .handsRow{
+  height:126px;
+  min-height:126px;
+  flex:0 0 126px;
+}
+.table:not(.betOverview):not(.dealingOverview):not(.payoutOverview) .seat.hasSideBetResults .handResult:empty{
+  height:0;
+  min-height:0;
+  line-height:0;
+}
+.table:not(.betOverview):not(.dealingOverview):not(.payoutOverview) .seat.hasSideBetResults .sideBetResults{
+  flex:0 0 auto;
+  width:100%;
+  min-height:24px;
+  margin-top:0;
+  padding:1px 2px 0;
+  box-sizing:border-box;
+}
+.table:not(.betOverview):not(.dealingOverview):not(.payoutOverview) .seat.hasSideBetResults .sideBetResult{
+  line-height:10px;
+  white-space:normal;
+  overflow-wrap:anywhere;
+}
