@@ -6184,3 +6184,39 @@ body.blackjackGameActive .app{
   white-space:normal;
   overflow-wrap:anywhere;
 }
+
+
+/* =========================================================
+   v14.57 — random player order table setting
+   ========================================================= */
+.playerOrderField{
+  gap:7px!important;
+}
+.playerOrderChoice{
+  width:100%;
+  min-height:42px;
+  display:flex!important;
+  flex-direction:row!important;
+  align-items:center;
+  gap:9px;
+  padding:9px 11px;
+  border:1px solid rgba(255,255,255,.11);
+  border-radius:11px;
+  background:rgba(255,255,255,.035);
+  box-sizing:border-box;
+  color:var(--text)!important;
+  font-size:11px!important;
+  font-weight:900!important;
+  line-height:1.3;
+}
+.playerOrderChoice input{
+  flex:0 0 auto;
+  width:17px!important;
+  height:17px!important;
+  margin:0!important;
+  padding:0!important;
+  accent-color:var(--gold);
+}
+.playerOrderChoice span{
+  min-width:0;
+}
