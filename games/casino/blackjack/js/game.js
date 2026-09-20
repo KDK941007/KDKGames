@@ -687,6 +687,14 @@ function anyOptionBetEnabled(){
 function normalizeSideBetAmount(value){
   return Math.max(0,Math.floor(Number(value)||0));
 }
+function optionBetMinimum(){
+  return Math.max(1,Math.floor((cfg.min||0)/2));
+}
+function optionBetValues(p){
+  const min=optionBetMinimum();
+  const values=[min,...chipValues()].filter(v=>v>=min&&v<=p.bank);
+  return [...new Set(values)].sort((a,b)=>a-b).slice(0,5);
+}
 function normalizedSideBetDraft(draft,playerIndex){
   const o=cfg.optionBets||{};
   const d=draft||emptySideBetDraft();
@@ -700,6 +708,16 @@ function normalizedSideBetDraft(draft,playerIndex){
   const twentyOnePlusThreeTarget=validAnyTarget(d.twentyOnePlusThreeTarget);
   const perfectPairsTarget=validAnyTarget(d.perfectPairsTarget);
   const betBehindTarget=Number.isInteger(+d.betBehindTarget)?+d.betBehindTarget:-1;
+  const optionMin=optionBetMinimum();
+  if(twentyOnePlusThree>0&&twentyOnePlusThree<optionMin){
+    return {ok:false,message:`21 + 3はOPTION MIN ${fmt(optionMin)} 以上でBETしてください。`};
+  }
+  if(perfectPairs>0&&perfectPairs<optionMin){
+    return {ok:false,message:`PERFECT PAIRSはOPTION MIN ${fmt(optionMin)} 以上でBETしてください。`};
+  }
+  if(betBehindAmount>0&&betBehindAmount<optionMin){
+    return {ok:false,message:`BET BEHINDはOPTION MIN ${fmt(optionMin)} 以上でBETしてください。`};
+  }
   if(betBehindAmount>0&&(betBehindTarget<0||betBehindTarget>=players.length||betBehindTarget===playerIndex)){
     return {ok:false,message:'BET BEHINDの対象席を選択してください。'};
   }
@@ -915,16 +933,21 @@ function refreshOptionBetButton(){
   }
 }
 
+function canHumanContinueAtTable(p){
+  if(!p||p.type==='cpu')return false;
+  if(p.bank>=(cfg.min||0))return true;
+  return !!cfg.optionBets?.betBehind&&p.bank>=optionBetMinimum();
+}
 function allUsersBankrupt(){
   const humans=players.filter(p=>p.type!=='cpu');
-  return humans.length>0&&humans.every(p=>p.bank<(cfg.min||0));
+  return humans.length>0&&humans.every(p=>!canHumanContinueAtTable(p));
 }
 function prepareSeatsForNextRound(){
   const min=cfg.min||0;
   let cpuChanged=false,humanRetired=false;
   const next=[];
   for(const p of players){
-    if(p.bank>=min){
+    if(p.bank>=min||(p.type!=='cpu'&&canHumanContinueAtTable(p))){
       next.push(p);
       continue;
     }
@@ -952,8 +975,15 @@ function prepareSeatsForNextRound(){
 }
 function nextBetPlayerIndex(from){
   let i=from;
-  while(i<players.length&&players[i].bank<(cfg.min||0))i++;
-  return i<players.length?i:-1;
+  while(i<players.length){
+    const p=players[i];
+    const eligible=p.type==='cpu'
+      ?p.bank>=(cfg.min||0)
+      :(p.bank>=(cfg.min||0)||(cfg.optionBets?.betBehind&&p.bank>=optionBetMinimum()));
+    if(eligible)return i;
+    i++;
+  }
+  return -1;
 }
 function cpuBetAmount(p){
   let amount=cfg.min;
@@ -1138,13 +1168,17 @@ $('repeatBetBtn').onclick=async()=>{
   if(animating)return;
   const p=players[activePlayer];
   const v=p.lastBet||0;
-  if(v<=0){toast('前回BETがありません');return}
-  if(v<cfg.min){toast(`前回BETがテーブルMIN ${fmt(cfg.min)} 未満です`);return}
-  if(v>cfg.max){toast(`前回BETがテーブルMAX ${fmt(cfg.max)} を超えています`);return}
   const available=p.bank+currentBet;
   const repeatDraft=p.lastSideBetDraft||emptySideBetDraft();
   const normalizedRepeat=normalizedSideBetDraft(repeatDraft,activePlayer);
   if(!normalizedRepeat.ok){toast(normalizedRepeat.message);return}
+  const repeatBetBehindOnly=v===0
+    &&normalizedRepeat.draft.betBehindAmount>=optionBetMinimum()
+    &&normalizedRepeat.draft.twentyOnePlusThree===0
+    &&normalizedRepeat.draft.perfectPairs===0;
+  if(v===0&&!repeatBetBehindOnly){toast('前回BETがありません');return}
+  if(v>0&&v<cfg.min){toast(`前回BETがテーブルMIN ${fmt(cfg.min)} 未満です`);return}
+  if(v>cfg.max){toast(`前回BETがテーブルMAX ${fmt(cfg.max)} を超えています`);return}
   if(v+normalizedRepeat.total>available){toast('前回のMAIN + OPTION BETを繰り返すには残高が不足しています');return}
 
   // Clear any amount currently being selected, then place the previous MAIN + OPTION BET.
@@ -1154,12 +1188,14 @@ $('repeatBetBtn').onclick=async()=>{
   sfxBet();
 
   const source=$('repeatBetBtn');
-  if(source)await flyChipToBet(source,v);
+  if(source&&v>0)await flyChipToBet(source,v);
 
   p.bank-=v;
   currentBet=v;
   $('betAmount').textContent=fmt(currentBet);
-  $('message').textContent=`${p.name}：前回BET ${fmt(v)}`;
+  $('message').textContent=v>0
+    ?`${p.name}：前回BET ${fmt(v)}`
+    :`${p.name}：前回BET BEHIND ${fmt(normalizedRepeat.draft.betBehindAmount)}`;
   render();
 
   // A short pause so the player can recognize what was placed before advancing.
@@ -1185,15 +1221,55 @@ $('dealBtn').onclick=async()=>{
   if(animating)return;
   const p=players[activePlayer];
   if(p.type==='cpu')return;
-  if(currentBet<cfg.min){$('message').textContent=`最低 ${fmt(cfg.min)} 必要です`;return}
+  const normalized=normalizedSideBetDraft(p.sideBetDraft,activePlayer);
+  if(!normalized.ok){$('message').textContent=normalized.message;toast(normalized.message);return}
+  const side=normalized.draft;
+  const hasSideOnly21OrPairs=currentBet===0&&(side.twentyOnePlusThree>0||side.perfectPairs>0);
+  const betBehindOnly=currentBet===0
+    &&side.betBehindAmount>=optionBetMinimum()
+    &&side.twentyOnePlusThree===0
+    &&side.perfectPairs===0;
+  if(hasSideOnly21OrPairs){
+    $('message').textContent='21 + 3 / PERFECT PAIRSにはMAIN BETが必要です';
+    toast('21 + 3 / PERFECT PAIRSだけではDEALできません');
+    return;
+  }
+  if(currentBet===0&&!betBehindOnly){
+    $('message').textContent=`MAIN BETは最低 ${fmt(cfg.min)} 必要です`;
+    return;
+  }
+  if(currentBet>0&&currentBet<cfg.min){$('message').textContent=`最低 ${fmt(cfg.min)} 必要です`;return}
   if(currentBet>cfg.max){$('message').textContent=`MAX ${fmt(cfg.max)} までです`;toast(`テーブルMAX ${fmt(cfg.max)} を超えています`);return}
-  if(!commitOptionBetsForPlayer(p,activePlayer))return;
+  if(!commitOptionBetsForPlayer(p,activePlayer,normalized.draft))return;
   p.bet=currentBet;p.lastBet=p.bet;currentBet=0;$('betAmount').textContent=fmt(0);
   const next=nextBetPlayerIndex(activePlayer+1);
   if(next>=0){activePlayer=next;showBetTurn()}
   else await dealInitial();
 }
 async function dealInitial(){
+  if(!players.some(p=>p.bet>0)){
+    let refunded=0;
+    players.forEach(p=>{
+      const bb=p.sideBets?.betBehind;
+      if(bb&&!bb.resolved){
+        const amount=bb.stakes.reduce((sum,v)=>sum+(Number(v)||0),0);
+        p.bank+=amount;
+        refunded+=amount;
+      }
+      p.sideBets=emptySideBets();
+      p.sideBetDraft=emptySideBetDraft();
+      p.sideBetResults=[];
+    });
+    phase='bet';
+    activePlayer=nextBetPlayerIndex(0);
+    currentBet=0;
+    $('betAmount').textContent=fmt(0);
+    $('message').textContent='BET BEHINDには対象となるMAIN BETが1つ以上必要です';
+    if(refunded>0)toast(`BET BEHINDを返却 ${fmt(refunded)}`);
+    render();
+    if(activePlayer>=0)showBetTurn();
+    return;
+  }
   animating=true;
   $('table').classList.remove('dealerDealActive','payoutOverview');
   $('table').dataset.dealSeats=String(players.length);
@@ -3685,12 +3761,14 @@ function updateOptionBetModalSummary(){
   const after=p.bank-total;
   const hint=$('optionBetBalanceHint');
   if(hint){
-    hint.textContent=after>=0?`設定後の残高：${fmt(after)}`:`残高不足：${fmt(Math.abs(after))}`;
+    hint.textContent=after>=0
+      ?`OPTION MIN ${fmt(optionBetMinimum())} / 設定後残高 ${fmt(after)}`
+      :`OPTION MIN ${fmt(optionBetMinimum())} / 残高不足 ${fmt(Math.abs(after))}`;
     hint.classList.toggle('over',after<0);
   }
 }
 function renderOptionBetQuickControls(p){
-  const values=chipValues().filter(v=>v>0&&v<=p.bank).slice(0,5);
+  const values=optionBetValues(p);
   OPTION_BET_UI.forEach(item=>{
     const root=$(item.quick);
     if(!root)return;
@@ -3709,6 +3787,11 @@ function openOptionBet(){
   const p=players[activePlayer];
   if(!p||p.type==='cpu'||!anyOptionBetEnabled())return;
   const d=p.sideBetDraft||emptySideBetDraft();
+  const optionMin=optionBetMinimum();
+  ['option21Plus3Amount','optionPerfectPairsAmount','optionBetBehindAmount'].forEach(id=>{
+    const input=$(id);
+    if(input){input.min=String(optionMin);input.placeholder=`MIN ${fmt(optionMin)}`;}
+  });
   $('option21Plus3Amount').value=String(normalizeSideBetAmount(d.twentyOnePlusThree));
   $('optionPerfectPairsAmount').value=String(normalizeSideBetAmount(d.perfectPairs));
   $('optionBetBehindAmount').value=String(normalizeSideBetAmount(d.betBehindAmount));
