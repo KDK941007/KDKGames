@@ -5730,3 +5730,76 @@ body.blackjackGameActive .app{
   .optionBetChoices{gap:4px}
   .optionBetChoice{padding:7px 3px;font-size:9px!important}
 }
+
+
+/* =========================================================
+   v14.53 — option bet round UI / results
+   ========================================================= */
+.betInlineTools{
+  margin-left:auto;
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  min-width:0;
+}
+.betInlineTools .betHintInlineBtn{
+  margin-left:0;
+}
+.optionBetInlineBtn{
+  border-color:rgba(226,192,100,.42)!important;
+  background:rgba(226,192,100,.10)!important;
+  color:var(--gold)!important;
+}
+.optionBetSheet{
+  max-height:calc(100dvh - 28px);
+  overflow-y:auto;
+  overscroll-behavior:contain;
+}
+.optionBetModalRow{
+  margin-bottom:10px;
+}
+#optionBetBehindRow{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:8px;
+}
+#optionBetBehindRow>.hint{
+  grid-column:1/-1;
+}
+.optionBetBalanceHint{
+  margin-top:2px;
+  padding:8px 9px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:9px;
+  background:rgba(255,255,255,.025);
+}
+.sideBetResults{
+  display:grid;
+  gap:2px;
+  margin-top:3px;
+}
+.sideBetResult{
+  font-size:8px;
+  line-height:1.25;
+  font-weight:900;
+  text-align:center;
+  overflow-wrap:anywhere;
+}
+.sideBetResult.win{color:var(--win)}
+.sideBetResult.lose{color:var(--lose)}
+.sideBetResult.push{color:#f6d87a}
+
+@media(max-width:390px){
+  .betInlineTools{gap:3px}
+  .betInlineTools .betHintInlineBtn{
+    padding-left:6px;
+    padding-right:6px;
+    font-size:8px;
+  }
+  #optionBetBehindRow{
+    grid-template-columns:1fr;
+  }
+  #optionBetBehindRow>.hint{
+    grid-column:auto;
+  }
+}
