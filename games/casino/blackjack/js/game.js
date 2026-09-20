@@ -61,6 +61,7 @@ let inputCurrency='JPY', targetCurrency='JPY', exchangeRates={
   KRW_SGD:'0.000920168'
 }, cfg={}, players=[], deck=[], dealer=[], activePlayer=0, activeHand=0, phase='setup', currentBet=0, reveal=false, insuranceIndex=0, insuranceMode='insurance', evenMoneyContext=null, evenMoneyResolve=null, animating=false, roundNo=0, settlingPlayer=-1, blackjackAnnouncePlayer=-1, lastActionPlayer=0, testDeal={dealer:[null,null],players:[]};let cardSeq=0,seenCards=new Set(),audioCtx=null,bgmOn=false,bgmTimer=null,bgmMode='lounge',bgmSession=0,bgmMaster=null,sfxMaster=null,bgmVolume=loadAudioVolume(AUDIO_BGM_KEY),sfxVolume=loadAudioVolume(AUDIO_SFX_KEY),bgmWasPlayingBeforeHide=false,bgmResumeMode=null,audioRestoreBusy=false,cutCardRemaining=0,cutCardSeen=false,shuffleAfterRound=false,shoeNo=0,hintMode='basic',hiLoRunning=0,hiLoCountedIds=new Set(),dealtCardMap=new Map(),cpuSerial=0,cpuTurnPending=false,roundHistory=[],lastRecordedRound=0,statsMode='players';
 let dealingDealerActive=false;
+const INITIAL_BANK_DEFAULT=Math.max(0,(Number($('tableMin').value)||0)*10);
 function buildBankInputs(){
   const n=+$('playerCount').value,root=$('playerBanks');
   const old=[...root.querySelectorAll('.playerBankRow')].map(row=>({
@@ -99,7 +100,7 @@ function buildBankInputs(){
       </div>
       <div class="playerBankMain">
         <div class="nameWrap"><label>名前</label><input class="playerNameInput${type==='user'?' portalUserLocked':''}" type="text" maxlength="10" value="${type==='user'?profile.displayName:(prev.name||`${type==='cpu'?'CPU':'GUEST'} ${i+1}`)}" placeholder="${type==='guest'?'GUEST':type==='cpu'?'CPU':'PLAYER'} ${i+1}"${type==='user'?' readonly':''}></div>
-        <div class="bankWrap"><label>開始資金（${inputCurrency}）</label><input class="bankInput" type="number" inputmode="decimal" min="0.01" step="0.01" value="${prev.bank||30000}"><div class="bankCalc"></div></div>
+        <div class="bankWrap"><label>開始資金（${inputCurrency}）</label><input class="bankInput" type="number" inputmode="decimal" min="0.01" step="0.01" value="${prev.bank||INITIAL_BANK_DEFAULT}"><div class="bankCalc"></div></div>
       </div>
       <div class="portalUserNote ${type==='user'?'':'hidden'}">PORTAL PLAYER：${profile.displayName}</div>
       <div class="cpuModeHelp ${type==='cpu'?'':'hidden'}">${cpuLevelDescription(prev.level||'advanced')}</div>`;
