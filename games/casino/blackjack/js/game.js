@@ -554,6 +554,15 @@ function playRoundResultSfx(){
 }
 
 
+function shufflePlayerOrder(list){
+  const shuffled=[...list];
+  for(let i=shuffled.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]];
+  }
+  return shuffled;
+}
+
 $('startBtn').onclick=()=>{
   let min=+$('tableMin').value,max=min*100;
   syncTableMax();
@@ -581,16 +590,19 @@ $('startBtn').onclick=()=>{
     perfectPairs:$('optionPerfectPairs').checked,
     betBehind:$('optionBetBehind').checked
   };
-  cfg={min,max,rate,inputCurrency,targetCurrency,startRateSnapshot,banks:[...banks],count:banks.length,cpuBustMode:$('cpuBustMode').value,optionBets};
+  const randomizePlayerOrder=$('randomizePlayerOrder').checked;
+  cfg={min,max,rate,inputCurrency,targetCurrency,startRateSnapshot,banks:[...banks],count:banks.length,cpuBustMode:$('cpuBustMode').value,optionBets,randomizePlayerOrder};
   $('table').classList.toggle('option21Plus3Enabled',optionBets.twentyOnePlusThree);
   $('table').classList.toggle('optionPerfectPairsEnabled',optionBets.perfectPairs);
   $('table').classList.toggle('optionBetBehindEnabled',optionBets.betBehind);
   cpuSerial=types.filter(t=>t==='cpu').length;
   players=banks.map((b,i)=>({
     name:names[i],type:types[i],playerId:types[i]==='user'?profile.playerId:null,cpuLevel:levels[i]||'advanced',
+    setupIndex:i,
     bank:b,initial:b,roundStartBank:b,bet:0,lastBet:0,hands:[],insurance:0,result:'',
     sideBets:emptySideBets(),sideBetDraft:emptySideBetDraft(),lastSideBetDraft:emptySideBetDraft(),sideBetResults:[]
   }));
+  if(randomizePlayerOrder)players=shufflePlayerOrder(players);
   roundNo=0;
   lastActionPlayer=0;
   roundHistory=[];
@@ -968,7 +980,7 @@ function prepareSeatsForNextRound(){
       if(cfg.cpuBustMode==='replace'){
         const id=++cpuSerial;
         next.push({
-          name:`CPU ${id}`,type:'cpu',cpuLevel:p.cpuLevel||'advanced',
+          name:`CPU ${id}`,type:'cpu',cpuLevel:p.cpuLevel||'advanced',setupIndex:p.setupIndex,
           bank:p.initial,initial:p.initial,roundStartBank:p.initial,
           bet:0,lastBet:0,hands:[],insurance:0,result:''
         });
@@ -1325,7 +1337,8 @@ async function dealInitial(){
       activePlayer=i;
       render();
       await sleep(160);
-      const forced=testDeal.players?.[i]?.[round]||null;
+      const testPlayerIndex=Number.isInteger(players[i].setupIndex)?players[i].setupIndex:i;
+      const forced=testDeal.players?.[testPlayerIndex]?.[round]||null;
       players[i].hands[0].cards.push(drawSpecified(forced));
       render();
       await sleep(330);
@@ -3959,6 +3972,7 @@ function showSettings(){buildTestDealInputs();
       :`1 ${cfg.inputCurrency||inputCurrency} = ${cfg.rate||$('rate').value} ${cfg.targetCurrency||targetCurrency}`],
     ['シュー', `SHOE ${shoeNo} / 残り ${deck.length}枚`],
     ['PLAYER TYPE', `${players.filter(p=>p.type==='user').length} USER / ${players.filter(p=>p.type==='guest').length} GUEST / ${players.filter(p=>p.type==='cpu').length} CPU`],
+    ['プレイヤー順', cfg.randomizePlayerOrder?'ランダム（開始時1回）':'設定順'],
     ['CPU残高MIN未満時', cfg.cpuBustMode==='replace'?'新しいCPUが参戦':'そのCPUは退場'],
     ['オプションBET', (()=>{const o=cfg.optionBets||{};const enabled=[];if(o.twentyOnePlusThree)enabled.push('21 + 3');if(o.perfectPairs)enabled.push('PERFECT PAIRS');if(o.betBehind)enabled.push('BET BEHIND');return enabled.length?enabled.join(' / '):'なし';})()],
     ['テスト配札', (testDeal.dealer.some(Boolean)||testDeal.players.some(a=>a&&a.some(Boolean)))?'指定あり':'通常（ランダム）']
