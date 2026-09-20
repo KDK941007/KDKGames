@@ -576,7 +576,15 @@ $('startBtn').onclick=()=>{
   const banks=raw.map(v=>Math.floor(v*rate));
   if(banks.some(v=>!v||v<min)){alert('換算後の全プレイヤー開始資金をテーブルMIN以上にしてください。');return}
   const startRateSnapshot=saveStartExchangeRateSnapshot(rate);
-  cfg={min,max,rate,inputCurrency,targetCurrency,startRateSnapshot,banks:[...banks],count:banks.length,cpuBustMode:$('cpuBustMode').value};
+  const optionBets={
+    twentyOnePlusThree:$('option21Plus3').checked,
+    perfectPairs:$('optionPerfectPairs').checked,
+    betBehind:$('optionBetBehind').checked
+  };
+  cfg={min,max,rate,inputCurrency,targetCurrency,startRateSnapshot,banks:[...banks],count:banks.length,cpuBustMode:$('cpuBustMode').value,optionBets};
+  $('table').classList.toggle('option21Plus3Enabled',optionBets.twentyOnePlusThree);
+  $('table').classList.toggle('optionPerfectPairsEnabled',optionBets.perfectPairs);
+  $('table').classList.toggle('optionBetBehindEnabled',optionBets.betBehind);
   cpuSerial=types.filter(t=>t==='cpu').length;
   players=banks.map((b,i)=>({
     name:names[i],type:types[i],playerId:types[i]==='user'?profile.playerId:null,cpuLevel:levels[i]||'advanced',
@@ -3450,6 +3458,7 @@ function showSettings(){buildTestDealInputs();
     ['シュー', `SHOE ${shoeNo} / 残り ${deck.length}枚`],
     ['PLAYER TYPE', `${players.filter(p=>p.type==='user').length} USER / ${players.filter(p=>p.type==='guest').length} GUEST / ${players.filter(p=>p.type==='cpu').length} CPU`],
     ['CPU残高MIN未満時', cfg.cpuBustMode==='replace'?'新しいCPUが参戦':'そのCPUは退場'],
+    ['オプションBET', (()=>{const o=cfg.optionBets||{};const enabled=[];if(o.twentyOnePlusThree)enabled.push('21 + 3');if(o.perfectPairs)enabled.push('PERFECT PAIRS');if(o.betBehind)enabled.push('BET BEHIND');return enabled.length?enabled.join(' / '):'なし';})()],
     ['テスト配札', (testDeal.dealer.some(Boolean)||testDeal.players.some(a=>a&&a.some(Boolean)))?'指定あり':'通常（ランダム）']
   ];
   $('settingsSummary').innerHTML=rows.map(r=>`<div class="settingsRow"><span>${r[0]}</span><b>${r[1]}</b></div>`).join('');
@@ -3472,7 +3481,7 @@ function closeBackTopConfirm(){
 function returnToTop(){
   stopBgm();
   dealingDealerActive=false;
-  $('table').classList.remove('dealingOverview','dealerDealActive','betPhase','betOverview','payoutOverview','viewMorphOutToAction','viewMorphInToAction','viewMorphOutToOverview','viewMorphInToOverview','viewMorphBusy','overviewPhaseOut','overviewPhaseIn','overviewPhaseBusy');
+  $('table').classList.remove('dealingOverview','dealerDealActive','betPhase','betOverview','payoutOverview','viewMorphOutToAction','viewMorphInToAction','viewMorphOutToOverview','viewMorphInToOverview','viewMorphBusy','overviewPhaseOut','overviewPhaseIn','overviewPhaseBusy','option21Plus3Enabled','optionPerfectPairsEnabled','optionBetBehindEnabled');
   phase='setup';
   roundNo=0;
   animating=false;
@@ -3512,7 +3521,7 @@ $('backTopModal').addEventListener('click',e=>{
 $('gameOverTopBtn').addEventListener('click',()=>{
   stopBgm();
   dealingDealerActive=false;
-  $('table').classList.remove('dealingOverview','dealerDealActive','betPhase','betOverview','payoutOverview','viewMorphOutToAction','viewMorphInToAction','viewMorphOutToOverview','viewMorphInToOverview','viewMorphBusy','overviewPhaseOut','overviewPhaseIn','overviewPhaseBusy');
+  $('table').classList.remove('dealingOverview','dealerDealActive','betPhase','betOverview','payoutOverview','viewMorphOutToAction','viewMorphInToAction','viewMorphOutToOverview','viewMorphInToOverview','viewMorphBusy','overviewPhaseOut','overviewPhaseIn','overviewPhaseBusy','option21Plus3Enabled','optionPerfectPairsEnabled','optionBetBehindEnabled');
   phase='setup';
   roundNo=0;
   animating=false;
