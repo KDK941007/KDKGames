@@ -180,6 +180,10 @@ function saveStartExchangeRateSnapshot(rate){
   try{localStorage.setItem(START_RATE_STORAGE_KEY,JSON.stringify(snapshot))}catch(e){}
   return snapshot;
 }
+function setGamePageScrollLocked(locked){
+  document.documentElement.classList.toggle('blackjackGameActive',locked);
+  document.body.classList.toggle('blackjackGameActive',locked);
+}
 function updateBankLabels(){
   document.querySelectorAll('.playerBankRow').forEach(row=>{
     const label=row.querySelector('.bankWrap label');
@@ -590,6 +594,7 @@ $('startBtn').onclick=()=>{
   window.scrollTo({top:0,left:0,behavior:'auto'});
   document.documentElement.scrollTop=0;
   document.body.scrollTop=0;
+  setGamePageScrollLocked(true);
 
   requestAnimationFrame(()=>{
     window.scrollTo({top:0,left:0,behavior:'auto'});
@@ -3492,6 +3497,7 @@ function returnToTop(){
   $('table').style.display='none';
   $('setup').style.display='block';
   $('betAmount').textContent=fmt(0);
+  setGamePageScrollLocked(false);
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
@@ -3525,6 +3531,7 @@ $('gameOverTopBtn').addEventListener('click',()=>{
   $('table').style.display='none';
   $('setup').style.display='block';
   $('betAmount').textContent=fmt(0);
+  setGamePageScrollLocked(false);
   window.scrollTo({top:0,behavior:'smooth'});
 });
 
