@@ -667,10 +667,18 @@ function renderChips(){
 
 
 function emptySideBetDraft(){
-  return {twentyOnePlusThree:0,perfectPairs:0,betBehindAmount:0,betBehindTarget:-1};
+  return {
+    twentyOnePlusThree:0,twentyOnePlusThreeTarget:-1,
+    perfectPairs:0,perfectPairsTarget:-1,
+    betBehindAmount:0,betBehindTarget:-1
+  };
 }
 function emptySideBets(){
-  return {twentyOnePlusThree:0,perfectPairs:0,betBehind:null};
+  return {
+    twentyOnePlusThree:0,twentyOnePlusThreeTarget:-1,
+    perfectPairs:0,perfectPairsTarget:-1,
+    betBehind:null
+  };
 }
 function anyOptionBetEnabled(){
   const o=cfg.optionBets||{};
@@ -685,13 +693,26 @@ function normalizedSideBetDraft(draft,playerIndex){
   const twentyOnePlusThree=o.twentyOnePlusThree?normalizeSideBetAmount(d.twentyOnePlusThree):0;
   const perfectPairs=o.perfectPairs?normalizeSideBetAmount(d.perfectPairs):0;
   const betBehindAmount=o.betBehind?normalizeSideBetAmount(d.betBehindAmount):0;
-  const target=Number.isInteger(+d.betBehindTarget)?+d.betBehindTarget:-1;
-  if(betBehindAmount>0&&(target<0||target>=players.length||target===playerIndex)){
+  const validAnyTarget=value=>{
+    const n=+value;
+    return Number.isInteger(n)&&n>=0&&n<players.length?n:playerIndex;
+  };
+  const twentyOnePlusThreeTarget=validAnyTarget(d.twentyOnePlusThreeTarget);
+  const perfectPairsTarget=validAnyTarget(d.perfectPairsTarget);
+  const betBehindTarget=Number.isInteger(+d.betBehindTarget)?+d.betBehindTarget:-1;
+  if(betBehindAmount>0&&(betBehindTarget<0||betBehindTarget>=players.length||betBehindTarget===playerIndex)){
     return {ok:false,message:'BET BEHINDの対象席を選択してください。'};
   }
   return {
     ok:true,
-    draft:{twentyOnePlusThree,perfectPairs,betBehindAmount,betBehindTarget:betBehindAmount>0?target:-1},
+    draft:{
+      twentyOnePlusThree,
+      twentyOnePlusThreeTarget,
+      perfectPairs,
+      perfectPairsTarget,
+      betBehindAmount,
+      betBehindTarget:betBehindAmount>0?betBehindTarget:-1
+    },
     total:twentyOnePlusThree+perfectPairs+betBehindAmount
   };
 }
@@ -703,7 +724,9 @@ function commitOptionBetsForPlayer(p,playerIndex,draft=p.sideBetDraft){
   p.bank-=normalized.total;
   p.sideBets={
     twentyOnePlusThree:d.twentyOnePlusThree,
+    twentyOnePlusThreeTarget:d.twentyOnePlusThreeTarget,
     perfectPairs:d.perfectPairs,
+    perfectPairsTarget:d.perfectPairsTarget,
     betBehind:d.betBehindAmount>0?{
       targetIndex:d.betBehindTarget,
       stakes:[d.betBehindAmount],
@@ -748,30 +771,42 @@ function evaluatePerfectPairs(cards){
 function settleInitialOptionBets(){
   if(!dealer[0])return;
   for(const p of players){
-    if(!p.hands?.[0]?.cards||p.hands[0].cards.length<2)continue;
-    const cards=p.hands[0].cards;
     const side=p.sideBets||emptySideBets();
     if(side.twentyOnePlusThree>0){
       const stake=side.twentyOnePlusThree;
-      const hit=evaluate21Plus3([cards[0],cards[1],dealer[0]]);
-      if(hit){
-        const profit=stake*hit.odds;
-        p.bank+=stake+profit;
-        p.sideBetResults.push({kind:'win',text:`21+3 ${hit.name} WIN +${fmt(profit)}`});
+      const target=players[side.twentyOnePlusThreeTarget];
+      const cards=target?.hands?.[0]?.cards;
+      if(!cards||cards.length<2){
+        p.bank+=stake;
+        p.sideBetResults.push({kind:'push',text:`21+3 → 対象なし REFUND +${fmt(stake)}`});
       }else{
-        p.sideBetResults.push({kind:'lose',text:`21+3 LOSE -${fmt(stake)}`});
+        const hit=evaluate21Plus3([cards[0],cards[1],dealer[0]]);
+        if(hit){
+          const profit=stake*hit.odds;
+          p.bank+=stake+profit;
+          p.sideBetResults.push({kind:'win',text:`21+3 → ${target.name} / ${hit.name} WIN +${fmt(profit)}`});
+        }else{
+          p.sideBetResults.push({kind:'lose',text:`21+3 → ${target.name} / LOSE -${fmt(stake)}`});
+        }
       }
       side.twentyOnePlusThree=0;
     }
     if(side.perfectPairs>0){
       const stake=side.perfectPairs;
-      const hit=evaluatePerfectPairs(cards);
-      if(hit){
-        const profit=stake*hit.odds;
-        p.bank+=stake+profit;
-        p.sideBetResults.push({kind:'win',text:`PERFECT PAIRS ${hit.name} WIN +${fmt(profit)}`});
+      const target=players[side.perfectPairsTarget];
+      const cards=target?.hands?.[0]?.cards;
+      if(!cards||cards.length<2){
+        p.bank+=stake;
+        p.sideBetResults.push({kind:'push',text:`PERFECT PAIRS → 対象なし REFUND +${fmt(stake)}`});
       }else{
-        p.sideBetResults.push({kind:'lose',text:`PERFECT PAIRS LOSE -${fmt(stake)}`});
+        const hit=evaluatePerfectPairs(cards);
+        if(hit){
+          const profit=stake*hit.odds;
+          p.bank+=stake+profit;
+          p.sideBetResults.push({kind:'win',text:`PERFECT PAIRS → ${target.name} / ${hit.name} WIN +${fmt(profit)}`});
+        }else{
+          p.sideBetResults.push({kind:'lose',text:`PERFECT PAIRS → ${target.name} / LOSE -${fmt(stake)}`});
+        }
       }
       side.perfectPairs=0;
     }
@@ -3594,14 +3629,18 @@ $('bgmOff').addEventListener('click',()=>{stopBgm();$('bgmModal').classList.add(
 $('closeBgm').addEventListener('click',()=>{$('bgmModal').classList.add('hidden')});
 $('bgmModal').addEventListener('click',e=>{if(e.target===$('bgmModal'))$('bgmModal').classList.add('hidden')});
 
-function buildBetBehindTargetOptions(playerIndex,selected=-1){
-  const select=$('optionBetBehindTarget');
+function buildOptionBetTargetOptions(selectId,playerIndex,selected=-1,excludeSelf=false){
+  const select=$(selectId);
   if(!select)return;
-  const options=players.map((p,i)=>i===playerIndex?null:`<option value="${i}">${p.name}</option>`).filter(Boolean);
+  const options=players.map((p,i)=>{
+    if(excludeSelf&&i===playerIndex)return null;
+    return `<option value="${i}">${p.name}${i===playerIndex?'（自分）':''}</option>`;
+  }).filter(Boolean);
   select.innerHTML=options.join('');
   if(options.length){
-    const valid=selected>=0&&selected<players.length&&selected!==playerIndex;
-    select.value=String(valid?selected:+select.options[0].value);
+    const valid=selected>=0&&selected<players.length&&(!excludeSelf||selected!==playerIndex);
+    const fallback=excludeSelf?+select.options[0].value:playerIndex;
+    select.value=String(valid?selected:fallback);
     select.disabled=false;
   }else{
     select.innerHTML='<option value="-1">対象なし</option>';
@@ -3619,7 +3658,9 @@ function openOptionBet(){
   $('option21Plus3Amount').value=String(normalizeSideBetAmount(d.twentyOnePlusThree));
   $('optionPerfectPairsAmount').value=String(normalizeSideBetAmount(d.perfectPairs));
   $('optionBetBehindAmount').value=String(normalizeSideBetAmount(d.betBehindAmount));
-  buildBetBehindTargetOptions(activePlayer,+d.betBehindTarget);
+  buildOptionBetTargetOptions('option21Plus3Target',activePlayer,+d.twentyOnePlusThreeTarget,false);
+  buildOptionBetTargetOptions('optionPerfectPairsTarget',activePlayer,+d.perfectPairsTarget,false);
+  buildOptionBetTargetOptions('optionBetBehindTarget',activePlayer,+d.betBehindTarget,true);
   $('optionBetBalanceHint').textContent=`OPTION BETに使用できる残高：${fmt(p.bank)}（現在選択中のMAIN BETは差引済み）`;
   $('optionBetModal').classList.remove('hidden');
 }
@@ -3632,7 +3673,9 @@ $('applyOptionBet').addEventListener('click',()=>{
   if(!p||p.type==='cpu')return;
   const draft={
     twentyOnePlusThree:normalizeSideBetAmount($('option21Plus3Amount').value),
+    twentyOnePlusThreeTarget:+$('option21Plus3Target').value,
     perfectPairs:normalizeSideBetAmount($('optionPerfectPairsAmount').value),
+    perfectPairsTarget:+$('optionPerfectPairsTarget').value,
     betBehindAmount:normalizeSideBetAmount($('optionBetBehindAmount').value),
     betBehindTarget:+$('optionBetBehindTarget').value
   };
