@@ -5663,3 +5663,25 @@ header{display:flex;align-items:center;justify-content:space-between;padding:6px
   text-shadow:0 2px 4px rgba(0,0,0,.55)!important;
   pointer-events:none!important;
 }
+
+
+/* =========================================================
+   v14.51 — lock page scroll while seated at the table
+   ========================================================= */
+html.blackjackGameActive,
+body.blackjackGameActive{
+  width:100%;
+  height:100%;
+  overflow:hidden!important;
+  overscroll-behavior-y:none!important;
+}
+body.blackjackGameActive{
+  position:fixed;
+  inset:0;
+  height:100dvh;
+}
+body.blackjackGameActive .app{
+  height:100dvh;
+  min-height:100dvh;
+  overflow:hidden;
+}
