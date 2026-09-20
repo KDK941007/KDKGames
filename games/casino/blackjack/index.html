@@ -563,68 +563,122 @@
 </div>
 <div id="optionBetModal" class="settingsModal hidden" role="dialog" aria-modal="true" aria-labelledby="optionBetTitle">
   <div class="settingsSheet optionBetSheet">
-    <div class="settingsHead">
+    <div class="settingsHead optionBetHead">
       <div>
         <b id="optionBetTitle">OPTION BET</b>
-        <div class="helpSub">このラウンドで追加するBETを設定</div>
+        <div class="helpSub">追加BETを選んで設定</div>
       </div>
       <button id="closeOptionBet" class="small">閉じる</button>
     </div>
-    <div id="option21Plus3Row" class="optionBetModalRow hidden">
-      <div class="optionSideBetGrid">
-        <div class="field">
-          <label>21 + 3 対象PLAYER</label>
-          <select id="option21Plus3Target"></select>
-        </div>
-        <div class="field">
-          <label>21 + 3 BET</label>
-          <input id="option21Plus3Amount" type="number" inputmode="numeric" min="0" step="1" value="0">
-        </div>
+
+    <div class="optionBetOverview">
+      <div>
+        <span>BANK</span>
+        <b id="optionBetBankValue">-</b>
       </div>
-      <div class="optionBetRule">
-        <b>ルール</b>
-        <span>選択したPLAYERの初期2枚＋Dealerの表向き1枚の計3枚で判定します。自分・他PLAYERのどちらも選択可能です。</span>
-        <span>配当：Suited Trips 100:1 / Straight Flush 40:1 / Three of a Kind 30:1 / Straight 10:1 / Flush 5:1。</span>
-        <span>MAIN HANDの勝敗とは独立し、初期配札完了時に結果を確定します。</span>
+      <div>
+        <span>OPTION TOTAL</span>
+        <b id="optionBetTotalValue">-</b>
       </div>
     </div>
-    <div id="optionPerfectPairsRow" class="optionBetModalRow hidden">
-      <div class="optionSideBetGrid">
-        <div class="field">
-          <label>PERFECT PAIRS 対象PLAYER</label>
-          <select id="optionPerfectPairsTarget"></select>
-        </div>
-        <div class="field">
-          <label>PERFECT PAIRS BET</label>
-          <input id="optionPerfectPairsAmount" type="number" inputmode="numeric" min="0" step="1" value="0">
-        </div>
-      </div>
-      <div class="optionBetRule">
-        <b>ルール</b>
-        <span>選択したPLAYERの最初の2枚が同じランクならPair成立です。自分・他PLAYERのどちらも選択可能です。</span>
-        <span>Perfect Pair＝同ランク・同スート 25:1 / Colored Pair＝同ランク・同色 12:1 / Mixed Pair＝同ランクのみ 6:1。</span>
-        <span>MAIN HANDの勝敗とは独立し、初期配札完了時に結果を確定します。</span>
-      </div>
+
+    <div id="optionBetTabs" class="optionBetTabs">
+      <button id="option21Plus3Tab" type="button" class="optionBetTab hidden" data-option-tab="21plus3">
+        <span>21 + 3</span><small id="option21Plus3TabValue">-</small>
+      </button>
+      <button id="optionPerfectPairsTab" type="button" class="optionBetTab hidden" data-option-tab="pairs">
+        <span>PERFECT<br>PAIRS</span><small id="optionPerfectPairsTabValue">-</small>
+      </button>
+      <button id="optionBetBehindTab" type="button" class="optionBetTab hidden" data-option-tab="behind">
+        <span>BET<br>BEHIND</span><small id="optionBetBehindTabValue">-</small>
+      </button>
     </div>
-    <div id="optionBetBehindRow" class="optionBetModalRow hidden">
-      <div class="field">
-        <label>BET BEHIND 対象</label>
-        <select id="optionBetBehindTarget"></select>
-      </div>
-      <div class="field">
-        <label>BET BEHIND BET</label>
-        <input id="optionBetBehindAmount" type="number" inputmode="numeric" min="0" step="1" value="0">
-      </div>
-      <div class="optionBetRule">
-        <b>ルール</b>
-        <span>自分以外のPLAYERを選び、そのPLAYERのMAIN HANDの最終結果にBETします。</span>
-        <span>通常勝ち1:1 / BLACKJACK 3:2 / PUSHはBET返却 / SURRENDERは半額返却として精算します。</span>
-        <span>対象PLAYERがDouble / Splitした場合は、残高が足りるときだけ同額の追加BETを自動追従します。残高不足なら追加分は追従しません。</span>
-        <span>Insurance / Even Money / 21+3 / PERFECT PAIRSには追従しません。</span>
-      </div>
+
+    <div class="optionBetPanels">
+      <section id="option21Plus3Row" class="optionBetPanel hidden" data-option-panel="21plus3">
+        <div class="optionBetPanelHead">
+          <div><b>21 + 3</b><span>3枚でポーカー役を狙う</span></div>
+          <strong>最大 100:1</strong>
+        </div>
+        <div class="optionBetActionGrid">
+          <label class="optionBetControl">
+            <span>対象PLAYER</span>
+            <select id="option21Plus3Target"></select>
+          </label>
+          <label class="optionBetControl">
+            <span>BET</span>
+            <input id="option21Plus3Amount" type="number" inputmode="numeric" min="0" step="1" value="0">
+          </label>
+        </div>
+        <div id="option21Plus3Quick" class="optionBetQuick"></div>
+        <details class="optionBetDetails">
+          <summary>ルール・配当を見る</summary>
+          <div class="optionBetRule">
+            <span>選択したPLAYERの初期2枚＋Dealerの表向き1枚の計3枚で判定します。自分・他PLAYERのどちらも選択可能です。</span>
+            <span>Suited Trips 100:1 / Straight Flush 40:1 / Three of a Kind 30:1 / Straight 10:1 / Flush 5:1。</span>
+            <span>MAIN HANDの勝敗とは独立し、初期配札完了時に結果を確定します。</span>
+          </div>
+        </details>
+      </section>
+
+      <section id="optionPerfectPairsRow" class="optionBetPanel hidden" data-option-panel="pairs">
+        <div class="optionBetPanelHead">
+          <div><b>PERFECT PAIRS</b><span>最初の2枚のPairを狙う</span></div>
+          <strong>最大 25:1</strong>
+        </div>
+        <div class="optionBetActionGrid">
+          <label class="optionBetControl">
+            <span>対象PLAYER</span>
+            <select id="optionPerfectPairsTarget"></select>
+          </label>
+          <label class="optionBetControl">
+            <span>BET</span>
+            <input id="optionPerfectPairsAmount" type="number" inputmode="numeric" min="0" step="1" value="0">
+          </label>
+        </div>
+        <div id="optionPerfectPairsQuick" class="optionBetQuick"></div>
+        <details class="optionBetDetails">
+          <summary>ルール・配当を見る</summary>
+          <div class="optionBetRule">
+            <span>選択したPLAYERの最初の2枚が同じランクならPair成立です。自分・他PLAYERのどちらも選択可能です。</span>
+            <span>Perfect Pair＝同ランク・同スート 25:1 / Colored Pair＝同ランク・同色 12:1 / Mixed Pair＝同ランクのみ 6:1。</span>
+            <span>MAIN HANDの勝敗とは独立し、初期配札完了時に結果を確定します。</span>
+          </div>
+        </details>
+      </section>
+
+      <section id="optionBetBehindRow" class="optionBetPanel hidden" data-option-panel="behind">
+        <div class="optionBetPanelHead">
+          <div><b>BET BEHIND</b><span>他PLAYERのMAIN HANDに乗る</span></div>
+          <strong>MAIN連動</strong>
+        </div>
+        <div class="optionBetActionGrid">
+          <label class="optionBetControl">
+            <span>対象PLAYER</span>
+            <select id="optionBetBehindTarget"></select>
+          </label>
+          <label class="optionBetControl">
+            <span>BET</span>
+            <input id="optionBetBehindAmount" type="number" inputmode="numeric" min="0" step="1" value="0">
+          </label>
+        </div>
+        <div id="optionBetBehindQuick" class="optionBetQuick"></div>
+        <details class="optionBetDetails">
+          <summary>ルール・追従範囲を見る</summary>
+          <div class="optionBetRule">
+            <span>自分以外のPLAYERを選び、そのPLAYERのMAIN HANDの最終結果にBETします。</span>
+            <span>通常勝ち1:1 / BLACKJACK 3:2 / PUSHはBET返却 / SURRENDERは半額返却として精算します。</span>
+            <span>対象PLAYERがDouble / Splitした場合は、残高が足りるときだけ同額の追加BETを自動追従します。</span>
+            <span>Insurance / Even Money / 21+3 / PERFECT PAIRSには追従しません。</span>
+          </div>
+        </details>
+      </section>
     </div>
-    <div id="optionBetBalanceHint" class="hint optionBetBalanceHint"></div>
-    <button id="applyOptionBet" class="primary">この内容で設定</button>
+
+    <div class="optionBetBottom">
+      <div id="optionBetBalanceHint" class="optionBetBalanceHint"></div>
+      <button id="applyOptionBet" class="primary">このOPTION BETで確定</button>
+    </div>
   </div>
 </div>
 <div id="customBetModal" class="settingsModal hidden" role="dialog" aria-modal="true" aria-labelledby="customBetTitle">
