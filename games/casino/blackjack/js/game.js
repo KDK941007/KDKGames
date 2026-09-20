@@ -3647,27 +3647,87 @@ function buildOptionBetTargetOptions(selectId,playerIndex,selected=-1,excludeSel
     select.disabled=true;
   }
 }
+const OPTION_BET_UI=[
+  {key:'21plus3',enabled:'twentyOnePlusThree',tab:'option21Plus3Tab',panel:'option21Plus3Row',amount:'option21Plus3Amount',quick:'option21Plus3Quick',value:'option21Plus3TabValue'},
+  {key:'pairs',enabled:'perfectPairs',tab:'optionPerfectPairsTab',panel:'optionPerfectPairsRow',amount:'optionPerfectPairsAmount',quick:'optionPerfectPairsQuick',value:'optionPerfectPairsTabValue'},
+  {key:'behind',enabled:'betBehind',tab:'optionBetBehindTab',panel:'optionBetBehindRow',amount:'optionBetBehindAmount',quick:'optionBetBehindQuick',value:'optionBetBehindTabValue'}
+];
+let optionBetActiveTab='21plus3';
+function enabledOptionBetUi(){
+  const o=cfg.optionBets||{};
+  return OPTION_BET_UI.filter(item=>!!o[item.enabled]);
+}
+function setOptionBetActiveTab(key){
+  const enabled=enabledOptionBetUi();
+  if(!enabled.length)return;
+  const selected=enabled.some(item=>item.key===key)?key:enabled[0].key;
+  optionBetActiveTab=selected;
+  OPTION_BET_UI.forEach(item=>{
+    const isEnabled=enabled.some(x=>x.key===item.key);
+    const isActive=isEnabled&&item.key===selected;
+    $(item.tab)?.classList.toggle('hidden',!isEnabled);
+    $(item.tab)?.classList.toggle('active',isActive);
+    $(item.panel)?.classList.toggle('hidden',!isActive);
+  });
+}
+function updateOptionBetModalSummary(){
+  const p=players[activePlayer];
+  if(!p)return;
+  let total=0;
+  OPTION_BET_UI.forEach(item=>{
+    const amount=normalizeSideBetAmount($(item.amount)?.value);
+    total+=((cfg.optionBets||{})[item.enabled]?amount:0);
+    const label=$(item.value);
+    if(label)label.textContent=amount>0?fmt(amount):'未設定';
+  });
+  if($('optionBetBankValue'))$('optionBetBankValue').textContent=fmt(p.bank);
+  if($('optionBetTotalValue'))$('optionBetTotalValue').textContent=fmt(total);
+  const after=p.bank-total;
+  const hint=$('optionBetBalanceHint');
+  if(hint){
+    hint.textContent=after>=0?`設定後の残高：${fmt(after)}`:`残高不足：${fmt(Math.abs(after))}`;
+    hint.classList.toggle('over',after<0);
+  }
+}
+function renderOptionBetQuickControls(p){
+  const values=chipValues().filter(v=>v>0&&v<=p.bank).slice(0,5);
+  OPTION_BET_UI.forEach(item=>{
+    const root=$(item.quick);
+    if(!root)return;
+    root.innerHTML=
+      '<button type="button" class="optionBetQuickBtn clear" data-v="0">CLEAR</button>'+
+      values.map(v=>`<button type="button" class="optionBetQuickBtn" data-v="${v}">${chipAmountLabel(v)}</button>`).join('');
+    root.querySelectorAll('.optionBetQuickBtn').forEach(btn=>btn.addEventListener('click',()=>{
+      const input=$(item.amount);
+      if(!input)return;
+      input.value=btn.dataset.v||'0';
+      updateOptionBetModalSummary();
+    }));
+  });
+}
 function openOptionBet(){
   const p=players[activePlayer];
   if(!p||p.type==='cpu'||!anyOptionBetEnabled())return;
-  const o=cfg.optionBets||{};
   const d=p.sideBetDraft||emptySideBetDraft();
-  $('option21Plus3Row').classList.toggle('hidden',!o.twentyOnePlusThree);
-  $('optionPerfectPairsRow').classList.toggle('hidden',!o.perfectPairs);
-  $('optionBetBehindRow').classList.toggle('hidden',!o.betBehind);
   $('option21Plus3Amount').value=String(normalizeSideBetAmount(d.twentyOnePlusThree));
   $('optionPerfectPairsAmount').value=String(normalizeSideBetAmount(d.perfectPairs));
   $('optionBetBehindAmount').value=String(normalizeSideBetAmount(d.betBehindAmount));
   buildOptionBetTargetOptions('option21Plus3Target',activePlayer,+d.twentyOnePlusThreeTarget,false);
   buildOptionBetTargetOptions('optionPerfectPairsTarget',activePlayer,+d.perfectPairsTarget,false);
   buildOptionBetTargetOptions('optionBetBehindTarget',activePlayer,+d.betBehindTarget,true);
-  $('optionBetBalanceHint').textContent=`OPTION BETに使用できる残高：${fmt(p.bank)}（現在選択中のMAIN BETは差引済み）`;
+  renderOptionBetQuickControls(p);
+  setOptionBetActiveTab(optionBetActiveTab);
+  updateOptionBetModalSummary();
   $('optionBetModal').classList.remove('hidden');
 }
 function closeOptionBet(){$('optionBetModal').classList.add('hidden')}
 $('optionBetBtn').addEventListener('click',openOptionBet);
 $('closeOptionBet').addEventListener('click',closeOptionBet);
 $('optionBetModal').addEventListener('click',e=>{if(e.target===$('optionBetModal'))closeOptionBet()});
+document.querySelectorAll('.optionBetTab').forEach(btn=>btn.addEventListener('click',()=>setOptionBetActiveTab(btn.dataset.optionTab)));
+['option21Plus3Amount','optionPerfectPairsAmount','optionBetBehindAmount'].forEach(id=>{
+  $(id)?.addEventListener('input',updateOptionBetModalSummary);
+});
 $('applyOptionBet').addEventListener('click',()=>{
   const p=players[activePlayer];
   if(!p||p.type==='cpu')return;
