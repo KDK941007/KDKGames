@@ -1,7 +1,7 @@
 const BUILD='14.47-portal-player';
 const $=id=>document.getElementById(id), fmt=(n,currency=null)=>{
   const code=currency||(cfg&&cfg.targetCurrency)||targetCurrency||'JPY';
-  const symbol={JPY:'¥',USD:'$',SGD:'S$'}[code]||'';
+  const symbol={JPY:'¥',USD:'$',SGD:'S$',KRW:'₩'}[code]||'';
   return symbol+Math.round(Number(n)||0).toLocaleString('ja-JP');
 }, sleep=ms=>new Promise(r=>setTimeout(r,ms));
 function chipAmountLabel(amount,prefix=''){
@@ -588,7 +588,8 @@ $('startBtn').onclick=()=>{
   cpuSerial=types.filter(t=>t==='cpu').length;
   players=banks.map((b,i)=>({
     name:names[i],type:types[i],playerId:types[i]==='user'?profile.playerId:null,cpuLevel:levels[i]||'advanced',
-    bank:b,initial:b,roundStartBank:b,bet:0,lastBet:0,hands:[],insurance:0,result:''
+    bank:b,initial:b,roundStartBank:b,bet:0,lastBet:0,hands:[],insurance:0,result:'',
+    sideBets:emptySideBets(),sideBetDraft:emptySideBetDraft(),lastSideBetDraft:emptySideBetDraft(),sideBetResults:[]
   }));
   roundNo=0;
   lastActionPlayer=0;
@@ -663,6 +664,203 @@ function renderChips(){
     repeat.textContent=v?`前回 ${v>=10000?(v/10000)+'万':v}`:'前回BET';
   }
 }async function flyChipToBet(btn,v){let seat=document.querySelectorAll('.seat')[activePlayer];if(!seat)return;let from=btn.getBoundingClientRect(),to=seat.getBoundingClientRect();let clone=btn.cloneNode(true);clone.classList.add('flyingChip');clone.style.left=from.left+'px';clone.style.top=from.top+'px';clone.style.width=from.width+'px';clone.style.height=from.height+'px';clone.style.margin='0';document.body.appendChild(clone);let dx=(to.left+to.width/2)-(from.left+from.width/2),dy=(to.top+44)-(from.top+from.height/2);let a=clone.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:`translate(${dx*.58}px,${dy*.48-34}px) scale(.92) rotate(7deg)`,opacity:1,offset:.55},{transform:`translate(${dx}px,${dy}px) scale(.62) rotate(-4deg)`,opacity:.2}],{duration:360,easing:'cubic-bezier(.2,.75,.2,1)',fill:'forwards'});await a.finished.catch(()=>{});clone.remove();toast(`${v>=10000?(v/10000)+'万':v}チップ BET`) }function chipStackHTML(amount){if(!amount)return '';let vals=chipValues().slice().reverse(),left=amount,out=[];for(const v of vals){while(left>=v&&out.length<8){out.push(v);left-=v}}if(left>0&&out.length<8)out.push(left);return out.length?`<div class="chipStack">${out.map(v=>`<span class="chipDisc">${v>=10000?(v/10000)+'万':v}</span>`).join('')}</div>`:''}function resultClass(r=''){if(r.includes('BLACKJACK')||r.includes('EVEN MONEY')||r.includes('WIN'))return'win';if(r.includes('PUSH'))return'push';if(r.includes('SURRENDER'))return'surrender';if(r.includes('LOSE')||r.includes('BUST'))return'lose';return''}
+
+
+function emptySideBetDraft(){
+  return {twentyOnePlusThree:0,perfectPairs:0,betBehindAmount:0,betBehindTarget:-1};
+}
+function emptySideBets(){
+  return {twentyOnePlusThree:0,perfectPairs:0,betBehind:null};
+}
+function anyOptionBetEnabled(){
+  const o=cfg.optionBets||{};
+  return !!(o.twentyOnePlusThree||o.perfectPairs||o.betBehind);
+}
+function normalizeSideBetAmount(value){
+  return Math.max(0,Math.floor(Number(value)||0));
+}
+function normalizedSideBetDraft(draft,playerIndex){
+  const o=cfg.optionBets||{};
+  const d=draft||emptySideBetDraft();
+  const twentyOnePlusThree=o.twentyOnePlusThree?normalizeSideBetAmount(d.twentyOnePlusThree):0;
+  const perfectPairs=o.perfectPairs?normalizeSideBetAmount(d.perfectPairs):0;
+  const betBehindAmount=o.betBehind?normalizeSideBetAmount(d.betBehindAmount):0;
+  const target=Number.isInteger(+d.betBehindTarget)?+d.betBehindTarget:-1;
+  if(betBehindAmount>0&&(target<0||target>=players.length||target===playerIndex)){
+    return {ok:false,message:'BET BEHINDの対象席を選択してください。'};
+  }
+  return {
+    ok:true,
+    draft:{twentyOnePlusThree,perfectPairs,betBehindAmount,betBehindTarget:betBehindAmount>0?target:-1},
+    total:twentyOnePlusThree+perfectPairs+betBehindAmount
+  };
+}
+function commitOptionBetsForPlayer(p,playerIndex,draft=p.sideBetDraft){
+  const normalized=normalizedSideBetDraft(draft,playerIndex);
+  if(!normalized.ok){toast(normalized.message);return false}
+  if(normalized.total>p.bank){toast('OPTION BETを含めると残高が不足します');return false}
+  const d=normalized.draft;
+  p.bank-=normalized.total;
+  p.sideBets={
+    twentyOnePlusThree:d.twentyOnePlusThree,
+    perfectPairs:d.perfectPairs,
+    betBehind:d.betBehindAmount>0?{
+      targetIndex:d.betBehindTarget,
+      stakes:[d.betBehindAmount],
+      initialAmount:d.betBehindAmount,
+      resolved:false,
+      notes:[]
+    }:null
+  };
+  p.sideBetDraft={...d};
+  p.lastSideBetDraft={...d};
+  p.sideBetResults=[];
+  return true;
+}
+function cardColor(suit){
+  return suit==='♥'||suit==='♦'?'red':'black';
+}
+function threeCardStraight(cards){
+  const vals=[...new Set(cards.map(c=>c.r==='A'?1:ranks.indexOf(c.r)+1))].sort((a,b)=>a-b);
+  if(vals.length!==3)return false;
+  if(vals[0]===1&&vals[1]===2&&vals[2]===3)return true;
+  if(vals[0]===1&&vals[1]===12&&vals[2]===13)return true;
+  return vals[2]-vals[0]===2;
+}
+function evaluate21Plus3(cards){
+  if(!cards||cards.length!==3)return null;
+  const sameRank=cards.every(c=>c.r===cards[0].r);
+  const sameSuit=cards.every(c=>c.s===cards[0].s);
+  const straight=threeCardStraight(cards);
+  if(sameRank&&sameSuit)return {name:'SUITED TRIPS',odds:100};
+  if(straight&&sameSuit)return {name:'STRAIGHT FLUSH',odds:40};
+  if(sameRank)return {name:'THREE OF A KIND',odds:30};
+  if(straight)return {name:'STRAIGHT',odds:10};
+  if(sameSuit)return {name:'FLUSH',odds:5};
+  return null;
+}
+function evaluatePerfectPairs(cards){
+  if(!cards||cards.length<2||cards[0].r!==cards[1].r)return null;
+  if(cards[0].s===cards[1].s)return {name:'PERFECT PAIR',odds:25};
+  if(cardColor(cards[0].s)===cardColor(cards[1].s))return {name:'COLORED PAIR',odds:12};
+  return {name:'MIXED PAIR',odds:6};
+}
+function settleInitialOptionBets(){
+  if(!dealer[0])return;
+  for(const p of players){
+    if(!p.hands?.[0]?.cards||p.hands[0].cards.length<2)continue;
+    const cards=p.hands[0].cards;
+    const side=p.sideBets||emptySideBets();
+    if(side.twentyOnePlusThree>0){
+      const stake=side.twentyOnePlusThree;
+      const hit=evaluate21Plus3([cards[0],cards[1],dealer[0]]);
+      if(hit){
+        const profit=stake*hit.odds;
+        p.bank+=stake+profit;
+        p.sideBetResults.push({kind:'win',text:`21+3 ${hit.name} WIN +${fmt(profit)}`});
+      }else{
+        p.sideBetResults.push({kind:'lose',text:`21+3 LOSE -${fmt(stake)}`});
+      }
+      side.twentyOnePlusThree=0;
+    }
+    if(side.perfectPairs>0){
+      const stake=side.perfectPairs;
+      const hit=evaluatePerfectPairs(cards);
+      if(hit){
+        const profit=stake*hit.odds;
+        p.bank+=stake+profit;
+        p.sideBetResults.push({kind:'win',text:`PERFECT PAIRS ${hit.name} WIN +${fmt(profit)}`});
+      }else{
+        p.sideBetResults.push({kind:'lose',text:`PERFECT PAIRS LOSE -${fmt(stake)}`});
+      }
+      side.perfectPairs=0;
+    }
+  }
+}
+function followBetBehindDouble(targetIndex,handIndex){
+  players.forEach((owner,ownerIndex)=>{
+    if(ownerIndex===targetIndex)return;
+    const bb=owner.sideBets?.betBehind;
+    if(!bb||bb.resolved||bb.targetIndex!==targetIndex)return;
+    const stake=bb.stakes[handIndex]||0;
+    if(stake<=0)return;
+    if(owner.bank>=stake){
+      owner.bank-=stake;
+      bb.stakes[handIndex]+=stake;
+      bb.notes.push(`DOUBLE追従 ${fmt(stake)}`);
+    }else{
+      bb.notes.push('DOUBLE追加BETは残高不足で追従なし');
+    }
+  });
+}
+function followBetBehindSplit(targetIndex,handIndex){
+  players.forEach((owner,ownerIndex)=>{
+    if(ownerIndex===targetIndex)return;
+    const bb=owner.sideBets?.betBehind;
+    if(!bb||bb.resolved||bb.targetIndex!==targetIndex)return;
+    const stake=bb.stakes[handIndex]||0;
+    if(stake>0&&owner.bank>=stake){
+      owner.bank-=stake;
+      bb.stakes.splice(handIndex+1,0,stake);
+      bb.notes.push(`SPLIT追従 ${fmt(stake)}`);
+    }else{
+      bb.stakes.splice(handIndex+1,0,0);
+      if(stake>0)bb.notes.push('SPLIT追加BETは残高不足でHAND 1のみ追従');
+    }
+  });
+}
+function settleBetBehindAll(dealerBlackjack=false){
+  const dv=value(dealer);
+  players.forEach((owner,ownerIndex)=>{
+    const bb=owner.sideBets?.betBehind;
+    if(!bb||bb.resolved)return;
+    const target=players[bb.targetIndex];
+    const totalStake=bb.stakes.reduce((a,b)=>a+(Number(b)||0),0);
+    if(!target||!target.hands?.length||target.bet<=0){
+      owner.bank+=totalStake;
+      owner.sideBetResults.push({kind:'push',text:`BET BEHIND REFUND +${fmt(totalStake)}`});
+      bb.resolved=true;
+      return;
+    }
+    let returned=0,profit=0,lost=0,wins=0,pushes=0,losses=0;
+    target.hands.forEach((h,hi)=>{
+      const stake=bb.stakes[hi]||0;
+      if(stake<=0)return;
+      const pv=value(h.cards);
+      if(h.surrendered){
+        returned+=stake/2;
+        lost+=stake/2;
+        losses++;
+      }else if(dealerBlackjack){
+        if(natural(h.cards,h.splitOrigin)){returned+=stake;pushes++}
+        else{lost+=stake;losses++}
+      }else if(pv>21){
+        lost+=stake;losses++;
+      }else if(natural(h.cards,h.splitOrigin)){
+        returned+=stake;profit+=stake*1.5;wins++;
+      }else if(dv>21||pv>dv){
+        returned+=stake;profit+=stake;wins++;
+      }else if(pv===dv){
+        returned+=stake;pushes++;
+      }else{
+        lost+=stake;losses++;
+      }
+    });
+    owner.bank+=returned+profit;
+    const kind=wins?'win':(pushes&&!losses?'push':'lose');
+    const net=profit-lost;
+    const sign=net>0?'+':'';
+    owner.sideBetResults.push({
+      kind,
+      text:`BET BEHIND → ${target.name} ${sign}${fmt(net)}`
+    });
+    bb.resolved=true;
+  });
+}
+function optionBetStatusHTML(p){
+  if(!p.sideBetResults?.length)return '';
+  return `<div class="sideBetResults">${p.sideBetResults.map(r=>`<div class="sideBetResult ${r.kind||''}">${r.text}</div>`).join('')}</div>`;
+}
 
 function allUsersBankrupt(){
   const humans=players.filter(p=>p.type!=='cpu');
@@ -874,7 +1072,7 @@ function beginBet(){
   if(!deck.length||shuffleAfterRound)newShoe();
   roundNo++;phase='bet';activeHand=0;currentBet=0;dealer=[];reveal=false;insuranceIndex=0;insuranceMode='insurance';evenMoneyContext=null;evenMoneyResolve=null;seenCards.clear();
   $('roundBanner').className='roundBanner';$('roundBanner').textContent='';
-  players.forEach(p=>{p.roundStartBank=p.bank;p.bet=0;p.hands=[];p.insurance=0;p.result=''});
+  players.forEach(p=>{p.roundStartBank=p.bank;p.bet=0;p.hands=[];p.insurance=0;p.result='';p.sideBets=emptySideBets();p.sideBetDraft=emptySideBetDraft();p.sideBetResults=[]});
   $('betArea').style.display='block';$('insuranceBox').style.display='none';$('playActions').classList.add('hidden');
   $('betAmount').textContent=fmt(0);
   activePlayer=nextBetPlayerIndex(0);
