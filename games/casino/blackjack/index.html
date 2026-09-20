@@ -267,9 +267,9 @@
       </div>
       <div class="ruleSectionTitle">オプションBET</div>
       <div class="ruleExtraList">
-        <div><b>21 + 3</b><span>自分の最初の2枚＋Dealerの表向き1枚で3カード役を判定。Suited Trips 100:1 / Straight Flush 40:1 / Three of a Kind 30:1 / Straight 10:1 / Flush 5:1。</span></div>
-        <div><b>PERFECT PAIRS</b><span>最初の2枚が同ランクなら判定。Perfect Pair 25:1 / Colored Pair 12:1 / Mixed Pair 6:1。</span></div>
-        <div><b>BET BEHIND</b><span>他の席のMAIN HANDへBETし、その席のアクションと勝敗に追従します。自分自身の席にはBETできません。</span></div>
+        <div><b>21 + 3</b><span>対象PLAYERを自分を含む全席から選択できます。選択したPLAYERの最初の2枚＋Dealerの表向き1枚で3カード役を判定し、MAIN HANDとは独立して初期配札直後に精算します。Suited Trips 100:1 / Straight Flush 40:1 / Three of a Kind 30:1 / Straight 10:1 / Flush 5:1。</span></div>
+        <div><b>PERFECT PAIRS</b><span>対象PLAYERを自分を含む全席から選択できます。選択したPLAYERの最初の2枚だけで判定し、MAIN HANDとは独立して初期配札直後に精算します。Perfect Pair＝同ランク・同スート 25:1 / Colored Pair＝同ランク・同色 12:1 / Mixed Pair＝同ランクのみ 6:1。</span></div>
+        <div><b>BET BEHIND</b><span>自分以外のPLAYERを選び、そのPLAYERのMAIN HANDの最終結果へBETします。通常勝ち1:1 / BLACKJACK 3:2 / PUSHはBET返却 / SURRENDERは半額返却。Double / Splitは残高が足りる場合のみ追加BETを自動追従し、Insurance・Even Money・他のオプションBETには追従しません。</span></div>
       </div>
       <div class="helpNote">オプションBETのMIN/MAXは実際のテーブルごとに異なるため、このトレーナーでは残高の範囲内で設定します。実際のカジノではテーブル表示とディーラーの案内を優先してください。</div>
     </div>
@@ -570,15 +570,41 @@
       </div>
       <button id="closeOptionBet" class="small">閉じる</button>
     </div>
-    <div id="option21Plus3Row" class="field optionBetModalRow hidden">
-      <label>21 + 3 BET</label>
-      <input id="option21Plus3Amount" type="number" inputmode="numeric" min="0" step="1" value="0">
-      <div class="hint">自分の最初の2枚＋Dealerの表向き1枚で判定します。</div>
+    <div id="option21Plus3Row" class="optionBetModalRow hidden">
+      <div class="optionSideBetGrid">
+        <div class="field">
+          <label>21 + 3 対象PLAYER</label>
+          <select id="option21Plus3Target"></select>
+        </div>
+        <div class="field">
+          <label>21 + 3 BET</label>
+          <input id="option21Plus3Amount" type="number" inputmode="numeric" min="0" step="1" value="0">
+        </div>
+      </div>
+      <div class="optionBetRule">
+        <b>ルール</b>
+        <span>選択したPLAYERの初期2枚＋Dealerの表向き1枚の計3枚で判定します。自分・他PLAYERのどちらも選択可能です。</span>
+        <span>配当：Suited Trips 100:1 / Straight Flush 40:1 / Three of a Kind 30:1 / Straight 10:1 / Flush 5:1。</span>
+        <span>MAIN HANDの勝敗とは独立し、初期配札完了時に結果を確定します。</span>
+      </div>
     </div>
-    <div id="optionPerfectPairsRow" class="field optionBetModalRow hidden">
-      <label>PERFECT PAIRS BET</label>
-      <input id="optionPerfectPairsAmount" type="number" inputmode="numeric" min="0" step="1" value="0">
-      <div class="hint">自分の最初の2枚が同ランクならPair成立です。</div>
+    <div id="optionPerfectPairsRow" class="optionBetModalRow hidden">
+      <div class="optionSideBetGrid">
+        <div class="field">
+          <label>PERFECT PAIRS 対象PLAYER</label>
+          <select id="optionPerfectPairsTarget"></select>
+        </div>
+        <div class="field">
+          <label>PERFECT PAIRS BET</label>
+          <input id="optionPerfectPairsAmount" type="number" inputmode="numeric" min="0" step="1" value="0">
+        </div>
+      </div>
+      <div class="optionBetRule">
+        <b>ルール</b>
+        <span>選択したPLAYERの最初の2枚が同じランクならPair成立です。自分・他PLAYERのどちらも選択可能です。</span>
+        <span>Perfect Pair＝同ランク・同スート 25:1 / Colored Pair＝同ランク・同色 12:1 / Mixed Pair＝同ランクのみ 6:1。</span>
+        <span>MAIN HANDの勝敗とは独立し、初期配札完了時に結果を確定します。</span>
+      </div>
     </div>
     <div id="optionBetBehindRow" class="optionBetModalRow hidden">
       <div class="field">
@@ -589,7 +615,13 @@
         <label>BET BEHIND BET</label>
         <input id="optionBetBehindAmount" type="number" inputmode="numeric" min="0" step="1" value="0">
       </div>
-      <div class="hint">他の席のMAIN HANDに追従します。Double / Splitは残高が足りる場合のみ追加BETも自動追従します。</div>
+      <div class="optionBetRule">
+        <b>ルール</b>
+        <span>自分以外のPLAYERを選び、そのPLAYERのMAIN HANDの最終結果にBETします。</span>
+        <span>通常勝ち1:1 / BLACKJACK 3:2 / PUSHはBET返却 / SURRENDERは半額返却として精算します。</span>
+        <span>対象PLAYERがDouble / Splitした場合は、残高が足りるときだけ同額の追加BETを自動追従します。残高不足なら追加分は追従しません。</span>
+        <span>Insurance / Even Money / 21+3 / PERFECT PAIRSには追従しません。</span>
+      </div>
     </div>
     <div id="optionBetBalanceHint" class="hint optionBetBalanceHint"></div>
     <button id="applyOptionBet" class="primary">この内容で設定</button>
