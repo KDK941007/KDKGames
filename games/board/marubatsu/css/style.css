@@ -408,6 +408,20 @@
   .cell.x{color:var(--x)}
   .cell.o{color:var(--o)}
 
+  .cell .piece{
+    display:inline-block;
+    opacity:1;
+  }
+
+  .cell.oldest .piece{
+    animation:oldestPieceFade 1.4s ease-in-out infinite;
+  }
+
+  @keyframes oldestPieceFade{
+    0%,100%{opacity:1}
+    50%{opacity:.35}
+  }
+
   .cell.oldest{
     border-color:var(--accent);
     box-shadow:inset 0 0 0 1px rgba(251,191,36,.28);
