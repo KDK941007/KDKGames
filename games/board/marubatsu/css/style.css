@@ -363,12 +363,44 @@
   .turn-symbol.o{color:var(--o)}
 
   .board-wrap{
+    position:relative;
     min-height:0;
     padding:6px 14px 10px;
     display:flex;
     align-items:center;
     justify-content:center;
     overflow:hidden;
+  }
+
+  .start-countdown{
+    position:absolute;
+    inset:6px 14px 10px;
+    z-index:5;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    pointer-events:none;
+    color:var(--accent);
+    font-size:clamp(72px,26vw,132px);
+    font-weight:1000;
+    line-height:1;
+    text-shadow:0 6px 24px rgba(0,0,0,.55);
+  }
+
+  .start-countdown.show{display:flex}
+
+  .start-countdown.tick{
+    animation:startCountdownTick .72s ease-out both;
+  }
+
+  @keyframes startCountdownTick{
+    0%{opacity:.2;transform:scale(.72)}
+    28%{opacity:1;transform:scale(1)}
+    100%{opacity:1;transform:scale(1)}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .start-countdown.tick{animation:none}
   }
 
   .board{

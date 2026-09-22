@@ -1,5 +1,6 @@
 (() => {
   const boardEl = document.getElementById('board');
+  const startCountdown = document.getElementById('startCountdown');
   const statusLabel = document.getElementById('statusLabel');
   const statusText = document.getElementById('statusText');
   const turnSymbol = document.getElementById('turnSymbol');
@@ -95,6 +96,7 @@
   let turnLimitSeconds = null;
   let turnDeadline = 0;
   let timerRaf = 0;
+  let startCountdownTimer = 0;
   let audioCtx = null;
   let portalResultRecorded = false;
 
@@ -158,6 +160,7 @@
   }
 
   function resetState() {
+    stopStartCountdown();
     stopTurnTimer();
     board = Array(9).fill(null);
     current = null;
@@ -202,15 +205,59 @@
     resetState();
 
     turnLimitSeconds = selectedLimit;
-    current = resolveStartPlayer(mode);
+    const startPlayer = resolveStartPlayer(mode);
 
     starterInline.classList.remove('show');
     starterArea.style.display = 'none';
-    turnView.classList.remove('hidden');
+    turnView.classList.add('hidden');
     winnerOverlay.classList.remove('show');
 
     render();
-    startTurnTimer();
+    runStartCountdown(startPlayer);
+  }
+
+  function stopStartCountdown() {
+    if (startCountdownTimer) {
+      clearTimeout(startCountdownTimer);
+      startCountdownTimer = 0;
+    }
+    startCountdown.classList.remove('show', 'tick');
+    startCountdown.setAttribute('aria-hidden', 'true');
+    startCountdown.textContent = '';
+  }
+
+  function runStartCountdown(startPlayer) {
+    let remaining = 3;
+    startCountdown.classList.add('show');
+    startCountdown.setAttribute('aria-hidden', 'false');
+
+    const tick = () => {
+      startCountdown.textContent = String(remaining);
+      startCountdown.classList.remove('tick');
+      void startCountdown.offsetWidth;
+      startCountdown.classList.add('tick');
+
+      startCountdownTimer = window.setTimeout(() => {
+        remaining -= 1;
+
+        if (remaining > 0) {
+          tick();
+          return;
+        }
+
+        startCountdownTimer = 0;
+        startCountdown.classList.remove('show', 'tick');
+        startCountdown.setAttribute('aria-hidden', 'true');
+        startCountdown.textContent = '';
+
+        current = startPlayer;
+        turnView.classList.remove('hidden');
+        render();
+        startTurnTimer();
+      }, 1000);
+    };
+
+    tick();
   }
 
   function startTurnTimer() {
