@@ -294,7 +294,10 @@
       cell.disabled = !current || gameOver;
 
       if (value) {
-        cell.textContent = getSymbol(value);
+        const piece = document.createElement('span');
+        piece.className = 'piece';
+        piece.textContent = getSymbol(value);
+        cell.appendChild(piece);
         cell.classList.add(value.toLowerCase());
 
         if (index === oldestX || index === oldestO) {
