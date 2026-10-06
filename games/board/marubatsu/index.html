@@ -46,6 +46,14 @@
                 <span class="player-slot-info"><small id="xPlayerMode">GUEST</small><b id="xPlayerName">GUEST</b></span>
               </button>
             </div>
+            <div class="cpu-difficulty-row" id="cpuDifficultyRow">
+              <select id="oCpuDifficulty" class="cpu-difficulty hidden" aria-label="○ CPUの強さ">
+                <option value="weak">弱い</option><option value="normal" selected>普通</option><option value="strong">強い</option><option value="max">最強</option>
+              </select>
+              <select id="xCpuDifficulty" class="cpu-difficulty hidden" aria-label="× CPUの強さ">
+                <option value="weak">弱い</option><option value="normal" selected>普通</option><option value="strong">強い</option><option value="max">最強</option>
+              </select>
+            </div>
             <div class="setup-row">
               <div>
                 <div class="time-setting-label">1ターンの制限時間</div>
