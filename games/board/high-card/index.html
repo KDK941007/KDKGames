@@ -40,17 +40,31 @@
             <button class="primary" id="readyBtn" type="button">準備OK</button>
           </div>
 
+          <div class="selection-preview hidden" id="selectionPreview">
+            <div class="preview-card" id="previewCard"></div>
+            <button class="primary" id="confirmSelectedCard" type="button">このカードを出す</button>
+          </div>
+
           <div class="battle-ready hidden" id="battleReadyPanel">
             <b>全員のカードが揃いました</b>
             <button class="primary" id="battleBtn" type="button">勝負開始</button>
           </div>
 
-          <div class="round-summary hidden" id="roundSummary">
-            <b id="roundWinnerText"></b>
-            <button class="primary" id="nextRoundBtn" type="button">次のラウンドへ</button>
-          </div>
+          <div class="showdown-overlay" id="showdownOverlay" aria-hidden="true"><span>勝負！</span></div>
         </section>
       </div>
+
+      <section class="result-dock hidden" id="roundSummary">
+        <b id="roundWinnerText"></b>
+        <button class="primary" id="nextRoundBtn" type="button">次のラウンドへ</button>
+      </section>
+
+      <section class="result-dock final-panel hidden" id="finalResultPanel">
+        <div class="trophy">★</div>
+        <h2 id="finalTitle">PLAYER 1 の勝ち！</h2>
+        <div class="final-scores" id="finalScores"></div>
+        <button class="primary" id="backSetupBtn" type="button">もう一度遊ぶ</button>
+      </section>
     </section>
 
     <div class="actions">
@@ -61,11 +75,9 @@
   </section>
 </main>
 
-<div class="overlay" id="rulesOverlay"><div class="modal"><h2>遊び方</h2><ol><li>2〜4人で遊びます。各プレイヤーには異なるスートのA・K・Q・J・10が1枚ずつ配られます。</li><li>カードの強さは A ＞ K ＞ Q ＞ J ＞ 10 です。</li><li>配られる5枚の並び順はプレイヤーごとにランダムです。</li><li>各ラウンドで、自分の番になったら「準備OK」を押して自分の手札だけを確認し、1枚選びます。</li><li>選んだカードは中央へ裏向きで出され、次のプレイヤーには選択内容が見えません。</li><li>全員が選んだ後、「勝負開始」を押すと判定します。</li><li>一番強いカードを出したプレイヤーが+1点。同率1位が複数人いる場合は、その全員が+1点です。</li><li>開始前に「オープンする」を選んだ場合だけ、勝負時に選択カードを表向きにします。「伏せたまま」では結果後もカード内容は表示しません。</li><li>5ラウンド終了時に最も点数が高いプレイヤーが勝ちです。最高得点が同率なら引き分けです。</li></ol><button class="primary" id="closeRules" type="button">閉じる</button></div></div>
+<div class="overlay" id="rulesOverlay"><div class="modal"><h2>遊び方</h2><ol><li>2〜4人で遊びます。各プレイヤーには異なるスートのA・K・Q・J・10が1枚ずつ配られます。</li><li>カードの強さは A ＞ K ＞ Q ＞ J ＞ 10 です。</li><li>配られる5枚の並び順はプレイヤーごとにランダムです。</li><li>各ラウンドで、自分の番になったらそのプレイヤーが手前になるよう卓上表示が切り替わります。</li><li>「準備OK」を押して自分の手札だけを確認し、1枚選びます。選択中のカードは中央に大きく表示されます。</li><li>決定したカードは中央へ裏向きで出され、次のプレイヤーには選択内容が見えません。</li><li>全員が選んだ後、「勝負開始」を押すと判定します。</li><li>一番強いカードを出したプレイヤーが+1点。同率1位が複数人いる場合は、その該当者全員が+1点です。ただし全員が同率の場合は全員0点です。</li><li>開始前に「オープンする」を選んだ場合だけ、勝負時に選択カードを表向きにします。「伏せたまま」では結果後もカード内容は表示しません。</li><li>5ラウンド終了時に最も点数が高いプレイヤーが勝ちです。最高得点が同率なら引き分けです。</li></ol><button class="primary" id="closeRules" type="button">閉じる</button></div></div>
 
 <div class="overlay" id="restartOverlay"><div class="modal"><h2>最初からやり直す</h2><p>現在のゲーム内容を破棄してスタート画面へ戻りますか？</p><div class="confirm-actions"><button id="cancelRestart" type="button">キャンセル</button><button id="confirmRestart" class="primary" type="button">最初から</button></div></div></div>
-
-<div class="overlay" id="finalOverlay"><div class="modal final-result"><div class="trophy">★</div><h2 id="finalTitle">PLAYER 1 の勝ち！</h2><div class="final-scores" id="finalScores"></div><button class="primary" id="backSetupBtn" type="button">もう一度遊ぶ</button></div></div>
 
 <script src="../../../shared/js/player-store.js"></script>
 <script src="../../../shared/js/playing-cards.js"></script>
