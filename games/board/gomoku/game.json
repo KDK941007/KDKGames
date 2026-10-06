@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "gomoku",
+  "name": "五目並べ",
+  "category": "board",
+  "categoryLabel": "ボードゲーム",
+  "description": "何目並べかと持ち時間を設定できる対戦型の五目並べ。",
+  "searchTerms": ["五目並べ", "ごもくならべ", "gomoku", "連珠", "対戦", "board", "ボードゲーム"],
+  "icon": "./icon.svg",
+  "entry": "./index.html",
+  "available": true
+}

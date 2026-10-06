@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "othello",
+  "name": "オセロ",
+  "category": "board",
+  "categoryLabel": "ボードゲーム",
+  "description": "盤面サイズと持ち時間を設定できる2人対戦オセロ。",
+  "searchTerms": ["オセロ", "リバーシ", "othello", "reversi", "対戦", "board", "ボードゲーム"],
+  "icon": "./icon.svg",
+  "entry": "./index.html",
+  "available": true
+}

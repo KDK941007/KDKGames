@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<title>カード強さ勝負</title>
+<link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+<main class="app">
+  <section class="card-shell">
+    <header><h1>カード強さ勝負</h1><div class="sub">A・K・Q・J・10を1枚ずつ使う読み合い対戦</div></header>
+
+    <section class="setup" id="setupPanel">
+      <label class="field"><span>プレイヤー人数</span><select id="playerCount"><option value="2" selected>2人</option><option value="3">3人</option><option value="4">4人</option></select></label>
+      <fieldset class="field-set"><legend>勝負時のカード表示</legend><label><input type="radio" name="revealMode" value="hidden" checked> 伏せたまま</label><label><input type="radio" name="revealMode" value="open"> オープンする</label></fieldset>
+      <div class="rule-note">カードの強さ：A ＞ K ＞ Q ＞ J ＞ 10</div>
+      <button class="primary" id="startBtn" type="button">ゲーム開始</button>
+    </section>
+
+    <section class="play hidden" id="playPanel">
+      <div class="round-head"><span id="roundText">ROUND 1 / 5</span><b id="phaseText">準備</b></div>
+      <div class="scoreboard" id="scoreboard"></div>
+
+      <section class="ready-panel" id="readyPanel">
+        <div class="ready-icon" id="readyIcon">♠</div>
+        <h2 id="readyTitle">PLAYER 1 の番です</h2>
+        <p>他のプレイヤーに画面が見えない状態で、準備ができたら押してください。</p>
+        <button class="primary" id="readyBtn" type="button">準備OK</button>
+      </section>
+
+      <section class="choose-panel hidden" id="choosePanel">
+        <div class="player-label" id="chooseTitle">PLAYER 1：カードを1枚選択</div>
+        <div class="hand" id="hand"></div>
+        <button class="primary" id="confirmCardBtn" type="button" disabled>このカードで決定</button>
+      </section>
+
+      <section class="round-result hidden" id="roundResultPanel">
+        <h2 id="roundResultTitle">ROUND 1 結果</h2>
+        <div class="played-cards" id="playedCards"></div>
+        <p id="roundWinnerText"></p>
+        <button class="primary" id="nextRoundBtn" type="button">次のラウンドへ</button>
+      </section>
+
+      <section class="final-result hidden" id="finalResultPanel">
+        <div class="trophy">★</div>
+        <h2 id="finalTitle">PLAYER 1 の勝ち！</h2>
+        <div class="final-scores" id="finalScores"></div>
+        <button class="primary" id="backSetupBtn" type="button">もう一度遊ぶ</button>
+      </section>
+    </section>
+
+    <div class="actions"><button id="restartBtn" type="button">最初から</button><button id="rulesBtn" type="button">ルール</button><button id="portalBtn" type="button">ポータルへ戻る</button></div>
+  </section>
+</main>
+
+<div class="overlay" id="rulesOverlay"><div class="modal"><h2>遊び方</h2><ol><li>2〜4人で遊びます。各プレイヤーには異なるスートのA・K・Q・J・10が配られます。</li><li>カードの強さは A ＞ K ＞ Q ＞ J ＞ 10 です。</li><li>各ラウンドで、プレイヤーは自分の残っているカードから1枚を秘密で選びます。</li><li>プレイヤーが交代するたびに「準備OK」画面を挟むため、前の人の選択内容は表示されません。</li><li>全員が選んだら勝負し、一番強いカードを出したプレイヤーが+1点です。</li><li>同率1位が複数人いる場合は、その全員が+1点です。</li><li>開始前に「オープンする」を選ぶとラウンド結果で全員のカードを公開します。「伏せたまま」ではカードは公開しません。</li><li>5ラウンド終了時に最も点数が高いプレイヤーが勝ちです。最高得点が同率なら引き分けです。</li></ol><button class="primary" id="closeRules" type="button">閉じる</button></div></div>
+
+<script src="../../../shared/js/player-store.js"></script>
+<script src="./js/game.js"></script>
+<script src="../../../shared/js/portal-navigation.js" data-portal-root="../../../index.html"></script>
+</body>
+</html>

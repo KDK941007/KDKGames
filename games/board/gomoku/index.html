@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<title>五目並べ</title>
+<link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+<main class="app">
+  <section class="card">
+    <header>
+      <h1>五目並べ</h1>
+      <div class="sub">先に指定した数の石を縦・横・斜めに並べた方が勝ち</div>
+    </header>
+
+    <section class="setup" id="setupPanel">
+      <div class="setup-grid">
+        <label class="field">
+          <span>何目並べ</span>
+          <div class="input-unit"><input id="targetInput" type="number" min="3" max="15" step="1" value="5" inputmode="numeric"><b>目</b></div>
+        </label>
+        <label class="field">
+          <span>持ち時間</span>
+          <select id="timerMode">
+            <option value="none" selected>無制限</option>
+            <option value="total">ゲーム全体</option>
+            <option value="turn">1ターン</option>
+          </select>
+        </label>
+        <label class="field timer-value-field hidden" id="timerValueField">
+          <span id="timerValueLabel">持ち時間</span>
+          <div class="input-unit"><input id="timerSeconds" type="number" min="1" step="1" inputmode="numeric" placeholder="秒数"><b>秒</b></div>
+        </label>
+      </div>
+      <div class="error" id="setupError"></div>
+      <button class="primary" id="startBtn" type="button">ゲーム開始</button>
+    </section>
+
+    <section class="game hidden" id="gamePanel">
+      <div class="status">
+        <div><small>現在のターン</small><strong id="turnText">● 黒</strong></div>
+        <div class="clock-box" id="clockBox"><small>残り時間</small><strong id="clockText">∞</strong></div>
+      </div>
+      <div class="total-clocks hidden" id="totalClocks">
+        <div><span>● 黒</span><b id="blackClock">∞</b></div>
+        <div><span>○ 白</span><b id="whiteClock">∞</b></div>
+      </div>
+      <div class="board-wrap"><div class="board" id="board" aria-label="五目並べ盤"></div></div>
+    </section>
+
+    <div class="actions">
+      <button id="restartBtn" type="button">最初から</button>
+      <button id="rulesBtn" type="button">ルール</button>
+      <button id="portalBtn" type="button">ポータルへ戻る</button>
+    </div>
+  </section>
+</main>
+
+<div class="overlay" id="rulesOverlay">
+  <div class="modal">
+    <h2>遊び方</h2>
+    <ol>
+      <li>黒から交互に空いているマスへ石を置きます。</li>
+      <li>開始前に3〜15目の範囲で勝利に必要な数を選べます。初期値は5目です。</li>
+      <li>縦・横・斜めのいずれかに指定数以上を連続して並べると勝ちです。</li>
+      <li>持ち時間は「無制限」「ゲーム全体」「1ターン」から選べます。</li>
+      <li>「ゲーム全体」は各プレイヤー個別の持ち時間が自分の手番中だけ減ります。</li>
+      <li>時間切れになったプレイヤーは負けです。</li>
+    </ol>
+    <button class="primary" id="closeRules" type="button">閉じる</button>
+  </div>
+</div>
+
+<div class="overlay" id="resultOverlay">
+  <div class="modal result">
+    <div class="result-mark" id="resultMark">●</div>
+    <h2 id="resultTitle">黒の勝ち！</h2>
+    <p id="resultReason"></p>
+    <button class="primary" id="closeResult" type="button">閉じる</button>
+  </div>
+</div>
+
+<script src="../../../shared/js/player-store.js"></script>
+<script src="./js/game.js"></script>
+<script src="../../../shared/js/portal-navigation.js" data-portal-root="../../../index.html"></script>
+</body>
+</html>
