@@ -221,36 +221,6 @@
   },
   {
     "schemaVersion": 1,
-    "id": "what-changed",
-    "name": "変わったところはどこ？",
-    "category": "other",
-    "categoryLabel": "OTHER",
-    "description": "絵を覚えて、変化したところを見つける観察・記憶ゲーム。",
-    "searchTerms": [
-      "変わったところはどこ",
-      "間違い探し",
-      "変化探し",
-      "観察",
-      "記憶",
-      "脳トレ",
-      "spot the difference",
-      "memory",
-      "other"
-    ],
-    "icon": "./games/other/what-changed/icon.svg",
-    "entry": "./index.html",
-    "available": true,
-    "path": "./games/other/what-changed/",
-    "localEntry": "./games/other/what-changed/index.html",
-    "assets": [
-      "./games/other/what-changed/css/style.css",
-      "./games/other/what-changed/icon.svg",
-      "./games/other/what-changed/index.html",
-      "./games/other/what-changed/js/game.js"
-    ]
-  },
-  {
-    "schemaVersion": 1,
     "id": "marubatsu",
     "name": "消える○×ゲーム",
     "category": "board",
