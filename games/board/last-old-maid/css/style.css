@@ -34,8 +34,11 @@ h1{margin:0 0 4px;font-size:26px}.sub{font-size:12px;color:var(--muted)}
 .phase-title small{display:block;margin-bottom:4px;color:#c8d5ce;font-size:10px;font-weight:900}
 .face-hand,.back-hand{display:flex;justify-content:center;align-items:flex-end;gap:18px;min-height:170px;margin:16px 0}
 .face-hand .playingCard,.back-hand .playingCard,.drawn-card .playingCard{width:96px;height:138px;border-radius:11px;font-size:20px;padding:9px}.face-hand .playingCard>span:first-child,.drawn-card .playingCard>span:first-child{align-self:flex-start;text-align:left}.face-hand .playingCard>.b,.drawn-card .playingCard>.b{text-align:right}
-.playingCard.joker{background:#fff;color:#111827;border:2px solid #d8b4fe;align-items:center;justify-content:center;padding:4px}
-.playingCard.joker .joker-art{display:block;width:96%;height:96%;background:transparent}
+.playingCard.joker{position:relative;background:#fff;color:#111827;border:2px solid #c4b5fd;align-items:center;justify-content:center;padding:0;overflow:hidden}
+.playingCard.joker .joker-figure{position:absolute;left:50%;top:50%;width:84%;height:78%;transform:translate(-50%,-50%);display:block;background:transparent}
+.playingCard.joker .joker-word{position:absolute;z-index:3;font-family:Georgia,"Times New Roman",serif;font-size:10px;font-weight:800;line-height:1;letter-spacing:.7px;color:#5b21b6;white-space:nowrap}
+.playingCard.joker .joker-word-top{top:6px;left:7px}
+.playingCard.joker .joker-word-bottom{right:7px;bottom:6px;transform:rotate(180deg)}
 .order-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
 .order-actions button{min-height:44px;border:1px solid rgba(255,255,255,.18);border-radius:11px;background:rgba(3,22,15,.72);color:var(--text);font-weight:900;font-size:12px}
 .order-actions button:disabled{opacity:.4;cursor:not-allowed}
@@ -67,7 +70,7 @@ h1{margin:0 0 4px;font-size:26px}.sub{font-size:12px;color:var(--muted)}
 .overlay.show{display:flex}
 .modal{width:min(100%,430px);max-height:90vh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:18px}
 .modal h2{margin:0 0 10px}.modal li,.modal p{color:#c7d1df;line-height:1.65;font-size:13px}
-.result{text-align:center}.result-joker{width:86px;height:104px;margin:0 auto 8px;display:flex;align-items:center;justify-content:center}.result-joker .joker-art{display:block;width:100%;height:100%;background:transparent}
+.result{text-align:center}.result-joker{width:86px;height:104px;margin:0 auto 8px;display:flex;align-items:center;justify-content:center}.result-joker .joker-figure{display:block;width:100%;height:100%;background:transparent}
 .confirm-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
 .confirm-actions button{min-height:46px;border-radius:12px;border:1px solid var(--line);background:#273351;color:var(--text);font-weight:900}
 .confirm-actions .primary{background:#f8fafc;color:#111827;border:0}
@@ -75,7 +78,7 @@ h1{margin:0 0 4px;font-size:26px}.sub{font-size:12px;color:var(--muted)}
   .setup,.play{padding-left:9px;padding-right:9px}
   .stage{min-height:390px;padding:12px}
   .face-hand,.back-hand{gap:8px;min-height:150px}
-  .face-hand .playingCard,.back-hand .playingCard,.drawn-card .playingCard{width:82px;height:118px;font-size:17px;padding:7px}.flip-shell{width:82px;height:118px}.playingCard.joker .joker-art{width:94%;height:94%}
+  .face-hand .playingCard,.back-hand .playingCard,.drawn-card .playingCard{width:82px;height:118px;font-size:17px;padding:7px}.flip-shell{width:82px;height:118px}.playingCard.joker .joker-word{font-size:8.5px}.playingCard.joker .joker-word-top{top:5px;left:6px}.playingCard.joker .joker-word-bottom{right:6px;bottom:5px}.playingCard.joker .joker-figure{width:84%;height:76%}
   .actions{gap:5px;padding-left:9px;padding-right:9px}
   .actions button{font-size:10px}
 }
