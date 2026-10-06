@@ -35,7 +35,7 @@ h1{margin:0 0 4px;font-size:26px}.sub{font-size:12px;color:var(--muted)}
 .face-hand,.back-hand{display:flex;justify-content:center;align-items:flex-end;gap:18px;min-height:170px;margin:16px 0}
 .face-hand .playingCard,.back-hand .playingCard,.drawn-card .playingCard{width:96px;height:138px;border-radius:11px;font-size:20px;padding:9px}.face-hand .playingCard>span:first-child,.drawn-card .playingCard>span:first-child{align-self:flex-start;text-align:left}.face-hand .playingCard>.b,.drawn-card .playingCard>.b{text-align:right}
 .playingCard.joker{background:#fff;color:#111827;border:2px solid #d8b4fe;align-items:center;justify-content:center;padding:4px}
-.playingCard.joker .joker-art{display:block;width:92%;height:92%;background:transparent}
+.playingCard.joker .joker-art{display:block;width:96%;height:96%;background:transparent}
 .order-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
 .order-actions button{min-height:44px;border:1px solid rgba(255,255,255,.18);border-radius:11px;background:rgba(3,22,15,.72);color:var(--text);font-weight:900;font-size:12px}
 .order-actions button:disabled{opacity:.4;cursor:not-allowed}
@@ -59,7 +59,7 @@ h1{margin:0 0 4px;font-size:26px}.sub{font-size:12px;color:var(--muted)}
 @keyframes victoryJoker{0%{transform:scale(.2) rotate(-25deg);opacity:0}55%{transform:scale(1.35) rotate(12deg);opacity:1}75%{transform:scale(.92) rotate(-6deg)}100%{transform:scale(1) rotate(0)}}
 @keyframes victoryTitle{0%,100%{transform:scale(1);text-shadow:0 0 0 rgba(251,191,36,0)}50%{transform:scale(1.08);text-shadow:0 0 24px rgba(251,191,36,.9)}}
 @keyframes confettiFall{0%{transform:translate3d(0,-20px,0) rotate(0deg);opacity:1}100%{transform:translate3d(var(--piece-drift),110vh,0) rotate(var(--piece-rotate));opacity:.9}}
-.reveal-panel b{display:block;color:var(--accent);font-size:16px;line-height:1.5}
+.reveal-panel b{min-height:24px;display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:16px;line-height:1.5}
 .actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:8px 14px 14px}
 .actions:has(#restartBtn.hidden){grid-template-columns:repeat(2,minmax(0,1fr))}
 .actions button{min-height:44px;border:1px solid var(--line);border-radius:12px;background:#273351;color:var(--text);font-weight:800;font-size:12px}
