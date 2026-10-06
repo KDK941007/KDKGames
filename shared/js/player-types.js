@@ -67,7 +67,7 @@
         });
         button.addEventListener('click',()=>{
           captureNames();
-          if(types[i]==='user'){types[i]='guest'}else if(types[i]==='guest'){types[i]='cpu'}else{types[i]='user';types=types.map((type,index)=>index===i?'user':type==='user'?'guest':type)}
+          if(types[i]==='user'){types[i]='guest';guestNames[i]=fallbackGuest(i)}else if(types[i]==='guest'){types[i]='cpu'}else{types[i]='user';types=types.map((type,index)=>{if(index===i)return'user';if(type==='user'){guestNames[index]=fallbackGuest(index);return'guest'}return type})}
           render();
           container.dispatchEvent(new CustomEvent('playertypechange',{detail:{index:i,type:types[i]}}));
         });
