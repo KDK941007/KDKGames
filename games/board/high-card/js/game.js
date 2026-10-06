@@ -8,7 +8,7 @@
   const cards=globalThis.MiniGamePlayingCards;
   const reducedMotion=globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
   let playerTypes=null;
-  let players=[],seatPositions=[],initialSeatPositions=[],fieldSlots=[],turnOrder=[],turnCursor=0,round=1,currentIndex=0,choices={},selectedIndex=-1,reveal=false,recorded=false,phase='setup',dealTimer=0,showdownTimer=0,celebrationTimer=0;
+  let players=[],seatPositions=[],initialSeatPositions=[],fieldSlots=[],turnOrder=[],turnCursor=0,round=1,currentIndex=0,choices={},selectedIndex=-1,reveal=false,recorded=false,phase='setup',dealTimer=0,showdownTimer=0,celebrationTimer=0,cpuTimer=0;
 
   function playerName(i){return playerTypes?.getDisplayName(i)||`PLAYER ${i+1}`}
   playerTypes=globalThis.MiniGamePlayerTypes.create(playerTypesEl,{count:Number(playerCountEl.value),items:i=>({symbol:SUITS[i]?.symbol||String(i+1),symbolClass:SUITS[i]?.red?'red':''}),guestName:i=>`PLAYER ${i+1}`});
@@ -50,7 +50,7 @@
     const wait=reducedMotion?0:(players.length*5-1)*90+520;
     dealTimer=setTimeout(()=>{dealTimer=0;showReady()},wait);
   }
-  function clearTimers(){if(dealTimer){clearTimeout(dealTimer);dealTimer=0}if(showdownTimer){clearTimeout(showdownTimer);showdownTimer=0}if(celebrationTimer){clearTimeout(celebrationTimer);celebrationTimer=0}}
+  function clearTimers(){if(dealTimer){clearTimeout(dealTimer);dealTimer=0}if(showdownTimer){clearTimeout(showdownTimer);showdownTimer=0}if(celebrationTimer){clearTimeout(celebrationTimer);celebrationTimer=0}if(cpuTimer){clearTimeout(cpuTimer);cpuTimer=0}}
   function returnToSetup(){
     clearTimers();phase='setup';tableBoard.classList.remove('showdown');showdownOverlay.classList.remove('active');winnerCelebration.classList.add('hidden');
     setupPanel.classList.remove('hidden');playPanel.classList.add('hidden');restartBtn.classList.add('hidden');restartOverlay.classList.remove('show');
@@ -67,14 +67,14 @@
       const handHtml=p.hand.map((rank,cardIndex)=>{
         const face=cards.cardHTML(cardObject(i,rank),{back:!showFaces});
         const cls=['card-slot'];
-        if(showFaces)cls.push('selectable');
+        if(showFaces&&!isCpu(i))cls.push('selectable');
         if(showFaces&&selectedIndex===cardIndex)cls.push('selected');
         if(dealing)cls.push('dealing');
         const delay=dealing?(cardIndex*players.length+i)*90:0;
         return `<div class="${cls.join(' ')}" data-card-index="${cardIndex}" style="animation-delay:${delay}ms">${face}</div>`;
       }).join('');
       el.innerHTML=`<div class="station-hand">${handHtml}</div><div class="station-label">${SUITS[i].symbol} ${playerName(i)}</div>`;
-      if(showFaces)el.querySelectorAll('.card-slot').forEach(slot=>slot.addEventListener('click',()=>selectCard(+slot.dataset.cardIndex)));
+      if(showFaces&&!isCpu(i))el.querySelectorAll('.card-slot').forEach(slot=>slot.addEventListener('click',()=>selectCard(+slot.dataset.cardIndex)));
     });
     renderCenterCards();
   }
@@ -107,7 +107,11 @@
     roundSummary.classList.add('hidden');roundSummary.classList.remove('win');finalResultPanel.classList.add('hidden');selectionPreview.classList.add('hidden');battleReadyPanel.classList.add('hidden');centerMessage.classList.add('hidden');winnerCelebration.classList.add('hidden');winnerCelebration.classList.remove('draw');readyPanel.classList.remove('hidden');
     readySuit.textContent=SUITS[currentIndex].symbol;readySuit.classList.toggle('red',SUITS[currentIndex].red);readyTitle.textContent=`${playerName(currentIndex)} の番です`;
     renderTable();
+    scheduleCpuTurn();
   }
+  function isCpu(i=currentIndex){return playerTypes.getType(i)==='cpu'}
+  function cpuCardIndex(){const hand=players[currentIndex].hand;if(!hand.length)return-1;const roundsLeft=6-round,score=players[currentIndex].score,top=Math.max(...players.map(p=>p.score)),behind=top-score;let best=-Infinity,bestIndexes=[];hand.forEach((rank,i)=>{let value=POWER[rank]*10;if(rank==='10')value+=hand.includes('A')?8:2;if(rank==='A'&&hand.includes('10'))value-=3;if(behind>0&&roundsLeft<=behind+1)value+=POWER[rank]*4;if(round===5)value+=POWER[rank]*6;if(value>best){best=value;bestIndexes=[i]}else if(value===best)bestIndexes.push(i)});return bestIndexes[Math.floor(Math.random()*bestIndexes.length)]}
+  function scheduleCpuTurn(){if(cpuTimer){clearTimeout(cpuTimer);cpuTimer=0}if(phase!=='ready'||!isCpu())return;cpuTimer=setTimeout(()=>{cpuTimer=0;if(phase!=='ready'||!isCpu())return;showChoose();const index=cpuCardIndex();if(index<0)return;selectedIndex=index;renderTable();cpuTimer=setTimeout(()=>{cpuTimer=0;confirmCard()},450)},500)}
   function showChoose(){
     setPhase('choosing','カード選択');
     readyPanel.classList.add('hidden');selectionPreview.classList.add('hidden');
@@ -115,7 +119,7 @@
     renderTable();
   }
   function selectCard(index){
-    if(phase!=='choosing'||index<0||index>=players[currentIndex].hand.length)return;
+    if(phase!=='choosing'||isCpu()||index<0||index>=players[currentIndex].hand.length)return;
     selectedIndex=index;renderTable();
     const rank=players[currentIndex].hand[index];
     previewCard.innerHTML=cards.cardHTML(cardObject(currentIndex,rank));
@@ -137,6 +141,7 @@
     seatPositions=[...initialSeatPositions];
     hideCenterPanels();battleReadyPanel.classList.remove('hidden');
     renderTable();
+    if(playerTypes.snapshot().every(type=>type==='cpu')){cpuTimer=setTimeout(()=>{cpuTimer=0;resolveBattle()},500)}
   }
   function resolveBattle(){
     if(phase!=='battle-ready')return;
@@ -175,7 +180,7 @@
     }
     nextRoundBtn.textContent=round>=5?'最終結果へ':'次のラウンドへ';
     renderScores();renderCenterCards({resolved:true,winners,allTied});
-    if(celebrationTimer)clearTimeout(celebrationTimer);celebrationTimer=setTimeout(()=>{celebrationTimer=0;winnerCelebration.classList.add('hidden')},1500);
+    if(celebrationTimer)clearTimeout(celebrationTimer);celebrationTimer=setTimeout(()=>{celebrationTimer=0;winnerCelebration.classList.add('hidden');if(playerTypes.snapshot().every(type=>type==='cpu')){cpuTimer=setTimeout(()=>{cpuTimer=0;nextRound()},450)}},1500);
   }
   function nextRound(){
     if(phase!=='result')return;
