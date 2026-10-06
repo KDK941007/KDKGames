@@ -100,7 +100,23 @@
     battleReadyPanel.classList.add('hidden');
     centerMessage.classList.add('hidden');
   }
+  function autoSelectLastCards(){
+    if(!players.length||!players.every(player=>player.hand.length===1))return false;
+    choices={};
+    turnOrder.forEach((playerIndex,orderIndex)=>{
+      const rank=players[playerIndex].hand[0];
+      players[playerIndex].hand.splice(0,1);
+      choices[playerIndex]={rank,fresh:true,fieldPosition:fieldSlots[orderIndex]};
+    });
+    turnCursor=turnOrder.length-1;
+    currentIndex=turnOrder[turnCursor];
+    selectedIndex=-1;
+    roundText.textContent=`ROUND ${round} / 5`;
+    showBattleReady();
+    return true;
+  }
   function showReady(){
+    if(autoSelectLastCards())return;
     selectedIndex=-1;updateSeatPositions();
     setPhase('ready','準備');
     roundText.textContent=`ROUND ${round} / 5`;
