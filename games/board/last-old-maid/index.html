@@ -46,7 +46,6 @@
 
       <section class="stage">
         <div class="ready-panel" id="readyPanel">
-          <div class="ready-icon" id="readyIcon">↕</div>
           <h2 id="readyTitle">PLAYER 2 の番です</h2>
           <p id="readyText">手札の順番を決めます。画面を本人だけが見られる状態にしてください。</p>
           <button class="primary" id="readyBtn" type="button">準備OK</button>
@@ -111,7 +110,7 @@
 
 <div class="overlay" id="resultOverlay">
   <div class="modal result">
-    <div class="result-joker">🃏</div>
+    <div class="result-joker" id="resultJoker" aria-hidden="true"></div>
     <h2 id="resultTitle">PLAYER 1 の勝ち！</h2>
     <p id="resultText"></p>
     <button class="primary" id="resultRestartBtn" type="button">最初から</button>

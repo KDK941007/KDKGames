@@ -2,7 +2,7 @@
   'use strict';
 
   const $=id=>document.getElementById(id);
-  const setupPanel=$('setupPanel'),playPanel=$('playPanel'),playerTypesEl=$('playerTypes'),randomOrderToggle=$('randomOrderToggle'),startBtn=$('startBtn'),restartBtn=$('restartBtn'),rulesBtn=$('rulesBtn'),rulesOverlay=$('rulesOverlay'),closeRules=$('closeRules'),restartOverlay=$('restartOverlay'),cancelRestart=$('cancelRestart'),confirmRestart=$('confirmRestart'),resultOverlay=$('resultOverlay'),resultTitle=$('resultTitle'),resultText=$('resultText'),resultRestartBtn=$('resultRestartBtn'),drawerName=$('drawerName'),holderName=$('holderName'),readyPanel=$('readyPanel'),readyIcon=$('readyIcon'),readyTitle=$('readyTitle'),readyText=$('readyText'),readyBtn=$('readyBtn'),orderPanel=$('orderPanel'),orderTitle=$('orderTitle'),orderHand=$('orderHand'),swapBtn=$('swapBtn'),shuffleBtn=$('shuffleBtn'),orderHelper=$('orderHelper'),confirmOrderBtn=$('confirmOrderBtn'),drawPanel=$('drawPanel'),drawTitle=$('drawTitle'),drawHand=$('drawHand'),confirmDrawBtn=$('confirmDrawBtn'),revealPanel=$('revealPanel'),drawnCard=$('drawnCard'),revealText=$('revealText');
+  const setupPanel=$('setupPanel'),playPanel=$('playPanel'),playerTypesEl=$('playerTypes'),randomOrderToggle=$('randomOrderToggle'),startBtn=$('startBtn'),restartBtn=$('restartBtn'),rulesBtn=$('rulesBtn'),rulesOverlay=$('rulesOverlay'),closeRules=$('closeRules'),restartOverlay=$('restartOverlay'),cancelRestart=$('cancelRestart'),confirmRestart=$('confirmRestart'),resultOverlay=$('resultOverlay'),resultTitle=$('resultTitle'),resultText=$('resultText'),resultRestartBtn=$('resultRestartBtn'),resultJoker=$('resultJoker'),drawerName=$('drawerName'),holderName=$('holderName'),readyPanel=$('readyPanel'),readyTitle=$('readyTitle'),readyText=$('readyText'),readyBtn=$('readyBtn'),orderPanel=$('orderPanel'),orderTitle=$('orderTitle'),orderHand=$('orderHand'),swapBtn=$('swapBtn'),shuffleBtn=$('shuffleBtn'),orderHelper=$('orderHelper'),confirmOrderBtn=$('confirmOrderBtn'),drawPanel=$('drawPanel'),drawTitle=$('drawTitle'),drawHand=$('drawHand'),confirmDrawBtn=$('confirmDrawBtn'),revealPanel=$('revealPanel'),drawnCard=$('drawnCard'),revealText=$('revealText');
 
   const store=globalThis.MiniGamePortalPlayerStore;
   const cards=globalThis.MiniGamePlayingCards;
@@ -41,9 +41,21 @@
 
   function isJoker(card){return card?.joker===true}
   function cardLabel(card){return isJoker(card)?'ジョーカー':`${card.rank}${card.suit}`}
+  function jokerArt(){
+    return '<svg class="joker-art" viewBox="0 0 100 130" role="img" aria-label="ジョーカー" xmlns="http://www.w3.org/2000/svg">'
+      +'<path d="M18 40C21 21 33 11 49 11c16 0 29 10 33 29-8-8-16-11-23-10 3 5 4 10 3 15-8-7-16-10-24-8-6 2-13 7-20 13 0-4 0-7 0-10z" fill="#7c3aed"/>'
+      +'<circle cx="20" cy="39" r="7" fill="#fbbf24"/><circle cx="50" cy="16" r="7" fill="#fb7185"/><circle cx="80" cy="39" r="7" fill="#60a5fa"/>'
+      +'<path d="M26 49c4-9 13-15 24-15s20 6 24 15v20c0 17-10 31-24 31S26 86 26 69V49z" fill="#fde68a" stroke="#6b21a8" stroke-width="3"/>'
+      +'<path d="M34 57c4-5 9-7 16-7s12 2 16 7" fill="none" stroke="#6b21a8" stroke-width="3" stroke-linecap="round"/>'
+      +'<circle cx="40" cy="67" r="4" fill="#111827"/><circle cx="60" cy="67" r="4" fill="#111827"/>'
+      +'<path d="M41 82c6 5 12 5 18 0" fill="none" stroke="#dc2626" stroke-width="4" stroke-linecap="round"/>'
+      +'<path d="M29 98l-11 21h25l7-13 7 13h25L71 98c-6 6-13 9-21 9s-15-3-21-9z" fill="#7c3aed"/>'
+      +'<circle cx="24" cy="117" r="5" fill="#fbbf24"/><circle cx="76" cy="117" r="5" fill="#fb7185"/>'
+      +'</svg>';
+  }
   function cardFace(card){
     if(isJoker(card)){
-      return '<div class="playingCard joker" aria-label="ジョーカー"><span>JOKER</span><span class="joker-center">🃏</span><span class="b">JOKER</span></div>';
+      return '<div class="playingCard joker" aria-label="ジョーカー">'+jokerArt()+'</div>';
     }
     return cards.cardHTML(card,{ariaLabel:cardLabel(card)});
   }
@@ -80,11 +92,9 @@
     readyPanel.classList.remove('hidden');
 
     if(purpose==='order'){
-      readyIcon.textContent='↕';
       readyTitle.textContent=`${playerName(holder)} の番です`;
       readyText.textContent='手札の順番を決めます。画面を本人だけが見られる状態にしてください。';
     }else{
-      readyIcon.textContent='🃏';
       readyTitle.textContent=`${playerName(drawer)} の番です`;
       readyText.textContent='相手のカードを1枚引きます。画面を本人だけが見られる状態にしてください。';
     }
@@ -258,6 +268,8 @@
     restartOverlay.classList.remove('show');
     hideStages();
   }
+
+  resultJoker.innerHTML=jokerArt();
 
   randomOrderToggle.addEventListener('click',()=>{
     const next=randomOrderToggle.getAttribute('aria-pressed')!=='true';
