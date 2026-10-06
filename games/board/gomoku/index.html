@@ -50,6 +50,7 @@
         <div><span>○ 白</span><b id="whiteClock">∞</b></div>
       </div>
       <div class="board-wrap" id="boardWrap"><div class="board" id="board" aria-label="五目並べ盤"></div></div>
+      <button class="primary move-confirm" id="confirmMoveBtn" type="button" disabled>この手で決定</button>
     </section>
 
     <div class="actions">
@@ -64,7 +65,7 @@
   <div class="modal">
     <h2>遊び方</h2>
     <ol>
-      <li>黒から交互に空いているマスへ石を置きます。</li>
+      <li>黒から交互に空いているマスを選び、仮置きした石を確認してから「この手で決定」を押します。</li>
       <li>開始前に3〜15目の範囲で勝利に必要な数を選べます。初期値は5目です。</li>
       <li>縦・横・斜めのいずれかに指定数以上を連続して並べると勝ちです。</li>
       <li>持ち時間は「無制限」「ゲーム全体」「1ターン」から選べます。</li>

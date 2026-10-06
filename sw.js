@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mini-game-portal-v13';
+const CACHE_NAME = 'mini-game-portal-v14';
 
 const CORE_PATHS = [
   './',

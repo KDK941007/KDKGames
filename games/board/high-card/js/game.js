@@ -149,8 +149,15 @@
     showdownTimer=setTimeout(()=>{showdownTimer=0;tableBoard.classList.remove('showdown');showdownOverlay.classList.remove('active');showdownOverlay.setAttribute('aria-hidden','true');showBattleResult()},wait);
   }
   function showBattleResult(){
-    const max=Math.max(...Object.values(choices).map(v=>POWER[v.rank]));
-    const winners=Object.keys(choices).map(Number).filter(i=>POWER[choices[i].rank]===max);
+    const choiceIndexes=Object.keys(choices).map(Number);
+    const ranks=choiceIndexes.map(i=>choices[i].rank);
+    let winners;
+    if(ranks.includes('A')&&ranks.includes('10')){
+      winners=choiceIndexes.filter(i=>choices[i].rank==='10');
+    }else{
+      const max=Math.max(...choiceIndexes.map(i=>POWER[choices[i].rank]));
+      winners=choiceIndexes.filter(i=>POWER[choices[i].rank]===max);
+    }
     const allTied=winners.length===players.length;
     if(!allTied)winners.forEach(i=>players[i].score++);
     setPhase('result','結果');
