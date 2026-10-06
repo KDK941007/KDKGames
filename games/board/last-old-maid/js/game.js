@@ -2,7 +2,7 @@
   'use strict';
 
   const $=id=>document.getElementById(id);
-  const setupPanel=$('setupPanel'),playPanel=$('playPanel'),playerTypesEl=$('playerTypes'),randomOrderToggle=$('randomOrderToggle'),startBtn=$('startBtn'),restartBtn=$('restartBtn'),rulesBtn=$('rulesBtn'),rulesOverlay=$('rulesOverlay'),closeRules=$('closeRules'),restartOverlay=$('restartOverlay'),cancelRestart=$('cancelRestart'),confirmRestart=$('confirmRestart'),resultOverlay=$('resultOverlay'),resultTitle=$('resultTitle'),resultText=$('resultText'),playAgainBtn=$('playAgainBtn'),drawerName=$('drawerName'),holderName=$('holderName'),readyPanel=$('readyPanel'),readyIcon=$('readyIcon'),readyTitle=$('readyTitle'),readyText=$('readyText'),readyBtn=$('readyBtn'),orderPanel=$('orderPanel'),orderTitle=$('orderTitle'),orderHand=$('orderHand'),swapBtn=$('swapBtn'),shuffleBtn=$('shuffleBtn'),orderHelper=$('orderHelper'),confirmOrderBtn=$('confirmOrderBtn'),drawPanel=$('drawPanel'),drawTitle=$('drawTitle'),drawHand=$('drawHand'),confirmDrawBtn=$('confirmDrawBtn'),revealPanel=$('revealPanel'),drawnCard=$('drawnCard'),revealText=$('revealText');
+  const setupPanel=$('setupPanel'),playPanel=$('playPanel'),playerTypesEl=$('playerTypes'),randomOrderToggle=$('randomOrderToggle'),startBtn=$('startBtn'),restartBtn=$('restartBtn'),rulesBtn=$('rulesBtn'),rulesOverlay=$('rulesOverlay'),closeRules=$('closeRules'),restartOverlay=$('restartOverlay'),cancelRestart=$('cancelRestart'),confirmRestart=$('confirmRestart'),resultOverlay=$('resultOverlay'),resultTitle=$('resultTitle'),resultText=$('resultText'),resultRestartBtn=$('resultRestartBtn'),drawerName=$('drawerName'),holderName=$('holderName'),readyPanel=$('readyPanel'),readyIcon=$('readyIcon'),readyTitle=$('readyTitle'),readyText=$('readyText'),readyBtn=$('readyBtn'),orderPanel=$('orderPanel'),orderTitle=$('orderTitle'),orderHand=$('orderHand'),swapBtn=$('swapBtn'),shuffleBtn=$('shuffleBtn'),orderHelper=$('orderHelper'),confirmOrderBtn=$('confirmOrderBtn'),drawPanel=$('drawPanel'),drawTitle=$('drawTitle'),drawHand=$('drawHand'),confirmDrawBtn=$('confirmDrawBtn'),revealPanel=$('revealPanel'),drawnCard=$('drawnCard'),revealText=$('revealText');
 
   const store=globalThis.MiniGamePortalPlayerStore;
   const cards=globalThis.MiniGamePlayingCards;
@@ -67,12 +67,10 @@
       {rank,suit:suits[0],joker:false},
       {rank,suit:suits[1],joker:false}
     ];
-    const twoCardPlayer=Math.random()<0.5?0:1;
-    const oneCardPlayer=other(twoCardPlayer);
     const pairCards=shuffle(pair);
     hands=[[],[]];
-    hands[twoCardPlayer]=shuffle([{rank:'JOKER',suit:'',joker:true},pairCards[0]]);
-    hands[oneCardPlayer]=[pairCards[1]];
+    hands[holder]=shuffle([{rank:'JOKER',suit:'',joker:true},pairCards[0]]);
+    hands[drawer]=[pairCards[1]];
   }
 
   function showReady(purpose){
@@ -171,7 +169,7 @@
     phase='reveal';
     hideStages();
     revealPanel.classList.remove('hidden');
-    drawnCard.innerHTML=cardFace(card);
+    drawnCard.innerHTML='<div class="flip-shell"><div class="flip-inner"><div class="flip-face flip-back">'+cards.cardHTML({}, {back:true})+'</div><div class="flip-face flip-front">'+cardFace(card)+'</div></div></div>';
     revealText.textContent=madePair?'同じ数字が揃いました！':'ジョーカーを引きました';
     updateStatus();
 
@@ -186,7 +184,29 @@
       drawer=holder;
       holder=previousDrawer;
       showReady('order');
-    },1100);
+    },1750);
+  }
+
+  function clearCelebration(){
+    resultOverlay.classList.remove('victory');
+    resultOverlay.querySelectorAll('.confetti-piece').forEach(el=>el.remove());
+  }
+
+  function runCelebration(){
+    clearCelebration();
+    resultOverlay.classList.add('victory');
+    const colors=['#fbbf24','#fb7185','#60a5fa','#34d399','#c084fc','#f8fafc'];
+    for(let i=0;i<46;i++){
+      const piece=document.createElement('span');
+      piece.className='confetti-piece';
+      piece.style.setProperty('--piece-x',Math.random()*100+'%');
+      piece.style.setProperty('--piece-drift',(Math.random()*180-90)+'px');
+      piece.style.setProperty('--piece-rotate',(Math.random()*1080-540)+'deg');
+      piece.style.setProperty('--piece-delay',(Math.random()*.5)+'s');
+      piece.style.setProperty('--piece-duration',(1.8+Math.random()*1.5)+'s');
+      piece.style.setProperty('--piece-color',colors[i%colors.length]);
+      resultOverlay.appendChild(piece);
+    }
   }
 
   function finishGame(){
@@ -198,6 +218,7 @@
     resultTitle.textContent=`${playerName(winner)} の勝ち！`;
     resultText.textContent=`${playerName(jokerOwner)} にジョーカーが残りました。`;
     resultOverlay.classList.add('show');
+    runCelebration();
   }
 
   function recordPlay(){
@@ -209,12 +230,14 @@
 
   function startGame(){
     clearRevealTimer();
-    createLastThree();
+    clearCelebration();
     const random=randomOrderToggle.getAttribute('aria-pressed')==='true';
     drawer=random?(Math.random()<0.5?0:1):0;
     holder=other(drawer);
+    createLastThree();
     selectedDraw=-1;
     recorded=false;
+    clearCelebration();
     resultOverlay.classList.remove('show');
     restartOverlay.classList.remove('show');
     setupPanel.classList.add('hidden');
@@ -271,12 +294,9 @@
   cancelRestart.addEventListener('click',()=>restartOverlay.classList.remove('show'));
   confirmRestart.addEventListener('click',returnToSetup);
   restartOverlay.addEventListener('click',event=>{if(event.target===restartOverlay)restartOverlay.classList.remove('show')});
-  playAgainBtn.addEventListener('click',()=>{
-    resultOverlay.classList.remove('show');
-    startGame();
-  });
+  resultRestartBtn.addEventListener('click',returnToSetup);
   rulesBtn.addEventListener('click',()=>rulesOverlay.classList.add('show'));
   closeRules.addEventListener('click',()=>rulesOverlay.classList.remove('show'));
   rulesOverlay.addEventListener('click',event=>{if(event.target===rulesOverlay)rulesOverlay.classList.remove('show')});
-  window.addEventListener('pagehide',clearRevealTimer);
+  window.addEventListener('pagehide',()=>{clearRevealTimer();clearCelebration()});
 })();
