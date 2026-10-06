@@ -357,7 +357,7 @@ function drawSpecified(rank){
 }
 function value(h){let v=0,a=0;for(const c of h){if(c.r==='A'){v+=11;a++}else if(['J','Q','K'].includes(c.r))v+=10;else v+=+c.r}while(v>21&&a){v-=10;a--}return v}
 function natural(h,splitOrigin=false){return !splitOrigin&&h.length===2&&value(h)===21}
-function cardHTML(c,back=false){let fresh=!seenCards.has(c.id),cls=fresh?' newCard':'';if(back)return `<div class="playingCard back${cls}" data-card="${c.id}"></div>`;let red=c.s==='♥'||c.s==='♦';return `<div class="playingCard ${red?'red':''}${cls}" data-card="${c.id}"><span>${c.r}${c.s}</span><span class="b">${c.r}${c.s}</span></div>`}
+function cardHTML(c,back=false){let fresh=!seenCards.has(c.id);return globalThis.MiniGamePlayingCards.cardHTML(c,{back,className:fresh?'newCard':'',dataCard:c.id})}
 function hiLoCardValue(card){
   if(!card)return 0;
   if(['2','3','4','5','6'].includes(card.r))return 1;

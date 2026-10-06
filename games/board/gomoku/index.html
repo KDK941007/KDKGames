@@ -47,11 +47,11 @@
         <div><span>● 黒</span><b id="blackClock">∞</b></div>
         <div><span>○ 白</span><b id="whiteClock">∞</b></div>
       </div>
-      <div class="board-wrap"><div class="board" id="board" aria-label="五目並べ盤"></div></div>
+      <div class="board-wrap" id="boardWrap"><div class="board" id="board" aria-label="五目並べ盤"></div></div>
     </section>
 
     <div class="actions">
-      <button id="restartBtn" type="button">最初から</button>
+      <button id="restartBtn" class="hidden" type="button">最初から</button>
       <button id="rulesBtn" type="button">ルール</button>
       <button id="portalBtn" type="button">ポータルへ戻る</button>
     </div>
@@ -68,6 +68,7 @@
       <li>持ち時間は「無制限」「ゲーム全体」「1ターン」から選べます。</li>
       <li>「ゲーム全体」は各プレイヤー個別の持ち時間が自分の手番中だけ減ります。</li>
       <li>時間切れになったプレイヤーは負けです。</li>
+      <li>ゲーム中は盤面を2本指でつまんで拡大・縮小できます。</li>
     </ol>
     <button class="primary" id="closeRules" type="button">閉じる</button>
   </div>
@@ -82,7 +83,19 @@
   </div>
 </div>
 
+<div class="overlay" id="restartOverlay">
+  <div class="modal">
+    <h2>最初からやり直す</h2>
+    <p>現在のゲーム内容を破棄してスタート画面へ戻りますか？</p>
+    <div class="confirm-actions">
+      <button id="cancelRestart" type="button">キャンセル</button>
+      <button id="confirmRestart" class="primary" type="button">最初から</button>
+    </div>
+  </div>
+</div>
+
 <script src="../../../shared/js/player-store.js"></script>
+<script src="../../../shared/js/pinch-zoom.js"></script>
 <script src="./js/game.js"></script>
 <script src="../../../shared/js/portal-navigation.js" data-portal-root="../../../index.html"></script>
 </body>

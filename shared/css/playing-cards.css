@@ -1,0 +1,30 @@
+.playingCard{
+  width:57px;
+  height:82px;
+  border-radius:8px;
+  background:#fff;
+  color:#111;
+  box-shadow:0 4px 12px rgba(0,0,0,.34);
+  padding:6px;
+  font-weight:950;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  transform-origin:center;
+  position:relative;
+  overflow:hidden;
+}
+.playingCard.red{color:#c22323}
+.playingCard.back{
+  background:repeating-linear-gradient(45deg,#183d69,#183d69 6px,#d7bc65 6px,#d7bc65 9px);
+  border:3px solid #fff;
+  color:#fff;
+}
+.playingCard.back::after{
+  content:"";
+  position:absolute;
+  inset:5px;
+  border:1px solid rgba(255,255,255,.6);
+  border-radius:4px;
+}
+.playingCard .b{transform:rotate(180deg);align-self:flex-end}
