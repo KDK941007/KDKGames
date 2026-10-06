@@ -4,7 +4,7 @@
   function profileName(){
     try{return store?.profile?.()?.displayName||'PLAYER'}catch(_){return 'PLAYER'}
   }
-  function create(container,{count=2,items=[],defaultUserIndex=0,guestName=i=>`GUEST ${i+1}`,maxNameLength=10}={}){
+  function create(container,{count=2,items=[],defaultUserIndex=0,guestName=i=>`GUEST ${i+1}`,maxNameLength=10,cpuDifficulty=true}={}){
     if(!container)throw new Error('player type container is required');
     let types=[],guestNames=[],cpuDifficulties=[];
     let currentCount=0;
@@ -72,7 +72,7 @@
           container.dispatchEvent(new CustomEvent('playertypechange',{detail:{index:i,type:types[i]}}));
         });
         wrap.append(button,input);
-        if(type==='cpu'){
+        if(type==='cpu'&&cpuDifficulty){
           const select=document.createElement('select');select.className='mg-cpu-difficulty';select.dataset.playerIndex=String(i);select.setAttribute('aria-label',`CPU ${i+1}の強さ`);
           [['weak','弱い'],['normal','普通'],['strong','強い'],['max','最強']].forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;select.appendChild(option)});
           select.value=cpuDifficulties[i]||'normal';
