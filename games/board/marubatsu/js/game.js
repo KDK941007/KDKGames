@@ -54,6 +54,7 @@
   const oPlayerMode = document.getElementById('oPlayerMode');
   const xPlayerMode = document.getElementById('xPlayerMode');
   const playerTypes={O:'user',X:'guest'};
+  const cpuDifficulty={O:document.getElementById('oCpuDifficulty'),X:document.getElementById('xCpuDifficulty')};
 
   function getPlayerType(side){ return playerTypes[side]||'guest'; }
   function refreshPlayerTypes(changed=null) {
@@ -68,6 +69,7 @@
       btn.setAttribute('aria-pressed',isUser?'true':'false');
       modeEl.textContent=isUser?'USER':isCpu?'CPU':'GUEST';
       nameEl.textContent=isUser?profile.displayName:isCpu?'CPU':'一時プレイ';
+      cpuDifficulty[side].classList.toggle('hidden',!isCpu);
     };
     apply('O',oPlayerTypeBtn,oPlayerName,oPlayerMode);
     apply('X',xPlayerTypeBtn,xPlayerName,xPlayerMode);
@@ -278,6 +280,14 @@
     updateTurnTimer();
   }
 
+  function isCpuTurn(){return !!current&&getPlayerType(current)==='cpu'}
+  function simulatedMove(state,hist,index,player){const b=[...state],h={X:[...hist.X],O:[...hist.O]};if(h[player].length>=3)b[h[player].shift()]=null;b[index]=player;h[player].push(index);return{board:b,history:h}}
+  function winOn(state,player){return WIN_LINES.some(line=>line.every(i=>state[i]===player))}
+  function heuristic(state,player){const opp=player==='X'?'O':'X';let score=0;for(const line of WIN_LINES){const mine=line.filter(i=>state[i]===player).length,theirs=line.filter(i=>state[i]===opp).length;if(!theirs)score+=mine===2?18:mine===1?4:1;if(!mine)score-=theirs===2?20:theirs===1?4:1}if(state[4]===player)score+=3;if(state[4]===opp)score-=3;return score}
+  function minimax(state,hist,turn,cpu,depth){const opp=cpu==='X'?'O':'X';if(winOn(state,cpu))return 10000+depth;if(winOn(state,opp))return-10000-depth;if(depth<=0)return heuristic(state,cpu);const moves=state.map((v,i)=>v?null:i).filter(i=>i!==null);if(!moves.length)return heuristic(state,cpu);const maximizing=turn===cpu;let best=maximizing?-Infinity:Infinity;for(const i of moves){const next=simulatedMove(state,hist,i,turn);const value=minimax(next.board,next.history,turn==='X'?'O':'X',cpu,depth-1);best=maximizing?Math.max(best,value):Math.min(best,value)}return best}
+  function chooseCpuMove(){const moves=board.map((v,i)=>v?null:i).filter(i=>i!==null);if(!moves.length)return undefined;const level=cpuDifficulty[current]?.value||'normal';if(level==='weak')return moves[Math.floor(Math.random()*moves.length)];const depth=level==='normal'?2:level==='strong'?5:8;let best=-Infinity,bestMoves=[];for(const i of moves){const next=simulatedMove(board,history,i,current);const score=winOn(next.board,current)?100000:minimax(next.board,next.history,current==='X'?'O':'X',current,depth);if(score>best){best=score;bestMoves=[i]}else if(score===best)bestMoves.push(i)}return bestMoves[Math.floor(Math.random()*bestMoves.length)]}
+  function scheduleCpuTurn(){if(cpuTimer){clearTimeout(cpuTimer);cpuTimer=0}if(!isCpuTurn()||gameOver)return;cpuTimer=setTimeout(()=>{cpuTimer=0;if(!isCpuTurn()||gameOver)return;const move=chooseCpuMove();if(Number.isInteger(move))play(move,true)},500)}
+
   function stopTurnTimer() {
     if (timerRaf) {
       cancelAnimationFrame(timerRaf);
@@ -400,6 +410,7 @@
     current = playedBy === 'X' ? 'O' : 'X';
     render();
     startTurnTimer();
+    scheduleCpuTurn();
     scheduleCpuTurn();
   }
 
