@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#111827">
 <title>オセロ</title>
+<link rel="stylesheet" href="../../../shared/css/player-types.css">
 <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
@@ -13,6 +14,7 @@
     <header><h1>オセロ</h1><div class="sub">盤面サイズと持ち時間を選べる2人対戦</div></header>
 
     <section class="setup" id="setupPanel">
+      <div id="playerTypes" class="mg-player-types" aria-label="プレイヤータイプ"></div>
       <div class="setup-grid">
         <label class="field"><span>盤面サイズ</span><div class="input-unit"><input id="boardSizeInput" type="number" min="4" max="16" step="2" value="8" inputmode="numeric"><b>× 同数</b></div></label>
         <label class="field"><span>持ち時間</span><select id="timerMode"><option value="none" selected>無制限</option><option value="total">ゲーム全体</option><option value="turn">1ターン</option></select></label>
@@ -40,10 +42,11 @@
 </main>
 
 <div class="overlay" id="rulesOverlay"><div class="modal"><h2>遊び方</h2><ol><li>黒が先攻です。</li><li>相手の石を自分の石で挟めるマスにだけ置けます。</li><li>置いた石と自分の石で挟んだ相手の石は、順番にひっくり返って自分の色になります。</li><li>置ける場所がない場合は自動でパスします。</li><li>両者とも置けなくなるか盤面が埋まると終了し、石の多い方が勝ちです。</li><li>盤面は4×4〜16×16の偶数サイズを選べます。初期値は通常の8×8です。</li><li>持ち時間は「無制限」「ゲーム全体」「1ターン」から選べます。時間切れは負けです。</li><li>ゲーム中は盤面を2本指でつまんで拡大・縮小できます。</li></ol><button class="primary" id="closeRules" type="button">閉じる</button></div></div>
-<div class="overlay" id="resultOverlay"><div class="modal result"><div class="result-mark" id="resultMark">●</div><h2 id="resultTitle">黒の勝ち！</h2><p id="resultReason"></p><button class="primary" id="closeResult" type="button">閉じる</button></div></div>
+<div class="overlay" id="resultOverlay"><div class="modal result"><div class="result-disc black" id="resultMark" aria-label="黒"></div><h2 id="resultTitle">黒の勝ち！</h2><p id="resultReason"></p><button class="primary" id="closeResult" type="button">閉じる</button></div></div>
 <div class="overlay" id="restartOverlay"><div class="modal"><h2>最初からやり直す</h2><p>現在のゲーム内容を破棄してスタート画面へ戻りますか？</p><div class="confirm-actions"><button id="cancelRestart" type="button">キャンセル</button><button id="confirmRestart" class="primary" type="button">最初から</button></div></div></div>
 
 <script src="../../../shared/js/player-store.js"></script>
+<script src="../../../shared/js/player-types.js"></script>
 <script src="../../../shared/js/pinch-zoom.js"></script>
 <script src="./js/game.js"></script>
 <script src="../../../shared/js/portal-navigation.js" data-portal-root="../../../index.html"></script>

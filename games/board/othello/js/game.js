@@ -1,9 +1,10 @@
 (() => {
   'use strict';
   const $=id=>document.getElementById(id);
-  const setupPanel=$('setupPanel'),gamePanel=$('gamePanel'),boardSizeInput=$('boardSizeInput'),timerMode=$('timerMode'),timerValueField=$('timerValueField'),timerValueLabel=$('timerValueLabel'),timerSeconds=$('timerSeconds'),setupError=$('setupError'),startBtn=$('startBtn'),restartBtn=$('restartBtn'),rulesBtn=$('rulesBtn'),rulesOverlay=$('rulesOverlay'),closeRules=$('closeRules'),resultOverlay=$('resultOverlay'),resultMark=$('resultMark'),resultTitle=$('resultTitle'),resultReason=$('resultReason'),closeResult=$('closeResult'),restartOverlay=$('restartOverlay'),cancelRestart=$('cancelRestart'),confirmRestart=$('confirmRestart'),boardWrap=$('boardWrap'),boardEl=$('board'),turnText=$('turnText'),passText=$('passText'),blackCount=$('blackCount'),whiteCount=$('whiteCount'),clockBox=$('clockBox'),clockText=$('clockText'),totalClocks=$('totalClocks'),blackClock=$('blackClock'),whiteClock=$('whiteClock');
+  const setupPanel=$('setupPanel'),gamePanel=$('gamePanel'),playerTypesEl=$('playerTypes'),boardSizeInput=$('boardSizeInput'),timerMode=$('timerMode'),timerValueField=$('timerValueField'),timerValueLabel=$('timerValueLabel'),timerSeconds=$('timerSeconds'),setupError=$('setupError'),startBtn=$('startBtn'),restartBtn=$('restartBtn'),rulesBtn=$('rulesBtn'),rulesOverlay=$('rulesOverlay'),closeRules=$('closeRules'),resultOverlay=$('resultOverlay'),resultMark=$('resultMark'),resultTitle=$('resultTitle'),resultReason=$('resultReason'),closeResult=$('closeResult'),restartOverlay=$('restartOverlay'),cancelRestart=$('cancelRestart'),confirmRestart=$('confirmRestart'),boardWrap=$('boardWrap'),boardEl=$('board'),turnText=$('turnText'),passText=$('passText'),blackCount=$('blackCount'),whiteCount=$('whiteCount'),clockBox=$('clockBox'),clockText=$('clockText'),totalClocks=$('totalClocks'),blackClock=$('blackClock'),whiteClock=$('whiteClock');
   const DIRS=[[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
   const store=globalThis.MiniGamePortalPlayerStore;
+  const playerTypes=globalThis.MiniGamePlayerTypes.create(playerTypesEl,{count:2,items:[{symbol:'',symbolClass:'disc black'},{symbol:'',symbolClass:'disc white'}],guestName:()=> '一時プレイ'});
   const zoom=globalThis.MiniGamePinchZoom?.attach(boardWrap,boardEl,{min:1,max:2.5})||{reset(){}};
   const reducedMotion=matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
   let size,board,current,mode,limit,total,lastMove,gameOver,raf,turnStarted,recorded=false,passMessage='',animating=false,animationTimer=0;
@@ -30,8 +31,8 @@
   function advance(previous){const next=other(previous);passMessage='';if(legalMoves(next).length){current=next;render();beginTurn();return}if(legalMoves(previous).length){current=previous;passMessage=`${label(next)}は置ける場所がないためパス`;render();beginTurn();return}finishByCount()}
   function timeout(){if(gameOver||animating)return;stopClock();gameOver=true;const loser=current,winner=other(loser);if(mode==='total')total[loser]=0;render();finish(winner,`${label(loser)}が時間切れ`)}
   function finishByCount(){stopClock();gameOver=true;const c=counts();render();if(c.B>c.W)finish('B',`黒 ${c.B} - 白 ${c.W}`);else if(c.W>c.B)finish('W',`黒 ${c.B} - 白 ${c.W}`);else finish(null,`黒 ${c.B} - 白 ${c.W}`)}
-  function record(){if(recorded||!store)return;recorded=true;store.recordPlay('othello','オセロ')}
-  function finish(winner,reason){record();if(winner){resultMark.textContent=winner==='B'?'●':'○';resultTitle.textContent=`${winner==='B'?'黒':'白'}の勝ち！`}else{resultMark.textContent='―';resultTitle.textContent='引き分け'}resultReason.textContent=reason;setTimeout(()=>resultOverlay.classList.add('show'),180)}
+  function record(){if(recorded)return;recorded=true;if(!store||playerTypes.userIndex()<0)return;store.recordPlay('othello','オセロ')}
+  function finish(winner,reason){record();resultMark.className='result-disc';resultMark.textContent='';if(winner){resultMark.classList.add(winner==='B'?'black':'white');resultMark.setAttribute('aria-label',winner==='B'?'黒':'白');resultTitle.textContent=`${winner==='B'?'黒':'白'}の勝ち！`}else{resultMark.classList.add('draw');resultMark.textContent='―';resultMark.setAttribute('aria-label','引き分け');resultTitle.textContent='引き分け'}resultReason.textContent=reason;setTimeout(()=>resultOverlay.classList.add('show'),180)}
   timerMode.addEventListener('change',syncTimerSetup);
   startBtn.addEventListener('click',start);
   restartBtn.addEventListener('click',()=>restartOverlay.classList.add('show'));

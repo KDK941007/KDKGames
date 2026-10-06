@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mini-game-portal-v6';
+const CACHE_NAME = 'mini-game-portal-v7';
 
 const CORE_PATHS = [
   './',
@@ -9,7 +9,9 @@ const CORE_PATHS = [
   './portal/games.json',
   './portal/games.js',
   './shared/css/playing-cards.css',
+  './shared/css/player-types.css',
   './shared/js/playing-cards.js',
+  './shared/js/player-types.js',
   './shared/js/pinch-zoom.js',
   './shared/js/player-store.js',
   './shared/js/portal-navigation.js',

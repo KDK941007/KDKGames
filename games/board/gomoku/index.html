@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#111827">
 <title>五目並べ</title>
+<link rel="stylesheet" href="../../../shared/css/player-types.css">
 <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
@@ -16,6 +17,7 @@
     </header>
 
     <section class="setup" id="setupPanel">
+      <div id="playerTypes" class="mg-player-types" aria-label="プレイヤータイプ"></div>
       <div class="setup-grid">
         <label class="field">
           <span>何目並べ</span>
@@ -76,7 +78,7 @@
 
 <div class="overlay" id="resultOverlay">
   <div class="modal result">
-    <div class="result-mark" id="resultMark">●</div>
+    <div class="result-disc black" id="resultMark" aria-label="黒"></div>
     <h2 id="resultTitle">黒の勝ち！</h2>
     <p id="resultReason"></p>
     <button class="primary" id="closeResult" type="button">閉じる</button>
@@ -95,6 +97,7 @@
 </div>
 
 <script src="../../../shared/js/player-store.js"></script>
+<script src="../../../shared/js/player-types.js"></script>
 <script src="../../../shared/js/pinch-zoom.js"></script>
 <script src="./js/game.js"></script>
 <script src="../../../shared/js/portal-navigation.js" data-portal-root="../../../index.html"></script>

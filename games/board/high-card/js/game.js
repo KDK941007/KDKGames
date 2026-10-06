@@ -1,15 +1,18 @@
 (() => {
   'use strict';
   const $=id=>document.getElementById(id);
-  const setupPanel=$('setupPanel'),playPanel=$('playPanel'),playerCountEl=$('playerCount'),startBtn=$('startBtn'),restartBtn=$('restartBtn'),rulesBtn=$('rulesBtn'),rulesOverlay=$('rulesOverlay'),closeRules=$('closeRules'),restartOverlay=$('restartOverlay'),cancelRestart=$('cancelRestart'),confirmRestart=$('confirmRestart'),roundText=$('roundText'),phaseText=$('phaseText'),scoreboard=$('scoreboard'),tableBoard=$('tableBoard'),centerCards=$('centerCards'),centerMessage=$('centerMessage'),readyPanel=$('readyPanel'),readySuit=$('readySuit'),readyTitle=$('readyTitle'),readyBtn=$('readyBtn'),selectionPreview=$('selectionPreview'),previewCard=$('previewCard'),confirmSelectedCard=$('confirmSelectedCard'),battleReadyPanel=$('battleReadyPanel'),battleBtn=$('battleBtn'),showdownOverlay=$('showdownOverlay'),roundSummary=$('roundSummary'),roundWinnerText=$('roundWinnerText'),nextRoundBtn=$('nextRoundBtn'),finalResultPanel=$('finalResultPanel'),finalTitle=$('finalTitle'),finalScores=$('finalScores'),backSetupBtn=$('backSetupBtn');
+  const setupPanel=$('setupPanel'),playPanel=$('playPanel'),playerCountEl=$('playerCount'),playerTypesEl=$('playerTypes'),startBtn=$('startBtn'),restartBtn=$('restartBtn'),rulesBtn=$('rulesBtn'),rulesOverlay=$('rulesOverlay'),closeRules=$('closeRules'),restartOverlay=$('restartOverlay'),cancelRestart=$('cancelRestart'),confirmRestart=$('confirmRestart'),roundText=$('roundText'),phaseText=$('phaseText'),scoreboard=$('scoreboard'),tableBoard=$('tableBoard'),centerCards=$('centerCards'),centerMessage=$('centerMessage'),readyPanel=$('readyPanel'),readySuit=$('readySuit'),readyTitle=$('readyTitle'),readyBtn=$('readyBtn'),selectionPreview=$('selectionPreview'),previewCard=$('previewCard'),confirmSelectedCard=$('confirmSelectedCard'),battleReadyPanel=$('battleReadyPanel'),battleBtn=$('battleBtn'),showdownOverlay=$('showdownOverlay'),roundSummary=$('roundSummary'),roundWinnerText=$('roundWinnerText'),nextRoundBtn=$('nextRoundBtn'),finalResultPanel=$('finalResultPanel'),finalTitle=$('finalTitle'),finalScores=$('finalScores'),backSetupBtn=$('backSetupBtn');
   const stationEls={top:$('stationTop'),right:$('stationRight'),bottom:$('stationBottom'),left:$('stationLeft')};
   const RANKS=['A','K','Q','J','10'],POWER={A:5,K:4,Q:3,J:2,'10':1},SUITS=[{symbol:'♠',name:'スペード',red:false},{symbol:'♥',name:'ハート',red:true},{symbol:'♦',name:'ダイヤ',red:true},{symbol:'♣',name:'クラブ',red:false}];
   const store=globalThis.MiniGamePortalPlayerStore;
   const cards=globalThis.MiniGamePlayingCards;
   const reducedMotion=globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+  let playerTypes=null;
   let players=[],seatPositions=[],round=1,currentIndex=0,choices={},selectedIndex=-1,reveal=false,recorded=false,phase='setup',dealTimer=0,showdownTimer=0;
 
-  function playerName(i){return `PLAYER ${i+1}`}
+  function playerName(i){return playerTypes?.getDisplayName(i)||`PLAYER ${i+1}`}
+  playerTypes=globalThis.MiniGamePlayerTypes.create(playerTypesEl,{count:Number(playerCountEl.value),items:i=>({symbol:SUITS[i]?.symbol||String(i+1),symbolClass:SUITS[i]?.red?'red':''}),guestName:i=>`GUEST ${i+1}`});
+  playerCountEl.addEventListener('change',()=>playerTypes.setCount(Number(playerCountEl.value)));
   function shuffle(values){const out=[...values];for(let i=out.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[out[i],out[j]]=[out[j],out[i]]}return out}
   function cardObject(playerIndex,rank){return {rank,suit:SUITS[playerIndex].symbol}}
   function renderScores(){scoreboard.innerHTML='';players.forEach((p,i)=>{const d=document.createElement('div');d.className='score-item';d.innerHTML=`<span>${SUITS[i].symbol} ${playerName(i)}</span><b>${p.score}</b>`;scoreboard.appendChild(d)})}
@@ -27,6 +30,7 @@
   function updateSeatPositions(){seatPositions=buildSeatPositions(currentIndex)}
   function start(){
     const count=Number(playerCountEl.value);
+    playerTypes.setCount(count);
     reveal=document.querySelector('input[name="revealMode"]:checked').value==='open';
     players=Array.from({length:count},()=>({score:0,hand:shuffle(RANKS)}));
     round=1;currentIndex=0;choices={};selectedIndex=-1;recorded=false;updateSeatPositions();
@@ -166,7 +170,7 @@
     players.forEach((p,i)=>{const d=document.createElement('div');d.className='final-score';d.innerHTML=`<span>${SUITS[i].symbol} ${playerName(i)}</span><b>${p.score} POINT</b>`;finalScores.appendChild(d)});
     finalResultPanel.classList.remove('hidden');recordPlay();
   }
-  function recordPlay(){if(recorded||!store)return;recorded=true;store.recordPlay('high-card','ハイカードバトル')}
+  function recordPlay(){if(recorded)return;recorded=true;if(!store||playerTypes.userIndex()<0)return;store.recordPlay('high-card','ハイカードバトル')}
   readyBtn.addEventListener('click',showChoose);
   confirmSelectedCard.addEventListener('click',confirmCard);
   battleBtn.addEventListener('click',resolveBattle);

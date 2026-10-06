@@ -2,9 +2,10 @@
   'use strict';
   const SIZE=15;
   const $=id=>document.getElementById(id);
-  const setupPanel=$('setupPanel'),gamePanel=$('gamePanel'),targetInput=$('targetInput'),timerMode=$('timerMode'),timerValueField=$('timerValueField'),timerValueLabel=$('timerValueLabel'),timerSeconds=$('timerSeconds'),setupError=$('setupError'),startBtn=$('startBtn'),restartBtn=$('restartBtn'),rulesBtn=$('rulesBtn'),rulesOverlay=$('rulesOverlay'),closeRules=$('closeRules'),resultOverlay=$('resultOverlay'),resultMark=$('resultMark'),resultTitle=$('resultTitle'),resultReason=$('resultReason'),closeResult=$('closeResult'),restartOverlay=$('restartOverlay'),cancelRestart=$('cancelRestart'),confirmRestart=$('confirmRestart'),boardWrap=$('boardWrap'),boardEl=$('board'),turnText=$('turnText'),clockBox=$('clockBox'),clockText=$('clockText'),totalClocks=$('totalClocks'),blackClock=$('blackClock'),whiteClock=$('whiteClock');
+  const setupPanel=$('setupPanel'),gamePanel=$('gamePanel'),playerTypesEl=$('playerTypes'),targetInput=$('targetInput'),timerMode=$('timerMode'),timerValueField=$('timerValueField'),timerValueLabel=$('timerValueLabel'),timerSeconds=$('timerSeconds'),setupError=$('setupError'),startBtn=$('startBtn'),restartBtn=$('restartBtn'),rulesBtn=$('rulesBtn'),rulesOverlay=$('rulesOverlay'),closeRules=$('closeRules'),resultOverlay=$('resultOverlay'),resultMark=$('resultMark'),resultTitle=$('resultTitle'),resultReason=$('resultReason'),closeResult=$('closeResult'),restartOverlay=$('restartOverlay'),cancelRestart=$('cancelRestart'),confirmRestart=$('confirmRestart'),boardWrap=$('boardWrap'),boardEl=$('board'),turnText=$('turnText'),clockBox=$('clockBox'),clockText=$('clockText'),totalClocks=$('totalClocks'),blackClock=$('blackClock'),whiteClock=$('whiteClock');
   let board,current,target,mode,limit,total,lastMove,gameOver,raf,turnStarted,recorded=false;
   const store=globalThis.MiniGamePortalPlayerStore;
+  const playerTypes=globalThis.MiniGamePlayerTypes.create(playerTypesEl,{count:2,items:[{symbol:'',symbolClass:'disc black'},{symbol:'',symbolClass:'disc white'}],guestName:()=> '一時プレイ'});
   const zoom=globalThis.MiniGamePinchZoom?.attach(boardWrap,boardEl,{min:1,max:2.5})||{reset(){}};
 
   function fmt(sec){ if(!Number.isFinite(sec))return '∞'; sec=Math.max(0,sec); return sec>=10?String(Math.ceil(sec)):sec.toFixed(1); }
@@ -26,8 +27,8 @@
   function play(i){if(gameOver||board[i])return; if(mode!=='none'&&currentRemain()<=0){timeout();return} consume();stopClock();const p=current;board[i]=p;lastMove=i;const line=findWin(i,p);if(line){gameOver=true;render();line.forEach(x=>boardEl.children[x]?.classList.add('win'));finish(p,`${target}目以上並びました`);return}if(board.every(Boolean)){gameOver=true;render();finish(null,'盤面がすべて埋まりました');return}current=other(current);render();beginTurn();}
   function findWin(index,p){const r=Math.floor(index/SIZE),c=index%SIZE,dirs=[[1,0],[0,1],[1,1],[1,-1]];for(const[dR,dC]of dirs){const line=[index];for(const s of[-1,1]){let rr=r+dR*s,cc=c+dC*s;while(rr>=0&&rr<SIZE&&cc>=0&&cc<SIZE&&board[rr*SIZE+cc]===p){line.push(rr*SIZE+cc);rr+=dR*s;cc+=dC*s}}if(line.length>=target)return line}return null}
   function timeout(){if(gameOver)return;stopClock();gameOver=true;const loser=current,winner=other(loser);if(mode==='total')total[loser]=0;render();finish(winner,`${label(loser)}が時間切れ`)}
-  function record(){if(recorded||!store)return;recorded=true;store.recordPlay('gomoku','五目並べ');}
-  function finish(winner,reason){record();if(winner){resultMark.textContent=winner==='B'?'●':'○';resultTitle.textContent=`${winner==='B'?'黒':'白'}の勝ち！`}else{resultMark.textContent='―';resultTitle.textContent='引き分け'}resultReason.textContent=reason;setTimeout(()=>resultOverlay.classList.add('show'),180)}
+  function record(){if(recorded)return;recorded=true;if(!store||playerTypes.userIndex()<0)return;store.recordPlay('gomoku','五目並べ');}
+  function finish(winner,reason){record();resultMark.className='result-disc';resultMark.textContent='';if(winner){resultMark.classList.add(winner==='B'?'black':'white');resultMark.setAttribute('aria-label',winner==='B'?'黒':'白');resultTitle.textContent=`${winner==='B'?'黒':'白'}の勝ち！`}else{resultMark.classList.add('draw');resultMark.textContent='―';resultMark.setAttribute('aria-label','引き分け');resultTitle.textContent='引き分け'}resultReason.textContent=reason;setTimeout(()=>resultOverlay.classList.add('show'),180)}
   timerMode.addEventListener('change',syncTimerSetup);
   startBtn.addEventListener('click',start);
   restartBtn.addEventListener('click',()=>restartOverlay.classList.add('show'));

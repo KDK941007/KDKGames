@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#111827">
 <title>ハイカードバトル</title>
 <link rel="stylesheet" href="../../../shared/css/playing-cards.css">
+<link rel="stylesheet" href="../../../shared/css/player-types.css">
 <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
@@ -15,6 +16,7 @@
 
     <section class="setup" id="setupPanel">
       <label class="field"><span>プレイヤー人数</span><select id="playerCount"><option value="2" selected>2人</option><option value="3">3人</option><option value="4">4人</option></select></label>
+      <div id="playerTypes" class="mg-player-types" aria-label="プレイヤータイプ"></div>
       <fieldset class="field-set"><legend>勝負時のカード表示</legend><label><input type="radio" name="revealMode" value="hidden" checked> 伏せたまま</label><label><input type="radio" name="revealMode" value="open"> オープンする</label></fieldset>
       <button class="primary" id="startBtn" type="button">ゲーム開始</button>
     </section>
@@ -80,6 +82,7 @@
 <div class="overlay" id="restartOverlay"><div class="modal"><h2>最初からやり直す</h2><p>現在のゲーム内容を破棄してスタート画面へ戻りますか？</p><div class="confirm-actions"><button id="cancelRestart" type="button">キャンセル</button><button id="confirmRestart" class="primary" type="button">最初から</button></div></div></div>
 
 <script src="../../../shared/js/player-store.js"></script>
+<script src="../../../shared/js/player-types.js"></script>
 <script src="../../../shared/js/playing-cards.js"></script>
 <script src="./js/game.js"></script>
 <script src="../../../shared/js/portal-navigation.js" data-portal-root="../../../index.html"></script>
