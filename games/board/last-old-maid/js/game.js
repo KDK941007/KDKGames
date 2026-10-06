@@ -12,7 +12,8 @@
   const playerTypes=globalThis.MiniGamePlayerTypes.create(playerTypesEl,{
     count:2,
     items:[{symbol:'1'},{symbol:'2'}],
-    guestName:i=>`PLAYER ${i+1}`
+    guestName:i=>`PLAYER ${i+1}`,
+    cpuDifficulty:false
   });
 
   let hands=[[],[]];
@@ -25,8 +26,6 @@
   let revealTextTimer=0;
   let recorded=false;
   let cpuTimer=0;
-  let lastJokerDrawIndex=-1;
-  let jokerDrawCounts=[0,0];
 
   function playerName(i){return playerTypes.getDisplayName(i)}
   function other(i){return i===0?1:0}
@@ -100,9 +99,8 @@
   }
 
   function isCpu(i){return playerTypes.getType(i)==='cpu'}
-  function cpuLevel(i){return playerTypes.getCpuDifficulty(i)}
-  function arrangeCpuHand(){const level=cpuLevel(holder);if(hands[holder].length<2)return;if(level==='weak'){hands[holder].sort((a,b)=>Number(isJoker(b))-Number(isJoker(a)));return}if(level==='normal'){hands[holder]=shuffle(hands[holder]);return}const joker=hands[holder].find(isJoker),normal=hands[holder].find(card=>!isJoker(card));if(!joker||!normal)return;let jokerIndex;if(level==='strong')jokerIndex=lastJokerDrawIndex<0?Math.floor(Math.random()*2):1-lastJokerDrawIndex;else{const min=Math.min(...jokerDrawCounts),candidates=[0,1].filter(i=>jokerDrawCounts[i]===min);jokerIndex=candidates[Math.floor(Math.random()*candidates.length)]}hands[holder]=jokerIndex===0?[joker,normal]:[normal,joker]}
-  function chooseCpuDrawIndex(){const level=cpuLevel(drawer);if(hands[holder].length<=1)return 0;if(level==='weak')return 0;if(level==='normal')return Math.floor(Math.random()*hands[holder].length);if(level==='strong'&&lastJokerDrawIndex>=0)return lastJokerDrawIndex;const max=Math.max(...jokerDrawCounts),candidates=[0,1].filter(i=>jokerDrawCounts[i]===max);return candidates[Math.floor(Math.random()*candidates.length)]}
+  function arrangeCpuHand(){hands[holder]=shuffle(hands[holder])}
+  function chooseCpuDrawIndex(){return hands[holder].length<=1?0:Math.floor(Math.random()*hands[holder].length)}
   function scheduleCpuReady(){if(cpuTimer){clearTimeout(cpuTimer);cpuTimer=0}const actor=readyPurpose==='order'?holder:drawer;if(!isCpu(actor))return;cpuTimer=setTimeout(()=>{cpuTimer=0;if(phase!=='ready')return;if(readyPurpose==='order')showOrder();else showDraw()},500)}
   function renderOrderHand(){
     orderHand.innerHTML='';
@@ -180,12 +178,10 @@
   function confirmDraw(){
     if(phase!=='draw'||selectedDraw<0||selectedDraw>=hands[holder].length)return;
 
-    const drawnIndex=selectedDraw;
     const card=hands[holder].splice(selectedDraw,1)[0];
     hands[drawer].push(card);
     selectedDraw=-1;
     const madePair=discardPair(drawer);
-    if(isJoker(card)){lastJokerDrawIndex=drawnIndex;jokerDrawCounts[drawnIndex]=(jokerDrawCounts[drawnIndex]||0)+1}
 
     phase='reveal';
     hideStages();
@@ -261,7 +257,6 @@
     holder=other(drawer);
     createLastThree();
     selectedDraw=-1;
-    lastJokerDrawIndex=-1;jokerDrawCounts=[0,0];
     recorded=false;
     clearCelebration();
     resultOverlay.classList.remove('show');
