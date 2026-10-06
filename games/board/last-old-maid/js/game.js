@@ -44,7 +44,7 @@
   function isJoker(card){return card?.joker===true}
   function cardLabel(card){return isJoker(card)?'ジョーカー':`${card.rank}${card.suit}`}
   function jokerArt(){
-    return '<img class="joker-image" src="./assets/joker.webp" alt="">';
+    return '<img class="joker-image" src="./assets/joker.jpg" alt="">';
   }
   function cardFace(card){
     if(isJoker(card)){

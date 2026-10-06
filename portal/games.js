@@ -216,7 +216,7 @@ globalThis.MINI_GAME_PORTAL_GAMES = [
     "path": "./games/board/last-old-maid/",
     "localEntry": "./games/board/last-old-maid/index.html",
     "assets": [
-      "./games/board/last-old-maid/assets/joker.webp",
+      "./games/board/last-old-maid/assets/joker.jpg",
       "./games/board/last-old-maid/css/style.css",
       "./games/board/last-old-maid/icon.svg",
       "./games/board/last-old-maid/index.html",
