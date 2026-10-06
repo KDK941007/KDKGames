@@ -81,7 +81,7 @@
   function renderCenterCards({resolved=false,winners=[],allTied=false}={}){
     centerCards.innerHTML='';
     Object.entries(choices).forEach(([key,choice])=>{
-      const i=Number(key),position=(phase==='battle-ready'||phase==='showdown'||phase==='result'||phase==='final')?(initialSeatPositions[i]||choice.fieldPosition):choice.fieldPosition;
+      const i=Number(key),position=(phase==='battle-ready'||phase==='showdown'||phase==='result'||phase==='final')?(initialSeatPositions[i]||seatPositions[i]||choice.fieldPosition):(seatPositions[i]||choice.fieldPosition);
       const wrap=document.createElement('div');
       wrap.className=`battle-card pos-${position}`;
       if(choice.fresh)wrap.classList.add('enter');
