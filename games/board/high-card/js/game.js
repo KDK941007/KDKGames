@@ -126,7 +126,45 @@
     scheduleCpuTurn();
   }
   function isCpu(i=currentIndex){return playerTypes.getType(i)==='cpu'}
-  function cpuCardIndex(){const hand=players[currentIndex].hand;if(!hand.length)return-1;const level=playerTypes.getCpuDifficulty(currentIndex);if(level==='weak')return Math.floor(Math.random()*hand.length);const roundsLeft=6-round,score=players[currentIndex].score,top=Math.max(...players.map(p=>p.score)),behind=top-score;const ranked=hand.map((rank,i)=>{let value=POWER[rank]*10;if(rank==='10')value+=hand.includes('A')?8:2;if(rank==='A'&&hand.includes('10'))value-=3;if(behind>0&&roundsLeft<=behind+1)value+=POWER[rank]*4;if(round===5)value+=POWER[rank]*6;if(level==='max'){const leaders=players.filter(p=>p.score===top).length;value+=behind>0?POWER[rank]*5:0;value+=leaders>1&&rank==='10'?5:0}return{i,value}}).sort((a,b)=>b.value-a.value);if(level==='normal'){const pool=ranked.slice(0,Math.min(3,ranked.length));return pool[Math.floor(Math.random()*pool.length)].i}if(level==='strong'){const pool=ranked.slice(0,Math.min(2,ranked.length));return pool[Math.floor(Math.random()*pool.length)].i}return ranked[0].i}
+  function weightedCpuChoice(ranked,weights){
+    const pool=ranked.slice(0,Math.min(ranked.length,weights.length));
+    const activeWeights=weights.slice(0,pool.length);
+    const total=activeWeights.reduce((sum,weight)=>sum+weight,0);
+    let roll=Math.random()*total;
+    for(let i=0;i<pool.length;i++){
+      roll-=activeWeights[i];
+      if(roll<0)return pool[i].i;
+    }
+    return pool[pool.length-1].i;
+  }
+  function cpuCardIndex(){
+    const hand=players[currentIndex].hand;
+    if(!hand.length)return-1;
+    const level=playerTypes.getCpuDifficulty(currentIndex);
+    if(level==='weak')return Math.floor(Math.random()*hand.length);
+
+    const roundsLeft=6-round;
+    const score=players[currentIndex].score;
+    const top=Math.max(...players.map(p=>p.score));
+    const behind=top-score;
+    const ranked=hand.map((rank,i)=>{
+      let value=POWER[rank]*10;
+      if(rank==='10')value+=hand.includes('A')?8:2;
+      if(rank==='A'&&hand.includes('10'))value-=3;
+      if(behind>0&&roundsLeft<=behind+1)value+=POWER[rank]*4;
+      if(round===5)value+=POWER[rank]*6;
+      if(level==='max'){
+        const leaders=players.filter(p=>p.score===top).length;
+        value+=behind>0?POWER[rank]*5:0;
+        value+=leaders>1&&rank==='10'?5:0;
+      }
+      return{i,value};
+    }).sort((a,b)=>b.value-a.value);
+
+    if(level==='normal')return weightedCpuChoice(ranked,[4,3,2]);
+    if(level==='strong')return weightedCpuChoice(ranked,[7,3,1]);
+    return weightedCpuChoice(ranked,[17,3]);
+  }
   function scheduleCpuTurn(){if(cpuTimer){clearTimeout(cpuTimer);cpuTimer=0}if(phase!=='ready'||!isCpu())return;cpuTimer=setTimeout(()=>{cpuTimer=0;if(phase!=='ready'||!isCpu())return;showChoose();const index=cpuCardIndex();if(index<0)return;selectedIndex=index;renderTable();cpuTimer=setTimeout(()=>{cpuTimer=0;confirmCard()},450)},500)}
   function showChoose(){
     setPhase('choosing','カード選択');
