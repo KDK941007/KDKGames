@@ -1,6 +1,7 @@
 (() => {
   const boardEl = document.getElementById('board');
   const startCountdown = document.getElementById('startCountdown');
+  const firstMoveGuide = document.getElementById('firstMoveGuide');
   const statusLabel = document.getElementById('statusLabel');
   const statusText = document.getElementById('statusText');
   const turnSymbol = document.getElementById('turnSymbol');
@@ -353,7 +354,9 @@
       cell.className = 'cell';
       cell.type = 'button';
       cell.setAttribute('aria-label', `${index + 1}番のマス`);
-      cell.disabled = !current || gameOver || isFirstMoveBlocked(index);
+      const firstMoveBlocked=isFirstMoveBlocked(index);
+      cell.disabled = !current || gameOver || firstMoveBlocked;
+      cell.classList.toggle('first-move-blocked',!!current&&!gameOver&&firstMoveBlocked);
 
       if (value) {
         const piece = document.createElement('span');
@@ -374,6 +377,8 @@
       cell.addEventListener('click', () => play(index));
       boardEl.appendChild(cell);
     });
+
+    firstMoveGuide.classList.toggle('hidden',!current||gameOver||!isFirstMove());
 
     if (!gameOver && current) {
       statusLabel.textContent = '現在のターン';
