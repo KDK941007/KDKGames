@@ -6,7 +6,7 @@
   }
   function create(container,{count=2,items=[],defaultUserIndex=0,guestName=i=>`GUEST ${i+1}`,maxNameLength=10}={}){
     if(!container)throw new Error('player type container is required');
-    let types=[],guestNames=[];
+    let types=[],guestNames=[],cpuDifficulties=[];
     let currentCount=0;
     const itemAt=i=>typeof items==='function'?(items(i)||{}):(items[i]||{});
     const fallbackGuest=i=>String(guestName(i)||`GUEST ${i+1}`).slice(0,maxNameLength);
@@ -22,6 +22,7 @@
       const old=[...types];
       types=Array.from({length:n},(_,i)=>old[i]||'guest');
       guestNames=Array.from({length:n},(_,i)=>guestNames[i]||fallbackGuest(i));
+      cpuDifficulties=Array.from({length:n},(_,i)=>cpuDifficulties[i]||'normal');
       if(!types.includes('user')&&defaultUserIndex>=0&&defaultUserIndex<n)types[defaultUserIndex]='user';
       let found=false;
       types=types.map(type=>{
@@ -70,7 +71,15 @@
           render();
           container.dispatchEvent(new CustomEvent('playertypechange',{detail:{index:i,type:types[i]}}));
         });
-        wrap.append(button,input);container.appendChild(wrap);
+        wrap.append(button,input);
+        if(type==='cpu'){
+          const select=document.createElement('select');select.className='mg-cpu-difficulty';select.dataset.playerIndex=String(i);select.setAttribute('aria-label',`CPU ${i+1}の強さ`);
+          [['weak','弱い'],['normal','普通'],['strong','強い'],['max','最強']].forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;select.appendChild(option)});
+          select.value=cpuDifficulties[i]||'normal';
+          select.addEventListener('change',()=>{cpuDifficulties[i]=select.value;container.dispatchEvent(new CustomEvent('cpudifficultychange',{detail:{index:i,difficulty:select.value}}))});
+          wrap.appendChild(select);
+        }
+        container.appendChild(wrap);
       });
     }
     setCount(count);
@@ -79,6 +88,7 @@
       setCount,
       refresh:render,
       getType:i=>types[i]||'guest',
+      getCpuDifficulty:i=>cpuDifficulties[i]||'normal',
       getDisplayName(i){
         if(types[i]==='user')return profileName();
         if(types[i]==='cpu')return `CPU ${i+1}`;
@@ -87,7 +97,8 @@
         return (value||fallbackGuest(i)).slice(0,maxNameLength);
       },
       userIndex:()=>types.findIndex(x=>x==='user'),
-      snapshot:()=>[...types]
+      snapshot:()=>[...types],
+      cpuDifficultySnapshot:()=>[...cpuDifficulties]
     };
   }
   globalThis.MiniGamePlayerTypes={create};
