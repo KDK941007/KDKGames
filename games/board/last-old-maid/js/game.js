@@ -22,6 +22,7 @@
   let readyPurpose='order';
   let phase='setup';
   let revealTimer=0;
+  let revealTextTimer=0;
   let recorded=false;
 
   function playerName(i){return playerTypes.getDisplayName(i)}
@@ -37,6 +38,7 @@
 
   function clearRevealTimer(){
     if(revealTimer){clearTimeout(revealTimer);revealTimer=0}
+    if(revealTextTimer){clearTimeout(revealTextTimer);revealTextTimer=0}
   }
 
   function isJoker(card){return card?.joker===true}
@@ -180,10 +182,14 @@
     hideStages();
     revealPanel.classList.remove('hidden');
     drawnCard.innerHTML='<div class="flip-shell"><div class="flip-inner"><div class="flip-face flip-back">'+cards.cardHTML({}, {back:true})+'</div><div class="flip-face flip-front">'+cardFace(card)+'</div></div></div>';
-    revealText.textContent=madePair?'同じ数字が揃いました！':'ジョーカーを引きました';
+    revealText.textContent='';
     updateStatus();
 
     clearRevealTimer();
+    revealTextTimer=setTimeout(()=>{
+      revealTextTimer=0;
+      revealText.textContent=madePair?'同じ数字が揃いました！':'ジョーカーを引きました';
+    },1450);
     revealTimer=setTimeout(()=>{
       revealTimer=0;
       if(madePair){
@@ -194,7 +200,7 @@
       drawer=holder;
       holder=previousDrawer;
       showReady('order');
-    },1750);
+    },2200);
   }
 
   function clearCelebration(){
