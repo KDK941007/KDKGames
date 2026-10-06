@@ -164,11 +164,12 @@ globalThis.MINI_GAME_PORTAL_GAMES = [
   {
     "schemaVersion": 1,
     "id": "high-card",
-    "name": "カード強さ勝負",
+    "name": "ハイカードバトル",
     "category": "board",
     "categoryLabel": "ボードゲーム",
-    "description": "A・K・Q・J・10を秘密で出し合い、5ラウンドの得点を競う2〜4人対戦。",
+    "description": "A・K・Q・J・10から1枚ずつ秘密で出し、5ラウンドの得点を競う2〜4人対戦。",
     "searchTerms": [
+      "ハイカードバトル",
       "カード強さ勝負",
       "ハイカード",
       "high card",
