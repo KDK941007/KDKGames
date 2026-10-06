@@ -8,7 +8,7 @@
   const cards=globalThis.MiniGamePlayingCards;
   const reducedMotion=globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
   let playerTypes=null;
-  let players=[],seatPositions=[],fieldSlots=[],round=1,currentIndex=0,choices={},selectedIndex=-1,reveal=false,recorded=false,phase='setup',dealTimer=0,showdownTimer=0,celebrationTimer=0;
+  let players=[],seatPositions=[],initialSeatPositions=[],fieldSlots=[],round=1,currentIndex=0,choices={},selectedIndex=-1,reveal=false,recorded=false,phase='setup',dealTimer=0,showdownTimer=0,celebrationTimer=0;
 
   function playerName(i){return playerTypes?.getDisplayName(i)||`PLAYER ${i+1}`}
   playerTypes=globalThis.MiniGamePlayerTypes.create(playerTypesEl,{count:Number(playerCountEl.value),items:i=>({symbol:SUITS[i]?.symbol||String(i+1),symbolClass:SUITS[i]?.red?'red':''}),guestName:i=>`PLAYER ${i+1}`});
@@ -34,7 +34,7 @@
     reveal=document.querySelector('input[name="revealMode"]:checked').value==='open';
     players=Array.from({length:count},()=>({score:0,hand:[...RANKS]}));
     fieldSlots=shuffle((count===2?['left','right']:count===3?['left','top','right']:['top','right','bottom','left']));
-    round=1;currentIndex=0;choices={};selectedIndex=-1;recorded=false;updateSeatPositions();
+    round=1;currentIndex=0;choices={};selectedIndex=-1;recorded=false;updateSeatPositions();initialSeatPositions=[...seatPositions];
     setupPanel.classList.add('hidden');playPanel.classList.remove('hidden');restartBtn.classList.remove('hidden');restartOverlay.classList.remove('show');
     roundSummary.classList.add('hidden');finalResultPanel.classList.add('hidden');selectionPreview.classList.add('hidden');battleReadyPanel.classList.add('hidden');readyPanel.classList.add('hidden');
     renderScores();renderTable({dealing:true});roundText.textContent='ROUND 1 / 5';setPhase('dealing','配札中');centerMessage.textContent='カードを配っています';centerMessage.classList.remove('hidden');
@@ -73,7 +73,7 @@
   function renderCenterCards({resolved=false,winners=[],allTied=false}={}){
     centerCards.innerHTML='';
     Object.entries(choices).forEach(([key,choice])=>{
-      const i=Number(key),position=choice.fieldPosition;
+      const i=Number(key),position=(phase==='battle-ready'||phase==='showdown'||phase==='result'||phase==='final')?(initialSeatPositions[i]||choice.fieldPosition):choice.fieldPosition;
       const wrap=document.createElement('div');
       wrap.className=`battle-card pos-${position}`;
       if(choice.fresh)wrap.classList.add('enter');
@@ -126,6 +126,7 @@
   }
   function showBattleReady(){
     setPhase('battle-ready','勝負待ち');
+    seatPositions=[...initialSeatPositions];
     hideCenterPanels();battleReadyPanel.classList.remove('hidden');
     renderTable();
   }
@@ -164,7 +165,7 @@
   function nextRound(){
     if(phase!=='result')return;
     if(round>=5){showFinal();return}
-    round++;currentIndex=0;choices={};selectedIndex=-1;fieldSlots=shuffle((players.length===2?['left','right']:players.length===3?['left','top','right']:['top','right','bottom','left']));roundSummary.classList.add('hidden');winnerCelebration.classList.add('hidden');showReady();
+    round++;currentIndex=0;choices={};selectedIndex=-1;fieldSlots=shuffle((players.length===2?['left','right']:players.length===3?['left','top','right']:['top','right','bottom','left']));seatPositions=[...initialSeatPositions];roundSummary.classList.add('hidden');winnerCelebration.classList.add('hidden');showReady();
   }
   function showFinal(){
     setPhase('final','ゲーム終了');
