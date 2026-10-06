@@ -148,14 +148,14 @@
     roundSummary.classList.remove('hidden');roundSummary.classList.toggle('win',!allTied);
     winnerCelebration.classList.remove('hidden','draw');
     if(allTied){
-      winnerCelebration.classList.add('draw');winnerCelebrationTitle.textContent='DRAW';winnerCelebrationName.textContent='全員同率・ポイントなし';
-      roundWinnerText.textContent='全員同率のため、このラウンドはポイントなし';
+      winnerCelebration.classList.add('draw');winnerCelebrationTitle.textContent='DRAW';winnerCelebrationName.textContent='全員引き分け・ポイントなし';
+      roundWinnerText.textContent='全員引き分けのため、このラウンドはポイントなし';
     }else if(winners.length===1){
       winnerCelebrationTitle.textContent='WIN!';winnerCelebrationName.textContent=`${playerName(winners[0])} +1 POINT`;
       roundWinnerText.textContent=`${playerName(winners[0])} が+1ポイント`;
     }else{
       winnerCelebrationTitle.textContent='WIN!';winnerCelebrationName.textContent=`${winners.map(playerName).join('・')} +1 POINT`;
-      roundWinnerText.textContent=`${winners.map(playerName).join('・')} が同率1位で全員+1ポイント`;
+      roundWinnerText.textContent=`${winners.map(playerName).join('・')} は引き分けで全員+1ポイント`;
     }
     nextRoundBtn.textContent=round>=5?'最終結果へ':'次のラウンドへ';
     renderScores();renderCenterCards({resolved:true,winners,allTied});
