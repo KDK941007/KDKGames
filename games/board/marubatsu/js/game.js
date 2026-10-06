@@ -375,7 +375,8 @@
 
     if (!gameOver && current) {
       statusLabel.textContent = '現在のターン';
-      statusText.textContent = `${getSymbol(current)} の番`;
+      const turnName=current==='O'?oPlayerName.textContent:xPlayerName.textContent;
+      statusText.textContent = `${turnName}（${getSymbol(current)}）の番`;
       turnSymbol.textContent = getSymbol(current);
       turnSymbol.className = `turn-symbol ${current.toLowerCase()}`;
     }
