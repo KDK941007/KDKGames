@@ -63,11 +63,11 @@
     if(playerTypes.O==='user' && playerTypes.X==='user') playerTypes.X='guest';
     const profile=mgPortalProfile();
     const apply=(side,btn,nameEl,modeEl)=>{
-      const isUser=playerTypes[side]==='user';
-      btn.classList.toggle('is-user',isUser);
+      const type=playerTypes[side],isUser=type==='user',isCpu=type==='cpu';
+      btn.classList.toggle('is-user',isUser);btn.classList.toggle('is-cpu',isCpu);
       btn.setAttribute('aria-pressed',isUser?'true':'false');
-      modeEl.textContent=isUser?'USER':'GUEST';
-      nameEl.textContent=isUser?profile.displayName:'一時プレイ';
+      modeEl.textContent=isUser?'USER':isCpu?'CPU':'GUEST';
+      nameEl.textContent=isUser?profile.displayName:isCpu?'CPU':'一時プレイ';
     };
     apply('O',oPlayerTypeBtn,oPlayerName,oPlayerMode);
     apply('X',xPlayerTypeBtn,xPlayerName,xPlayerMode);
@@ -75,7 +75,7 @@
 
   [oPlayerTypeBtn,xPlayerTypeBtn].forEach(btn=>btn.addEventListener('click',()=>{
     const side=btn.dataset.side;
-    playerTypes[side]=playerTypes[side]==='user'?'guest':'user';
+    playerTypes[side]=playerTypes[side]==='user'?'guest':playerTypes[side]==='guest'?'cpu':'user';
     refreshPlayerTypes(side);
   }));
   window.addEventListener('pageshow',()=>refreshPlayerTypes());
@@ -99,6 +99,7 @@
   let startCountdownTimer = 0;
   let audioCtx = null;
   let portalResultRecorded = false;
+  let cpuTimer = 0;
 
   function getSymbol(player) {
     return player === 'X' ? '×' : '○';
@@ -162,6 +163,7 @@
   function resetState() {
     stopStartCountdown();
     stopTurnTimer();
+    if(cpuTimer){clearTimeout(cpuTimer);cpuTimer=0}
     board = Array(9).fill(null);
     current = null;
     history = { X: [], O: [] };
@@ -254,6 +256,7 @@
         turnView.classList.remove('hidden');
         render();
         startTurnTimer();
+        scheduleCpuTurn();
       }, 1000);
     };
 
@@ -368,8 +371,8 @@
     }
   }
 
-  function play(index) {
-    if (!current || gameOver || board[index]) return;
+  function play(index, cpuAction=false) {
+    if (!current || gameOver || board[index] || (isCpuTurn()&&!cpuAction)) return;
 
     const playedBy = current;
 
@@ -397,6 +400,7 @@
     current = playedBy === 'X' ? 'O' : 'X';
     render();
     startTurnTimer();
+    scheduleCpuTurn();
   }
 
   function findWin(player) {
@@ -497,6 +501,7 @@
 
   confirmPortalBtn.addEventListener('click', () => {
     stopTurnTimer();
+    if(cpuTimer)clearTimeout(cpuTimer);
     window.location.href = '../';
   });
 
