@@ -63,7 +63,7 @@
       if(i<0){el.classList.add('hidden');el.innerHTML='';return}
       el.classList.remove('hidden');el.classList.toggle('active',phase==='choosing'&&i===currentIndex);
       const p=players[i];
-      const showFaces=phase==='choosing'&&i===currentIndex;
+      const showFaces=phase==='choosing'&&i===currentIndex&&!isCpu(i);
       const handHtml=p.hand.map((rank,cardIndex)=>{
         const face=cards.cardHTML(cardObject(i,rank),{back:!showFaces});
         const cls=['card-slot'];
