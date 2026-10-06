@@ -25,7 +25,7 @@
       if(!types.includes('user')&&defaultUserIndex>=0&&defaultUserIndex<n)types[defaultUserIndex]='user';
       let found=false;
       types=types.map(type=>{
-        if(type!=='user')return 'guest';
+        if(type!=='user')return type==='cpu'?'cpu':'guest';
         if(found)return 'guest';
         found=true;return 'user';
       });
@@ -41,22 +41,22 @@
         const wrap=document.createElement('div');wrap.className='mg-player-participant';
         const button=document.createElement('button');
         button.type='button';
-        button.className='mg-player-type'+(type==='user'?' is-user':'');
+        button.className='mg-player-type'+(type==='user'?' is-user':type==='cpu'?' is-cpu':'');
         button.dataset.playerIndex=String(i);
         button.setAttribute('aria-pressed',type==='user'?'true':'false');
         const symbol=document.createElement('span');
         symbol.className='mg-player-type-symbol'+(item.symbolClass?' '+item.symbolClass:'');
         symbol.textContent=item.symbol||String(i+1);
         const info=document.createElement('span');info.className='mg-player-type-info';
-        const mode=document.createElement('small');mode.textContent=type==='user'?'USER':'GUEST';
-        const name=document.createElement('b');name.textContent=type==='user'?profileName():(guestNames[i]||fallbackGuest(i));
+        const mode=document.createElement('small');mode.textContent=type==='user'?'USER':type==='cpu'?'CPU':'GUEST';
+        const name=document.createElement('b');name.textContent=type==='user'?profileName():type==='cpu'?('CPU '+(i+1)):(guestNames[i]||fallbackGuest(i));
         info.append(mode,name);button.append(symbol,info);
         const input=document.createElement('input');
         input.type='text';input.className='mg-player-name';input.dataset.playerIndex=String(i);
         input.maxLength=maxNameLength;
-        input.value=type==='user'?profileName():(guestNames[i]||fallbackGuest(i));
+        input.value=type==='user'?profileName():type==='cpu'?('CPU '+(i+1)):(guestNames[i]||fallbackGuest(i));
         input.placeholder=fallbackGuest(i);
-        input.readOnly=type==='user';
+        input.readOnly=type!=='guest';
         input.setAttribute('aria-label',`プレイヤー${i+1}の名前`);
         input.addEventListener('input',()=>{
           if(types[i]!=='guest')return;
@@ -66,7 +66,7 @@
         });
         button.addEventListener('click',()=>{
           captureNames();
-          if(types[i]==='user'){types[i]='guest'}else{types=types.map(()=> 'guest');types[i]='user'}
+          if(types[i]==='user'){types[i]='guest'}else if(types[i]==='guest'){types[i]='cpu'}else{types[i]='user';types=types.map((type,index)=>index===i?'user':type==='user'?'guest':type)}
           render();
           container.dispatchEvent(new CustomEvent('playertypechange',{detail:{index:i,type:types[i]}}));
         });
@@ -81,6 +81,7 @@
       getType:i=>types[i]||'guest',
       getDisplayName(i){
         if(types[i]==='user')return profileName();
+        if(types[i]==='cpu')return `CPU ${i+1}`;
         const input=container.querySelector(`.mg-player-name[data-player-index="${i}"]`);
         const value=(input?.value||guestNames[i]||fallbackGuest(i)).trim();
         return (value||fallbackGuest(i)).slice(0,maxNameLength);
