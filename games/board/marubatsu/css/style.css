@@ -679,3 +679,24 @@
 @media(max-height:700px){.player-set-row{margin-bottom:5px}.player-slot{height:35px}.player-slot-symbol{font-size:21px}}
 
 .cpu-difficulty-row{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:-2px 0 7px}.cpu-difficulty{width:100%;height:32px;border:1px solid var(--line);border-radius:9px;background:#171f34;color:var(--text);padding:0 8px;font-size:11px;font-weight:900}.cpu-difficulty.hidden{visibility:hidden;pointer-events:none}.player-slot.is-cpu .player-slot-info small{color:#60a5fa}
+
+
+.first-move-guide{
+  position:absolute;top:8px;left:50%;z-index:4;transform:translateX(-50%);
+  padding:5px 10px;border:1px solid rgba(251,191,36,.5);border-radius:999px;
+  background:rgba(17,24,39,.92);color:var(--accent);font-size:10px;font-weight:900;
+  white-space:nowrap;pointer-events:none;
+}
+.first-move-guide.hidden{display:none}
+.cell.first-move-blocked{
+  cursor:not-allowed;
+  filter:brightness(.55);
+  border-color:#3b455d;
+  background:repeating-linear-gradient(135deg,#111827 0,#111827 8px,#182036 8px,#182036 16px);
+}
+.cell.first-move-blocked::after{
+  content:"初手不可";
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  padding:4px 6px;border-radius:999px;background:#374151;color:#cbd5e1;
+  font-size:9px;font-weight:900;white-space:nowrap;
+}
