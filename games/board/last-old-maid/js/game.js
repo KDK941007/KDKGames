@@ -24,6 +24,7 @@
   let revealTimer=0;
   let revealTextTimer=0;
   let recorded=false;
+  let cpuTimer=0;
 
   function playerName(i){return playerTypes.getDisplayName(i)}
   function other(i){return i===0?1:0}
@@ -37,6 +38,7 @@
   }
 
   function clearRevealTimer(){
+    if(cpuTimer){clearTimeout(cpuTimer);cpuTimer=0}
     if(revealTimer){clearTimeout(revealTimer);revealTimer=0}
     if(revealTextTimer){clearTimeout(revealTextTimer);revealTextTimer=0}
   }
@@ -92,8 +94,11 @@
       readyText.textContent='相手のカードを1枚引きます。画面を本人だけが見られる状態にしてください。';
     }
     updateStatus();
+    scheduleCpuReady();
   }
 
+  function isCpu(i){return playerTypes.getType(i)==='cpu'}
+  function scheduleCpuReady(){if(cpuTimer){clearTimeout(cpuTimer);cpuTimer=0}const actor=readyPurpose==='order'?holder:drawer;if(!isCpu(actor))return;cpuTimer=setTimeout(()=>{cpuTimer=0;if(phase!=='ready')return;if(readyPurpose==='order')showOrder();else showDraw()},500)}
   function renderOrderHand(){
     orderHand.innerHTML='';
     hands[holder].forEach(card=>{
@@ -113,6 +118,7 @@
     orderPanel.classList.remove('hidden');
     orderTitle.textContent=`${playerName(holder)}：手札の順番を決める`;
     renderOrderHand();
+    if(isCpu(holder)){hands[holder]=shuffle(hands[holder]);renderOrderHand();cpuTimer=setTimeout(()=>{cpuTimer=0;if(phase==='order')showReady('draw')},500)}
   }
 
   function showDraw(){
@@ -135,10 +141,11 @@
     });
     confirmDrawBtn.disabled=true;
     updateStatus();
+    if(isCpu(drawer)){cpuTimer=setTimeout(()=>{cpuTimer=0;if(phase!=='draw'||!hands[holder].length)return;selectedDraw=Math.floor(Math.random()*hands[holder].length);[...drawHand.querySelectorAll('.back-choice')].forEach((el,i)=>el.classList.toggle('selected',i===selectedDraw));confirmDrawBtn.disabled=false;cpuTimer=setTimeout(()=>{cpuTimer=0;confirmDraw()},400)},500)}
   }
 
   function selectDraw(index){
-    if(phase!=='draw'||index<0||index>=hands[holder].length)return;
+    if(phase!=='draw'||isCpu(drawer)||index<0||index>=hands[holder].length)return;
     selectedDraw=index;
     [...drawHand.querySelectorAll('.back-choice')].forEach((el,i)=>el.classList.toggle('selected',i===index));
     confirmDrawBtn.disabled=false;
@@ -276,24 +283,25 @@
 
   readyBtn.addEventListener('click',()=>{
     if(phase!=='ready')return;
+    const actor=readyPurpose==='order'?holder:drawer;if(isCpu(actor))return;
     if(readyPurpose==='order')showOrder();
     else showDraw();
   });
 
   swapBtn.addEventListener('click',()=>{
-    if(phase!=='order'||hands[holder].length<2)return;
+    if(phase!=='order'||isCpu(holder)||hands[holder].length<2)return;
     hands[holder].reverse();
     renderOrderHand();
   });
 
   shuffleBtn.addEventListener('click',()=>{
-    if(phase!=='order'||hands[holder].length<2)return;
+    if(phase!=='order'||isCpu(holder)||hands[holder].length<2)return;
     hands[holder]=shuffle(hands[holder]);
     renderOrderHand();
   });
 
   confirmOrderBtn.addEventListener('click',()=>{
-    if(phase!=='order')return;
+    if(phase!=='order'||isCpu(holder))return;
     showReady('draw');
   });
 
