@@ -28,7 +28,47 @@
   const CATEGORY_ORDER = ['casino','board','action','rpg','other'];
   const SWIPE_MIN = 48;
   const SWIPE_RATIO = 0.18;
+  const PORTAL_RETURN_STATE_KEY = 'miniGamePortal:returnState:v1';
   const esc = value => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+
+  function loadReturnState(){
+    try{
+      const raw = sessionStorage.getItem(PORTAL_RETURN_STATE_KEY);
+      if(!raw) return null;
+      sessionStorage.removeItem(PORTAL_RETURN_STATE_KEY);
+      const state = JSON.parse(raw);
+      return state && typeof state === 'object' ? state : null;
+    }catch(_){
+      return null;
+    }
+  }
+
+  function saveReturnState(){
+    try{
+      sessionStorage.setItem(PORTAL_RETURN_STATE_KEY, JSON.stringify({
+        categoryId: categories[categoryIndex]?.id || 'all',
+        search: search.value || '',
+        scrollY: window.scrollY,
+        filterScrollLeft: filters.scrollLeft
+      }));
+    }catch(_){}
+  }
+
+  function restoreScrollState(state){
+    if(!state) return;
+    const scrollY = Number(state.scrollY);
+    const filterScrollLeft = Number(state.filterScrollLeft);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if(Number.isFinite(filterScrollLeft)){
+          filters.scrollLeft = Math.max(0, filterScrollLeft);
+        }
+        if(Number.isFinite(scrollY)){
+          window.scrollTo({top:Math.max(0, scrollY), left:0, behavior:'auto'});
+        }
+      });
+    });
+  }
 
   function renderFilters(){
     filters.innerHTML = categories.map((item, index) =>
@@ -117,7 +157,7 @@
 
     track.classList.remove('animating');
     track.style.transition = 'none';
-    track.style.transform = `translate3d(${direction > 0 ? -width : width}px,0,0)`;
+    track.style.transform = `translate3d(${direction > 0 ? width : -width}px,0,0)`;
 
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
@@ -156,9 +196,10 @@
       event.stopPropagation();
       return;
     }
-    if(!isLocalFile) return;
     const link = event.target.closest('a.gameTile.available');
     if(!link) return;
+    saveReturnState();
+    if(!isLocalFile) return;
     event.preventDefault();
     location.href = link.dataset.localEntry || `${link.getAttribute('href')}index.html`;
   });
@@ -277,8 +318,21 @@
       return av - bv || String(a[1]).localeCompare(String(b[1]), 'ja');
     });
     categories = [{id:'all', label:'ALL'}, ...ordered.map(([id,label]) => ({id,label}))];
+
+    const returnState = loadReturnState();
+    if(returnState){
+      if(typeof returnState.search === 'string'){
+        search.value = returnState.search;
+      }
+      const restoredIndex = categories.findIndex(item => item.id === returnState.categoryId);
+      if(restoredIndex >= 0){
+        categoryIndex = restoredIndex;
+      }
+    }
+
     renderFilters();
     renderGames();
+    restoreScrollState(returnState);
     cachePlayableGames();
   }
 
