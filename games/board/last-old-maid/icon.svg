@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="ラストばば抜き">
+  <rect x="2" y="2" width="60" height="60" rx="16" fill="#fdf2f8" stroke="#fb7185" stroke-opacity=".35" stroke-width="2"/>
+  <g transform="translate(9 11)">
+    <rect x="1" y="5" width="24" height="36" rx="5" fill="#fff" stroke="#94a3b8" transform="rotate(-10 13 23)"/>
+    <rect x="21" y="5" width="24" height="36" rx="5" fill="#fff" stroke="#94a3b8" transform="rotate(10 33 23)"/>
+    <rect x="12" y="0" width="24" height="40" rx="5" fill="#fff" stroke="#a855f7" stroke-width="2"/>
+    <text x="24" y="14" text-anchor="middle" font-size="6" font-family="sans-serif" font-weight="700" fill="#7e22ce">JOKER</text>
+    <text x="24" y="31" text-anchor="middle" font-size="17">🃏</text>
+  </g>
+  <path d="M22 52h20" stroke="#fb7185" stroke-width="3" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "last-old-maid",
+  "name": "ラストばば抜き",
+  "category": "board",
+  "categoryLabel": "ボードゲーム",
+  "description": "残り3枚から始まる、ばば抜き終盤だけの2人対戦。",
+  "searchTerms": [
+    "ラストばば抜き",
+    "ばば抜き",
+    "ババ抜き",
+    "old maid",
+    "トランプ",
+    "カード",
+    "ジョーカー",
+    "2人対戦",
+    "board",
+    "ボードゲーム"
+  ],
+  "icon": "./icon.svg",
+  "entry": "./index.html",
+  "available": true
+}

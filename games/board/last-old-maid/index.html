@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<title>ラストばば抜き</title>
+<link rel="stylesheet" href="../../../shared/css/playing-cards.css">
+<link rel="stylesheet" href="../../../shared/css/player-types.css">
+<link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+<main class="app">
+  <section class="card-shell">
+    <header>
+      <h1>ラストばば抜き</h1>
+      <div class="sub">残り3枚から始める、最後の読み合い</div>
+    </header>
+
+    <section class="setup" id="setupPanel">
+      <div id="playerTypes" class="mg-player-types" aria-label="プレイヤータイプ"></div>
+
+      <div class="order-setting">
+        <span class="order-setting-label">最初にカードを引く人</span>
+        <button id="randomOrderToggle" class="order-toggle" type="button" aria-pressed="false">
+          <span class="order-toggle-track"><span class="order-toggle-knob"></span></span>
+          <span class="order-toggle-text">固定</span>
+        </button>
+        <small>固定はPLAYER 1から開始。ランダムONではゲーム開始時に引く人をランダムに決めます。</small>
+      </div>
+
+      <button class="primary" id="startBtn" type="button">ゲーム開始</button>
+    </section>
+
+    <section class="play hidden" id="playPanel">
+      <div class="status-row">
+        <div>
+          <small>引く人</small>
+          <b id="drawerName">PLAYER 1</b>
+        </div>
+        <div>
+          <small>引かれる人</small>
+          <b id="holderName">PLAYER 2</b>
+        </div>
+      </div>
+
+      <section class="stage">
+        <div class="ready-panel" id="readyPanel">
+          <div class="ready-icon" id="readyIcon">↕</div>
+          <h2 id="readyTitle">PLAYER 2 の番です</h2>
+          <p id="readyText">手札の順番を決めます。画面を本人だけが見られる状態にしてください。</p>
+          <button class="primary" id="readyBtn" type="button">準備OK</button>
+        </div>
+
+        <div class="order-panel hidden" id="orderPanel">
+          <div class="phase-title">
+            <small>カードを引かれる側</small>
+            <h2 id="orderTitle">手札の順番を決める</h2>
+          </div>
+          <div class="face-hand" id="orderHand"></div>
+          <div class="order-actions">
+            <button id="swapBtn" type="button">左右を入れ替える</button>
+            <button id="shuffleBtn" type="button">ランダム</button>
+          </div>
+          <p class="helper" id="orderHelper">並び順を決めたら確定してください。</p>
+          <button class="primary" id="confirmOrderBtn" type="button">この順番で決定</button>
+        </div>
+
+        <div class="draw-panel hidden" id="drawPanel">
+          <div class="phase-title">
+            <small>カードを引く側</small>
+            <h2 id="drawTitle">1枚選んでください</h2>
+          </div>
+          <div class="back-hand" id="drawHand"></div>
+          <p class="helper">選択しただけでは確定しません。</p>
+          <button class="primary" id="confirmDrawBtn" type="button" disabled>このカードを引く</button>
+        </div>
+
+        <div class="reveal-panel hidden" id="revealPanel">
+          <small>引いたカード</small>
+          <div class="drawn-card" id="drawnCard"></div>
+          <b id="revealText"></b>
+        </div>
+      </section>
+    </section>
+
+    <div class="actions">
+      <button id="restartBtn" class="hidden" type="button">最初から</button>
+      <button id="rulesBtn" type="button">ルール</button>
+      <button id="portalBtn" type="button">ポータルへ戻る</button>
+    </div>
+  </section>
+</main>
+
+<div class="overlay" id="rulesOverlay">
+  <div class="modal">
+    <h2>遊び方</h2>
+    <ol>
+      <li>通常のばば抜きで、残り3枚になった状態から始めます。</li>
+      <li>3枚はジョーカー1枚と、同じ数字・異なるマークのカード2枚です。</li>
+      <li>1人が「ジョーカー＋数字カード」の2枚、もう1人が同じ数字のカード1枚を持ちます。2枚を持つ人は毎ゲームランダムです。</li>
+      <li>最初にカードを引く人は、開始画面で固定／ランダムを選べます。固定ではPLAYER 1から始まります。</li>
+      <li>カードを引かれる人は、自分の手札の並びを「左右入れ替え」または「ランダム」で決めてから確定します。</li>
+      <li>カードを引く人は裏向きのカードを1枚選び、「このカードを引く」を押して確定します。</li>
+      <li>同じ数字の2枚が揃ったら、そのペアは捨てます。</li>
+      <li>最後にジョーカーだけを持っている人が負けです。</li>
+    </ol>
+    <button class="primary" id="closeRules" type="button">閉じる</button>
+  </div>
+</div>
+
+<div class="overlay" id="resultOverlay">
+  <div class="modal result">
+    <div class="result-joker">🃏</div>
+    <h2 id="resultTitle">PLAYER 1 の勝ち！</h2>
+    <p id="resultText"></p>
+    <button class="primary" id="playAgainBtn" type="button">もう一度遊ぶ</button>
+  </div>
+</div>
+
+<div class="overlay" id="restartOverlay">
+  <div class="modal">
+    <h2>最初からやり直す</h2>
+    <p>現在のゲーム内容を破棄してスタート画面へ戻りますか？</p>
+    <div class="confirm-actions">
+      <button id="cancelRestart" type="button">キャンセル</button>
+      <button id="confirmRestart" class="primary" type="button">最初から</button>
+    </div>
+  </div>
+</div>
+
+<script src="../../../shared/js/player-store.js"></script>
+<script src="../../../shared/js/player-types.js"></script>
+<script src="../../../shared/js/playing-cards.js"></script>
+<script src="./js/game.js"></script>
+<script src="../../../shared/js/portal-navigation.js" data-portal-root="../../../index.html"></script>
+</body>
+</html>

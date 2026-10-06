@@ -193,6 +193,37 @@ globalThis.MINI_GAME_PORTAL_GAMES = [
   },
   {
     "schemaVersion": 1,
+    "id": "last-old-maid",
+    "name": "ラストばば抜き",
+    "category": "board",
+    "categoryLabel": "ボードゲーム",
+    "description": "残り3枚から始まる、ばば抜き終盤だけの2人対戦。",
+    "searchTerms": [
+      "ラストばば抜き",
+      "ばば抜き",
+      "ババ抜き",
+      "old maid",
+      "トランプ",
+      "カード",
+      "ジョーカー",
+      "2人対戦",
+      "board",
+      "ボードゲーム"
+    ],
+    "icon": "./games/board/last-old-maid/icon.svg",
+    "entry": "./index.html",
+    "available": true,
+    "path": "./games/board/last-old-maid/",
+    "localEntry": "./games/board/last-old-maid/index.html",
+    "assets": [
+      "./games/board/last-old-maid/css/style.css",
+      "./games/board/last-old-maid/icon.svg",
+      "./games/board/last-old-maid/index.html",
+      "./games/board/last-old-maid/js/game.js"
+    ]
+  },
+  {
+    "schemaVersion": 1,
     "id": "gomoku",
     "name": "五目並べ",
     "category": "board",
