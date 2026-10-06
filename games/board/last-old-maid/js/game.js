@@ -115,10 +115,14 @@
   function showOrder(){
     phase='order';
     hideStages();
+    if(isCpu(holder)){
+      hands[holder]=shuffle(hands[holder]);
+      cpuTimer=setTimeout(()=>{cpuTimer=0;if(phase==='order')showReady('draw')},500);
+      return;
+    }
     orderPanel.classList.remove('hidden');
     orderTitle.textContent=`${playerName(holder)}：手札の順番を決める`;
     renderOrderHand();
-    if(isCpu(holder)){hands[holder]=shuffle(hands[holder]);renderOrderHand();cpuTimer=setTimeout(()=>{cpuTimer=0;if(phase==='order')showReady('draw')},500)}
   }
 
   function showDraw(){
