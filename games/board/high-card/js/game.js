@@ -11,7 +11,7 @@
   let players=[],seatPositions=[],fieldSlots=[],round=1,currentIndex=0,choices={},selectedIndex=-1,reveal=false,recorded=false,phase='setup',dealTimer=0,showdownTimer=0,celebrationTimer=0;
 
   function playerName(i){return playerTypes?.getDisplayName(i)||`PLAYER ${i+1}`}
-  playerTypes=globalThis.MiniGamePlayerTypes.create(playerTypesEl,{count:Number(playerCountEl.value),items:i=>({symbol:SUITS[i]?.symbol||String(i+1),symbolClass:SUITS[i]?.red?'red':''}),guestName:i=>`GUEST ${i+1}`});
+  playerTypes=globalThis.MiniGamePlayerTypes.create(playerTypesEl,{count:Number(playerCountEl.value),items:i=>({symbol:SUITS[i]?.symbol||String(i+1),symbolClass:SUITS[i]?.red?'red':''}),guestName:i=>`PLAYER ${i+1}`});
   playerCountEl.addEventListener('change',()=>playerTypes.setCount(Number(playerCountEl.value)));
   function shuffle(values){const out=[...values];for(let i=out.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[out[i],out[j]]=[out[j],out[i]]}return out}
   function cardObject(playerIndex,rank){return {rank,suit:SUITS[playerIndex].symbol}}

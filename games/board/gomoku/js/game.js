@@ -5,7 +5,7 @@
   const setupPanel=$('setupPanel'),gamePanel=$('gamePanel'),playerTypesEl=$('playerTypes'),targetInput=$('targetInput'),timerMode=$('timerMode'),timerValueField=$('timerValueField'),timerValueLabel=$('timerValueLabel'),timerSeconds=$('timerSeconds'),setupError=$('setupError'),startBtn=$('startBtn'),restartBtn=$('restartBtn'),rulesBtn=$('rulesBtn'),rulesOverlay=$('rulesOverlay'),closeRules=$('closeRules'),resultOverlay=$('resultOverlay'),resultMark=$('resultMark'),resultTitle=$('resultTitle'),resultReason=$('resultReason'),closeResult=$('closeResult'),restartOverlay=$('restartOverlay'),cancelRestart=$('cancelRestart'),confirmRestart=$('confirmRestart'),boardWrap=$('boardWrap'),boardEl=$('board'),turnDisc=$('turnDisc'),turnText=$('turnText'),clockBox=$('clockBox'),clockText=$('clockText'),totalClocks=$('totalClocks'),blackClock=$('blackClock'),whiteClock=$('whiteClock');
   let board,current,target,mode,limit,total,lastMove,gameOver,raf,turnStarted,recorded=false;
   const store=globalThis.MiniGamePortalPlayerStore;
-  const playerTypes=globalThis.MiniGamePlayerTypes.create(playerTypesEl,{count:2,items:[{symbol:'',symbolClass:'piece black'},{symbol:'',symbolClass:'piece white'}],guestName:i=>`GUEST ${i+1}`});
+  const playerTypes=globalThis.MiniGamePlayerTypes.create(playerTypesEl,{count:2,items:[{symbol:'',symbolClass:'piece black'},{symbol:'',symbolClass:'piece white'}],guestName:i=>`PLAYER ${i+1}`});
   const zoom=globalThis.MiniGamePinchZoom?.attach(boardWrap,boardEl,{min:1,max:2.5})||{reset(){}};
 
   function fmt(sec){ if(!Number.isFinite(sec))return '∞'; sec=Math.max(0,sec); return sec>=10?String(Math.ceil(sec)):sec.toFixed(1); }
