@@ -38,13 +38,25 @@
     score+=SIZE-(Math.abs(r-center)+Math.abs(c-center))*.25;
     return score;
   }
+  function cpuDifficulty(){return playerTypes.getCpuDifficulty(current==='B'?0:1)}
   function chooseCpuMove(){
     const empty=[];for(let i=0;i<board.length;i++)if(!board[i])empty.push(i);
     if(!empty.length)return-1;
-    if(empty.length===board.length)return Math.floor(SIZE/2)*SIZE+Math.floor(SIZE/2);
-    let best=-Infinity,moves=[];
-    for(const i of empty){const score=scoreCpuMove(i,current);if(score>best){best=score;moves=[i]}else if(score===best)moves.push(i)}
-    return moves[Math.floor(Math.random()*moves.length)];
+    if(empty.length===board.length)return cpuDifficulty()==='weak'?empty[Math.floor(Math.random()*empty.length)]:Math.floor(SIZE/2)*SIZE+Math.floor(SIZE/2);
+    const level=cpuDifficulty();
+    if(level==='weak')return empty[Math.floor(Math.random()*empty.length)];
+    const ranked=empty.map(i=>({i,score:scoreCpuMove(i,current)})).sort((a,b)=>b.score-a.score);
+    if(level==='normal'){const pool=ranked.slice(0,Math.min(8,ranked.length));return pool[Math.floor(Math.random()*pool.length)].i}
+    if(level==='strong')return ranked[0].i;
+    let best=-Infinity,bestMoves=[];
+    for(const move of ranked.slice(0,Math.min(14,ranked.length))){
+      board[move.i]=current;
+      const replies=[];for(let j=0;j<board.length;j++)if(!board[j])replies.push(scoreCpuMove(j,other(current)));
+      board[move.i]=null;
+      const score=move.score-(replies.length?Math.max(...replies)*.97:0);
+      if(score>best){best=score;bestMoves=[move.i]}else if(score===best)bestMoves.push(move.i);
+    }
+    return bestMoves[Math.floor(Math.random()*bestMoves.length)];
   }
   function scheduleCpuTurn(){
     if(cpuTimer){clearTimeout(cpuTimer);cpuTimer=0}
