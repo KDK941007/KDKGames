@@ -6220,3 +6220,10 @@ body.blackjackGameActive .app{
 .playerOrderChoice span{
   min-width:0;
 }
+
+/* Keep full option-bet outcomes readable inside result areas. */
+.sideBetResults{min-width:0;width:100%;max-width:100%;gap:5px;margin:8px 0;}
+.sideBetResult{font-size:clamp(10px,2.8vw,12px);line-height:1.5;text-align:left;white-space:normal;overflow-wrap:anywhere;word-break:normal;}
+.resultPlayer .sideBetResults{padding:6px 0;}
+.resultPlayer .resultTotals{grid-template-columns:minmax(0,1fr) minmax(0,1fr);}
+.resultPlayer .resultTotals b{overflow-wrap:anywhere;text-align:right;}
