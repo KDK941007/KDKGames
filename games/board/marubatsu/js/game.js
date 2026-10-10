@@ -237,7 +237,7 @@
     startCountdown.setAttribute('aria-hidden', 'false');
 
     const tick = () => {
-      startCountdown.textContent = String(remaining);
+      startCountdown.textContent = `${startPlayer === 'O' ? oPlayerName.textContent : xPlayerName.textContent}（${getSymbol(startPlayer)}）の番\n${remaining}`;
       startCountdown.classList.remove('tick');
       void startCountdown.offsetWidth;
       startCountdown.classList.add('tick');
