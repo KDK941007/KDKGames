@@ -1034,6 +1034,12 @@
     resetPilot();
     updateHud();
 
+    if(first){
+      state.waitingForGrab=true;
+      state.transitioning=false;
+      levelOverlay.classList.remove('show','countdownMode');
+      return;
+    }
     showLevelIntro(level)
       .then(() => {
         if(!state.running || state.gameOver) return;
@@ -1093,6 +1099,7 @@
       lastTs:0,
       spawnAccumulator:0,
       drag:false,
+      waitingForGrab:false,
       warningGroup:null,
       shotGroupSeq:0
     });
@@ -1181,8 +1188,18 @@
   }
 
   function startDrag(e){
-    if(!state.running || state.paused || state.transitioning || state.gameOver) return;
+    if(!state.running || state.paused || (state.transitioning&&!state.waitingForGrab) || state.gameOver) return;
     e.preventDefault();
+    if(state.waitingForGrab){
+      state.waitingForGrab=false;
+      state.transitioning=true;
+      showLevelIntro(state.level).then(()=>{
+        if(!state.running||state.gameOver)return;
+        state.transitioning=false;
+        state.lastTs=performance.now();
+        state.spawnAccumulator=Math.max(0,spawnInterval()-520);
+      });
+    }
     const p = eventPoint(e);
     const pr = pilot.getBoundingClientRect();
     state.drag = true;
