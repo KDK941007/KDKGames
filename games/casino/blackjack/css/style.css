@@ -6227,3 +6227,27 @@ body.blackjackGameActive .app{
 .resultPlayer .sideBetResults{padding:6px 0;}
 .resultPlayer .resultTotals{grid-template-columns:minmax(0,1fr) minmax(0,1fr);}
 .resultPlayer .resultTotals b{overflow-wrap:anywhere;text-align:right;}
+
+/* OPTION BET outcomes must remain visible even in compact payout overview seats. */
+.table.payoutOverview .seat.hasSideBetResults{
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  justify-content:flex-start!important;
+  overscroll-behavior:contain;
+}
+.table.payoutOverview .seat.hasSideBetResults .sideBetResults{
+  display:grid!important;
+  flex:0 0 auto;
+  width:100%;
+  margin:4px 0 2px;
+  padding:3px;
+  border-radius:5px;
+  background:rgba(0,0,0,.48);
+  box-sizing:border-box;
+}
+.table.payoutOverview .seat.hasSideBetResults .sideBetResult{
+  font-size:clamp(9px,2vw,11px);
+  line-height:1.35;
+  white-space:normal;
+  overflow-wrap:anywhere;
+}
