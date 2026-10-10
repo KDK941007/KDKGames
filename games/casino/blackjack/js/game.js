@@ -601,7 +601,7 @@ $('startBtn').onclick=()=>{
     name:names[i],type:types[i],playerId:types[i]==='user'?profile.playerId:null,cpuLevel:levels[i]||'advanced',
     setupIndex:i,
     bank:b,initial:b,roundStartBank:b,bet:0,lastBet:0,hands:[],insurance:0,result:'',
-    sideBets:emptySideBets(),sideBetDraft:emptySideBetDraft(),lastSideBetDraft:emptySideBetDraft(),sideBetResults:[]
+    sideBets:emptySideBets(),sideBetDraft:emptySideBetDraft(),lastSideBetDraft:emptySideBetDraft(),sideBetResults:[],optionNet:0
   }));
   if(randomizePlayerOrder)players=shufflePlayerOrder(players);
   roundNo=0;
@@ -827,8 +827,10 @@ function settleInitialOptionBets(){
         if(hit){
           const profit=stake*hit.odds;
           p.bank+=stake+profit;
+          p.optionNet+=profit;
           p.sideBetResults.push({kind:'win',text:`21+3 → ${target.name} / ${hit.name} WIN +${fmt(profit)}`});
         }else{
+          p.optionNet-=stake;
           p.sideBetResults.push({kind:'lose',text:`21+3 → ${target.name} / LOSE -${fmt(stake)}`});
         }
       }
@@ -846,8 +848,10 @@ function settleInitialOptionBets(){
         if(hit){
           const profit=stake*hit.odds;
           p.bank+=stake+profit;
+          p.optionNet+=profit;
           p.sideBetResults.push({kind:'win',text:`PERFECT PAIRS → ${target.name} / ${hit.name} WIN +${fmt(profit)}`});
         }else{
+          p.optionNet-=stake;
           p.sideBetResults.push({kind:'lose',text:`PERFECT PAIRS → ${target.name} / LOSE -${fmt(stake)}`});
         }
       }
@@ -925,6 +929,7 @@ function settleBetBehindAll(dealerBlackjack=false){
       }
     });
     owner.bank+=returned+profit;
+    owner.optionNet+=(profit-lost);
     const kind=wins?'win':(pushes&&!losses?'push':'lose');
     const net=profit-lost;
     const sign=net>0?'+':'';
@@ -1181,7 +1186,7 @@ function beginBet(){
   if(!deck.length||shuffleAfterRound)newShoe();
   roundNo++;phase='bet';activeHand=0;currentBet=0;dealer=[];reveal=false;insuranceIndex=0;insuranceMode='insurance';evenMoneyContext=null;evenMoneyResolve=null;seenCards.clear();
   $('roundBanner').className='roundBanner';$('roundBanner').textContent='';
-  players.forEach(p=>{p.roundStartBank=p.bank;p.bet=0;p.hands=[];p.insurance=0;p.result='';p.sideBets=emptySideBets();p.sideBetDraft=emptySideBetDraft();p.sideBetResults=[]});
+  players.forEach(p=>{p.roundStartBank=p.bank;p.bet=0;p.hands=[];p.insurance=0;p.result='';p.sideBets=emptySideBets();p.sideBetDraft=emptySideBetDraft();p.sideBetResults=[];p.optionNet=0});
   $('betArea').style.display='block';$('insuranceBox').style.display='none';$('playActions').classList.add('hidden');
   $('betAmount').textContent=fmt(0);
   activePlayer=nextBetPlayerIndex(0);
@@ -2961,6 +2966,7 @@ async function settleDealerBlackjack(){
       await flyDealerPayout(pi,p.insurance*2);
       await flyBetBackToBank(pi,p.insurance,'INS BET');
       p.bank+=p.insurance*3;
+      p.optionNet+=p.insurance*2;
 
       for(const h of p.hands){
         h.result+=(h.result?' / ':'')+`Insurance WIN +${fmt(p.insurance*2)}`;
@@ -3171,6 +3177,8 @@ function buildResultHtml(){
   return `<div class="resultPanelTitle">ROUND ${roundNo} RESULT</div>`+
     players.map((p,pi)=>{
       const delta=p.bank-p.roundStartBank;
+      const optionNet=p.optionNet||0;
+      const mainNet=delta-optionNet;
       const type=delta>0?'win':delta<0?'lose':'push';
       const hands=p.hands.map((h,hi)=>{
         const label=p.hands.length>1?`HAND ${hi+1}`:'HAND';
@@ -3180,7 +3188,10 @@ function buildResultHtml(){
       return `<div class="resultPlayer">
         <div class="resultPlayerHead"><span>${p.name}</span><span class="playerResultBadge ${playerOutcomeType(p)}">${playerOutcomeLabel(p)}</span></div>
         <div class="resultHands">${hands}</div>
-        <div class="resultTotals"><span>このラウンド</span><b class="resultDelta ${type}">${signedFmt(delta)}</b></div>
+        <div class="resultTotals"><span>通常BET損益</span><b class="resultDelta ${mainNet>0?'win':mainNet<0?'lose':'push'}">${signedFmt(mainNet)}</b></div>
+        <div class="resultTotals"><span>オプションBET損益</span><b class="resultDelta ${optionNet>0?'win':optionNet<0?'lose':'push'}">${signedFmt(optionNet)}</b></div>
+        <div class="resultTotals"><span>このラウンド（合計）</span><b class="resultDelta ${type}">${signedFmt(delta)}</b></div>
+        ${optionBetStatusHTML(p)}
         <div class="resultTotals"><span>元金</span><b>${fmt(p.initial)}</b></div>
         <div class="resultTotals"><span>残高</span><b>${fmt(p.roundStartBank)} → ${fmt(p.bank)}</b></div>
         <div class="resultTotals"><span>元金差</span><b class="resultDelta ${p.bank-p.initial>0?'win':p.bank-p.initial<0?'lose':'push'}">${signedFmt(p.bank-p.initial)}</b></div>
