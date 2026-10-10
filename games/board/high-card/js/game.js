@@ -1,7 +1,7 @@
 (() => {
   'use strict';
   const $=id=>document.getElementById(id);
-  const setupPanel=$('setupPanel'),playPanel=$('playPanel'),playerCountEl=$('playerCount'),playerTypesEl=$('playerTypes'),randomOrderToggle=$('randomOrderToggle'),startBtn=$('startBtn'),restartBtn=$('restartBtn'),rulesBtn=$('rulesBtn'),rulesOverlay=$('rulesOverlay'),closeRules=$('closeRules'),restartOverlay=$('restartOverlay'),cancelRestart=$('cancelRestart'),confirmRestart=$('confirmRestart'),roundText=$('roundText'),phaseText=$('phaseText'),scoreboard=$('scoreboard'),tableBoard=$('tableBoard'),centerCards=$('centerCards'),centerMessage=$('centerMessage'),readyPanel=$('readyPanel'),readySuit=$('readySuit'),readyTitle=$('readyTitle'),readyBtn=$('readyBtn'),selectionPreview=$('selectionPreview'),previewCard=$('previewCard'),confirmSelectedCard=$('confirmSelectedCard'),battleReadyPanel=$('battleReadyPanel'),battleBtn=$('battleBtn'),showdownOverlay=$('showdownOverlay'),winnerCelebration=$('winnerCelebration'),winnerCelebrationTitle=$('winnerCelebrationTitle'),winnerCelebrationName=$('winnerCelebrationName'),roundSummary=$('roundSummary'),roundWinnerText=$('roundWinnerText'),nextRoundBtn=$('nextRoundBtn'),finalResultPanel=$('finalResultPanel'),finalTitle=$('finalTitle'),finalScores=$('finalScores'),backSetupBtn=$('backSetupBtn');
+  const setupPanel=$('setupPanel'),playPanel=$('playPanel'),playerCountEl=$('playerCount'),playerTypesEl=$('playerTypes'),turnOrderMode=$('turnOrderMode'),startBtn=$('startBtn'),restartBtn=$('restartBtn'),rulesBtn=$('rulesBtn'),rulesOverlay=$('rulesOverlay'),closeRules=$('closeRules'),restartOverlay=$('restartOverlay'),cancelRestart=$('cancelRestart'),confirmRestart=$('confirmRestart'),roundText=$('roundText'),phaseText=$('phaseText'),scoreboard=$('scoreboard'),tableBoard=$('tableBoard'),centerCards=$('centerCards'),centerMessage=$('centerMessage'),readyPanel=$('readyPanel'),readySuit=$('readySuit'),readyTitle=$('readyTitle'),readyBtn=$('readyBtn'),selectionPreview=$('selectionPreview'),previewCard=$('previewCard'),confirmSelectedCard=$('confirmSelectedCard'),battleReadyPanel=$('battleReadyPanel'),battleBtn=$('battleBtn'),showdownOverlay=$('showdownOverlay'),winnerCelebration=$('winnerCelebration'),winnerCelebrationTitle=$('winnerCelebrationTitle'),winnerCelebrationName=$('winnerCelebrationName'),roundSummary=$('roundSummary'),roundWinnerText=$('roundWinnerText'),nextRoundBtn=$('nextRoundBtn'),finalResultPanel=$('finalResultPanel'),finalTitle=$('finalTitle'),finalScores=$('finalScores'),backSetupBtn=$('backSetupBtn');
   const stationEls={top:$('stationTop'),right:$('stationRight'),bottom:$('stationBottom'),left:$('stationLeft')};
   const RANKS=['A','K','Q','J','10'],POWER={A:5,K:4,Q:3,J:2,'10':1},SUITS=[{symbol:'♠',name:'スペード',red:false},{symbol:'♥',name:'ハート',red:true},{symbol:'♦',name:'ダイヤ',red:true},{symbol:'♣',name:'クラブ',red:false}];
   const store=globalThis.MiniGamePortalPlayerStore;
@@ -13,11 +13,6 @@
   function playerName(i){return playerTypes?.getDisplayName(i)||`PLAYER ${i+1}`}
   playerTypes=globalThis.MiniGamePlayerTypes.create(playerTypesEl,{count:Number(playerCountEl.value),items:i=>({symbol:SUITS[i]?.symbol||String(i+1),symbolClass:SUITS[i]?.red?'red':''}),guestName:i=>`PLAYER ${i+1}`});
   playerCountEl.addEventListener('change',()=>playerTypes.setCount(Number(playerCountEl.value)));
-  randomOrderToggle.addEventListener('click',()=>{
-    const next=randomOrderToggle.getAttribute('aria-pressed')!=='true';
-    randomOrderToggle.setAttribute('aria-pressed',String(next));
-    randomOrderToggle.querySelector('.order-toggle-text').textContent=next?'ランダム':'固定';
-  });
   function shuffle(values){const out=[...values];for(let i=out.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[out[i],out[j]]=[out[j],out[i]]}return out}
   function cardObject(playerIndex,rank){return {rank,suit:SUITS[playerIndex].symbol}}
   function renderScores(){scoreboard.innerHTML='';players.forEach((p,i)=>{const d=document.createElement('div');d.className='score-item';d.innerHTML=`<span>${SUITS[i].symbol} ${playerName(i)}</span><b>${p.score}</b>`;scoreboard.appendChild(d)})}
@@ -40,7 +35,7 @@
     players=Array.from({length:count},()=>({score:0,hand:[...RANKS]}));
     fieldSlots=shuffle((count===2?['left','right']:count===3?['left','top','right']:['top','right','bottom','left']));
     turnOrder=Array.from({length:count},(_,i)=>i);
-    if(randomOrderToggle.getAttribute('aria-pressed')==='true')turnOrder=shuffle(turnOrder);
+    if(turnOrderMode.value==='random-start'||turnOrderMode.value==='random-each')turnOrder=shuffle(turnOrder);
     turnCursor=0;round=1;currentIndex=turnOrder[0];choices={};selectedIndex=-1;recorded=false;
     initialSeatPositions=buildSeatPositions(0);seatPositions=[...initialSeatPositions];
     setupPanel.classList.add('hidden');playPanel.classList.remove('hidden');restartBtn.classList.remove('hidden');restartOverlay.classList.remove('show');
@@ -232,13 +227,24 @@
       winnerCelebrationTitle.textContent='WIN!';winnerCelebrationName.textContent=`${winners.map(playerName).join('・')} +1 POINT`;
       roundWinnerText.textContent=`${winners.map(playerName).join('・')} は引き分けで全員+1ポイント`;
     }
-    nextRoundBtn.textContent=round>=5?'最終結果へ':'次のラウンドへ';
+    const remaining=5-round;
+    const topScore=Math.max(...players.map(p=>p.score));
+    const leaders=players.filter(p=>p.score===topScore);
+    const decided=leaders.length===1 && players.every(p=>p===leaders[0]||p.score+remaining<topScore);
+    nextRoundBtn.textContent=round>=5||decided?'最終結果へ':'次のラウンドへ';
+    nextRoundBtn.dataset.final=String(round>=5||decided);
+    if(turnOrderMode.value==='winner-first'&&!allTied){
+      const first=winners[0];
+      const position=turnOrder.indexOf(first);
+      turnOrder=[...turnOrder.slice(position),...turnOrder.slice(0,position)];
+    }
     renderScores();renderCenterCards({resolved:true,winners,allTied});
     if(celebrationTimer)clearTimeout(celebrationTimer);celebrationTimer=setTimeout(()=>{celebrationTimer=0;winnerCelebration.classList.add('hidden');if(playerTypes.snapshot().every(type=>type==='cpu')){cpuTimer=setTimeout(()=>{cpuTimer=0;nextRound()},450)}},1500);
   }
   function nextRound(){
     if(phase!=='result')return;
-    if(round>=5){showFinal();return}
+    if(nextRoundBtn.dataset.final==='true'){showFinal();return}
+    if(turnOrderMode.value==='random-each')turnOrder=shuffle(turnOrder);
     round++;turnCursor=0;currentIndex=turnOrder[0];choices={};selectedIndex=-1;fieldSlots=shuffle((players.length===2?['left','right']:players.length===3?['left','top','right']:['top','right','bottom','left']));seatPositions=[...initialSeatPositions];roundSummary.classList.add('hidden');winnerCelebration.classList.add('hidden');showReady();
   }
   function showFinal(){
