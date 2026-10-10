@@ -3043,7 +3043,7 @@ async function settle(){
 
       if(profit){
         $('message').textContent=
-          `${p.name}${p.hands.length>1?` HAND ${hi+1}`:''}：${h.result.startsWith('BLACKJACK')?'BLACKJACK':'WIN'} — 配当`;
+          `${p.name}${p.hands.length>1?` HAND ${hi+1}`:''}：${h.result.startsWith('BLACKJACK')?'BLACKJACK':'WIN'} — 利益 ${fmt(profit)}${returnBet?` / 元BET返却 ${fmt(returnBet)} / 受取総額 ${fmt(returnBet+profit)}`:''}`;
         await flyDealerPayout(pi,profit);
       }
 
