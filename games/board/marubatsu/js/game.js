@@ -233,6 +233,7 @@
 
   function runStartCountdown(startPlayer) {
     let remaining = 3;
+    startCountdown.style.whiteSpace = 'pre-line';
     startCountdown.classList.add('show');
     startCountdown.setAttribute('aria-hidden', 'false');
 
