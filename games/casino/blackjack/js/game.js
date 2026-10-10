@@ -2704,6 +2704,7 @@ async function dealerTurn(){
     players.forEach(p=>{
       if(p.insurance){
         p.result='Insurance LOSE';
+          p.optionNet-=p.insurance;
       }
     });
     $('message').textContent='Insurance LOSE';
