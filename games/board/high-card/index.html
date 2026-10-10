@@ -19,10 +19,7 @@
       <div id="playerTypes" class="mg-player-types" aria-label="プレイヤータイプ"></div>
       <div class="order-setting">
         <span class="order-setting-label">プレイヤー順</span>
-        <button id="randomOrderToggle" class="order-toggle" type="button" aria-pressed="false">
-          <span class="order-toggle-track"><span class="order-toggle-knob"></span></span>
-          <span class="order-toggle-text">固定</span>
-        </button>
+        <select id="turnOrderMode" aria-label="プレイヤー順"><option value="fixed">固定</option><option value="random-start">開始時ランダム</option><option value="winner-first">前ラウンド勝者から</option><option value="random-each">毎ターンランダム</option></select>
         <small>ランダムONの場合、ゲーム開始時に1回だけ順番をランダム化します。</small>
       </div>
       <fieldset class="field-set"><legend>勝負時のカード表示</legend><label><input type="radio" name="revealMode" value="hidden" checked> 伏せたまま</label><label><input type="radio" name="revealMode" value="open"> オープンする</label></fieldset>
