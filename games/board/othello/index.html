@@ -16,6 +16,7 @@
     <section class="setup" id="setupPanel">
       <div id="playerTypes" class="mg-player-types" aria-label="プレイヤータイプ"></div>
       <div class="setup-grid">
+        <label class="field"><span>先攻</span><select id="firstTurn"><option value="B">黒</option><option value="W">白</option><option value="random">ランダム</option></select></label>
         <label class="field"><span>盤面サイズ</span><div class="input-unit"><input id="boardSizeInput" type="number" min="4" max="16" step="2" value="8" inputmode="numeric"><b>× 同数</b></div></label>
         <label class="field"><span>持ち時間</span><select id="timerMode"><option value="none" selected>無制限</option><option value="total">ゲーム全体</option><option value="turn">1ターン</option></select></label>
         <label class="field timer-value-field hidden" id="timerValueField"><span id="timerValueLabel">持ち時間</span><div class="input-unit"><input id="timerSeconds" type="number" min="1" step="1" inputmode="numeric" placeholder="秒数"><b>秒</b></div></label>
