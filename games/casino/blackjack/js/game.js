@@ -1295,16 +1295,8 @@ $('dealBtn').onclick=async()=>{
   }
   if(currentBet>0&&currentBet<cfg.min){$('message').textContent=`最低 ${fmt(cfg.min)} 必要です`;return}
   if(currentBet>cfg.max){$('message').textContent=`MAX ${fmt(cfg.max)} までです`;toast(`テーブルMAX ${fmt(cfg.max)} を超えています`);return}
-  if(normalized.total>0){
-    animating=true;
-    await flyOptionBetChips(activePlayer,normalized.total,'bet');
-  }
-  if(!commitOptionBetsForPlayer(p,activePlayer,normalized.draft)){
-    animating=false;
-    return;
-  }
+  if(!commitOptionBetsForPlayer(p,activePlayer,normalized.draft))return;
   p.bet=currentBet;p.lastBet=p.bet;currentBet=0;$('betAmount').textContent=fmt(0);
-  animating=false;
   const next=nextBetPlayerIndex(activePlayer+1);
   if(next>=0){activePlayer=next;showBetTurn()}
   else await dealInitial();
@@ -1397,9 +1389,6 @@ async function dealInitial(){
   }
 
   dealingDealerActive=false;
-  const initialOptionEvents=settleInitialOptionBets();
-  render();
-  await animateOptionBetOutcomes(initialOptionEvents);
   const insuranceRequired=dealer[0]?.r==='A';
 
   // Dealerはまだ1枚しか持っていないため、この時点ではBLACKJACK判定しない。
@@ -1409,6 +1398,15 @@ async function dealInitial(){
   }else{
     $('table').classList.remove('dealingOverview','dealerDealActive','betOverview','payoutOverview');
     render();
+  }
+
+  // Show initial OPTION BET outcomes only after switching into the ACTION view.
+  // Keep this before Insurance decisions so its payout can be used for Insurance.
+  const initialOptionEvents=settleInitialOptionBets();
+  render();
+  if(initialOptionEvents.length){
+    $('message').textContent='OPTION BET — 配当・結果';
+    await animateOptionBetOutcomes(initialOptionEvents);
   }
 
   if(scroller)scroller.scrollTop=0;
@@ -3981,7 +3979,8 @@ document.querySelectorAll('.optionBetTab').forEach(btn=>btn.addEventListener('cl
 ['option21Plus3Amount','optionPerfectPairsAmount','optionBetBehindAmount'].forEach(id=>{
   $(id)?.addEventListener('input',updateOptionBetModalSummary);
 });
-$('applyOptionBet').addEventListener('click',()=>{
+$('applyOptionBet').addEventListener('click',async()=>{
+  if(animating||phase!=='bet')return;
   const ownerIndex=optionBetOwnerIndex;
   const p=players[ownerIndex];
   if(ownerIndex<0||!p||p.type==='cpu')return;
@@ -4001,9 +4000,21 @@ $('applyOptionBet').addEventListener('click',()=>{
   const normalized=normalizedSideBetDraft(draft,ownerIndex);
   if(!normalized.ok){toast(normalized.message);return}
   if(normalized.total>p.bank){toast('OPTION BETを含めると残高が不足します');return}
+  const previousTotal=sideBetDraftDisplayTotal(p.sideBetDraft);
   p.sideBetDraft={...normalized.draft};
   refreshOptionBetButton();
   closeOptionBet();
+  // The modal's confirmation is where users expect to see the OPTION chips.
+  // Actual funds are still committed only when MAIN BET is confirmed.
+  const added=Math.max(0,normalized.total-previousTotal);
+  if(added>0){
+    animating=true;
+    try{
+      await flyOptionBetChips(ownerIndex,added,'bet');
+    }finally{
+      animating=false;
+    }
+  }
 });
 
 function openCustomBet(){
