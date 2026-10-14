@@ -951,15 +951,26 @@ function sideBetDraftDisplayTotal(draft){
     +(o.perfectPairs?normalizeSideBetAmount(d.perfectPairs):0)
     +(o.betBehind?normalizeSideBetAmount(d.betBehindAmount):0);
 }
+// After Double / Split, BET BEHIND may include additional stakes.
+function optionBetTotalForSeat(p){
+  const initial=sideBetDraftDisplayTotal(p?.sideBetDraft);
+  const behind=p?.sideBets?.betBehind;
+  const behindOriginal=normalizeSideBetAmount(p?.sideBetDraft?.betBehindAmount);
+  const behindActual=behind?.stakes?.reduce((sum,stake)=>sum+normalizeSideBetAmount(stake),0)||0;
+  return initial+Math.max(0,behindActual-behindOriginal);
+}
 function refreshOptionBetButton(){
   const btn=$('optionBetBtn');
   const p=players[activePlayer];
   if(!btn)return;
   const visible=phase==='bet'&&anyOptionBetEnabled()&&p&&p.type!=='cpu';
   btn.classList.toggle('hidden',!visible);
-  if(visible){
-    const total=sideBetDraftDisplayTotal(p.sideBetDraft);
-    btn.textContent=total>0?`OPTION ${fmt(total)}`:'OPTION BET';
+  const total=visible?sideBetDraftDisplayTotal(p.sideBetDraft):0;
+  if(visible)btn.textContent=total>0?`OPTION ${fmt(total)}`:'OPTION BET';
+  const summary=$('optionBetCurrentSummary');
+  if(summary){
+    summary.classList.toggle('hidden',!visible||total<=0);
+    $('optionBetCurrentTotal').textContent=fmt(total);
   }
 }
 
@@ -3432,7 +3443,7 @@ function currentFocusPlayer(){
   if(phase==='settling')return settlingPlayer;
   return -1;
 }
-function render(){ const table=$('table');if(table){table.dataset.dealSeats=String(players.length);table.classList.toggle('dealerDealActive',phase==='dealing'&&dealingDealerActive)} $('roundCounter').textContent=`ROUND ${Math.max(roundNo,1)}`;$('shoeCount').textContent=`SHOE ${shoeNo} ・ ${deck.length} cards${cutCardSeen?' ・ LAST GAME':''}`;$('dealerCards').innerHTML=dealer.map((c,i)=>cardHTML(c,!reveal&&i===1)).join('');$('dealerScore').textContent=dealer.length?(dealer.length===1?`(${value(dealer)})`:(reveal?`(${value(dealer)})`:`(${dealer[0]?value([dealer[0]]):''} + ?)`)):'';$('players').innerHTML=players.map((p,pi)=>{let tempBet=phase==='bet'&&pi===activePlayer?currentBet:p.bet;return `<div class="seat ${p.sideBetResults?.length?'hasSideBetResults ':''}${(((phase==='bet'||phase==='play'||(phase==='dealing'&&!dealingDealerActive))&&pi===activePlayer)||(phase==='insurance'&&pi===insuranceIndex)||(phase==='settling'&&pi===settlingPlayer))?'active':''} ${pi===blackjackAnnouncePlayer?'blackjackFlash':''}" data-player-index="${pi}"><div class="seatHead"><span>${p.name}${p.type==='cpu'?`<em class="cpuBadge">CPU ${String(p.cpuLevel||'advanced').toUpperCase()}</em>`:p.type==='guest'?`<em class="cpuBadge">GUEST</em>`:`<em class="cpuBadge cpuBadgeSpacer" aria-hidden="true">CPU ADVANCED</em>`}</span><span>BANK ${fmt(p.bank)}</span></div><div class="overviewChipSlot">${chipStackHTML(tempBet)}</div>${p.hands.length?`<div class="handsRow ${p.hands.length>1?'splitHands':''} ${p.hands.length===3?'threeHands':''}">${p.hands.map((h,hi)=>`<div class="handBlock ${phase==='play'&&pi===activePlayer&&hi===activeHand?'activeHand':''} ${phase==='play'&&pi===activePlayer&&p.hands.length>1&&hi!==activeHand?'dimmedHand':''}"><div class="handTitle">${p.hands.length>1?`HAND ${hi+1} ・ `:''}BET ${fmt(h.bet)}</div><div class="cards">${h.cards.map(c=>cardHTML(c)).join('')}</div><div class="handTotal">${h.cards.length?`TOTAL ${value(h.cards)}`:'&nbsp;'}</div><div class="handResult result ${resultClass(h.result)}">${h.result||''}</div></div>`).join('')}</div>`:`<div class="handsRow"><div class="handBlock handPlaceholder"><div class="handTitle">BET ${fmt(tempBet)}</div><div class="cards"></div><div class="handTotal"></div><div class="handResult"></div></div></div>`}${optionBetStatusHTML(p)}${p.insurance?`<div class="result">Insurance ${fmt(p.insurance)}</div>`:''}</div>`}).join('');markSeen();ensurePlayerVisible(currentFocusPlayer())}
+function render(){ const table=$('table');if(table){table.dataset.dealSeats=String(players.length);table.classList.toggle('dealerDealActive',phase==='dealing'&&dealingDealerActive)} $('roundCounter').textContent=`ROUND ${Math.max(roundNo,1)}`;$('shoeCount').textContent=`SHOE ${shoeNo} ・ ${deck.length} cards${cutCardSeen?' ・ LAST GAME':''}`;$('dealerCards').innerHTML=dealer.map((c,i)=>cardHTML(c,!reveal&&i===1)).join('');$('dealerScore').textContent=dealer.length?(dealer.length===1?`(${value(dealer)})`:(reveal?`(${value(dealer)})`:`(${dealer[0]?value([dealer[0]]):''} + ?)`)):'';$('players').innerHTML=players.map((p,pi)=>{let tempBet=phase==='bet'&&pi===activePlayer?currentBet:p.bet;const optionTotal=optionBetTotalForSeat(p);return `<div class="seat ${p.sideBetResults?.length?'hasSideBetResults ':''}${(((phase==='bet'||phase==='play'||(phase==='dealing'&&!dealingDealerActive))&&pi===activePlayer)||(phase==='insurance'&&pi===insuranceIndex)||(phase==='settling'&&pi===settlingPlayer))?'active':''} ${pi===blackjackAnnouncePlayer?'blackjackFlash':''}" data-player-index="${pi}"><div class="seatHead"><span>${p.name}${p.type==='cpu'?`<em class="cpuBadge">CPU ${String(p.cpuLevel||'advanced').toUpperCase()}</em>`:p.type==='guest'?`<em class="cpuBadge">GUEST</em>`:`<em class="cpuBadge cpuBadgeSpacer" aria-hidden="true">CPU ADVANCED</em>`}</span><span>BANK ${fmt(p.bank)}</span></div><div class="overviewChipSlot">${chipStackHTML(tempBet)}</div>${p.hands.length?`<div class="handsRow ${p.hands.length>1?'splitHands':''} ${p.hands.length===3?'threeHands':''}">${p.hands.map((h,hi)=>`<div class="handBlock ${phase==='play'&&pi===activePlayer&&hi===activeHand?'activeHand':''} ${phase==='play'&&pi===activePlayer&&p.hands.length>1&&hi!==activeHand?'dimmedHand':''}"><div class="handTitle">${p.hands.length>1?`HAND ${hi+1} ・ `:''}BET ${fmt(h.bet)}</div><div class="cards">${h.cards.map(c=>cardHTML(c)).join('')}</div><div class="handTotal">${h.cards.length?`TOTAL ${value(h.cards)}`:'&nbsp;'}</div><div class="handResult result ${resultClass(h.result)}">${h.result||''}</div></div>`).join('')}</div>`:`<div class="handsRow"><div class="handBlock handPlaceholder"><div class="handTitle">BET ${fmt(tempBet)}</div><div class="cards"></div><div class="handTotal"></div><div class="handResult"></div></div></div>`}${phase==='play'&&optionTotal>0?`<div class="optionSeatTotal">OPTION BET ${fmt(optionTotal)}</div>`:''}${optionBetStatusHTML(p)}${p.insurance?`<div class="result">Insurance ${fmt(p.insurance)}</div>`:''}</div>`}).join('');markSeen();ensurePlayerVisible(currentFocusPlayer())}
 function startLoungeBgm(){
  if(bgmOn)return;
  audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();
@@ -3817,7 +3828,27 @@ function renderOptionBetQuickControls(p){
     root.querySelectorAll('.optionBetQuickBtn').forEach(btn=>btn.addEventListener('click',()=>{
       const input=$(item.amount);
       if(!input)return;
-      input.value=btn.dataset.v||'0';
+      const add=normalizeSideBetAmount(btn.dataset.v);
+      if(add===0){
+        input.value='0';
+      }else{
+        const otherTotal=OPTION_BET_UI.reduce((sum,other)=>
+          sum+(other.key!==item.key&&(cfg.optionBets||{})[other.enabled]
+            ?normalizeSideBetAmount($(other.amount)?.value):0),0);
+        const available=Math.max(0,p.bank-otherTotal);
+        const current=normalizeSideBetAmount(input.value);
+        if(available<=current){
+          toast('OPTION BETを追加できる残高がありません');
+          return;
+        }
+        const next=Math.min(available,current+add);
+        if(next<optionBetMinimum()){
+          toast(`OPTION MIN ${fmt(optionBetMinimum())} に必要な残高がありません`);
+          return;
+        }
+        input.value=String(next);
+        if(next<current+add)toast('残高上限までOPTION BETを追加しました');
+      }
       updateOptionBetModalSummary();
     }));
   });

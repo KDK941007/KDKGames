@@ -77,7 +77,7 @@
 <div class="controls"><div class="controlTopRow"><div id="roundBanner" class="roundBanner"></div><button id="resultBtn" class="roundResultBtn" disabled>結果を見る</button></div>
 <div class="actionMessageRow"><div id="message" class="message"></div><button id="hintBtn" type="button" class="messageHintBtn">戦略ヒント</button></div>
 <div class="controlFrame">
-<div id="betArea" class="controlState"><div id="chips" class="chips"></div><div class="betRow"><span><span class="betLabelGroup">BET <b id="betAmount" class="betAmount">¥0</b></span><span class="betInlineTools"><button id="betHintBtn" type="button" class="betHintInlineBtn">BETヒント</button><button id="optionBetBtn" type="button" class="betHintInlineBtn optionBetInlineBtn hidden">OPTION BET</button></span></span><button id="repeatBetBtn" class="small repeatBetBtn">前回BET</button><button id="clearBet" class="small">クリア</button><button id="dealBtn" class="small">BET確定</button></div></div>
+<div id="betArea" class="controlState"><div id="chips" class="chips"></div><div class="betRow"><span><span class="betLabelGroup">BET <b id="betAmount" class="betAmount">¥0</b></span><span class="betInlineTools"><button id="betHintBtn" type="button" class="betHintInlineBtn">BETヒント</button><button id="optionBetBtn" type="button" class="betHintInlineBtn optionBetInlineBtn hidden">OPTION BET</button></span></span><button id="repeatBetBtn" class="small repeatBetBtn">前回BET</button><button id="clearBet" class="small">クリア</button><button id="dealBtn" class="small">BET確定</button></div><div id="optionBetCurrentSummary" class="optionBetCurrentSummary hidden" aria-live="polite">OPTION BET 合計 <strong id="optionBetCurrentTotal">0</strong></div></div>
 <div id="insuranceBox" class="insuranceBox controlState"><div id="insuranceTitle" style="margin-bottom:8px;font-weight:900">INSURANCE?</div><div class="insuranceBtns"><button id="insuranceYes" class="action special">YES（1/2 BET）</button><button id="insuranceNo" class="action secondary">NO</button></div></div>
 <div id="playActions" class="actions twoRow controlState hidden"><button id="hitBtn" class="action">HIT</button><button id="standBtn" class="action secondary">STAND</button><button id="doubleBtn" class="action">DOUBLE</button><button id="splitBtn" class="action special">SPLIT</button><button id="surrenderBtn" class="action danger">SURRENDER</button></div>
 </div>
@@ -603,6 +603,7 @@
       </button>
     </div>
 
+    <div class="optionBetChipHelp">金額ボタンは押すたびに加算されます（CLEARで0に戻します）</div>
     <div class="optionBetPanels">
       <section id="option21Plus3Row" class="optionBetPanel hidden" data-option-panel="21plus3">
         <div class="optionBetPanelHead">
