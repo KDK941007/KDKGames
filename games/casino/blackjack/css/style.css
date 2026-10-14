@@ -6409,3 +6409,37 @@ body.blackjackGameActive .app{
   min-height:20px!important;
   overflow-wrap:anywhere!important;
 }
+
+
+/* PR #11: evidence-based layout adjustment for ACTION and multi-seat payouts.
+   Safari/iOS supports :has(); only ACTION seats with option results gain space. */
+.table:not(.betOverview):not(.dealingOverview):not(.payoutOverview):has(.seat.hasBetSummary.hasSideBetResults) .gameStage{
+  height:462px!important;
+  min-height:462px!important;
+}
+.table:not(.betOverview):not(.dealingOverview):not(.payoutOverview) .seat.hasBetSummary.hasSideBetResults{
+  height:320px!important;
+  min-height:320px!important;
+  box-sizing:border-box;
+}
+/* Do not enlarge one-to-three-player payouts: the reported clipping is in
+   the two-row, four-to-six-player overview. */
+.table.payoutOverview .gameStage{
+  height:402px!important;
+  min-height:402px!important;
+}
+.table.payoutOverview[data-deal-seats="4"] .gameStage{
+  height:476px!important;
+  min-height:476px!important;
+}
+.table.payoutOverview[data-deal-seats="5"] .gameStage,
+.table.payoutOverview[data-deal-seats="6"] .gameStage{
+  height:502px!important;
+  min-height:502px!important;
+}
+/* Keep side-bet outcomes accessible within every payout seat. */
+.table.payoutOverview .seat.hasSideBetResults{
+  justify-content:flex-start!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+}
