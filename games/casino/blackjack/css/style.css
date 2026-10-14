@@ -6296,3 +6296,84 @@ body.blackjackGameActive .app{
   overflow-wrap:anywhere;
   box-sizing:border-box;
 }
+
+
+/* Blackjack follow-up: show actual combined wager while the hands are in play. */
+.table:not(.betOverview):not(.dealingOverview):not(.payoutOverview) .seat.hasBetSummary{
+  height:266px;
+  min-height:266px;
+}
+.table:not(.betOverview):not(.dealingOverview):not(.payoutOverview) .seat.hasBetSummary.hasSideBetResults{
+  height:300px;
+  min-height:300px;
+  overflow-y:auto;
+  overflow-x:hidden;
+  overscroll-behavior:contain;
+}
+.seatBetSummary{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:center;
+  gap:3px 7px;
+  width:100%;
+  margin:5px auto 3px;
+  padding:5px 7px;
+  border:1px solid rgba(226,192,100,.32);
+  border-radius:8px;
+  background:rgba(226,192,100,.08);
+  font-size:10px;
+  font-weight:850;
+  line-height:1.35;
+  color:#e9dcae;
+  box-sizing:border-box;
+}
+.seatBetSummary>span{white-space:nowrap;}
+.seatBetSummary>strong{
+  color:#fff2b8;
+  white-space:nowrap;
+  font-size:11px;
+  font-weight:950;
+}
+@media(max-width:390px){
+  .seatBetSummary{font-size:9px;gap:2px 5px;padding:5px 3px;}
+  .seatBetSummary>strong{font-size:10px;}
+}
+
+/* Give the payout overview slightly taller seats, leaving BET/dealing views unchanged. */
+.table.payoutOverview .gameStage{
+  height:442px!important;
+  min-height:442px!important;
+}
+.table.payoutOverview .seat.hasSideBetResults{
+  justify-content:flex-start!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  scrollbar-width:thin;
+}
+.table.payoutOverview .handBlock .handResult.result,
+.table.payoutOverview .handsRow.splitHands .handBlock .handResult.result,
+.table.payoutOverview .handsRow.threeHands .handBlock .handResult.result{
+  height:auto!important;
+  min-height:20px!important;
+  line-height:1.25!important;
+  font-size:clamp(7px,1.8vw,9px)!important;
+  white-space:normal!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+  overflow-wrap:anywhere;
+}
+.table.payoutOverview .seat.hasSideBetResults .sideBetResults{
+  align-self:stretch;
+  margin-top:6px;
+}
+.table.payoutOverview .seat.hasSideBetResults .sideBetResult{
+  line-height:1.4!important;
+  overflow-wrap:anywhere;
+}
+
+/* Option chips use the existing casino chip geometry, with a distinct gold rim. */
+.payoutChipVisual.optionPayoutChip{
+  border-color:#f7d773!important;
+  box-shadow:inset 0 0 0 3px rgba(255,232,160,.75),0 8px 18px rgba(0,0,0,.55)!important;
+}
