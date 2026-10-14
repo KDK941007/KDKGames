@@ -6340,10 +6340,10 @@ body.blackjackGameActive .app{
   .seatBetSummary>strong{font-size:10px;}
 }
 
-/* Give the payout overview slightly taller seats, leaving BET/dealing views unchanged. */
+/* Keep payout stage close to its original height; use scrolling inside seats if needed. */
 .table.payoutOverview .gameStage{
-  height:442px!important;
-  min-height:442px!important;
+  height:414px!important;
+  min-height:414px!important;
 }
 .table.payoutOverview .seat.hasSideBetResults{
   justify-content:flex-start!important;
@@ -6376,4 +6376,36 @@ body.blackjackGameActive .app{
 .payoutChipVisual.optionPayoutChip{
   border-color:#f7d773!important;
   box-shadow:inset 0 0 0 3px rgba(255,232,160,.75),0 8px 18px rgba(0,0,0,.55)!important;
+}
+
+/* The earlier larger frame did not fix the underlying result clipping.
+   Allow result text to determine each hand's height and keep long outcomes scrollable. */
+.table.payoutOverview .seat{
+  justify-content:flex-start!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+}
+.table.payoutOverview .handsRow,
+.table.payoutOverview .handsRow.splitHands,
+.table.payoutOverview .handsRow.threeHands{
+  height:auto!important;
+  min-height:0!important;
+  overflow:visible!important;
+  align-items:stretch!important;
+}
+.table.payoutOverview .handBlock,
+.table.payoutOverview .handsRow.splitHands .handBlock,
+.table.payoutOverview .handsRow.threeHands .handBlock{
+  height:auto!important;
+  min-height:0!important;
+  overflow:visible!important;
+}
+.table.payoutOverview .handBlock .handResult.result,
+.table.payoutOverview .handsRow.splitHands .handBlock .handResult.result,
+.table.payoutOverview .handsRow.threeHands .handBlock .handResult.result{
+  height:auto!important;
+  min-height:20px!important;
+  overflow-wrap:anywhere!important;
 }
