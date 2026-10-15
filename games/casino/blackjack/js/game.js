@@ -811,10 +811,11 @@ function evaluatePerfectPairs(cards){
   if(cardColor(cards[0].s)===cardColor(cards[1].s))return {name:'COLORED PAIR',odds:12};
   return {name:'MIXED PAIR',odds:6};
 }
-function settleInitialOptionBets(){
+function settleInitialOptionBets(playerIndex){
   if(!dealer[0])return [];
   const events=[];
   for(const [pi,p] of players.entries()){
+    if(pi!==playerIndex)continue;
     const side=p.sideBets||emptySideBets();
     if(side.twentyOnePlusThree>0){
       const stake=side.twentyOnePlusThree;
@@ -899,12 +900,12 @@ function followBetBehindSplit(targetIndex,handIndex){
     }
   });
 }
-function settleBetBehindAll(dealerBlackjack=false){
+function settleBetBehindAll(dealerBlackjack=false,targetIndex=null){
   const events=[];
   const dv=value(dealer);
   players.forEach((owner,ownerIndex)=>{
     const bb=owner.sideBets?.betBehind;
-    if(!bb||bb.resolved)return;
+    if(!bb||bb.resolved||(targetIndex!==null&&bb.targetIndex!==targetIndex))return;
     const target=players[bb.targetIndex];
     const totalStake=bb.stakes.reduce((a,b)=>a+(Number(b)||0),0);
     if(!target||!target.hands?.length||target.bet<=0){
@@ -942,8 +943,8 @@ function settleBetBehindAll(dealerBlackjack=false){
     owner.optionNet+=(profit-lost);
     if(returned+profit>0)events.push({pi:ownerIndex,kind:profit>0?'win':'return',amount:returned+profit});
     if(lost>0)events.push({pi:ownerIndex,kind:'lose',amount:lost});
-    const kind=wins?'win':(pushes&&!losses?'push':'lose');
     const net=profit-lost;
+    const kind=net>0?'win':net<0?'lose':'push';
     const sign=net>0?'+':'';
     owner.sideBetResults.push({
       kind,
@@ -953,9 +954,12 @@ function settleBetBehindAll(dealerBlackjack=false){
   });
   return events;
 }
-function optionBetStatusHTML(p){
+function optionBetStatusHTML(p,compact=false){
   if(!p.sideBetResults?.length)return '';
-  return `<div class="sideBetResults">${p.sideBetResults.map(r=>`<div class="sideBetResult ${r.kind||''}">${r.text}</div>`).join('')}</div>`;
+  return `<div class="sideBetResults${compact?' sideBetResultsCompact':''}">${p.sideBetResults.map(r=>{
+    const label=compact?`${(r.text||'').split('→')[0].trim()} ${r.kind==='win'?'WIN':r.kind==='lose'?'LOSE':'PUSH'}`:r.text;
+    return `<div class="sideBetResult ${r.kind||''}">${label}</div>`;
+  }).join('')}</div>`;
 }
 function sideBetDraftDisplayTotal(draft){
   const d=draft||emptySideBetDraft();
@@ -1398,15 +1402,6 @@ async function dealInitial(){
   }else{
     $('table').classList.remove('dealingOverview','dealerDealActive','betOverview','payoutOverview');
     render();
-  }
-
-  // Show initial OPTION BET outcomes only after switching into the ACTION view.
-  // Keep this before Insurance decisions so its payout can be used for Insurance.
-  const initialOptionEvents=settleInitialOptionBets();
-  render();
-  if(initialOptionEvents.length){
-    $('message').textContent='OPTION BET — 配当・結果';
-    await animateOptionBetOutcomes(initialOptionEvents);
   }
 
   if(scroller)scroller.scrollTop=0;
@@ -2256,6 +2251,30 @@ function advancePlayer(){
     let p=players[activePlayer];
     while(activeHand<p.hands.length&&p.hands[activeHand].done)activeHand++;
 
+    // 21+3 / PERFECT PAIRS are paid only when their bettor becomes ACTIVE in ACTION.
+    // The stake is zeroed by settleInitialOptionBets so multiple hands cannot pay twice.
+    if(phase==='play'&&activeHand<p.hands.length&&
+      ((p.sideBets?.twentyOnePlusThree||0)>0||(p.sideBets?.perfectPairs||0)>0)){
+      const pi=activePlayer;
+      lastActionPlayer=pi;
+      animating=true;
+      const events=settleInitialOptionBets(pi);
+      $('message').textContent=`${p.name}：OPTION BET 配当`;
+      updateButtons();
+      render();
+      ensurePlayerVisible(pi,'smooth');
+      (async()=>{
+        try{
+          await animateOptionBetOutcomes(events);
+          await sleep(250);
+        }finally{
+          animating=false;
+          advancePlayer();
+        }
+      })();
+      return;
+    }
+
     if(activeHand<p.hands.length){
       let h=p.hands[activeHand];
 
@@ -3070,13 +3089,22 @@ async function settleDealerBlackjack(){
       render();
     }
 
+    // BET BEHIND follows the target player's settlement, not the owner's turn.
+    const behindOptionEvents=settleBetBehindAll(true,pi);
+    if(behindOptionEvents.length){
+      render();
+      await animateOptionBetOutcomes(behindOptionEvents);
+    }
     await settlePlayerCue(pi);
     await sleep(120);
   }
 
+  // Safety fallback for invalid/unsettled targets; normally every target was handled above.
   const behindOptionEvents=settleBetBehindAll(true);
-  render();
-  await animateOptionBetOutcomes(behindOptionEvents);
+  if(behindOptionEvents.length){
+    render();
+    await animateOptionBetOutcomes(behindOptionEvents);
+  }
   recordRoundHistory();
   phase='result';
   $('message').textContent='Dealer BLACKJACK';
@@ -3152,12 +3180,21 @@ async function settle(){
       await sleep(260);
     }
 
+    // Pay any BET BEHIND targeting this player while their settlement is active.
+    const behindOptionEvents=settleBetBehindAll(false,pi);
+    if(behindOptionEvents.length){
+      render();
+      await animateOptionBetOutcomes(behindOptionEvents);
+    }
     await settlePlayerCue(pi);
   }
 
+  // Safety fallback for invalid/unsettled targets.
   const behindOptionEvents=settleBetBehindAll(false);
-  render();
-  await animateOptionBetOutcomes(behindOptionEvents);
+  if(behindOptionEvents.length){
+    render();
+    await animateOptionBetOutcomes(behindOptionEvents);
+  }
   recordRoundHistory();
   phase='result';
   $('message').textContent=`ROUND END — Dealer ${dv}${dv>21?' BUST':''}`;
@@ -3529,7 +3566,7 @@ function currentFocusPlayer(){
   if(phase==='settling')return settlingPlayer;
   return -1;
 }
-function render(){ const table=$('table');if(table){table.dataset.dealSeats=String(players.length);table.classList.toggle('dealerDealActive',phase==='dealing'&&dealingDealerActive)} $('roundCounter').textContent=`ROUND ${Math.max(roundNo,1)}`;$('shoeCount').textContent=`SHOE ${shoeNo} ・ ${deck.length} cards${cutCardSeen?' ・ LAST GAME':''}`;$('dealerCards').innerHTML=dealer.map((c,i)=>cardHTML(c,!reveal&&i===1)).join('');$('dealerScore').textContent=dealer.length?(dealer.length===1?`(${value(dealer)})`:(reveal?`(${value(dealer)})`:`(${dealer[0]?value([dealer[0]]):''} + ?)`)):'';$('players').innerHTML=players.map((p,pi)=>{let tempBet=phase==='bet'&&pi===activePlayer?currentBet:p.bet;const optionTotal=optionBetTotalForSeat(p);const mainTotal=p.hands.length?p.hands.reduce((sum,h)=>sum+(h.bet||0),0):(p.bet||0);const insuranceTotal=p.insurance||0;const showBetSummary=phase==='play'||phase==='insurance';return `<div class="seat ${showBetSummary?'hasBetSummary ':''}${p.sideBetResults?.length?'hasSideBetResults ':''}${(((phase==='bet'||phase==='play'||(phase==='dealing'&&!dealingDealerActive))&&pi===activePlayer)||(phase==='insurance'&&pi===insuranceIndex)||(phase==='settling'&&pi===settlingPlayer))?'active':''} ${pi===blackjackAnnouncePlayer?'blackjackFlash':''}" data-player-index="${pi}"><div class="seatHead"><span>${p.name}${p.type==='cpu'?`<em class="cpuBadge">CPU ${String(p.cpuLevel||'advanced').toUpperCase()}</em>`:p.type==='guest'?`<em class="cpuBadge">GUEST</em>`:`<em class="cpuBadge cpuBadgeSpacer" aria-hidden="true">CPU ADVANCED</em>`}</span><span>BANK ${fmt(p.bank)}</span></div>${showBetSummary?`<div class="seatBetSummary"><span>MAIN ${fmt(mainTotal)}</span><span>OPTION ${fmt(optionTotal)}</span>${insuranceTotal?`<span>INS ${fmt(insuranceTotal)}</span>`:''}<strong>TOTAL ${fmt(mainTotal+optionTotal+insuranceTotal)}</strong></div>`:''}<div class="overviewChipSlot">${chipStackHTML(tempBet)}</div>${p.hands.length?`<div class="handsRow ${p.hands.length>1?'splitHands':''} ${p.hands.length===3?'threeHands':''}">${p.hands.map((h,hi)=>`<div class="handBlock ${phase==='play'&&pi===activePlayer&&hi===activeHand?'activeHand':''} ${phase==='play'&&pi===activePlayer&&p.hands.length>1&&hi!==activeHand?'dimmedHand':''}"><div class="handTitle">${p.hands.length>1?`HAND ${hi+1} ・ `:''}BET ${fmt(h.bet)}</div><div class="cards">${h.cards.map(c=>cardHTML(c)).join('')}</div><div class="handTotal">${h.cards.length?`TOTAL ${value(h.cards)}`:'&nbsp;'}</div><div class="handResult result ${resultClass(h.result)}">${h.result||''}</div></div>`).join('')}</div>`:`<div class="handsRow"><div class="handBlock handPlaceholder"><div class="handTitle">BET ${fmt(tempBet)}</div><div class="cards"></div><div class="handTotal"></div><div class="handResult"></div></div></div>`}${optionBetStatusHTML(p)}${p.insurance?`<div class="result">Insurance ${fmt(p.insurance)}</div>`:''}</div>`}).join('');markSeen();ensurePlayerVisible(currentFocusPlayer())}
+function render(){ const table=$('table');if(table){table.dataset.dealSeats=String(players.length);table.classList.toggle('dealerDealActive',phase==='dealing'&&dealingDealerActive)} $('roundCounter').textContent=`ROUND ${Math.max(roundNo,1)}`;$('shoeCount').textContent=`SHOE ${shoeNo} ・ ${deck.length} cards${cutCardSeen?' ・ LAST GAME':''}`;$('dealerCards').innerHTML=dealer.map((c,i)=>cardHTML(c,!reveal&&i===1)).join('');$('dealerScore').textContent=dealer.length?(dealer.length===1?`(${value(dealer)})`:(reveal?`(${value(dealer)})`:`(${dealer[0]?value([dealer[0]]):''} + ?)`)):'';$('players').innerHTML=players.map((p,pi)=>{let tempBet=phase==='bet'&&pi===activePlayer?currentBet:p.bet;const optionTotal=optionBetTotalForSeat(p);const mainTotal=p.hands.length?p.hands.reduce((sum,h)=>sum+(h.bet||0),0):(p.bet||0);const insuranceTotal=p.insurance||0;const showBetSummary=phase==='play'||phase==='insurance';return `<div class="seat ${showBetSummary?'hasBetSummary ':''}${p.sideBetResults?.length?'hasSideBetResults ':''}${(((phase==='bet'||phase==='play'||(phase==='dealing'&&!dealingDealerActive))&&pi===activePlayer)||(phase==='insurance'&&pi===insuranceIndex)||(phase==='settling'&&pi===settlingPlayer))?'active':''} ${pi===blackjackAnnouncePlayer?'blackjackFlash':''}" data-player-index="${pi}"><div class="seatHead"><span>${p.name}${p.type==='cpu'?`<em class="cpuBadge">CPU ${String(p.cpuLevel||'advanced').toUpperCase()}</em>`:p.type==='guest'?`<em class="cpuBadge">GUEST</em>`:`<em class="cpuBadge cpuBadgeSpacer" aria-hidden="true">CPU ADVANCED</em>`}</span><span>BANK ${fmt(p.bank)}</span></div>${showBetSummary?`<div class="seatBetSummary"><span>MAIN ${fmt(mainTotal)}</span><span>OPTION ${fmt(optionTotal)}</span>${insuranceTotal?`<span>INS ${fmt(insuranceTotal)}</span>`:''}<strong>TOTAL ${fmt(mainTotal+optionTotal+insuranceTotal)}</strong></div>`:''}<div class="overviewChipSlot">${chipStackHTML(tempBet)}</div>${p.hands.length?`<div class="handsRow ${p.hands.length>1?'splitHands':''} ${p.hands.length===3?'threeHands':''}">${p.hands.map((h,hi)=>`<div class="handBlock ${phase==='play'&&pi===activePlayer&&hi===activeHand?'activeHand':''} ${phase==='play'&&pi===activePlayer&&p.hands.length>1&&hi!==activeHand?'dimmedHand':''}"><div class="handTitle">${p.hands.length>1?`HAND ${hi+1} ・ `:''}BET ${fmt(h.bet)}</div><div class="cards">${h.cards.map(c=>cardHTML(c)).join('')}</div><div class="handTotal">${h.cards.length?`TOTAL ${value(h.cards)}`:'&nbsp;'}</div><div class="handResult result ${resultClass(h.result)}">${h.result||''}</div></div>`).join('')}</div>`:`<div class="handsRow"><div class="handBlock handPlaceholder"><div class="handTitle">BET ${fmt(tempBet)}</div><div class="cards"></div><div class="handTotal"></div><div class="handResult"></div></div></div>`}${optionBetStatusHTML(p,table?.classList.contains('payoutOverview'))}${p.insurance?`<div class="result">Insurance ${fmt(p.insurance)}</div>`:''}</div>`}).join('');markSeen();ensurePlayerVisible(currentFocusPlayer())}
 function startLoungeBgm(){
  if(bgmOn)return;
  audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();
