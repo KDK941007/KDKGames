@@ -4041,6 +4041,7 @@ $('applyOptionBet').addEventListener('click',async()=>{
   p.sideBetDraft={...normalized.draft};
   refreshOptionBetButton();
   closeOptionBet();
+  render(); // Update the overview OPTION BET indicator immediately.
   // The modal's confirmation is where users expect to see the OPTION chips.
   // Actual funds are still committed only when MAIN BET is confirmed.
   const added=Math.max(0,normalized.total-previousTotal);
