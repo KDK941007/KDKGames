@@ -6461,3 +6461,38 @@ body.blackjackGameActive .app{
   overflow-wrap:anywhere!important;
   text-align:center!important;
 }
+
+
+/* Overview OPTION BET marker: signal presence without displaying the stake amount.
+   Keep the existing centered MAIN chip and seat heights unchanged. */
+.overviewOptionBadge{
+  display:none;
+}
+.table.betOverview .overviewChipSlot,
+.table.dealingOverview .overviewChipSlot,
+.table.payoutOverview .overviewChipSlot{
+  position:relative!important;
+  overflow:visible!important;
+}
+.table.betOverview .overviewOptionBadge,
+.table.dealingOverview .overviewOptionBadge,
+.table.payoutOverview .overviewOptionBadge{
+  display:inline-flex!important;
+  align-items:center;
+  justify-content:center;
+  position:absolute;
+  top:50%;
+  left:calc(50% + 22px);
+  transform:translateY(-50%);
+  padding:2px 5px;
+  border:1px solid rgba(226,192,100,.6);
+  border-radius:999px;
+  background:rgba(28,46,34,.98);
+  color:#ffe2a1;
+  font-size:clamp(6px,1.4vw,9px);
+  font-weight:950;
+  line-height:1.15;
+  white-space:nowrap;
+  pointer-events:none;
+  box-sizing:border-box;
+}
