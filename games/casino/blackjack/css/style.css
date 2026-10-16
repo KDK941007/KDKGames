@@ -6496,3 +6496,9 @@ body.blackjackGameActive .app{
   pointer-events:none;
   box-sizing:border-box;
 }
+
+/* Payout overview: center MAIN-only seats. Keep OPTION outcome seats top-aligned
+   so their WIN/LOSE/PUSH lines remain visible and scrollable. */
+.table.payoutOverview .seat:not(.hasSideBetResults){
+  justify-content:center!important;
+}
