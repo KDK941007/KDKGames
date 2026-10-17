@@ -6299,16 +6299,13 @@ body.blackjackGameActive .app{
 
 
 /* Blackjack follow-up: show actual combined wager while the hands are in play. */
-.table:not(.betOverview):not(.dealingOverview):not(.payoutOverview) .seat.hasBetSummary{
-  height:266px;
-  min-height:266px;
-}
+.table:not(.betOverview):not(.dealingOverview):not(.payoutOverview) .seat.hasBetSummary,
 .table:not(.betOverview):not(.dealingOverview):not(.payoutOverview) .seat.hasBetSummary.hasSideBetResults{
-  height:300px;
-  min-height:300px;
-  overflow-y:auto;
-  overflow-x:hidden;
-  overscroll-behavior:contain;
+  height:320px!important;
+  min-height:320px!important;
+  padding-bottom:8px!important;
+  overflow-y:hidden!important;
+  overflow-x:hidden!important;
 }
 .seatBetSummary{
   display:flex;
@@ -6413,14 +6410,24 @@ body.blackjackGameActive .app{
 
 /* PR #11: evidence-based layout adjustment for ACTION and multi-seat payouts.
    Safari/iOS supports :has(); only ACTION seats with option results gain space. */
-.table:not(.betOverview):not(.dealingOverview):not(.payoutOverview):has(.seat.hasBetSummary.hasSideBetResults) .gameStage{
-  height:462px!important;
-  min-height:462px!important;
+.table:not(.betOverview):not(.dealingOverview):not(.payoutOverview):has(.seat.hasBetSummary) .gameStage{
+  height:486px!important;
+  min-height:486px!important;
 }
-.table:not(.betOverview):not(.dealingOverview):not(.payoutOverview) .seat.hasBetSummary.hasSideBetResults{
-  height:320px!important;
-  min-height:320px!important;
-  box-sizing:border-box;
+/* Always use the same hand area, regardless of whether OPTION BET paid out. */
+.table:not(.betOverview):not(.dealingOverview):not(.payoutOverview) .seat.hasBetSummary .handsRow,
+.table:not(.betOverview):not(.dealingOverview):not(.payoutOverview) .seat.hasBetSummary.hasSideBetResults .handsRow{
+  height:174px!important;
+  min-height:174px!important;
+  flex:0 0 174px!important;
+  overflow-y:hidden!important;
+}
+.table:not(.betOverview):not(.dealingOverview):not(.payoutOverview) .seat.hasBetSummary .handsRow .handBlock{
+  height:174px!important;
+  min-height:0!important;
+}
+.table:not(.betOverview):not(.dealingOverview):not(.payoutOverview) .seat.hasBetSummary .sideBetResults{
+  margin-top:6px!important;
 }
 /* Do not enlarge one-to-three-player payouts: the reported clipping is in
    the two-row, four-to-six-player overview. */
@@ -6450,27 +6457,42 @@ body.blackjackGameActive .app{
 .table.payoutOverview .sideBetResults.sideBetResultsCompact{
   display:grid!important;
   grid-template-columns:minmax(0,1fr);
-  gap:3px!important;
-  margin:5px auto 2px!important;
-  padding:4px 5px!important;
+  gap:2px!important;
+  margin:2px auto 1px!important;
+  padding:2px 3px!important;
 }
 .table.payoutOverview .sideBetResultsCompact .sideBetResult{
-  font-size:clamp(9px,2vw,11px)!important;
-  line-height:1.25!important;
-  white-space:normal!important;
-  overflow-wrap:anywhere!important;
+  /* Match the MAIN hand-result font in this same overview. */
+  font-size:clamp(7px,1.8vw,9px)!important;
+  line-height:1.2!important;
+  white-space:nowrap!important;
+  overflow-wrap:normal!important;
   text-align:center!important;
 }
 
 
-/* Payout overview: center MAIN-only seats. Keep OPTION outcome seats top-aligned
-   so their WIN/LOSE/PUSH lines remain visible and scrollable. */
+/* Align every payout seat identically, with or without OPTION BET. */
 .table.payoutOverview .seat:not(.hasSideBetResults){
+  justify-content:flex-start!important;
+}
+/* Center the MAIN outcome text inside its own result rectangle (not the entire seat). */
+.table.payoutOverview .handBlock .handResult.result{
+  display:flex!important;
+  align-items:center!important;
   justify-content:center!important;
+  height:20px!important;
+  min-height:20px!important;
+  line-height:1.2!important;
+  white-space:normal!important;
 }
 
 /* Put the OPTION wager directly below the corresponding MAIN BET label
    in BET, DEALING, PAYOUT and ACTION views. Use the same handTitle typography. */
 .table .handBlock .overviewOptionAmount{
   margin-top:2px!important;
+}
+
+/* Preserve the same OPTION label-row height even when the wager is zero. */
+.table .handBlock .overviewOptionEmpty{
+  visibility:hidden!important;
 }
