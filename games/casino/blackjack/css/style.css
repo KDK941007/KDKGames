@@ -6502,3 +6502,12 @@ body.blackjackGameActive .app{
 .table.payoutOverview .seat:not(.hasSideBetResults){
   justify-content:center!important;
 }
+
+/* BET overview: OPTION amount shares the regular BET label style and stays under it. */
+.table.betOverview .handPlaceholder .overviewOptionAmount{
+  margin-top:2px!important;
+}
+/* The horizontal marker clips at seat edges; the amount line replaces it while betting. */
+.table.betOverview .overviewOptionBadge{
+  display:none!important;
+}
