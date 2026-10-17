@@ -6435,9 +6435,11 @@ body.blackjackGameActive .app{
   height:402px!important;
   min-height:402px!important;
 }
+/* Four-player payout has two rows; reserve room for all three compact
+   OPTION outcomes without requiring the user to scroll inside a seat. */
 .table.payoutOverview[data-deal-seats="4"] .gameStage{
-  height:476px!important;
-  min-height:476px!important;
+  height:536px!important;
+  min-height:536px!important;
 }
 .table.payoutOverview[data-deal-seats="5"] .gameStage,
 .table.payoutOverview[data-deal-seats="6"] .gameStage{
