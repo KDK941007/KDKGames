@@ -6408,8 +6408,8 @@ body.blackjackGameActive .app{
 }
 
 
-/* PR #11: evidence-based layout adjustment for ACTION and multi-seat payouts.
-   Safari/iOS supports :has(); only ACTION seats with option results gain space. */
+/* Keep ACTION geometry fixed whether or not OPTION BET outcomes exist.
+   Reserve one consistent hand area; Safari/iOS supports :has(). */
 .table:not(.betOverview):not(.dealingOverview):not(.payoutOverview):has(.seat.hasBetSummary) .gameStage{
   height:486px!important;
   min-height:486px!important;
