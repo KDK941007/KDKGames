@@ -6463,51 +6463,14 @@ body.blackjackGameActive .app{
 }
 
 
-/* Overview OPTION BET marker: signal presence without displaying the stake amount.
-   Keep the existing centered MAIN chip and seat heights unchanged. */
-.overviewOptionBadge{
-  display:none;
-}
-.table.betOverview .overviewChipSlot,
-.table.dealingOverview .overviewChipSlot,
-.table.payoutOverview .overviewChipSlot{
-  position:relative!important;
-  overflow:visible!important;
-}
-.table.betOverview .overviewOptionBadge,
-.table.dealingOverview .overviewOptionBadge,
-.table.payoutOverview .overviewOptionBadge{
-  display:inline-flex!important;
-  align-items:center;
-  justify-content:center;
-  position:absolute;
-  top:50%;
-  left:calc(50% + 22px);
-  transform:translateY(-50%);
-  padding:2px 5px;
-  border:1px solid rgba(226,192,100,.6);
-  border-radius:999px;
-  background:rgba(28,46,34,.98);
-  color:#ffe2a1;
-  font-size:clamp(6px,1.4vw,9px);
-  font-weight:950;
-  line-height:1.15;
-  white-space:nowrap;
-  pointer-events:none;
-  box-sizing:border-box;
-}
-
 /* Payout overview: center MAIN-only seats. Keep OPTION outcome seats top-aligned
    so their WIN/LOSE/PUSH lines remain visible and scrollable. */
 .table.payoutOverview .seat:not(.hasSideBetResults){
   justify-content:center!important;
 }
 
-/* BET overview: OPTION amount shares the regular BET label style and stays under it. */
-.table.betOverview .handPlaceholder .overviewOptionAmount{
+/* Put the OPTION wager directly below the corresponding MAIN BET label
+   in BET, DEALING, PAYOUT and ACTION views. Use the same handTitle typography. */
+.table .handBlock .overviewOptionAmount{
   margin-top:2px!important;
-}
-/* The horizontal marker clips at seat edges; the amount line replaces it while betting. */
-.table.betOverview .overviewOptionBadge{
-  display:none!important;
 }
