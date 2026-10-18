@@ -112,7 +112,7 @@
     const multiple=hands[holder].length>1;
     swapBtn.disabled=!multiple;
     shuffleBtn.disabled=!multiple;
-    orderHelper.textContent=multiple?'並び順を決めたら確定してください。':'1枚なので並び替えはありません。';
+    orderHelper.textContent=multiple?'手動は並び順を確認して確定。ランダムは結果を見せずに確定します。':'1枚なので並び替えはありません。';
   }
 
   function showOrder(){
@@ -303,8 +303,9 @@
 
   shuffleBtn.addEventListener('click',()=>{
     if(phase!=='order'||isCpu(holder)||hands[holder].length<2)return;
+    // Commit the new order without rendering its faces, even to the holder.
     hands[holder]=shuffle(hands[holder]);
-    renderOrderHand();
+    showReady('draw');
   });
 
   confirmOrderBtn.addEventListener('click',()=>{
