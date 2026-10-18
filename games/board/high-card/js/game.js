@@ -8,7 +8,7 @@
   const cards=globalThis.MiniGamePlayingCards;
   const reducedMotion=globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
   let playerTypes=null;
-  let players=[],seatPositions=[],initialSeatPositions=[],fieldSlots=[],turnOrder=[],turnCursor=0,round=1,currentIndex=0,choices={},selectedIndex=-1,reveal=false,recorded=false,phase='setup',dealTimer=0,showdownTimer=0,celebrationTimer=0,cpuTimer=0;
+  let players=[],seatPositions=[],initialSeatPositions=[],fieldSlots=[],turnOrder=[],turnCursor=0,round=1,currentIndex=0,choices={},selectedIndex=-1,reveal=false,recorded=false,phase='setup',dealTimer=0,showdownTimer=0,celebrationTimer=0,cpuTimer=0,publiclyRevealedCards=[];
 
   function playerName(i){return playerTypes?.getDisplayName(i)||`PLAYER ${i+1}`}
   playerTypes=globalThis.MiniGamePlayerTypes.create(playerTypesEl,{count:Number(playerCountEl.value),items:i=>({symbol:SUITS[i]?.symbol||String(i+1),symbolClass:SUITS[i]?.red?'red':''}),guestName:i=>`PLAYER ${i+1}`});
@@ -33,6 +33,7 @@
     playerTypes.setCount(count);
     reveal=document.querySelector('input[name="revealMode"]:checked').value==='open';
     players=Array.from({length:count},()=>({score:0,hand:[...RANKS]}));
+    publiclyRevealedCards=players.map(()=>[]);
     fieldSlots=shuffle((count===2?['left','right']:count===3?['left','top','right']:['top','right','bottom','left']));
     turnOrder=Array.from({length:count},(_,i)=>i);
     if(turnOrderMode.value==='random-start'||turnOrderMode.value==='random-each')turnOrder=shuffle(turnOrder);
@@ -121,44 +122,112 @@
     scheduleCpuTurn();
   }
   function isCpu(i=currentIndex){return playerTypes.getType(i)==='cpu'}
-  function weightedCpuChoice(ranked,weights){
-    const pool=ranked.slice(0,Math.min(ranked.length,weights.length));
-    const activeWeights=weights.slice(0,pool.length);
-    const total=activeWeights.reduce((sum,weight)=>sum+weight,0);
-    let roll=Math.random()*total;
-    for(let i=0;i<pool.length;i++){
-      roll-=activeWeights[i];
-      if(roll<0)return pool[i].i;
+  // Opponents choose simultaneously. Never inspect their secretly committed cards
+  // or unrevealed hands, even though that information exists in the game state.
+  function cpuOpponentBias(rank,opponentIndex,turn){
+    const type=playerTypes.getType(opponentIndex);
+    const level=type==='cpu'?playerTypes.getCpuDifficulty(opponentIndex):'human';
+    const tendency=level==='weak'?0:level==='normal'?0.24:level==='strong'?0.10:level==='max'?0.06:0.32;
+    const early=(5-turn)/4;
+    if(rank==='A')return 1+tendency*early;
+    if(rank==='K')return 1+tendency*early*.55;
+    if(rank==='10')return 1+tendency*.2;
+    return 1;
+  }
+  function cpuOpponentForecast(opponentIndex,horizon){
+    const known=reveal?(publiclyRevealedCards[opponentIndex]||[]):[];
+    const available=RANKS.filter(rank=>!known.includes(rank));
+    const startTurn=reveal?known.length:0;
+    const startNeeded=round-1;
+    const result=Array.from({length:horizon},()=>Object.fromEntries(RANKS.map(rank=>[rank,0])));
+    // At most 5! permutations. In hidden mode, past removals are uncertain.
+    function walk(remaining,turn,chance){
+      if(turn>=5||!remaining.length)return;
+      const weights=remaining.map(rank=>cpuOpponentBias(rank,opponentIndex,turn+1));
+      const weightSum=weights.reduce((a,b)=>a+b,0);
+      for(let i=0;i<remaining.length;i++){
+        const rank=remaining[i],prob=chance*weights[i]/weightSum;
+        if(turn>=startNeeded&&turn-startNeeded<horizon)result[turn-startNeeded][rank]+=prob;
+        walk(remaining.filter((_,j)=>j!==i),turn+1,prob);
+      }
     }
-    return pool[pool.length-1].i;
+    walk(available,startTurn,1);
+    return result;
+  }
+  // The payoff is computed using the real A/10 exception and multiway-tie rules.
+  function cpuRoundValue(myRank,opponents,forecasts,offset){
+    const myScore=players[currentIndex].score;
+    const top=Math.max(...players.map(p=>p.score));
+    const threats=opponents.map(i=>1+(players[i].score===top?.25:0)+Math.max(0,players[i].score-myScore)*.25);
+    const totalThreat=threats.reduce((a,b)=>a+b,0);
+    const otherRanks=[];
+    let expected=0;
+    function compare(index,chance){
+      if(index<opponents.length){
+        for(const rank of RANKS){
+          const p=forecasts[index][offset][rank];
+          if(p>0){otherRanks.push(rank);compare(index+1,chance*p);otherRanks.pop()}
+        }
+        return;
+      }
+      const ranks=[myRank,...otherRanks];
+      const winningRank=ranks.includes('A')&&ranks.includes('10')
+        ?'10':ranks.reduce((best,rank)=>POWER[rank]>POWER[best]?rank:best);
+      const allTied=ranks.every(rank=>rank===winningRank);
+      if(allTied)return;
+      let advantage=myRank===winningRank?1:0;
+      for(let i=0;i<otherRanks.length;i++){
+        if(otherRanks[i]===winningRank)advantage-=threats[i]/totalThreat;
+      }
+      expected+=chance*advantage;
+    }
+    compare(0,1);
+    return expected;
+  }
+  function cpuWeightedPick(scores,temperature,exploration){
+    const max=Math.max(...scores);
+    const weights=scores.map(value=>Math.exp((value-max)/temperature)+exploration);
+    let roll=Math.random()*weights.reduce((sum,value)=>sum+value,0);
+    for(let i=0;i<weights.length;i++){
+      roll-=weights[i];
+      if(roll<0)return i;
+    }
+    return weights.length-1;
   }
   function cpuCardIndex(){
     const hand=players[currentIndex].hand;
-    if(!hand.length)return-1;
+    if(!hand.length)return -1;
     const level=playerTypes.getCpuDifficulty(currentIndex);
     if(level==='weak')return Math.floor(Math.random()*hand.length);
+    if(hand.length===1)return 0;
 
-    const roundsLeft=6-round;
-    const score=players[currentIndex].score;
-    const top=Math.max(...players.map(p=>p.score));
-    const behind=top-score;
-    const ranked=hand.map((rank,i)=>{
-      let value=POWER[rank]*10;
-      if(rank==='10')value+=hand.includes('A')?8:2;
-      if(rank==='A'&&hand.includes('10'))value-=3;
-      if(behind>0&&roundsLeft<=behind+1)value+=POWER[rank]*4;
-      if(round===5)value+=POWER[rank]*6;
-      if(level==='max'){
-        const leaders=players.filter(p=>p.score===top).length;
-        value+=behind>0?POWER[rank]*5:0;
-        value+=leaders>1&&rank==='10'?5:0;
+    const opponents=players.map((_,i)=>i).filter(i=>i!==currentIndex);
+    const forecasts=opponents.map(i=>cpuOpponentForecast(i,hand.length));
+    const values=Array.from({length:hand.length},(_,turn)=>
+      hand.map(rank=>cpuRoundValue(rank,opponents,forecasts,turn)));
+    // Assign the remaining cards to future rounds; playing A immediately is not
+    // automatically better than saving it to counter another player's later play.
+    const cache=new Map();
+    function bestFuture(mask,turn){
+      if(mask===0)return 0;
+      const key=mask*8+turn;
+      if(cache.has(key))return cache.get(key);
+      let best=-Infinity;
+      for(let i=0;i<hand.length;i++){
+        if(mask&(1<<i))best=Math.max(best,values[turn][i]+bestFuture(mask^(1<<i),turn+1));
       }
-      return{i,value};
-    }).sort((a,b)=>b.value-a.value);
-
-    if(level==='normal')return weightedCpuChoice(ranked,[4,3,2]);
-    if(level==='strong')return weightedCpuChoice(ranked,[7,3,1]);
-    return weightedCpuChoice(ranked,[17,3]);
+      cache.set(key,best);
+      return best;
+    }
+    const fullMask=(1<<hand.length)-1;
+    const futureWeight=level==='normal'?.70:1;
+    const scores=hand.map((_,i)=>
+      values[0][i]+futureWeight*bestFuture(fullMask^(1<<i),1));
+    // All ranks remain eligible. Higher levels are more consistent about the
+    // estimated multi-round advantage, not simply biased toward stronger ranks.
+    const temperature=level==='normal'?.30:level==='strong'?.20:.15;
+    const exploration=level==='normal'?.14:level==='strong'?.07:.035;
+    return cpuWeightedPick(scores,temperature,exploration);
   }
   function scheduleCpuTurn(){if(cpuTimer){clearTimeout(cpuTimer);cpuTimer=0}if(phase!=='ready'||!isCpu())return;cpuTimer=setTimeout(()=>{cpuTimer=0;if(phase!=='ready'||!isCpu())return;showChoose();const index=cpuCardIndex();if(index<0)return;selectedIndex=index;renderTable();cpuTimer=setTimeout(()=>{cpuTimer=0;confirmCard()},450)},500)}
   function showChoose(){
@@ -212,6 +281,8 @@
       const max=Math.max(...choiceIndexes.map(i=>POWER[choices[i].rank]));
       winners=choiceIndexes.filter(i=>POWER[choices[i].rank]===max);
     }
+    // Only cards publicly shown after a round may inform future CPU decisions.
+    if(reveal)choiceIndexes.forEach(i=>publiclyRevealedCards[i].push(choices[i].rank));
     const allTied=winners.length===players.length;
     if(!allTied)winners.forEach(i=>players[i].score++);
     setPhase('result','結果');
