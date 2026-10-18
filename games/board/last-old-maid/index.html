@@ -59,10 +59,12 @@
           <div class="face-hand" id="orderHand"></div>
           <div class="order-actions">
             <button id="swapBtn" type="button">左右を入れ替える</button>
-            <button id="shuffleBtn" type="button">ランダム</button>
           </div>
-          <p class="helper" id="orderHelper">並び順を決めたら確定してください。</p>
-          <button class="primary" id="confirmOrderBtn" type="button">この順番で決定</button>
+          <p class="helper" id="orderHelper">手動の場合は並び順を確認して確定してください。ランダムは結果を見せずに確定します。</p>
+          <div class="order-decision-actions">
+            <button id="shuffleBtn" type="button">ランダム</button>
+            <button class="primary" id="confirmOrderBtn" type="button">この順番で決定</button>
+          </div>
         </div>
 
         <div class="draw-panel hidden" id="drawPanel">
@@ -99,7 +101,7 @@
       <li>3枚はジョーカー1枚と、同じ数字・異なるマークのカード2枚です。</li>
       <li>最初にカードを引く人が数字カード1枚、引かれる人が「ジョーカー＋同じ数字のカード」の2枚を持って始めます。</li>
       <li>最初にカードを引く人は、開始画面で固定／ランダムを選べます。固定ではPLAYER 1から始まります。</li>
-      <li>カードを引かれる人は、自分の手札の並びを「左右入れ替え」または「ランダム」で決めてから確定します。</li>
+      <li>カードを引かれる人は、手動で左右を入れ替えて「この順番で決定」を押すか、「ランダム」を押して最終的な並び順を誰にも見せずにそのまま確定します。</li>
       <li>カードを引く人は裏向きのカードを1枚選び、「このカードを引く」を押して確定します。</li>
       <li>同じ数字の2枚が揃ったら、そのペアは捨てます。</li>
       <li>最後にジョーカーだけを持っている人が負けです。</li>
