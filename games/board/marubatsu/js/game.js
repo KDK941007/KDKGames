@@ -232,13 +232,22 @@
   }
 
   function runStartCountdown(startPlayer) {
+    // Keep the turn header visible during the countdown, without enabling moves.
+    statusLabel.textContent = '現在のターン';
+    const turnName = startPlayer === 'O' ? oPlayerName.textContent : xPlayerName.textContent;
+    statusText.textContent = `${turnName}（${getSymbol(startPlayer)}）の番`;
+    turnSymbol.textContent = getSymbol(startPlayer);
+    turnSymbol.className = `turn-symbol ${startPlayer.toLowerCase()}`;
+    turnTimer.textContent = turnLimitSeconds === null ? '∞' : String(turnLimitSeconds);
+    turnTimerBox.classList.remove('warning');
+    turnView.classList.remove('hidden');
+
     let remaining = 3;
-    startCountdown.style.whiteSpace = 'pre-line';
     startCountdown.classList.add('show');
     startCountdown.setAttribute('aria-hidden', 'false');
 
     const tick = () => {
-      startCountdown.textContent = `${startPlayer === 'O' ? oPlayerName.textContent : xPlayerName.textContent}（${getSymbol(startPlayer)}）の番\n${remaining}`;
+      startCountdown.textContent = String(remaining);
       startCountdown.classList.remove('tick');
       void startCountdown.offsetWidth;
       startCountdown.classList.add('tick');
@@ -257,7 +266,6 @@
         startCountdown.textContent = '';
 
         current = startPlayer;
-        turnView.classList.remove('hidden');
         render();
         startTurnTimer();
         scheduleCpuTurn();
