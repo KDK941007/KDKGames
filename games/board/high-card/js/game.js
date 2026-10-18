@@ -225,8 +225,8 @@
       values[0][i]+futureWeight*bestFuture(fullMask^(1<<i),1));
     // All ranks remain eligible. Higher levels are more consistent about the
     // estimated multi-round advantage, not simply biased toward stronger ranks.
-    const temperature=level==='normal'?.23:level==='strong'?.12:.065;
-    const exploration=level==='normal'?.11:level==='strong'?.035:.008;
+    const temperature=level==='normal'?.30:level==='strong'?.20:.15;
+    const exploration=level==='normal'?.14:level==='strong'?.07:.035;
     return cpuWeightedPick(scores,temperature,exploration);
   }
   function scheduleCpuTurn(){if(cpuTimer){clearTimeout(cpuTimer);cpuTimer=0}if(phase!=='ready'||!isCpu())return;cpuTimer=setTimeout(()=>{cpuTimer=0;if(phase!=='ready'||!isCpu())return;showChoose();const index=cpuCardIndex();if(index<0)return;selectedIndex=index;renderTable();cpuTimer=setTimeout(()=>{cpuTimer=0;confirmCard()},450)},500)}
