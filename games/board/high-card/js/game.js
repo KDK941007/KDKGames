@@ -116,8 +116,17 @@
     selectedIndex=-1;updateSeatPositions();
     setPhase('ready','準備');
     roundText.textContent=`ROUND ${round} / 5`;
-    roundSummary.classList.add('hidden');roundSummary.classList.remove('win');finalResultPanel.classList.add('hidden');selectionPreview.classList.add('hidden');battleReadyPanel.classList.add('hidden');centerMessage.classList.add('hidden');winnerCelebration.classList.add('hidden');winnerCelebration.classList.remove('draw');readyPanel.classList.remove('hidden');
-    readySuit.textContent=SUITS[currentIndex].symbol;readySuit.classList.toggle('red',SUITS[currentIndex].red);readyTitle.textContent=`${playerName(currentIndex)} の番です`;
+    roundSummary.classList.add('hidden');roundSummary.classList.remove('win');finalResultPanel.classList.add('hidden');selectionPreview.classList.add('hidden');battleReadyPanel.classList.add('hidden');centerMessage.classList.add('hidden');winnerCelebration.classList.add('hidden');winnerCelebration.classList.remove('draw');
+    const cpuTurn=isCpu();
+    readyPanel.classList.toggle('hidden',cpuTurn);
+    if(cpuTurn){
+      centerMessage.textContent='カードを選んでいます';
+      centerMessage.classList.remove('hidden');
+    }else{
+      readySuit.textContent=SUITS[currentIndex].symbol;
+      readySuit.classList.toggle('red',SUITS[currentIndex].red);
+      readyTitle.textContent=`${playerName(currentIndex)} の番です`;
+    }
     renderTable();
     scheduleCpuTurn();
   }
@@ -233,7 +242,7 @@
   function showChoose(){
     setPhase('choosing','カード選択');
     readyPanel.classList.add('hidden');selectionPreview.classList.add('hidden');
-    centerMessage.textContent='手札から1枚選んでください';centerMessage.classList.remove('hidden');
+    centerMessage.textContent=isCpu()?'カードを選んでいます':'手札から1枚選んでください';centerMessage.classList.remove('hidden');
     renderTable();
   }
   function selectCard(index){
@@ -329,7 +338,7 @@
     finalResultPanel.classList.remove('hidden');recordPlay();
   }
   function recordPlay(){if(recorded)return;recorded=true;if(!store||playerTypes.userIndex()<0)return;store.recordPlay('high-card','ハイカードバトル')}
-  readyBtn.addEventListener('click',showChoose);
+  readyBtn.addEventListener('click',()=>{if(phase!=='ready'||isCpu())return;showChoose()});
   confirmSelectedCard.addEventListener('click',confirmCard);
   battleBtn.addEventListener('click',resolveBattle);
   nextRoundBtn.addEventListener('click',nextRound);
